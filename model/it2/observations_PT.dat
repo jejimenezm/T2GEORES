@@ -1,0 +1,4904 @@
+	>>TEMPERATURE
+		>>> ELEMENT : AA110
+			>>>> ANNOTATION : AA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 164.31529195981886
+			<<<<
+
+		>>> ELEMENT : BA110
+			>>>> ANNOTATION : BA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.31628325665136
+			<<<<
+
+		>>> ELEMENT : CA110
+			>>>> ANNOTATION : CA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.5604920984197
+			<<<<
+
+		>>> ELEMENT : DA110
+			>>>> ANNOTATION : DA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.37699768372153
+			<<<<
+
+		>>> ELEMENT : EA110
+			>>>> ANNOTATION : EA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.39311724689878
+			<<<<
+
+		>>> ELEMENT : FA110
+			>>>> ANNOTATION : FA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.44020804160832
+			<<<<
+
+		>>> ELEMENT : GA110
+			>>>> ANNOTATION : GA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.33998799759954
+			<<<<
+
+		>>> ELEMENT : HA110
+			>>>> ANNOTATION : HA110-T-AH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.29069813962795
+			<<<<
+
+		>>> ELEMENT : AA111
+			>>>> ANNOTATION : AA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 164.31529195981886
+			<<<<
+
+		>>> ELEMENT : BA111
+			>>>> ANNOTATION : BA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.31628325665136
+			<<<<
+
+		>>> ELEMENT : CA111
+			>>>> ANNOTATION : CA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.5604920984197
+			<<<<
+
+		>>> ELEMENT : DA111
+			>>>> ANNOTATION : DA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.37699768372153
+			<<<<
+
+		>>> ELEMENT : EA111
+			>>>> ANNOTATION : EA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.39311724689878
+			<<<<
+
+		>>> ELEMENT : FA111
+			>>>> ANNOTATION : FA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.44020804160832
+			<<<<
+
+		>>> ELEMENT : GA111
+			>>>> ANNOTATION : GA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.33998799759954
+			<<<<
+
+		>>> ELEMENT : HA111
+			>>>> ANNOTATION : HA111-T-AH-11
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.29069813962795
+			<<<<
+
+		>>> ELEMENT : AA113
+			>>>> ANNOTATION : AA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 164.31529195981886
+			<<<<
+
+		>>> ELEMENT : BA113
+			>>>> ANNOTATION : BA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.31628325665136
+			<<<<
+
+		>>> ELEMENT : CA113
+			>>>> ANNOTATION : CA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.5604920984197
+			<<<<
+
+		>>> ELEMENT : DA113
+			>>>> ANNOTATION : DA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.37699768372153
+			<<<<
+
+		>>> ELEMENT : EA113
+			>>>> ANNOTATION : EA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.39311724689878
+			<<<<
+
+		>>> ELEMENT : FA113
+			>>>> ANNOTATION : FA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.44020804160832
+			<<<<
+
+		>>> ELEMENT : GA113
+			>>>> ANNOTATION : GA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.33998799759954
+			<<<<
+
+		>>> ELEMENT : HA113
+			>>>> ANNOTATION : HA113-T-AH-13
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.29069813962795
+			<<<<
+
+		>>> ELEMENT : AA114
+			>>>> ANNOTATION : AA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 164.31529195981886
+			<<<<
+
+		>>> ELEMENT : BA114
+			>>>> ANNOTATION : BA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.31628325665136
+			<<<<
+
+		>>> ELEMENT : CA114
+			>>>> ANNOTATION : CA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.5604920984197
+			<<<<
+
+		>>> ELEMENT : DA114
+			>>>> ANNOTATION : DA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.37699768372153
+			<<<<
+
+		>>> ELEMENT : EA114
+			>>>> ANNOTATION : EA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.39311724689878
+			<<<<
+
+		>>> ELEMENT : FA114
+			>>>> ANNOTATION : FA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.44020804160832
+			<<<<
+
+		>>> ELEMENT : GA114
+			>>>> ANNOTATION : GA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.33998799759954
+			<<<<
+
+		>>> ELEMENT : HA114
+			>>>> ANNOTATION : HA114-T-AH-14
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.29069813962795
+			<<<<
+
+		>>> ELEMENT : AA115
+			>>>> ANNOTATION : AA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 164.31529195981886
+			<<<<
+
+		>>> ELEMENT : BA115
+			>>>> ANNOTATION : BA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.31628325665136
+			<<<<
+
+		>>> ELEMENT : CA115
+			>>>> ANNOTATION : CA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.5604920984197
+			<<<<
+
+		>>> ELEMENT : DA115
+			>>>> ANNOTATION : DA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.37699768372153
+			<<<<
+
+		>>> ELEMENT : EA115
+			>>>> ANNOTATION : EA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.39311724689878
+			<<<<
+
+		>>> ELEMENT : FA115
+			>>>> ANNOTATION : FA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.44020804160832
+			<<<<
+
+		>>> ELEMENT : GA115
+			>>>> ANNOTATION : GA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.33998799759954
+			<<<<
+
+		>>> ELEMENT : HA115
+			>>>> ANNOTATION : HA115-T-AH-15
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.29069813962795
+			<<<<
+
+		>>> ELEMENT : AA116
+			>>>> ANNOTATION : AA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 164.31529195981886
+			<<<<
+
+		>>> ELEMENT : BA116
+			>>>> ANNOTATION : BA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.31628325665136
+			<<<<
+
+		>>> ELEMENT : CA116
+			>>>> ANNOTATION : CA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.5604920984197
+			<<<<
+
+		>>> ELEMENT : DA116
+			>>>> ANNOTATION : DA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.37699768372153
+			<<<<
+
+		>>> ELEMENT : EA116
+			>>>> ANNOTATION : EA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.39311724689878
+			<<<<
+
+		>>> ELEMENT : FA116
+			>>>> ANNOTATION : FA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.44020804160832
+			<<<<
+
+		>>> ELEMENT : GA116
+			>>>> ANNOTATION : GA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.33998799759954
+			<<<<
+
+		>>> ELEMENT : HA116
+			>>>> ANNOTATION : HA116-T-AH-16
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.29069813962795
+			<<<<
+
+		>>> ELEMENT : AA117
+			>>>> ANNOTATION : AA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 122.42811500504163
+			<<<<
+
+		>>> ELEMENT : BA117
+			>>>> ANNOTATION : BA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 155.66519414578394
+			<<<<
+
+		>>> ELEMENT : CA117
+			>>>> ANNOTATION : CA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.08601106352467
+			<<<<
+
+		>>> ELEMENT : DA117
+			>>>> ANNOTATION : DA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.43829392221633
+			<<<<
+
+		>>> ELEMENT : EA117
+			>>>> ANNOTATION : EA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.93253585867015
+			<<<<
+
+		>>> ELEMENT : FA117
+			>>>> ANNOTATION : FA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.62362901586786
+			<<<<
+
+		>>> ELEMENT : GA117
+			>>>> ANNOTATION : GA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.31625974705776
+			<<<<
+
+		>>> ELEMENT : HA117
+			>>>> ANNOTATION : HA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.94
+			<<<<
+
+		>>> ELEMENT : IA117
+			>>>> ANNOTATION : IA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.86728513445692
+			<<<<
+
+		>>> ELEMENT : JA117
+			>>>> ANNOTATION : JA117-T-AH-16A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.6647284730688
+			<<<<
+
+		>>> ELEMENT : AA118
+			>>>> ANNOTATION : AA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.09579262304442
+			<<<<
+
+		>>> ELEMENT : BA118
+			>>>> ANNOTATION : BA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.425
+			<<<<
+
+		>>> ELEMENT : CA118
+			>>>> ANNOTATION : CA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.6
+			<<<<
+
+		>>> ELEMENT : DA118
+			>>>> ANNOTATION : DA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 211.37104280212196
+			<<<<
+
+		>>> ELEMENT : EA118
+			>>>> ANNOTATION : EA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.1
+			<<<<
+
+		>>> ELEMENT : FA118
+			>>>> ANNOTATION : FA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.95
+			<<<<
+
+		>>> ELEMENT : GA118
+			>>>> ANNOTATION : GA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.04999999999998
+			<<<<
+
+		>>> ELEMENT : HA118
+			>>>> ANNOTATION : HA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.65
+			<<<<
+
+		>>> ELEMENT : IA118
+			>>>> ANNOTATION : IA118-T-AH-17
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.59843283814507
+			<<<<
+
+		>>> ELEMENT : AA119
+			>>>> ANNOTATION : AA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.09579262304442
+			<<<<
+
+		>>> ELEMENT : BA119
+			>>>> ANNOTATION : BA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.425
+			<<<<
+
+		>>> ELEMENT : CA119
+			>>>> ANNOTATION : CA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.6
+			<<<<
+
+		>>> ELEMENT : DA119
+			>>>> ANNOTATION : DA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 211.37104280212196
+			<<<<
+
+		>>> ELEMENT : EA119
+			>>>> ANNOTATION : EA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.1
+			<<<<
+
+		>>> ELEMENT : FA119
+			>>>> ANNOTATION : FA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.95
+			<<<<
+
+		>>> ELEMENT : GA119
+			>>>> ANNOTATION : GA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.04999999999998
+			<<<<
+
+		>>> ELEMENT : HA119
+			>>>> ANNOTATION : HA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.65
+			<<<<
+
+		>>> ELEMENT : IA119
+			>>>> ANNOTATION : IA119-T-AH-18
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.59843283814507
+			<<<<
+
+		>>> ELEMENT : AA120
+			>>>> ANNOTATION : AA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 138.99761612204315
+			<<<<
+
+		>>> ELEMENT : BA120
+			>>>> ANNOTATION : BA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 173.75
+			<<<<
+
+		>>> ELEMENT : CA120
+			>>>> ANNOTATION : CA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 205.45000000000002
+			<<<<
+
+		>>> ELEMENT : DA120
+			>>>> ANNOTATION : DA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 221.64097943192948
+			<<<<
+
+		>>> ELEMENT : EA120
+			>>>> ANNOTATION : EA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.75
+			<<<<
+
+		>>> ELEMENT : FA120
+			>>>> ANNOTATION : FA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 230.6
+			<<<<
+
+		>>> ELEMENT : GA120
+			>>>> ANNOTATION : GA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 231.64999999999998
+			<<<<
+
+		>>> ELEMENT : HA120
+			>>>> ANNOTATION : HA120-T-AH-19
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 232.5
+			<<<<
+
+		>>> ELEMENT : AA121
+			>>>> ANNOTATION : AA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 138.99761612204315
+			<<<<
+
+		>>> ELEMENT : BA121
+			>>>> ANNOTATION : BA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 173.75
+			<<<<
+
+		>>> ELEMENT : CA121
+			>>>> ANNOTATION : CA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 205.45000000000002
+			<<<<
+
+		>>> ELEMENT : DA121
+			>>>> ANNOTATION : DA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 221.64097943192948
+			<<<<
+
+		>>> ELEMENT : EA121
+			>>>> ANNOTATION : EA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.75
+			<<<<
+
+		>>> ELEMENT : FA121
+			>>>> ANNOTATION : FA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 230.6
+			<<<<
+
+		>>> ELEMENT : GA121
+			>>>> ANNOTATION : GA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 231.64999999999998
+			<<<<
+
+		>>> ELEMENT : HA121
+			>>>> ANNOTATION : HA121-T-AH-2
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 232.5
+			<<<<
+
+		>>> ELEMENT : AA122
+			>>>> ANNOTATION : AA122-T-AH-20
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 174.89836315151516
+			<<<<
+
+		>>> ELEMENT : BA122
+			>>>> ANNOTATION : BA122-T-AH-20
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 206.845
+			<<<<
+
+		>>> ELEMENT : CA122
+			>>>> ANNOTATION : CA122-T-AH-20
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.7075
+			<<<<
+
+		>>> ELEMENT : DA122
+			>>>> ANNOTATION : DA122-T-AH-20
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.56
+			<<<<
+
+		>>> ELEMENT : AA123
+			>>>> ANNOTATION : AA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 202.17391304347825
+			<<<<
+
+		>>> ELEMENT : BA123
+			>>>> ANNOTATION : BA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 202.4425
+			<<<<
+
+		>>> ELEMENT : CA123
+			>>>> ANNOTATION : CA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 203.6925
+			<<<<
+
+		>>> ELEMENT : DA123
+			>>>> ANNOTATION : DA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 206.18588581466844
+			<<<<
+
+		>>> ELEMENT : EA123
+			>>>> ANNOTATION : EA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.685
+			<<<<
+
+		>>> ELEMENT : FA123
+			>>>> ANNOTATION : FA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.225
+			<<<<
+
+		>>> ELEMENT : GA123
+			>>>> ANNOTATION : GA123-T-AH-21
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.14
+			<<<<
+
+		>>> ELEMENT : AA124
+			>>>> ANNOTATION : AA124-T-AH-22
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 214.79235876923076
+			<<<<
+
+		>>> ELEMENT : BA124
+			>>>> ANNOTATION : BA124-T-AH-22
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 215.1701
+			<<<<
+
+		>>> ELEMENT : CA124
+			>>>> ANNOTATION : CA124-T-AH-22
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 215.39
+			<<<<
+
+		>>> ELEMENT : DA124
+			>>>> ANNOTATION : DA124-T-AH-22
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 215.5479583139083
+			<<<<
+
+		>>> ELEMENT : AA125
+			>>>> ANNOTATION : AA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.7
+			<<<<
+
+		>>> ELEMENT : BA125
+			>>>> ANNOTATION : BA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.10704876822524
+			<<<<
+
+		>>> ELEMENT : CA125
+			>>>> ANNOTATION : CA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.584
+			<<<<
+
+		>>> ELEMENT : DA125
+			>>>> ANNOTATION : DA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 216.31199999999998
+			<<<<
+
+		>>> ELEMENT : EA125
+			>>>> ANNOTATION : EA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.012
+			<<<<
+
+		>>> ELEMENT : FA125
+			>>>> ANNOTATION : FA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 214.284
+			<<<<
+
+		>>> ELEMENT : GA125
+			>>>> ANNOTATION : GA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.888
+			<<<<
+
+		>>> ELEMENT : HA125
+			>>>> ANNOTATION : HA125-T-AH-23
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 211.57600000000002
+			<<<<
+
+		>>> ELEMENT : AA126
+			>>>> ANNOTATION : AA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.7
+			<<<<
+
+		>>> ELEMENT : BA126
+			>>>> ANNOTATION : BA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.10704876822524
+			<<<<
+
+		>>> ELEMENT : CA126
+			>>>> ANNOTATION : CA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.584
+			<<<<
+
+		>>> ELEMENT : DA126
+			>>>> ANNOTATION : DA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 216.31199999999998
+			<<<<
+
+		>>> ELEMENT : EA126
+			>>>> ANNOTATION : EA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.012
+			<<<<
+
+		>>> ELEMENT : FA126
+			>>>> ANNOTATION : FA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 214.284
+			<<<<
+
+		>>> ELEMENT : GA126
+			>>>> ANNOTATION : GA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.888
+			<<<<
+
+		>>> ELEMENT : HA126
+			>>>> ANNOTATION : HA126-T-AH-24
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 211.57600000000002
+			<<<<
+
+		>>> ELEMENT : AA127
+			>>>> ANNOTATION : AA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.7
+			<<<<
+
+		>>> ELEMENT : BA127
+			>>>> ANNOTATION : BA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.10704876822524
+			<<<<
+
+		>>> ELEMENT : CA127
+			>>>> ANNOTATION : CA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.584
+			<<<<
+
+		>>> ELEMENT : DA127
+			>>>> ANNOTATION : DA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 216.31199999999998
+			<<<<
+
+		>>> ELEMENT : EA127
+			>>>> ANNOTATION : EA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.012
+			<<<<
+
+		>>> ELEMENT : FA127
+			>>>> ANNOTATION : FA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 214.284
+			<<<<
+
+		>>> ELEMENT : GA127
+			>>>> ANNOTATION : GA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.888
+			<<<<
+
+		>>> ELEMENT : HA127
+			>>>> ANNOTATION : HA127-T-AH-25
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 211.57600000000002
+			<<<<
+
+		>>> ELEMENT : AA128
+			>>>> ANNOTATION : AA128-T-AH-26
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 200.9
+			<<<<
+
+		>>> ELEMENT : BA128
+			>>>> ANNOTATION : BA128-T-AH-26
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.15
+			<<<<
+
+		>>> ELEMENT : CA128
+			>>>> ANNOTATION : CA128-T-AH-26
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.575
+			<<<<
+
+		>>> ELEMENT : DA128
+			>>>> ANNOTATION : DA128-T-AH-26
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 204.88629470529472
+			<<<<
+
+		>>> ELEMENT : EA128
+			>>>> ANNOTATION : EA128-T-AH-26
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.55
+			<<<<
+
+		>>> ELEMENT : FA128
+			>>>> ANNOTATION : FA128-T-AH-26
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.84594594594597
+			<<<<
+
+		>>> ELEMENT : AA129
+			>>>> ANNOTATION : AA129-T-AH-27
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 200.9
+			<<<<
+
+		>>> ELEMENT : BA129
+			>>>> ANNOTATION : BA129-T-AH-27
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.15
+			<<<<
+
+		>>> ELEMENT : CA129
+			>>>> ANNOTATION : CA129-T-AH-27
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.575
+			<<<<
+
+		>>> ELEMENT : DA129
+			>>>> ANNOTATION : DA129-T-AH-27
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 204.88629470529472
+			<<<<
+
+		>>> ELEMENT : EA129
+			>>>> ANNOTATION : EA129-T-AH-27
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.55
+			<<<<
+
+		>>> ELEMENT : FA129
+			>>>> ANNOTATION : FA129-T-AH-27
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.84594594594597
+			<<<<
+
+		>>> ELEMENT : AA130
+			>>>> ANNOTATION : AA130-T-AH-28
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 200.9
+			<<<<
+
+		>>> ELEMENT : BA130
+			>>>> ANNOTATION : BA130-T-AH-28
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.15
+			<<<<
+
+		>>> ELEMENT : CA130
+			>>>> ANNOTATION : CA130-T-AH-28
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.575
+			<<<<
+
+		>>> ELEMENT : DA130
+			>>>> ANNOTATION : DA130-T-AH-28
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 204.88629470529472
+			<<<<
+
+		>>> ELEMENT : EA130
+			>>>> ANNOTATION : EA130-T-AH-28
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.55
+			<<<<
+
+		>>> ELEMENT : FA130
+			>>>> ANNOTATION : FA130-T-AH-28
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.84594594594597
+			<<<<
+
+		>>> ELEMENT : AA131
+			>>>> ANNOTATION : AA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 181.73492307692308
+			<<<<
+
+		>>> ELEMENT : BA131
+			>>>> ANNOTATION : BA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 190.71800000000002
+			<<<<
+
+		>>> ELEMENT : CA131
+			>>>> ANNOTATION : CA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 199.218
+			<<<<
+
+		>>> ELEMENT : DA131
+			>>>> ANNOTATION : DA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 203.43697435897437
+			<<<<
+
+		>>> ELEMENT : EA131
+			>>>> ANNOTATION : EA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 200.56
+			<<<<
+
+		>>> ELEMENT : FA131
+			>>>> ANNOTATION : FA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 199.028
+			<<<<
+
+		>>> ELEMENT : GA131
+			>>>> ANNOTATION : GA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 198.084
+			<<<<
+
+		>>> ELEMENT : HA131
+			>>>> ANNOTATION : HA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 193.488
+			<<<<
+
+		>>> ELEMENT : IA131
+			>>>> ANNOTATION : IA131-T-AH-29
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 185.752
+			<<<<
+
+		>>> ELEMENT : AA133
+			>>>> ANNOTATION : AA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.29554730983304
+			<<<<
+
+		>>> ELEMENT : BA133
+			>>>> ANNOTATION : BA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.3
+			<<<<
+
+		>>> ELEMENT : CA133
+			>>>> ANNOTATION : CA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.875
+			<<<<
+
+		>>> ELEMENT : DA133
+			>>>> ANNOTATION : DA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.72025974025973
+			<<<<
+
+		>>> ELEMENT : EA133
+			>>>> ANNOTATION : EA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 220.0
+			<<<<
+
+		>>> ELEMENT : FA133
+			>>>> ANNOTATION : FA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.75
+			<<<<
+
+		>>> ELEMENT : GA133
+			>>>> ANNOTATION : GA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.54999999999998
+			<<<<
+
+		>>> ELEMENT : HA133
+			>>>> ANNOTATION : HA133-T-AH-30
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.04999999999998
+			<<<<
+
+		>>> ELEMENT : AA134
+			>>>> ANNOTATION : AA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.4878578892372
+			<<<<
+
+		>>> ELEMENT : BA134
+			>>>> ANNOTATION : BA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.4348432601881
+			<<<<
+
+		>>> ELEMENT : CA134
+			>>>> ANNOTATION : CA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.5
+			<<<<
+
+		>>> ELEMENT : DA134
+			>>>> ANNOTATION : DA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 207.43856763925731
+			<<<<
+
+		>>> ELEMENT : EA134
+			>>>> ANNOTATION : EA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 219.58
+			<<<<
+
+		>>> ELEMENT : FA134
+			>>>> ANNOTATION : FA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.57999999999998
+			<<<<
+
+		>>> ELEMENT : GA134
+			>>>> ANNOTATION : GA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 227.28
+			<<<<
+
+		>>> ELEMENT : HA134
+			>>>> ANNOTATION : HA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 224.8
+			<<<<
+
+		>>> ELEMENT : IA134
+			>>>> ANNOTATION : IA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 219.46
+			<<<<
+
+		>>> ELEMENT : JA134
+			>>>> ANNOTATION : JA134-T-AH-31
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.28880877742947
+			<<<<
+
+		>>> ELEMENT : AA135
+			>>>> ANNOTATION : AA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 115.45
+			<<<<
+
+		>>> ELEMENT : BA135
+			>>>> ANNOTATION : BA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 161.64291948051948
+			<<<<
+
+		>>> ELEMENT : CA135
+			>>>> ANNOTATION : CA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 194.42499999999998
+			<<<<
+
+		>>> ELEMENT : DA135
+			>>>> ANNOTATION : DA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.1693179962894
+			<<<<
+
+		>>> ELEMENT : EA135
+			>>>> ANNOTATION : EA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.25
+			<<<<
+
+		>>> ELEMENT : FA135
+			>>>> ANNOTATION : FA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 230.35
+			<<<<
+
+		>>> ELEMENT : GA135
+			>>>> ANNOTATION : GA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 234.05
+			<<<<
+
+		>>> ELEMENT : HA135
+			>>>> ANNOTATION : HA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 236.5
+			<<<<
+
+		>>> ELEMENT : IA135
+			>>>> ANNOTATION : IA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 239.76636586270874
+			<<<<
+
+		>>> ELEMENT : JA135
+			>>>> ANNOTATION : JA135-T-AH-32
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 230.79835151515152
+			<<<<
+
+		>>> ELEMENT : AA136
+			>>>> ANNOTATION : AA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 116.62228903408169
+			<<<<
+
+		>>> ELEMENT : BA136
+			>>>> ANNOTATION : BA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 154.56363525951372
+			<<<<
+
+		>>> ELEMENT : CA136
+			>>>> ANNOTATION : CA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.72292584948778
+			<<<<
+
+		>>> ELEMENT : DA136
+			>>>> ANNOTATION : DA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 234.51101876247247
+			<<<<
+
+		>>> ELEMENT : EA136
+			>>>> ANNOTATION : EA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 241.9795012597418
+			<<<<
+
+		>>> ELEMENT : FA136
+			>>>> ANNOTATION : FA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 243.89752654412297
+			<<<<
+
+		>>> ELEMENT : GA136
+			>>>> ANNOTATION : GA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 244.98839277282468
+			<<<<
+
+		>>> ELEMENT : HA136
+			>>>> ANNOTATION : HA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 245.65641723271307
+			<<<<
+
+		>>> ELEMENT : IA136
+			>>>> ANNOTATION : IA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 246.43165287253146
+			<<<<
+
+		>>> ELEMENT : JA136
+			>>>> ANNOTATION : JA136-T-AH-33A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 244.14152294166823
+			<<<<
+
+		>>> ELEMENT : AA137
+			>>>> ANNOTATION : AA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 119.5489013362262
+			<<<<
+
+		>>> ELEMENT : BA137
+			>>>> ANNOTATION : BA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 138.30932488277628
+			<<<<
+
+		>>> ELEMENT : CA137
+			>>>> ANNOTATION : CA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 197.00256813666934
+			<<<<
+
+		>>> ELEMENT : DA137
+			>>>> ANNOTATION : DA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 220.2205555286957
+			<<<<
+
+		>>> ELEMENT : EA137
+			>>>> ANNOTATION : EA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 231.9193925414033
+			<<<<
+
+		>>> ELEMENT : FA137
+			>>>> ANNOTATION : FA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 236.31941700071994
+			<<<<
+
+		>>> ELEMENT : GA137
+			>>>> ANNOTATION : GA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 239.09987299423995
+			<<<<
+
+		>>> ELEMENT : HA137
+			>>>> ANNOTATION : HA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 240.92109331949112
+			<<<<
+
+		>>> ELEMENT : IA137
+			>>>> ANNOTATION : IA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 240.74515631186694
+			<<<<
+
+		>>> ELEMENT : JA137
+			>>>> ANNOTATION : JA137-T-AH-33B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 234.75362749807286
+			<<<<
+
+		>>> ELEMENT : AA138
+			>>>> ANNOTATION : AA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 131.92097795467248
+			<<<<
+
+		>>> ELEMENT : BA138
+			>>>> ANNOTATION : BA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 132.0848982127227
+			<<<<
+
+		>>> ELEMENT : CA138
+			>>>> ANNOTATION : CA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 178.81881666445594
+			<<<<
+
+		>>> ELEMENT : DA138
+			>>>> ANNOTATION : DA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.74555030394203
+			<<<<
+
+		>>> ELEMENT : EA138
+			>>>> ANNOTATION : EA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.1334155310387
+			<<<<
+
+		>>> ELEMENT : FA138
+			>>>> ANNOTATION : FA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.79765591934762
+			<<<<
+
+		>>> ELEMENT : GA138
+			>>>> ANNOTATION : GA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.39219793047064
+			<<<<
+
+		>>> ELEMENT : HA138
+			>>>> ANNOTATION : HA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.71896885420963
+			<<<<
+
+		>>> ELEMENT : IA138
+			>>>> ANNOTATION : IA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 218.07166232894596
+			<<<<
+
+		>>> ELEMENT : JA138
+			>>>> ANNOTATION : JA138-T-AH-33C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 214.32653393491913
+			<<<<
+
+		>>> ELEMENT : AA139
+			>>>> ANNOTATION : AA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 119.3072
+			<<<<
+
+		>>> ELEMENT : BA139
+			>>>> ANNOTATION : BA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 137.4557
+			<<<<
+
+		>>> ELEMENT : CA139
+			>>>> ANNOTATION : CA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 166.7727
+			<<<<
+
+		>>> ELEMENT : DA139
+			>>>> ANNOTATION : DA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 181.41342300319488
+			<<<<
+
+		>>> ELEMENT : EA139
+			>>>> ANNOTATION : EA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 198.239
+			<<<<
+
+		>>> ELEMENT : FA139
+			>>>> ANNOTATION : FA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.49
+			<<<<
+
+		>>> ELEMENT : GA139
+			>>>> ANNOTATION : GA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 221.3288
+			<<<<
+
+		>>> ELEMENT : HA139
+			>>>> ANNOTATION : HA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 234.1458
+			<<<<
+
+		>>> ELEMENT : IA139
+			>>>> ANNOTATION : IA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 246.6710100106496
+			<<<<
+
+		>>> ELEMENT : JA139
+			>>>> ANNOTATION : JA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 252.76775671087876
+			<<<<
+
+		>>> ELEMENT : KA139
+			>>>> ANNOTATION : KA139-T-AH-34
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 240.550592971246
+			<<<<
+
+		>>> ELEMENT : AA140
+			>>>> ANNOTATION : AA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 108.7575149364514
+			<<<<
+
+		>>> ELEMENT : BA140
+			>>>> ANNOTATION : BA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 113.66675183291834
+			<<<<
+
+		>>> ELEMENT : CA140
+			>>>> ANNOTATION : CA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 139.6275074254118
+			<<<<
+
+		>>> ELEMENT : DA140
+			>>>> ANNOTATION : DA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 168.7532928739411
+			<<<<
+
+		>>> ELEMENT : EA140
+			>>>> ANNOTATION : EA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 198.2414154973404
+			<<<<
+
+		>>> ELEMENT : FA140
+			>>>> ANNOTATION : FA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.31496152939843
+			<<<<
+
+		>>> ELEMENT : GA140
+			>>>> ANNOTATION : GA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 238.95721289835288
+			<<<<
+
+		>>> ELEMENT : HA140
+			>>>> ANNOTATION : HA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 245.83581679826534
+			<<<<
+
+		>>> ELEMENT : IA140
+			>>>> ANNOTATION : IA140-T-AH-34A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 240.85196935642574
+			<<<<
+
+		>>> ELEMENT : AA141
+			>>>> ANNOTATION : AA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 99.04305478246879
+			<<<<
+
+		>>> ELEMENT : BA141
+			>>>> ANNOTATION : BA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 111.94776600170358
+			<<<<
+
+		>>> ELEMENT : CA141
+			>>>> ANNOTATION : CA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 132.99377473429158
+			<<<<
+
+		>>> ELEMENT : DA141
+			>>>> ANNOTATION : DA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 158.35505899455276
+			<<<<
+
+		>>> ELEMENT : EA141
+			>>>> ANNOTATION : EA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 188.98288961562722
+			<<<<
+
+		>>> ELEMENT : FA141
+			>>>> ANNOTATION : FA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 219.93314859098805
+			<<<<
+
+		>>> ELEMENT : GA141
+			>>>> ANNOTATION : GA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 232.3670945756862
+			<<<<
+
+		>>> ELEMENT : HA141
+			>>>> ANNOTATION : HA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 237.50410130497735
+			<<<<
+
+		>>> ELEMENT : IA141
+			>>>> ANNOTATION : IA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 241.3389037780659
+			<<<<
+
+		>>> ELEMENT : JA141
+			>>>> ANNOTATION : JA141-T-AH-34B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 239.82367200674867
+			<<<<
+
+		>>> ELEMENT : AA142
+			>>>> ANNOTATION : AA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 134.61568116701991
+			<<<<
+
+		>>> ELEMENT : BA142
+			>>>> ANNOTATION : BA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 159.41538632430004
+			<<<<
+
+		>>> ELEMENT : CA142
+			>>>> ANNOTATION : CA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.61176014179767
+			<<<<
+
+		>>> ELEMENT : DA142
+			>>>> ANNOTATION : DA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.46024577196934
+			<<<<
+
+		>>> ELEMENT : EA142
+			>>>> ANNOTATION : EA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 235.5102721004753
+			<<<<
+
+		>>> ELEMENT : FA142
+			>>>> ANNOTATION : FA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 235.53623666475494
+			<<<<
+
+		>>> ELEMENT : GA142
+			>>>> ANNOTATION : GA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 237.12971450942277
+			<<<<
+
+		>>> ELEMENT : HA142
+			>>>> ANNOTATION : HA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 238.0310571032849
+			<<<<
+
+		>>> ELEMENT : IA142
+			>>>> ANNOTATION : IA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 236.79773522108408
+			<<<<
+
+		>>> ELEMENT : JA142
+			>>>> ANNOTATION : JA142-T-AH-35A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 232.57871133867863
+			<<<<
+
+		>>> ELEMENT : AA143
+			>>>> ANNOTATION : AA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 134.61568116701991
+			<<<<
+
+		>>> ELEMENT : BA143
+			>>>> ANNOTATION : BA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 159.41538632430004
+			<<<<
+
+		>>> ELEMENT : CA143
+			>>>> ANNOTATION : CA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.61176014179767
+			<<<<
+
+		>>> ELEMENT : DA143
+			>>>> ANNOTATION : DA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.46024577196934
+			<<<<
+
+		>>> ELEMENT : EA143
+			>>>> ANNOTATION : EA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 235.5102721004753
+			<<<<
+
+		>>> ELEMENT : FA143
+			>>>> ANNOTATION : FA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 235.53623666475494
+			<<<<
+
+		>>> ELEMENT : GA143
+			>>>> ANNOTATION : GA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 237.12971450942277
+			<<<<
+
+		>>> ELEMENT : HA143
+			>>>> ANNOTATION : HA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 238.0310571032849
+			<<<<
+
+		>>> ELEMENT : IA143
+			>>>> ANNOTATION : IA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 236.79773522108408
+			<<<<
+
+		>>> ELEMENT : JA143
+			>>>> ANNOTATION : JA143-T-AH-35B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 232.57871133867863
+			<<<<
+
+		>>> ELEMENT : AA144
+			>>>> ANNOTATION : AA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.6557206367419
+			<<<<
+
+		>>> ELEMENT : BA144
+			>>>> ANNOTATION : BA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 196.17058098724473
+			<<<<
+
+		>>> ELEMENT : CA144
+			>>>> ANNOTATION : CA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 207.25201630283655
+			<<<<
+
+		>>> ELEMENT : DA144
+			>>>> ANNOTATION : DA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 208.40537375103347
+			<<<<
+
+		>>> ELEMENT : EA144
+			>>>> ANNOTATION : EA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 209.3447267397628
+			<<<<
+
+		>>> ELEMENT : FA144
+			>>>> ANNOTATION : FA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 213.84073690742875
+			<<<<
+
+		>>> ELEMENT : GA144
+			>>>> ANNOTATION : GA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 219.17128750637326
+			<<<<
+
+		>>> ELEMENT : HA144
+			>>>> ANNOTATION : HA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.28099027056928
+			<<<<
+
+		>>> ELEMENT : IA144
+			>>>> ANNOTATION : IA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 238.568928193053
+			<<<<
+
+		>>> ELEMENT : JA144
+			>>>> ANNOTATION : JA144-T-AH-35C
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 239.58251234241305
+			<<<<
+
+		>>> ELEMENT : AA145
+			>>>> ANNOTATION : AA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 129.41784319955786
+			<<<<
+
+		>>> ELEMENT : BA145
+			>>>> ANNOTATION : BA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 186.24095873687628
+			<<<<
+
+		>>> ELEMENT : CA145
+			>>>> ANNOTATION : CA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 205.40969974238524
+			<<<<
+
+		>>> ELEMENT : DA145
+			>>>> ANNOTATION : DA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.2709347670027
+			<<<<
+
+		>>> ELEMENT : EA145
+			>>>> ANNOTATION : EA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.84182882538641
+			<<<<
+
+		>>> ELEMENT : FA145
+			>>>> ANNOTATION : FA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.94411788281946
+			<<<<
+
+		>>> ELEMENT : GA145
+			>>>> ANNOTATION : GA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.88080668540033
+			<<<<
+
+		>>> ELEMENT : HA145
+			>>>> ANNOTATION : HA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.6269879892153
+			<<<<
+
+		>>> ELEMENT : IA145
+			>>>> ANNOTATION : IA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 236.2065963435531
+			<<<<
+
+		>>> ELEMENT : JA145
+			>>>> ANNOTATION : JA145-T-AH-35D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 248.77785985166432
+			<<<<
+
+		>>> ELEMENT : AA146
+			>>>> ANNOTATION : AA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 161.28014643075045
+			<<<<
+
+		>>> ELEMENT : BA146
+			>>>> ANNOTATION : BA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 180.6225
+			<<<<
+
+		>>> ELEMENT : CA146
+			>>>> ANNOTATION : CA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 197.655
+			<<<<
+
+		>>> ELEMENT : DA146
+			>>>> ANNOTATION : DA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 196.89795647752695
+			<<<<
+
+		>>> ELEMENT : EA146
+			>>>> ANNOTATION : EA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 206.5425
+			<<<<
+
+		>>> ELEMENT : FA146
+			>>>> ANNOTATION : FA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 207.36749999999998
+			<<<<
+
+		>>> ELEMENT : GA146
+			>>>> ANNOTATION : GA146-T-AH-36
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 208.17
+			<<<<
+
+		>>> ELEMENT : AA147
+			>>>> ANNOTATION : AA147-T-AH-4BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 173.23989999999998
+			<<<<
+
+		>>> ELEMENT : BA147
+			>>>> ANNOTATION : BA147-T-AH-4BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.45615
+			<<<<
+
+		>>> ELEMENT : CA147
+			>>>> ANNOTATION : CA147-T-AH-4BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.82091515151515
+			<<<<
+
+		>>> ELEMENT : AA148
+			>>>> ANNOTATION : AA148-T-AH-5
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 173.23989999999998
+			<<<<
+
+		>>> ELEMENT : BA148
+			>>>> ANNOTATION : BA148-T-AH-5
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.45615
+			<<<<
+
+		>>> ELEMENT : CA148
+			>>>> ANNOTATION : CA148-T-AH-5
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.82091515151515
+			<<<<
+
+		>>> ELEMENT : AA149
+			>>>> ANNOTATION : AA149-T-AH-6
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 173.23989999999998
+			<<<<
+
+		>>> ELEMENT : BA149
+			>>>> ANNOTATION : BA149-T-AH-6
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.45615
+			<<<<
+
+		>>> ELEMENT : CA149
+			>>>> ANNOTATION : CA149-T-AH-6
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.82091515151515
+			<<<<
+
+		>>> ELEMENT : AA150
+			>>>> ANNOTATION : AA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 171.54420604956312
+			<<<<
+
+		>>> ELEMENT : BA150
+			>>>> ANNOTATION : BA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 202.7212
+			<<<<
+
+		>>> ELEMENT : CA150
+			>>>> ANNOTATION : CA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 225.7691
+			<<<<
+
+		>>> ELEMENT : DA150
+			>>>> ANNOTATION : DA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.3944
+			<<<<
+
+		>>> ELEMENT : EA150
+			>>>> ANNOTATION : EA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.7244
+			<<<<
+
+		>>> ELEMENT : FA150
+			>>>> ANNOTATION : FA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 229.12120000000002
+			<<<<
+
+		>>> ELEMENT : GA150
+			>>>> ANNOTATION : GA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 229.64999999999998
+			<<<<
+
+		>>> ELEMENT : HA150
+			>>>> ANNOTATION : HA150-T-AH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 229.89
+			<<<<
+
+		>>> ELEMENT : AA151
+			>>>> ANNOTATION : AA151-T-AH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.23137740388964
+			<<<<
+
+		>>> ELEMENT : BA151
+			>>>> ANNOTATION : BA151-T-AH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.70499999999998
+			<<<<
+
+		>>> ELEMENT : CA151
+			>>>> ANNOTATION : CA151-T-AH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.79250000000002
+			<<<<
+
+		>>> ELEMENT : DA151
+			>>>> ANNOTATION : DA151-T-AH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.4858782089552
+			<<<<
+
+		>>> ELEMENT : AA152
+			>>>> ANNOTATION : AA152-T-AH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.23137740388964
+			<<<<
+
+		>>> ELEMENT : BA152
+			>>>> ANNOTATION : BA152-T-AH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.70499999999998
+			<<<<
+
+		>>> ELEMENT : CA152
+			>>>> ANNOTATION : CA152-T-AH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.79250000000002
+			<<<<
+
+		>>> ELEMENT : DA152
+			>>>> ANNOTATION : DA152-T-AH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.4858782089552
+			<<<<
+
+		>>> ELEMENT : AA152
+			>>>> ANNOTATION : AA152-T-CH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.23137740388964
+			<<<<
+
+		>>> ELEMENT : BA152
+			>>>> ANNOTATION : BA152-T-CH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.70499999999998
+			<<<<
+
+		>>> ELEMENT : CA152
+			>>>> ANNOTATION : CA152-T-CH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 212.79250000000002
+			<<<<
+
+		>>> ELEMENT : DA152
+			>>>> ANNOTATION : DA152-T-CH-1
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 222.4858782089552
+			<<<<
+
+		>>> ELEMENT : AA153
+			>>>> ANNOTATION : AA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 129.35199999999998
+			<<<<
+
+		>>> ELEMENT : BA153
+			>>>> ANNOTATION : BA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 128.45149999999998
+			<<<<
+
+		>>> ELEMENT : CA153
+			>>>> ANNOTATION : CA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 148.652
+			<<<<
+
+		>>> ELEMENT : DA153
+			>>>> ANNOTATION : DA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 184.498
+			<<<<
+
+		>>> ELEMENT : EA153
+			>>>> ANNOTATION : EA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 175.99688315708812
+			<<<<
+
+		>>> ELEMENT : FA153
+			>>>> ANNOTATION : FA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 177.65099999999998
+			<<<<
+
+		>>> ELEMENT : GA153
+			>>>> ANNOTATION : GA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 176.47899999999998
+			<<<<
+
+		>>> ELEMENT : HA153
+			>>>> ANNOTATION : HA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 175.5286828257949
+			<<<<
+
+		>>> ELEMENT : IA153
+			>>>> ANNOTATION : IA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 176.26
+			<<<<
+
+		>>> ELEMENT : JA153
+			>>>> ANNOTATION : JA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 176.86599999999999
+			<<<<
+
+		>>> ELEMENT : KA153
+			>>>> ANNOTATION : KA153-T-CH-7
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 181.432
+			<<<<
+
+		>>> ELEMENT : AA154
+			>>>> ANNOTATION : AA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 113.08366638865722
+			<<<<
+
+		>>> ELEMENT : BA154
+			>>>> ANNOTATION : BA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 163.57
+			<<<<
+
+		>>> ELEMENT : CA154
+			>>>> ANNOTATION : CA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 203.23000000000002
+			<<<<
+
+		>>> ELEMENT : DA154
+			>>>> ANNOTATION : DA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.94629858215177
+			<<<<
+
+		>>> ELEMENT : EA154
+			>>>> ANNOTATION : EA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 199.95999999999998
+			<<<<
+
+		>>> ELEMENT : FA154
+			>>>> ANNOTATION : FA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 200.17499999999998
+			<<<<
+
+		>>> ELEMENT : GA154
+			>>>> ANNOTATION : GA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 201.555
+			<<<<
+
+		>>> ELEMENT : HA154
+			>>>> ANNOTATION : HA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 203.315
+			<<<<
+
+		>>> ELEMENT : IA154
+			>>>> ANNOTATION : IA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 208.4430425354462
+			<<<<
+
+		>>> ELEMENT : JA154
+			>>>> ANNOTATION : JA154-T-CH-7BIS
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 205.63007005838202
+			<<<<
+
+		>>> ELEMENT : AA155
+			>>>> ANNOTATION : AA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 106.418865234
+			<<<<
+
+		>>> ELEMENT : BA155
+			>>>> ANNOTATION : BA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 136.28062512000002
+			<<<<
+
+		>>> ELEMENT : CA155
+			>>>> ANNOTATION : CA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 179.04270110219403
+			<<<<
+
+		>>> ELEMENT : DA155
+			>>>> ANNOTATION : DA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 181.11079227606314
+			<<<<
+
+		>>> ELEMENT : EA155
+			>>>> ANNOTATION : EA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 179.60726746000003
+			<<<<
+
+		>>> ELEMENT : FA155
+			>>>> ANNOTATION : FA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 180.55210716000002
+			<<<<
+
+		>>> ELEMENT : GA155
+			>>>> ANNOTATION : GA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 183.24080716
+			<<<<
+
+		>>> ELEMENT : HA155
+			>>>> ANNOTATION : HA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 186.66665840000002
+			<<<<
+
+		>>> ELEMENT : IA155
+			>>>> ANNOTATION : IA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 193.51618405809614
+			<<<<
+
+		>>> ELEMENT : JA155
+			>>>> ANNOTATION : JA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 199.24903044347073
+			<<<<
+
+		>>> ELEMENT : KA155
+			>>>> ANNOTATION : KA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 210.45385191910268
+			<<<<
+
+		>>> ELEMENT : LA155
+			>>>> ANNOTATION : LA155-T-CH-8
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.21903056000002
+			<<<<
+
+		>>> ELEMENT : AA156
+			>>>> ANNOTATION : AA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 123.77210050251256
+			<<<<
+
+		>>> ELEMENT : BA156
+			>>>> ANNOTATION : BA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 154.2
+			<<<<
+
+		>>> ELEMENT : CA156
+			>>>> ANNOTATION : CA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 178.56666666666666
+			<<<<
+
+		>>> ELEMENT : DA156
+			>>>> ANNOTATION : DA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 188.0
+			<<<<
+
+		>>> ELEMENT : EA156
+			>>>> ANNOTATION : EA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 188.46666666666667
+			<<<<
+
+		>>> ELEMENT : FA156
+			>>>> ANNOTATION : FA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 190.0
+			<<<<
+
+		>>> ELEMENT : GA156
+			>>>> ANNOTATION : GA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 192.4353037916857
+			<<<<
+
+		>>> ELEMENT : HA156
+			>>>> ANNOTATION : HA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 195.2
+			<<<<
+
+		>>> ELEMENT : IA156
+			>>>> ANNOTATION : IA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 202.4
+			<<<<
+
+		>>> ELEMENT : JA156
+			>>>> ANNOTATION : JA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 203.4
+			<<<<
+
+		>>> ELEMENT : KA156
+			>>>> ANNOTATION : KA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 204.49288442211056
+			<<<<
+
+		>>> ELEMENT : LA156
+			>>>> ANNOTATION : LA156-T-CH-9
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 217.8
+			<<<<
+
+		>>> ELEMENT : AA157
+			>>>> ANNOTATION : AA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 106.29023067191602
+			<<<<
+
+		>>> ELEMENT : BA157
+			>>>> ANNOTATION : BA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 121.0595646647137
+			<<<<
+
+		>>> ELEMENT : CA157
+			>>>> ANNOTATION : CA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 127.64433651354702
+			<<<<
+
+		>>> ELEMENT : DA157
+			>>>> ANNOTATION : DA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 132.0547375831257
+			<<<<
+
+		>>> ELEMENT : EA157
+			>>>> ANNOTATION : EA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 131.6506423507752
+			<<<<
+
+		>>> ELEMENT : FA157
+			>>>> ANNOTATION : FA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 131.5637387782452
+			<<<<
+
+		>>> ELEMENT : GA157
+			>>>> ANNOTATION : GA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 131.1954005416478
+			<<<<
+
+		>>> ELEMENT : HA157
+			>>>> ANNOTATION : HA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 131.2096413365793
+			<<<<
+
+		>>> ELEMENT : IA157
+			>>>> ANNOTATION : IA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 122.83983433050916
+			<<<<
+
+		>>> ELEMENT : JA157
+			>>>> ANNOTATION : JA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 114.80655680258808
+			<<<<
+
+		>>> ELEMENT : KA157
+			>>>> ANNOTATION : KA157-T-CH-9A
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 128.23433432275
+			<<<<
+
+		>>> ELEMENT : AA158
+			>>>> ANNOTATION : AA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 104.45477669047095
+			<<<<
+
+		>>> ELEMENT : BA158
+			>>>> ANNOTATION : BA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 120.48928607317347
+			<<<<
+
+		>>> ELEMENT : CA158
+			>>>> ANNOTATION : CA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 147.6549528121762
+			<<<<
+
+		>>> ELEMENT : DA158
+			>>>> ANNOTATION : DA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 158.36392889794925
+			<<<<
+
+		>>> ELEMENT : EA158
+			>>>> ANNOTATION : EA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 159.89918658783515
+			<<<<
+
+		>>> ELEMENT : FA158
+			>>>> ANNOTATION : FA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 162.3484257845499
+			<<<<
+
+		>>> ELEMENT : GA158
+			>>>> ANNOTATION : GA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 166.72644956150512
+			<<<<
+
+		>>> ELEMENT : HA158
+			>>>> ANNOTATION : HA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 171.38496500134158
+			<<<<
+
+		>>> ELEMENT : IA158
+			>>>> ANNOTATION : IA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 163.31733650888287
+			<<<<
+
+		>>> ELEMENT : JA158
+			>>>> ANNOTATION : JA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 110.04009399781098
+			<<<<
+
+		>>> ELEMENT : KA158
+			>>>> ANNOTATION : KA158-T-CH-9B
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 134.24178015721145
+			<<<<
+
+		>>> ELEMENT : AA160
+			>>>> ANNOTATION : AA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 133.02097999999998
+			<<<<
+
+		>>> ELEMENT : BA160
+			>>>> ANNOTATION : BA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 153.83671
+			<<<<
+
+		>>> ELEMENT : CA160
+			>>>> ANNOTATION : CA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 181.41375000000002
+			<<<<
+
+		>>> ELEMENT : DA160
+			>>>> ANNOTATION : DA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 223.95525594776905
+			<<<<
+
+		>>> ELEMENT : EA160
+			>>>> ANNOTATION : EA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.37120000000002
+			<<<<
+
+		>>> ELEMENT : FA160
+			>>>> ANNOTATION : FA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 228.43097999999998
+			<<<<
+
+		>>> ELEMENT : GA160
+			>>>> ANNOTATION : GA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.15720779792477
+			<<<<
+
+		>>> ELEMENT : HA160
+			>>>> ANNOTATION : HA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 226.2552238108794
+			<<<<
+
+		>>> ELEMENT : IA160
+			>>>> ANNOTATION : IA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 229.67849157806793
+			<<<<
+
+		>>> ELEMENT : JA160
+			>>>> ANNOTATION : JA160-T-CH-D
+			>>>> DEVIATION  : 5
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+					 1 230.59349048596928
+			<<<<
+		<<<
+	>>PRESSURE
+		>>> ELEMENT : AA117
+			>>>> ANNOTATION : AA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 22.901838054959267
+			<<<<
+
+		>>> ELEMENT : BA117
+			>>>> ANNOTATION : BA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 23.165392885696175
+			<<<<
+
+		>>> ELEMENT : CA117
+			>>>> ANNOTATION : CA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 24.21248550556659
+			<<<<
+
+		>>> ELEMENT : DA117
+			>>>> ANNOTATION : DA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 24.544464529994688
+			<<<<
+
+		>>> ELEMENT : EA117
+			>>>> ANNOTATION : EA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 28.04874901825885
+			<<<<
+
+		>>> ELEMENT : FA117
+			>>>> ANNOTATION : FA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 32.24915471969897
+			<<<<
+
+		>>> ELEMENT : GA117
+			>>>> ANNOTATION : GA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.538469484926296
+			<<<<
+
+		>>> ELEMENT : HA117
+			>>>> ANNOTATION : HA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.753621837302205
+			<<<<
+
+		>>> ELEMENT : IA117
+			>>>> ANNOTATION : IA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 51.2740482137805
+			<<<<
+
+		>>> ELEMENT : JA117
+			>>>> ANNOTATION : JA117-P-AH-16A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 68.21276040821388
+			<<<<
+
+		>>> ELEMENT : AA118
+			>>>> ANNOTATION : AA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.93873778691333
+			<<<<
+
+		>>> ELEMENT : BA118
+			>>>> ANNOTATION : BA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.067500000000003
+			<<<<
+
+		>>> ELEMENT : CA118
+			>>>> ANNOTATION : CA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.18
+			<<<<
+
+		>>> ELEMENT : DA118
+			>>>> ANNOTATION : DA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 20.52983913129237
+			<<<<
+
+		>>> ELEMENT : EA118
+			>>>> ANNOTATION : EA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 26.76
+			<<<<
+
+		>>> ELEMENT : FA118
+			>>>> ANNOTATION : FA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 31.03
+			<<<<
+
+		>>> ELEMENT : GA118
+			>>>> ANNOTATION : GA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 35.31
+			<<<<
+
+		>>> ELEMENT : HA118
+			>>>> ANNOTATION : HA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 39.57
+			<<<<
+
+		>>> ELEMENT : IA118
+			>>>> ANNOTATION : IA118-P-AH-17
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 50.210156716185494
+			<<<<
+
+		>>> ELEMENT : AA120
+			>>>> ANNOTATION : AA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 3.643658999396512
+			<<<<
+
+		>>> ELEMENT : BA120
+			>>>> ANNOTATION : BA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 9.235
+			<<<<
+
+		>>> ELEMENT : CA120
+			>>>> ANNOTATION : CA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.485
+			<<<<
+
+		>>> ELEMENT : DA120
+			>>>> ANNOTATION : DA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 22.824395168135815
+			<<<<
+
+		>>> ELEMENT : EA120
+			>>>> ANNOTATION : EA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 27.96
+			<<<<
+
+		>>> ELEMENT : FA120
+			>>>> ANNOTATION : FA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 32.13
+			<<<<
+
+		>>> ELEMENT : GA120
+			>>>> ANNOTATION : GA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.275
+			<<<<
+
+		>>> ELEMENT : HA120
+			>>>> ANNOTATION : HA120-P-AH-19
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.44
+			<<<<
+
+		>>> ELEMENT : AA123
+			>>>> ANNOTATION : AA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.272262187088273
+			<<<<
+
+		>>> ELEMENT : BA123
+			>>>> ANNOTATION : BA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.372999999999998
+			<<<<
+
+		>>> ELEMENT : CA123
+			>>>> ANNOTATION : CA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.512999999999998
+			<<<<
+
+		>>> ELEMENT : DA123
+			>>>> ANNOTATION : DA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 23.829261747913925
+			<<<<
+
+		>>> ELEMENT : EA123
+			>>>> ANNOTATION : EA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 30.238
+			<<<<
+
+		>>> ELEMENT : FA123
+			>>>> ANNOTATION : FA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 34.628
+			<<<<
+
+		>>> ELEMENT : GA123
+			>>>> ANNOTATION : GA123-P-AH-21
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 38.978
+			<<<<
+
+		>>> ELEMENT : AA124
+			>>>> ANNOTATION : AA124-P-AH-22
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.75
+			<<<<
+
+		>>> ELEMENT : BA124
+			>>>> ANNOTATION : BA124-P-AH-22
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 20.03
+			<<<<
+
+		>>> ELEMENT : CA124
+			>>>> ANNOTATION : CA124-P-AH-22
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 20.1686
+			<<<<
+
+		>>> ELEMENT : DA124
+			>>>> ANNOTATION : DA124-P-AH-22
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 21.14932603729604
+			<<<<
+
+		>>> ELEMENT : AA125
+			>>>> ANNOTATION : AA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.9938
+			<<<<
+
+		>>> ELEMENT : BA125
+			>>>> ANNOTATION : BA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.185595123177478
+			<<<<
+
+		>>> ELEMENT : CA125
+			>>>> ANNOTATION : CA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.3556
+			<<<<
+
+		>>> ELEMENT : DA125
+			>>>> ANNOTATION : DA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 21.407
+			<<<<
+
+		>>> ELEMENT : EA125
+			>>>> ANNOTATION : EA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 27.5756
+			<<<<
+
+		>>> ELEMENT : FA125
+			>>>> ANNOTATION : FA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 31.9152
+			<<<<
+
+		>>> ELEMENT : GA125
+			>>>> ANNOTATION : GA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.275200000000005
+			<<<<
+
+		>>> ELEMENT : HA125
+			>>>> ANNOTATION : HA125-P-AH-23
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.6224
+			<<<<
+
+		>>> ELEMENT : AA128
+			>>>> ANNOTATION : AA128-P-AH-26
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 15.648968864468864
+			<<<<
+
+		>>> ELEMENT : BA128
+			>>>> ANNOTATION : BA128-P-AH-26
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 15.9025
+			<<<<
+
+		>>> ELEMENT : CA128
+			>>>> ANNOTATION : CA128-P-AH-26
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 16.104999999999997
+			<<<<
+
+		>>> ELEMENT : DA128
+			>>>> ANNOTATION : DA128-P-AH-26
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.700836913086913
+			<<<<
+
+		>>> ELEMENT : EA128
+			>>>> ANNOTATION : EA128-P-AH-26
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 26.115000000000002
+			<<<<
+
+		>>> ELEMENT : FA128
+			>>>> ANNOTATION : FA128-P-AH-26
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 30.425675675675674
+			<<<<
+
+		>>> ELEMENT : AA129
+			>>>> ANNOTATION : AA129-P-AH-27
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.491822445561137
+			<<<<
+
+		>>> ELEMENT : BA129
+			>>>> ANNOTATION : BA129-P-AH-27
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.63
+			<<<<
+
+		>>> ELEMENT : CA129
+			>>>> ANNOTATION : CA129-P-AH-27
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.7
+			<<<<
+
+		>>> ELEMENT : DA129
+			>>>> ANNOTATION : DA129-P-AH-27
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 20.24922445561139
+			<<<<
+
+		>>> ELEMENT : EA129
+			>>>> ANNOTATION : EA129-P-AH-27
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 26.58
+			<<<<
+
+		>>> ELEMENT : FA129
+			>>>> ANNOTATION : FA129-P-AH-27
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 30.815
+			<<<<
+
+		>>> ELEMENT : AA131
+			>>>> ANNOTATION : AA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 8.637846153846153
+			<<<<
+
+		>>> ELEMENT : BA131
+			>>>> ANNOTATION : BA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 10.94
+			<<<<
+
+		>>> ELEMENT : CA131
+			>>>> ANNOTATION : CA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 13.5916
+			<<<<
+
+		>>> ELEMENT : DA131
+			>>>> ANNOTATION : DA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.537351282051283
+			<<<<
+
+		>>> ELEMENT : EA131
+			>>>> ANNOTATION : EA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 25.978076923076923
+			<<<<
+
+		>>> ELEMENT : FA131
+			>>>> ANNOTATION : FA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 30.352400000000003
+			<<<<
+
+		>>> ELEMENT : GA131
+			>>>> ANNOTATION : GA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 34.6912
+			<<<<
+
+		>>> ELEMENT : HA131
+			>>>> ANNOTATION : HA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 39.063599999999994
+			<<<<
+
+		>>> ELEMENT : IA131
+			>>>> ANNOTATION : IA131-P-AH-29
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 50.17995384615385
+			<<<<
+
+		>>> ELEMENT : AA133
+			>>>> ANNOTATION : AA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.80777365491651
+			<<<<
+
+		>>> ELEMENT : BA133
+			>>>> ANNOTATION : BA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 17.9125
+			<<<<
+
+		>>> ELEMENT : CA133
+			>>>> ANNOTATION : CA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 18.06
+			<<<<
+
+		>>> ELEMENT : DA133
+			>>>> ANNOTATION : DA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 21.21473098330241
+			<<<<
+
+		>>> ELEMENT : EA133
+			>>>> ANNOTATION : EA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 27.54
+			<<<<
+
+		>>> ELEMENT : FA133
+			>>>> ANNOTATION : FA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 31.779999999999998
+			<<<<
+
+		>>> ELEMENT : GA133
+			>>>> ANNOTATION : GA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.015
+			<<<<
+
+		>>> ELEMENT : HA133
+			>>>> ANNOTATION : HA133-P-AH-30
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.305
+			<<<<
+
+		>>> ELEMENT : AA134
+			>>>> ANNOTATION : AA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 14.84271473354232
+			<<<<
+
+		>>> ELEMENT : BA134
+			>>>> ANNOTATION : BA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 14.85332288401254
+			<<<<
+
+		>>> ELEMENT : CA134
+			>>>> ANNOTATION : CA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 14.93
+			<<<<
+
+		>>> ELEMENT : DA134
+			>>>> ANNOTATION : DA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.323570291777187
+			<<<<
+
+		>>> ELEMENT : EA134
+			>>>> ANNOTATION : EA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 25.662
+			<<<<
+
+		>>> ELEMENT : FA134
+			>>>> ANNOTATION : FA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 29.822
+			<<<<
+
+		>>> ELEMENT : GA134
+			>>>> ANNOTATION : GA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 33.992
+			<<<<
+
+		>>> ELEMENT : HA134
+			>>>> ANNOTATION : HA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 38.258
+			<<<<
+
+		>>> ELEMENT : IA134
+			>>>> ANNOTATION : IA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 48.864999999999995
+			<<<<
+
+		>>> ELEMENT : JA134
+			>>>> ANNOTATION : JA134-P-AH-31
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 65.94516614420063
+			<<<<
+
+		>>> ELEMENT : AA138
+			>>>> ANNOTATION : AA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.9048623461732694
+			<<<<
+
+		>>> ELEMENT : BA138
+			>>>> ANNOTATION : BA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.913421887016625
+			<<<<
+
+		>>> ELEMENT : CA138
+			>>>> ANNOTATION : CA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 9.909588999241477
+			<<<<
+
+		>>> ELEMENT : DA138
+			>>>> ANNOTATION : DA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.461180257997153
+			<<<<
+
+		>>> ELEMENT : EA138
+			>>>> ANNOTATION : EA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 25.659149934754023
+			<<<<
+
+		>>> ELEMENT : FA138
+			>>>> ANNOTATION : FA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 29.78854439380298
+			<<<<
+
+		>>> ELEMENT : GA138
+			>>>> ANNOTATION : GA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 33.93848732700475
+			<<<<
+
+		>>> ELEMENT : HA138
+			>>>> ANNOTATION : HA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 38.051452851438526
+			<<<<
+
+		>>> ELEMENT : IA138
+			>>>> ANNOTATION : IA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 48.507546049543336
+			<<<<
+
+		>>> ELEMENT : JA138
+			>>>> ANNOTATION : JA138-P-AH-33C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 65.23605070685991
+			<<<<
+
+		>>> ELEMENT : AA139
+			>>>> ANNOTATION : AA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.1643999999999997
+			<<<<
+
+		>>> ELEMENT : BA139
+			>>>> ANNOTATION : BA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 3.6664
+			<<<<
+
+		>>> ELEMENT : CA139
+			>>>> ANNOTATION : CA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 12.815000000000001
+			<<<<
+
+		>>> ELEMENT : DA139
+			>>>> ANNOTATION : DA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 22.856753354632588
+			<<<<
+
+		>>> ELEMENT : EA139
+			>>>> ANNOTATION : EA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 29.581
+			<<<<
+
+		>>> ELEMENT : FA139
+			>>>> ANNOTATION : FA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 33.986200000000004
+			<<<<
+
+		>>> ELEMENT : GA139
+			>>>> ANNOTATION : GA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 38.410199999999996
+			<<<<
+
+		>>> ELEMENT : HA139
+			>>>> ANNOTATION : HA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 42.8078
+			<<<<
+
+		>>> ELEMENT : IA139
+			>>>> ANNOTATION : IA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 53.61167838125665
+			<<<<
+
+		>>> ELEMENT : JA139
+			>>>> ANNOTATION : JA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 70.17632145093104
+			<<<<
+
+		>>> ELEMENT : KA139
+			>>>> ANNOTATION : KA139-P-AH-34
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 94.68837060702876
+			<<<<
+
+		>>> ELEMENT : AA140
+			>>>> ANNOTATION : AA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 0.91
+			<<<<
+
+		>>> ELEMENT : BA140
+			>>>> ANNOTATION : BA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.8099555189561567
+			<<<<
+
+		>>> ELEMENT : CA140
+			>>>> ANNOTATION : CA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 11.941426526228598
+			<<<<
+
+		>>> ELEMENT : DA140
+			>>>> ANNOTATION : DA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 22.111680358616905
+			<<<<
+
+		>>> ELEMENT : EA140
+			>>>> ANNOTATION : EA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 28.94228468298025
+			<<<<
+
+		>>> ELEMENT : FA140
+			>>>> ANNOTATION : FA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 33.46097546489828
+			<<<<
+
+		>>> ELEMENT : GA140
+			>>>> ANNOTATION : GA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 37.800092555454675
+			<<<<
+
+		>>> ELEMENT : HA140
+			>>>> ANNOTATION : HA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 42.05718791543035
+			<<<<
+
+		>>> ELEMENT : IA140
+			>>>> ANNOTATION : IA140-P-AH-34A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 52.703975083996646
+			<<<<
+
+		>>> ELEMENT : AA144
+			>>>> ANNOTATION : AA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 13.240091722436148
+			<<<<
+
+		>>> ELEMENT : BA144
+			>>>> ANNOTATION : BA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 13.410595970658328
+			<<<<
+
+		>>> ELEMENT : CA144
+			>>>> ANNOTATION : CA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 20.495528939907672
+			<<<<
+
+		>>> ELEMENT : DA144
+			>>>> ANNOTATION : DA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 29.982873755722416
+			<<<<
+
+		>>> ELEMENT : EA144
+			>>>> ANNOTATION : EA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.29457754061077
+			<<<<
+
+		>>> ELEMENT : FA144
+			>>>> ANNOTATION : FA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.49421123221986
+			<<<<
+
+		>>> ELEMENT : GA144
+			>>>> ANNOTATION : GA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 44.707384251811824
+			<<<<
+
+		>>> ELEMENT : HA144
+			>>>> ANNOTATION : HA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 48.881440346833266
+			<<<<
+
+		>>> ELEMENT : IA144
+			>>>> ANNOTATION : IA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 59.23741878265773
+			<<<<
+
+		>>> ELEMENT : JA144
+			>>>> ANNOTATION : JA144-P-AH-35C
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 75.52572854073956
+			<<<<
+
+		>>> ELEMENT : AA145
+			>>>> ANNOTATION : AA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.782755675076306
+			<<<<
+
+		>>> ELEMENT : BA145
+			>>>> ANNOTATION : BA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 10.945932055372063
+			<<<<
+
+		>>> ELEMENT : CA145
+			>>>> ANNOTATION : CA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 20.486886795904443
+			<<<<
+
+		>>> ELEMENT : DA145
+			>>>> ANNOTATION : DA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 28.77392153354778
+			<<<<
+
+		>>> ELEMENT : EA145
+			>>>> ANNOTATION : EA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 33.851659991839014
+			<<<<
+
+		>>> ELEMENT : FA145
+			>>>> ANNOTATION : FA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 37.199762159568984
+			<<<<
+
+		>>> ELEMENT : GA145
+			>>>> ANNOTATION : GA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.46514894084421
+			<<<<
+
+		>>> ELEMENT : HA145
+			>>>> ANNOTATION : HA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 43.89163695964766
+			<<<<
+
+		>>> ELEMENT : IA145
+			>>>> ANNOTATION : IA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 52.175206917761464
+			<<<<
+
+		>>> ELEMENT : JA145
+			>>>> ANNOTATION : JA145-P-AH-35D
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 65.31027778067
+			<<<<
+
+		>>> ELEMENT : AA146
+			>>>> ANNOTATION : AA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 6.9124588163514336
+			<<<<
+
+		>>> ELEMENT : BA146
+			>>>> ANNOTATION : BA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 10.4925
+			<<<<
+
+		>>> ELEMENT : CA146
+			>>>> ANNOTATION : CA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 16.5
+			<<<<
+
+		>>> ELEMENT : DA146
+			>>>> ANNOTATION : DA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 26.173431360585724
+			<<<<
+
+		>>> ELEMENT : EA146
+			>>>> ANNOTATION : EA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 32.6575
+			<<<<
+
+		>>> ELEMENT : FA146
+			>>>> ANNOTATION : FA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.972500000000004
+			<<<<
+
+		>>> ELEMENT : GA146
+			>>>> ANNOTATION : GA146-P-AH-36
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.26
+			<<<<
+
+		>>> ELEMENT : AA151
+			>>>> ANNOTATION : AA151-P-AH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.599334907281776
+			<<<<
+
+		>>> ELEMENT : BA151
+			>>>> ANNOTATION : BA151-P-AH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.7
+			<<<<
+
+		>>> ELEMENT : CA151
+			>>>> ANNOTATION : CA151-P-AH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.8075
+			<<<<
+
+		>>> ELEMENT : DA151
+			>>>> ANNOTATION : DA151-P-AH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 25.837532998643148
+			<<<<
+
+		>>> ELEMENT : AA154
+			>>>> ANNOTATION : AA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 11.589583986655546
+			<<<<
+
+		>>> ELEMENT : BA154
+			>>>> ANNOTATION : BA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 10.1975
+			<<<<
+
+		>>> ELEMENT : CA154
+			>>>> ANNOTATION : CA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.345
+			<<<<
+
+		>>> ELEMENT : DA154
+			>>>> ANNOTATION : DA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 29.128105754795662
+			<<<<
+
+		>>> ELEMENT : EA154
+			>>>> ANNOTATION : EA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 35.585
+			<<<<
+
+		>>> ELEMENT : FA154
+			>>>> ANNOTATION : FA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 39.785
+			<<<<
+
+		>>> ELEMENT : GA154
+			>>>> ANNOTATION : GA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 44.269999999999996
+			<<<<
+
+		>>> ELEMENT : HA154
+			>>>> ANNOTATION : HA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 48.63
+			<<<<
+
+		>>> ELEMENT : IA154
+			>>>> ANNOTATION : IA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 59.2915813177648
+			<<<<
+
+		>>> ELEMENT : JA154
+			>>>> ANNOTATION : JA154-P-CH-7BIS
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 76.47125437864888
+			<<<<
+
+		>>> ELEMENT : AA155
+			>>>> ANNOTATION : AA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.7735662217999997
+			<<<<
+
+		>>> ELEMENT : BA155
+			>>>> ANNOTATION : BA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 8.117651212800006
+			<<<<
+
+		>>> ELEMENT : CA155
+			>>>> ANNOTATION : CA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 19.16887858858882
+			<<<<
+
+		>>> ELEMENT : DA155
+			>>>> ANNOTATION : DA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 29.26738326379816
+			<<<<
+
+		>>> ELEMENT : EA155
+			>>>> ANNOTATION : EA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 36.06209647399999
+			<<<<
+
+		>>> ELEMENT : FA155
+			>>>> ANNOTATION : FA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 40.521877838
+			<<<<
+
+		>>> ELEMENT : GA155
+			>>>> ANNOTATION : GA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 44.917412838000004
+			<<<<
+
+		>>> ELEMENT : HA155
+			>>>> ANNOTATION : HA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 49.31727173714286
+			<<<<
+
+		>>> ELEMENT : IA155
+			>>>> ANNOTATION : IA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 60.31672195252983
+			<<<<
+
+		>>> ELEMENT : JA155
+			>>>> ANNOTATION : JA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 77.72259850064388
+			<<<<
+
+		>>> ELEMENT : KA155
+			>>>> ANNOTATION : KA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 103.5723242162525
+			<<<<
+
+		>>> ELEMENT : LA155
+			>>>> ANNOTATION : LA155-P-CH-8
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 137.5952764
+			<<<<
+
+		>>> ELEMENT : AA157
+			>>>> ANNOTATION : AA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 0.23430321058484976
+			<<<<
+
+		>>> ELEMENT : BA157
+			>>>> ANNOTATION : BA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 10.069645048981696
+			<<<<
+
+		>>> ELEMENT : CA157
+			>>>> ANNOTATION : CA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 21.598503742084446
+			<<<<
+
+		>>> ELEMENT : DA157
+			>>>> ANNOTATION : DA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 32.01147449202108
+			<<<<
+
+		>>> ELEMENT : EA157
+			>>>> ANNOTATION : EA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 38.890629348863165
+			<<<<
+
+		>>> ELEMENT : FA157
+			>>>> ANNOTATION : FA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 43.515431650929145
+			<<<<
+
+		>>> ELEMENT : GA157
+			>>>> ANNOTATION : GA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 48.100241698297275
+			<<<<
+
+		>>> ELEMENT : HA157
+			>>>> ANNOTATION : HA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 52.76684905153659
+			<<<<
+
+		>>> ELEMENT : IA157
+			>>>> ANNOTATION : IA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 64.52712596964278
+			<<<<
+
+		>>> ELEMENT : JA157
+			>>>> ANNOTATION : JA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 83.33348023347142
+			<<<<
+
+		>>> ELEMENT : KA157
+			>>>> ANNOTATION : KA157-P-CH-9A
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 111.72755676319937
+			<<<<
+
+		>>> ELEMENT : AA158
+			>>>> ANNOTATION : AA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 1.3215130055313682
+			<<<<
+
+		>>> ELEMENT : BA158
+			>>>> ANNOTATION : BA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 11.744492002168471
+			<<<<
+
+		>>> ELEMENT : CA158
+			>>>> ANNOTATION : CA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 23.113867009807795
+			<<<<
+
+		>>> ELEMENT : DA158
+			>>>> ANNOTATION : DA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 33.20894854143981
+			<<<<
+
+		>>> ELEMENT : EA158
+			>>>> ANNOTATION : EA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 39.88257253375119
+			<<<<
+
+		>>> ELEMENT : FA158
+			>>>> ANNOTATION : FA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 44.34005994546439
+			<<<<
+
+		>>> ELEMENT : GA158
+			>>>> ANNOTATION : GA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 48.79015460980577
+			<<<<
+
+		>>> ELEMENT : HA158
+			>>>> ANNOTATION : HA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 53.1968575312457
+			<<<<
+
+		>>> ELEMENT : IA158
+			>>>> ANNOTATION : IA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 64.24588893287508
+			<<<<
+
+		>>> ELEMENT : JA158
+			>>>> ANNOTATION : JA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 82.8696892465001
+			<<<<
+
+		>>> ELEMENT : KA158
+			>>>> ANNOTATION : KA158-P-CH-9B
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : 10
+			>>>> WINDOWS    : 0 2 [SECONDS]
+			>>>> DATA
+				 1 111.22391492361949
+			<<<<
+		<<<

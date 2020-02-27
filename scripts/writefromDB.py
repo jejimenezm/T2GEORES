@@ -3,7 +3,9 @@ from model_conf import *
 from iapws import IAPWS97
 import t2resfun as t2r
 import numpy as np
-
+from scipy import interpolate
+import os
+import datetime
 
 #wells_dict[n['name']]=[n['drill'],n['PT_sel']]
 
@@ -66,6 +68,7 @@ non_selected_PT='AH-4'
 con=psycopg2.connect(dbname='GMS', host='10.0.16.5',port=5432, user='andrea')
 cur=con.cursor()
 
+
 def write_survey_to_txt_from_GMS(wells,cur):
 	for well_name in wells:
 		q_geometry="""SELECT "fProfundidadMD","fIncrementoNorte",\
@@ -123,20 +126,27 @@ def write_mh_to_txt_from_GMS(wells,cur,interval):
 	status_rein=['HOTREI','INYECTOR']
 	status_prod=['PRODUCTOR']
 
+	if interval=='month':
+		dt_forth=datetime.timedelta(days=365.25/24)
+		criterion=31
+	elif interval=='week':
+		dt_forth=datetime.timedelta(days=3.5)
+		criterion=31
+	elif interval=='year':
+		dt_forth=datetime.timedelta(days=365.25)
+		criterion=365.25
+	elif interval=='quarter':
+		dt_forth=datetime.timedelta(days=365.25/4)
+		criterion=365.25/4
+
+	dt_back=datetime.timedelta(seconds=1)
+
+
 	for name in wells:
 
 		file_mh=open('../input/mh/%s_mh.dat'%name,'w')
 		file_mh.write("type,date-time,steam,liquid,enthalpy,WHPabs\n")
 
-		q_flow="""SELECT DISTINCT "CodStatus" as status,
-		 		  date_trunc('%s',to_timestamp(concat("Fecha",' 00:00:00'),'YYYYMMDD HH24:MI:SS')::timestamp without time zone) as date_f, \
-		          avg("FlujoAgua"+"FlujoVapor") as total_flow, avg("h"), avg("PresionCabezal"), avg("FlujoVapor"), avg("FlujoAgua")\
-		          from "tOperacionPozo" \
-		          WHERE "NombrePozo"='%s'\
-		          AND "Fecha">%s GROUP BY date_f, status ORDER BY date_f """%(interval,name,ref_date)
-		cur.execute(q_flow)
-
-		var_mh=np.array(cur.fetchall())
 
 		q_ubication="""SELECT "fElevacion" FROM "tUbicacionPozo" WHERE "vNombrePozo"='%s' """%name
 		cur.execute(q_ubication)
@@ -144,32 +154,280 @@ def write_mh_to_txt_from_GMS(wells,cur,interval):
 
 		patm=t2r.patmfromelev(var_ubication)
 
-		for n_mh in range(len(var_mh)):
-			#print name, var_mh[n_mh][2], var_mh[n_mh][1], var_mh[n_mh][3]
-			if var_mh[n_mh][0] in status_rein:
-				status='R'
-			if var_mh[n_mh][0] in status_prod:
-				status='P'
+		q_flow="""SELECT DISTINCT "CodStatus" as status,
+	 		  date_trunc('%s',to_timestamp(concat("Fecha",' 00:00:00'),'YYYYMMDD HH24:MI:SS')::timestamp without time zone) as date_f, \
+	          avg("FlujoAgua"+"FlujoVapor") as total_flow, avg("h"), avg("PresionCabezal"), avg("FlujoVapor"), avg("FlujoAgua")\
+	          from "tOperacionPozo" \
+	          WHERE "NombrePozo"='%s'\
+	          AND "Fecha">%s GROUP BY date_f, status ORDER BY date_f """%(interval,name,ref_date.strftime("%Y%m%d"))
 
-			if var_mh[n_mh][2]>0: #Flow bigger than 0
-				if (var_mh[n_mh][3] is None and var_mh[n_mh][4]>0) or (var_mh[n_mh][3]==0 and var_mh[n_mh][4]>0):
-					C0=IAPWS97(P=float(var_mh[n_mh][4]+patm)/100,x=0)
-					var_mh[n_mh][3]=C0.h
-				elif var_mh[n_mh][3] is None and var_mh[n_mh][4]==0:
-					C0=IAPWS97(T=120+273.15,x=0)
-					var_mh[n_mh][3]=C0.h
-				elif var_mh[n_mh][3]==0 and var_mh[n_mh][4]>0:
-					C0=IAPWS97(P=float(var_mh[n_mh][5]+patm)/10,x=0)
-					var_mh[n_mh][3]=C0.h
-				string_x="%s,%s,%.2f,%.2f,%.2f,%.2f\n"%(status, \
-	                                                        str(var_mh[n_mh][1]),float(var_mh[n_mh][5]), \
-	                                                        float(var_mh[n_mh][6]), float(var_mh[n_mh][3]), \
-	                                                        float(float(var_mh[n_mh][4])+patm))
-				file_mh.write(string_x)
+		cur.execute(q_flow)
+		
+		var_mh=np.array(cur.fetchall())
 
-		file_mh.close()
+		if len(var_mh)>0:
+
+			dates_db=var_mh[:,1].tolist()
+			flows_db=(var_mh[:,5]+var_mh[:,6]).tolist()
+
+			types=var_mh[:,0].tolist()
+			enthalpy=var_mh[:,3].tolist()
+			WHPabs=var_mh[:,4].tolist()
+			steam=var_mh[:,5].tolist()
+			water=var_mh[:,6].tolist()
+
+			max_len=len(dates_db)
+
+			for n in range(len(dates_db)):
+
+				if n==0:
+					dates_db.append(dates_db[n]-dt_forth)
+					flows_db.append(0)
+					types.append(types[n])
+					enthalpy.append(enthalpy[n])
+					WHPabs.append(0)
+					steam.append(0)
+					water.append(0)
+				elif flows_db[n]>0 :
+					if (enthalpy[n] is None and WHPabs[n]>0) or (enthalpy[n]==0 and WHPabs[n]>0):
+						C0=IAPWS97(P=float(WHPabs[n]+patm)/100,x=0)
+						enthalpy[n]=C0.h
+					elif enthalpy[n] is None and WHPabs[n]==0:
+						C0=IAPWS97(T=120+273.15,x=0)
+						enthalpy[n]=C0.h
+					elif enthalpy[n]==0 and WHPabs[n]>0:
+						C0=IAPWS97(P=float(WHPabs[n]+patm)/10,x=0)
+						enthalpy[n]=C0.h
+					if interval=='year' and dates_db[n].year%4==0:
+						criterion=366
+
+					if (dates_db[n+1]-dates_db[n]).days>criterion and flows_db[n+1]>0:
+						dates_db.append(dates_db[n]+dt_forth)
+						flows_db.append(flows_db[n])
+						types.append(types[n])
+						enthalpy.append(enthalpy[n])
+						WHPabs.append(WHPabs[n])
+						steam.append(steam[n])
+						water.append(water[n])
 
 
+						dates_db.append(dates_db[n]+dt_forth+dt_back)
+						flows_db.append(0)
+						types.append(types[n])
+						enthalpy.append(enthalpy[n])
+						WHPabs.append(0)
+						steam.append(0)
+						water.append(0)
+
+
+						dates_db.append(dates_db[n+1]-dt_forth)
+						flows_db.append(flows_db[n+1])
+						types.append(types[n+1])
+
+						if enthalpy[n+1]==None:
+							C0=IAPWS97(T=120+273.15,x=0)
+							enthalpy.append(C0.h)
+						else:
+							enthalpy.append(enthalpy[n+1])
+
+						WHPabs.append(WHPabs[n+1])
+						steam.append(steam[n+1])
+						water.append(water[n+1])
+
+						dates_db.append(dates_db[n+1]-dt_forth-dt_back)
+						flows_db.append(0)
+						types.append(types[n+1])
+
+						if enthalpy[n+1]==None:
+							C0=IAPWS97(T=120+273.15,x=0)
+							enthalpy.append(C0.h)
+						else:
+							enthalpy.append(enthalpy[n+1])
+						WHPabs.append(0)
+						steam.append(0)
+						water.append(0)
+
+					if flows_db[n-1]==0:
+						
+						dates_db.append(dates_db[n]-dt_forth)
+						flows_db.append(flows_db[n])
+						types.append(types[n])
+
+						if enthalpy[n]==None:
+							C0=IAPWS97(T=120+273.15,x=0)
+							enthalpy.append(C0.h)
+						else:
+							enthalpy.append(enthalpy[n])
+
+						WHPabs.append(WHPabs[n])
+						steam.append(steam[n])
+						water.append(water[n])
+
+						dates_db.append(dates_db[n]-dt_forth-dt_back)
+						flows_db.append(0)
+						types.append(types[n])
+						enthalpy.append(enthalpy[n])
+						WHPabs.append(0)
+						steam.append(0)
+						water.append(0)
+
+					if flows_db[n+1]==0 and n+1<max_len:
+						dates_db.append(dates_db[n]+dt_forth)
+						flows_db.append(flows_db[n])
+						types.append(types[n])
+						enthalpy.append(enthalpy[n])
+						WHPabs.append(WHPabs[n])
+						steam.append(steam[n])
+						water.append(water[n])
+
+						dates_db.append(dates_db[n]+dt_forth+dt_back)
+						flows_db.append(0)
+						types.append(types[n])
+
+						if enthalpy[n]==None:
+							C0=IAPWS97(T=120+273.15,x=0)
+							enthalpy.append(C0.h)
+						else:
+							enthalpy.append(enthalpy[n])
+
+						WHPabs.append(0)
+						steam.append(0)
+						water.append(0)
+
+			unified = np.column_stack([types,dates_db,steam,water,enthalpy,WHPabs])
+			unified = unified[np.argsort(unified[:, 1])]
+
+			for nv in range(len(dates_db)):
+				if types[nv]in status_rein:
+					status='R'
+				if types[nv] in status_prod:
+					status='P'
+				if unified[:,4][nv]!=None:
+					string_x="%s,%s,%s,%s,%s,%s\n"%(status,unified[:,1][nv],\
+						                        unified[:,2][nv],unified[:,3][nv],unified[:,4][nv],unified[:,5][nv]+patm)
+					file_mh.write(string_x)
+				else:
+					string_x="%s,%s,%s,%s,%s,%s\n"%(unified[:,1][nv],unified[:,2][nv],unified[:,3][nv],unified[:,4][nv],unified[:,5][nv]+patm,name)
+					print string_x
+			file_mh.close()
+
+def write_drawdown_to_txt_from_GMS(wells,cur,depth_TVD):
+
+	for name in wells:
+
+		drawdown=[]
+		dates_dd=[]
+
+		q0 = """SELECT "iNCorr", "iFecha","vStatusPozo", "cTipoMedicion" FROM "tInformacionPerfilesPT" WHERE "vNombrePozo"='%s'\
+		    AND ("vStatusPozo"='SHUT-IN' OR "vStatusPozo"='BLEED' OR "vStatusPozo"='PURGADO' OR "vStatusPozo"='CERRADO' OR "vStatusPozo"='PRES' OR "vStatusPozo"='TEMP'\
+		     OR "vStatusPozo"='MONITOR' or "vStatusPozo"='PERFORACION'  or "vStatusPozo"='MONIT'  OR "vStatusPozo"='HOTREI' OR "vStatusPozo"='INYECTOR' OR "vStatusPozo"='PRODUCTOR')\
+		    ORDER BY "iFecha" """ % (name)
+		cur.execute(q0)
+		var0 =cur.fetchall()
+		corr = np.array(var0)[:, 0]
+		dates = np.array(var0)[:, 1]
+
+		cnt=0
+		for n in range(len(corr)):
+			q1 = """SELECT "fProfundidadMD", "fPresion", "fTemperatura" FROM "tPerfilesPT" WHERE "iNCorr"=%s ORDER BY "fProfundidadMD"  """ % (corr[n])
+			try:
+				cur.execute(q1)
+				var0 = cur.fetchall()
+				profr = np.array(var0)[:, 0]
+				pr = np.array(var0)[:, 1]
+				tr = np.array(var0)[:, 2]
+
+				tr= [np.nan if x == 0 else x for x in tr]
+				pr= [np.nan if x == 0 else x for x in pr]
+
+				if not np.isnan(np.mean(pr)) and len(pr)>1:
+					x_V,y_V,z_V,var_V=t2r.MD_to_TVD_one_var_array(name,pr,profr,100)
+					func_var=interpolate.interp1d(z_V,var_V)
+					try:
+						drawdown.append(func_var(depth_TVD))
+						dates_dd.append(dates[n])
+						if cnt==0:
+							if not os.path.isfile('../input/drawdown/%s_DD.dat'%name):
+								file_dd=open('../input/drawdown/%s_DD.dat'%name,'w')
+								file_dd.write("datetime,TVD,pressure\n")
+								cnt=1
+							else:
+								file_dd=open('../input/drawdown/%s_DD.dat'%name,'a')
+					except ValueError,KeyError:
+						print "There's not enough information for  well %s, %s"%(name,dates[n])
+						pass
+
+			except IndexError:
+				pass
+
+		for x in range(len(drawdown)):
+			string="%s,%s,%s\n"%(datetime.strptime(dates_dd[x]+' 00:00:00', "%Y%m%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")\
+								,depth_TVD,drawdown[x])
+			file_dd.write(string)
+		file_dd.close()
+	print depth_TVD
+
+def write_cooling_to_txt_from_GMS(wells,cur,depth_TVD):
+
+	for name in wells:
+
+		cooling=[]
+		dates_dd=[]
+
+		q0 = """SELECT "iNCorr", "iFecha","vStatusPozo", "cTipoMedicion" FROM "tInformacionPerfilesPT" WHERE "vNombrePozo"='%s'\
+		    AND ("vStatusPozo"='SHUT-IN' OR "vStatusPozo"='BLEED' OR "vStatusPozo"='PURGADO' OR "vStatusPozo"='CERRADO' OR "vStatusPozo"='PRES' OR "vStatusPozo"='TEMP'\
+		     OR "vStatusPozo"='MONITOR' or "vStatusPozo"='PERFORACION'  or "vStatusPozo"='MONIT'  OR "vStatusPozo"='HOTREI' OR "vStatusPozo"='INYECTOR' OR "vStatusPozo"='PRODUCTOR')\
+		    ORDER BY "iFecha" """ % (name)
+		cur.execute(q0)
+		var0 =cur.fetchall()
+		corr = np.array(var0)[:, 0]
+		dates = np.array(var0)[:, 1]
+
+		cnt=0
+		for n in range(len(corr)):
+			q1 = """SELECT "fProfundidadMD", "fPresion", "fTemperatura" FROM "tPerfilesPT" WHERE "iNCorr"=%s ORDER BY "fProfundidadMD"  """ % (corr[n])
+			try:
+				cur.execute(q1)
+				var0 = cur.fetchall()
+				profr = np.array(var0)[:, 0]
+				pr = np.array(var0)[:, 1]
+				tr = np.array(var0)[:, 2]
+
+				tr= [np.nan if x == 0 else x for x in tr]
+				pr= [np.nan if x == 0 else x for x in pr]
+
+				if not np.isnan(np.mean(tr)) and len(tr)>1:
+					x_V,y_V,z_V,var_V=t2r.MD_to_TVD_one_var_array(name,tr,profr,100)
+					func_var=interpolate.interp1d(z_V,var_V)
+					try:
+						cooling.append(func_var(depth_TVD))
+						dates_dd.append(dates[n])
+						if cnt==0:
+							if not os.path.isfile('../input/cooling/%s_C.dat'%name):
+								file_dd=open('../input/cooling/%s_C.dat'%name,'w')
+								file_dd.write("datetime,TVD,temperature\n")
+								cnt=1
+							else:
+								file_dd=open('../input/cooling/%s_C.dat'%name,'a')
+					except ValueError,KeyError:
+						print "There's not enough information for  well %s, %s"%(name,dates[n])
+						pass
+
+			except IndexError:
+				pass
+
+		for x in range(len(cooling)):
+			string="%s,%s,%s\n"%(datetime.strptime(dates_dd[x]+' 00:00:00', "%Y%m%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")\
+								,depth_TVD,cooling[x])
+			file_dd.write(string)
+		file_dd.close()
+	print depth_TVD
+
+"""
+depths=[200,100,0,-100,-200]
+for d in depths:
+	write_cooling_to_txt_from_GMS(wells,cur,d)
+"""
 #interval : millennium,century,decade,year,quarter,month,week,day,hour,minute,second,milliseconds,microseconds
 write_mh_to_txt_from_GMS(wells,cur,'week')
 #write_PT_to_txt_from_GMS(wells,cur)

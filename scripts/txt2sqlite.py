@@ -2,6 +2,8 @@ import sqlite3
 import os
 import pandas as pd
 import json
+from model_conf import *
+import t2resfun as t2r
 
 def checktable(table_name,c):
 	query="SELECT COUNT(name) from sqlite_master WHERE type='table' AND name='%s'"%(table_name)
@@ -62,6 +64,14 @@ def db_creation(db_path):
 						 [TVD] REAL,
 						 [pressure] REAL)''')
 
+		#Create table - cooling
+		if checktable('cooling',c)==0:
+			c.execute('''CREATE TABLE  cooling
+						 ([well] TEXT,
+						 [date_time] datetime,
+						 [TVD] REAL,
+						 [temp] REAL)''')
+
 		#Create table - wellfeedzone
 		if checktable('wellfeedzone',c)==0:
 			c.execute('''CREATE TABLE  wellfeedzone
@@ -72,15 +82,23 @@ def db_creation(db_path):
 		#Create table - TOUGH2 well block(correlative)
 		if checktable('t2wellblock',c)==0:
 			c.execute('''CREATE TABLE  t2wellblock
-						 ([well] TEXT,
+						 ([well] TEXT PRIMARY KEY,
 						 [blockcorr] TEXT)''')
 
 		#Create table - TOUGH2 well source
 		if checktable('t2wellsource',c)==0:
 			c.execute('''CREATE TABLE  t2wellsource
 						 ([well] TEXT,
-						 [blockcorr] TEXT,
+						 [blockcorr] TEXT PRIMARY KEY,
 						 [source_nickname] TEXT)''')
+
+		#Create table - layers levels
+		if checktable('layers',c)==0:
+			c.execute('''CREATE TABLE  layers
+						 ([correlative] TEXT PRIMARY KEY,
+						 [top] REAL,
+						 [middle] REAL,
+						 [bottom] REAL)''')
 
 		conn.commit()
 		conn.close()
@@ -131,7 +149,6 @@ def insert_survey_to_sqlite(db_path,source_txt):
 	conn.close()
 
 def insert_PT_to_sqlite(db_path,source_txt):
-
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	for f in os.listdir(source_txt+'PT'):
@@ -144,9 +161,31 @@ def insert_PT_to_sqlite(db_path,source_txt):
 			conn.commit()
 	conn.close()
 
+def insert_drawdown_to_sqlite(db_path,source_txt):
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	for f in os.listdir(source_txt+'drawdown'):
+		well_name=f.replace("'","").replace("_DD.dat","")
+		C=pd.read_csv(source_txt+'drawdown/'+f)
+		for index, row in C.iterrows():
+			q="INSERT INTO drawdown(well,date_time,TVD,pressure) VALUES ('%s','%s',%s,%s)"%\
+			(well_name,row['datetime'],row['TVD'],row['pressure'])
+			c.execute(q)
+			conn.commit()
+	conn.close()
 
-
-
+def insert_cooling_to_sqlite(db_path,source_txt):
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	for f in os.listdir(source_txt+'cooling'):
+		well_name=f.replace("'","").replace("_C.dat","")
+		DD=pd.read_csv(source_txt+'cooling/'+f)
+		for index, row in DD.iterrows():
+			q="INSERT INTO cooling(well,date_time,TVD,temp) VALUES ('%s','%s',%s,%s)"%\
+			(well_name,row['datetime'],row['TVD'],row['temperature'])
+			c.execute(q)
+			conn.commit()
+	conn.close()
 
 def insert_mh_to_sqlite(db_path,source_txt):
 
@@ -161,8 +200,6 @@ def insert_mh_to_sqlite(db_path,source_txt):
 			c.execute(q)
 			conn.commit()
 	conn.close()
-
-
 
 def sqlite_to_json(db_path,source_txt):
 
@@ -196,8 +233,23 @@ def sqlite_to_json(db_path,source_txt):
 				dict_of_wells_on_table=dict((n,{}) for n in dict_keys)
 				dict_to_json[lv]=dict_of_wells_on_table
 
+				query="PRAGMA table_info(%s)"%lv
+				c.execute(query)
+				rows=c.fetchall()
+				colums=[]
+				for row in rows:
+					colums.append(str(row[1]))
+
+				partq=[]
+
+				q_string=""
+				for nv in colums:
+					if nv not in levels[lv] :
+						partq.append(nv)
+						q_string+=" %s,"%(nv)
+
 				for nv in dict_keys:
-					query="SELECT * from %s WHERE %s='%s'"%(lv,lv2,nv)
+					query="SELECT %s from %s WHERE %s='%s'"%(q_string[0:-1],lv,lv2,nv)
 
 					conn=sqlite3.connect(db_path)
 					conn.row_factory = sqlite3.Row
@@ -239,7 +291,6 @@ def sqlite_to_json(db_path,source_txt):
 							partq.append(nv)
 							q_string+=" %s,"%(nv)
 
-					 
 					for prev_result in dict_keys:
 
 						query="SELECT DISTINCT %s from %s WHERE %s='%s'"%(lv2,lv,prev_key,prev_result)
@@ -255,7 +306,7 @@ def sqlite_to_json(db_path,source_txt):
 
 						for nv in dict_keys:
 
-							query="SELECT %s from %s WHERE %s='%s'"%(q_string[0:-1],lv,lv2,nv)
+							query="SELECT %s from %s WHERE %s='%s' AND %s='%s' "%(q_string[0:-1],lv,lv2,nv,prev_key,prev_result)
 
 							conn=sqlite3.connect(db_path)
 							conn.row_factory = sqlite3.Row
@@ -263,96 +314,142 @@ def sqlite_to_json(db_path,source_txt):
 							rows=c.execute(query).fetchall()
 
 							dict_to_json[lv][prev_result][nv]=[dict(ix) for ix in rows]
-
-						"""
-						print query
-						conn=sqlite3.connect(db_path)
-						conn.row_factory = sqlite3.Row
-						c=conn.cursor()
-						rows=c.execute(query).fetchall()
-
-						dict_to_json[lv][nv]=[dict(ix) for ix in rows]
-						"""
-				
-
-
+	
 	with open(source_txt+'model.json', 'w') as jlines:
 		json.dump(dict_to_json, jlines,indent=4,sort_keys=True)
 	
 
 	conn.close()
 
+def insert_wellblock_to_sqlite(db_path,source_txt,wells):
+	#Takes the well names from model_conf.py and read the well_correlative.txt on the mesh folder
 
-	"""
+	if os.path.isfile('../mesh/wells_correlative.txt'):
 
+		with open('../mesh/wells_correlative.txt') as json_file:
+		    wells_correlative=json.load(json_file)
+		
+		conn=sqlite3.connect(db_path)
+		c=conn.cursor()
+
+		for name in wells:
+			try:
+				blocknumer=wells_correlative[name][0]
+				q="INSERT INTO t2wellblock(well,blockcorr) VALUES ('%s','%s')"%(name,blocknumer)
+				c.execute(q)
+				conn.commit()
+			except KeyError:
+				pass
+			except sqlite3.IntegrityError:
+				print "The block  number is already assing for the well: %s"%name
+		conn.close()
+
+	else:
+		print "The file well_correlative.txt do not exists"
+
+def insert_layers_to_sqlite(db_path,source_txt):
+
+	top,correlative,middle,bottom=t2r.vertical_layer(layers,z0_level)
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	for n in range(len(top)):
+		q="INSERT INTO layers(correlative,top,middle,bottom) VALUES ('%s',%s,%s,%s)"\
+			%(correlative[n],top[n],middle[n],bottom[n])
+		try:
+			c.execute(q)
+			conn.commit()
+		except sqlite3.IntegrityError:
+			print "The layer %s is already define, correlative is a PRIMARY KEY"%correlative[n]
+	conn.close()
+
+"""
+def sqlite_to_json(db_path,source_txt):
+
+	levels={'wells':['well'],
+			'survey':['well','MeasuredDepth'],
+			'PT':['well','MeasuredDepth'],
+			'mh':['well','date_time'],
+			'drawdown':['well','date_time'],
+			'wellfeedzone':['well'],
+			't2wellblock':['well'],
+			't2wellsource':['well']}
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
-	query="SELECT name from sqlite_master WHERE type='table' "
-	c.execute(query)
-	rows=c.fetchall()
+	dict_to_json=dict((n,{}) for n in levels.keys())
+	
+	for lv in levels:
+		cnt=0
 
-	tables=[]
-	for row in rows:
-		tables.append(str(row[0]))
-
-	dict_to_json=dict((n,{}) for n in tables)
-
-	for table_name in tables:
-
-		#Writes the wells as an ID with empty values into a dictionary
-		conn=sqlite3.connect(db_path)
-		c=conn.cursor()
-		query="SELECT DISTINCT well from %s"%table_name
+		#Select the columns that are not part of the levels
+		query="PRAGMA table_info(%s)"%lv
 		c.execute(query)
 		rows=c.fetchall()
-		wells=[]
+		colums=[]
 		for row in rows:
-			wells.append(str(row[0]))
+			colums.append(str(row[1]))
 
-		dict_of_wells_on_table=dict((n,{}) for n in wells)
-		dict_to_json[table_name]=dict_of_wells_on_table
+		partq=[]
 
-		#Writes the data from a certain well into an nested dictionary 
-		conn=sqlite3.connect(db_path)
-		conn.row_factory = dict_factory
-		cur1=conn.cursor()
+		q_string=""
+		for nv in colums:
+			if nv not in levels[lv] :
+				partq.append(nv)
+				q_string+=" %s,"%(nv)
 
-		#The issue till now is the values are written like unicode when unpack
-		for well in wells:
-			rows=cur1.execute("SELECT * FROM %s where well='%s'"%(table_name,well)).fetchall()
+		lv2=levels[lv]
+		
+		prev_result=[]
 
-			#rows_s= [tuple(map(str,eachTuple)) for eachTuple in rows]
+		for nln in range(len(lv2)):
+			if cnt==0:
+				query="SELECT DISTINCT %s from %s"%(lv2[nln],lv)
+				cnt+=1
+			else:
+				query="SELECT DISTINCT %s from %s"%(lv2[nln],lv)
+			print query
+			c.execute(query)
+			rows=c.fetchall()
+			dict_keys=[]
+			for row in rows:
+				dict_keys.append(str(row[0]))
 
-			#print rows[0:-1]
-			#print rows
+			dict_of_wells_on_table=dict((n,{}) for n in dict_keys)
+			print dict_of_wells_on_table
 
-			#dict_to_json[table_name][well]=dict((str(key), str(value)) for key, value in rows[0:-1].items())
-
-			#dict_to_json[table_name][well]=format(rows[0:-1]).replace(" u'", "'").replace("'", "\"")
-
-			dict_to_json[table_name][well]=json.dumps([dict(ix) for ix in rows])
-	
-			#jlines.write(format(rows).replace(" u'", "'").replace("'", "\""))
-
-	#Writes the dictionary into a json
-	with open(source_txt+'model.json', 'w') as jlines:
-		json.dump(dict_to_json, jlines,indent=4,sort_keys=True)
-
-	conn.close()
-	"""
-
+			if nln==0:
+				dict_to_json[lv]=dict_of_wells_on_table
+			else:
+				str_dict="dict_to_json[lv]"
+				for nd in range(nln):
+					strx="[lv2[%s]]"%(nd)
+					str_dict+=strx
+				print str_dict
+				str_dict+="=dict((n,{}) for n in dict_keys)"
+				print eval(str_dict)
+"""
 
 db_path='../input/model.db'
 source_txt='../input/'
 
+
 """
 db_creation(db_path)
+
 insert_mh_to_sqlite(db_path,source_txt)
 insert_survey_to_sqlite(db_path,source_txt)
 insert_feedzone_to_sqlite(db_path,source_txt)
 insert_wells_sqlite(db_path,source_txt)
 insert_PT_to_sqlite(db_path,source_txt)
+insert_drawdown_to_sqlite(db_path,source_txt)
+insert_cooling_to_sqlite(db_path,source_txt)
+
+insert_wellblock_to_sqlite(db_path,source_txt,wells)
+
+insert_layers_to_sqlite(db_path,source_txt)
 """
-sqlite_to_json(db_path,source_txt)
+
+
+#sqlite_to_json(db_path,source_txt)

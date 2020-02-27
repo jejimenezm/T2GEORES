@@ -1,0 +1,22 @@
+estado natural CGA
+
+> OBSERVATION
+  >> STEADY-STATE at TIME : 1
+                       0
+  <<
+
+> computation
+	>> OUTPUT
+		>>> FORMAT contains : PLOPO
+			PRINTOUT : 9
+			PLOTFILE: TECPLOT
+			PLOTTING: 1
+		<<<
+
+	>> option
+		>>> solve forward
+		>>> STEADY-STATE, use SAVE for restarts :  315569260000.0 
+		<<<
+
+	<<
+<
