@@ -544,7 +544,7 @@ PARAM----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8
 					break
 			if len(dictionary)==1:
 				skip=True
-		if not skip:
+		if not skip: #Every time a dictionary finish
 			string+="\n"
 
 	string+="\n"
@@ -603,14 +603,45 @@ PARAM----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8
 	string+="\n"
 
 
-	string+="""FOFT----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"""
+	string+="""FOFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"""
 	if os.path.isfile('../model/t2/sources/FOFT'):
 		with open('../model/t2/sources/FOFT') as rock_file:
 			for line in rock_file.readlines()[:]:
 				string+="%s"%line
 		string+="\n"
 	else:
-		sys.exit("Error message: the FOFT file on ../model/t2/FOFT is not prepared, run write_wells_track_blocks_from_sqlite")
+		sys.exit("Error message: the FOFT file on ../model/t2/FOFT is not prepared, run write_wells_track_blocks_from_sqlite_to_FOFT or write_well_sources_from_sqlite_to_FOFT")
+
+	#Writing PARAM SECTION
+
+	string+="""TIMES----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"""
+
+	skip=False
+
+	for dictionary in times:
+		for index, key in enumerate(dictionary):
+			if len(dictionary[key])==3:
+				skip=False
+				if dictionary[key][1]!=None and 's' in dictionary[key][2]:
+					string+=format(str(dictionary[key][1]),"%s"%dictionary[key][2])
+				elif 's' not in dictionary[key][2] and dictionary[key][1]!=None:
+					string+=format(dictionary[key][1],"%s"%dictionary[key][2])
+				elif dictionary[key][1]==None and 'E' not in dictionary[key][2]:
+					string+=format("","%s"%dictionary[key][2])
+				elif dictionary[key][1]==None and 'E' in dictionary[key][2]:
+					string+=format("",">%ss"%dictionary[key][2].split('.')[0].split('>')[1])
+				if key%8==0:
+					string+="\n"
+				if key>100:
+					break
+			if len(dictionary)==1:
+				skip=True
+
+		if not skip: #Every time a dictionary finish
+			string+="\n"
+
+	string+="\n"
+
 
 
 	if os.path.isfile('../model/t2/sources/ELEME'):
@@ -663,7 +694,7 @@ PARAM----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8
 	file.write(string)
 	file.close()
 
-def write_wells_track_blocks_from_sqlite(db_path):
+def write_wells_track_blocks_from_sqlite_to_FOFT(db_path):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
@@ -680,6 +711,21 @@ def write_wells_track_blocks_from_sqlite(db_path):
 	file.write(string)
 	file.close()
 
+
+def write_well_sources_from_sqlite_to_FOFT(db_path):
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	data_blockcorr=pd.read_sql_query("SELECT blockcorr FROM t2wellsource WHERE source_nickname LIKE 'SRC%';",conn)
+
+	string=""
+	for n in sorted(data_blockcorr['blockcorr'].values):
+		string+="%s\n"%(n)
+
+	conn.close()
+	file=open('../model/t2/sources/FOFT','w')
+	file.write(string)
+	file.close()
 
 db_path='../input/model.db'
 
@@ -699,11 +745,12 @@ type_run='natural'
 #conne_from_steinar_to_t2()
 #merge_eleme_and_in_to_t2()
 #write_wells_track_blocks_from_sqlite(db_path)
+#write_well_sources_from_sqlite_to_FOFT(db_path)
 
 #FROM t2gener.py
 #write_gener_from_sqlite(db_path,wells)
 
-#t2_input_creation(param,multi,solver,recap,type_run,title)
+t2_input_creation(param,multi,solver,recap,type_run,title)
 
 #PRODUCTION STATE
 

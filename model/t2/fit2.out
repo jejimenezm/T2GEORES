@@ -14,13 +14,13 @@
                                                   ALL RIGHTS RESERVED
 
  ==================================================================================================================================
-                                          >>>>>>>>>>>>> 25-Feb-20  13:00 <<<<<<<<<<<<<
+                                          >>>>>>>>>>>>> 27-Feb-20  14:00 <<<<<<<<<<<<<
  ==================================================================================================================================
  iTOUGH2 RUN NO.               :    1
  iTOUGH2 INPUT FILE            :  fit2
  TOUGH2 INPUT FILE             :  t2
  WORKING DIRECTORY             :  /home/erick/Reservorios/T2RES/model/t2
- TEMPORARY DIRECTORY           :  /home/erick/it2_4691
+ TEMPORARY DIRECTORY           :  /home/erick/it2_4606
  EQUATION OF STATE MODULE NO.  :  1 - Pure and traced water in liquid, vapor, and two-phase state
  COMPONENTS                    :  WATER     TRACER    HEAT                                    
  PHASES                        :  VAPOR     LIQUID              
@@ -101,7 +101,7 @@
  Executable                                      : /home/erick/itough2/Executable/itough2_1.erick-ws
 
 
- --- End of iTOUGH2 input job:   22 lines read,    0.26 CPU-seconds used
+ --- End of iTOUGH2 input job:   22 lines read,    0.25 CPU-seconds used
 
 
  **********************************************************************************************************************************
@@ -117,10 +117,16 @@
  ----------------------------------------------------------------------------------------------------------------------------------
  ITER TOUGH2 OBJ FUNC. MAX. RESID. EQU.
 
- ****  MESSAGE  *****     1: Assumed steady state (IQIT= 2). Time = 0.31423E+10 [sec]. Run not accepted!                                                               
->I  0    1 0.00000E+00 0.00000E+00    1
+ ****  MESSAGE  *****     1: Assumed steady state (IQIT= 0). Time = 0.30282E+10 [sec]. Start transient run now.                                                        
 
- Terminated normally.
+ >>>>>  Forward run terminated at simulation time  0.00000000E+00 [sec] <<<<<
+
+
+ *****  ERROR  *****
+ * TOUGH2 terminated prematurely!
+ * Simulation time 0.00000000E+00 [sec] was too short, i.e.,
+ * run did not reach time of last calibration point at 0.10000000E+51 [sec]!
+ *****  ERROR  *****
 
 
  **********************************************************************************************************************************
@@ -145,7 +151,7 @@
  Objective Function                                                                                                         C.O.F.
  ------------------
  Initial value of objective function     :     0.0000E+00                                                                    0.00 %
- Minimum value of objective function     :     0.1000E+01                                                                  100.00 %
+ Minimum value of objective function     :     0.1000E+51                                                                  100.00 %
 
 
  ==================================================================================================================================
@@ -188,6 +194,10 @@
                                                                              A PRIORI    MARGINAL      C/M    OUTPUT   OBJ. FUNC.
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- ---  1178th iTOUGH2 simulation job stopped normally on 25-Feb-20  13:08 ---  CPU time used =     458.57 sec.
+ ---  1190th iTOUGH2 simulation job stopped abnormally on 27-Feb-20  14:08 ---  CPU time used =     454.95 sec.
 
- ---     0 error(s) and  0 warning(s) detected
+
+     Error  >> Subroutine <<  Message
+      5290  >>> OBSERVAT <<<  ERROR                --> Incomplete TOUGH2 simulation  
+
+ ---     1 error(s) and  0 warning(s) detected

@@ -224,7 +224,7 @@ def write_geners_to_txt_and_sqlite(db_path,geners):
 	for j in list_preve_gener:
 		if j not in list_gener_on_model:
 			print j
-			q="DELETE FROM  t2wellsource WHERE source_nickname='%s'"%(j)
+			q="DELETE FROM  t2wellsource WHERE git remorte source_nickname='%s'"%(j)
 			c.execute(q)
 			conn.commit()
 

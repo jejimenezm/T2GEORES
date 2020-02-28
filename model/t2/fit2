@@ -13,7 +13,7 @@ estado natural CGA
 			PLOTTING: 1
 		<<<
 
-	>> option
+	>> OPTION
 		>>> solve forward
 		>>> STEADY-STATE, use SAVE for restarts :  315569260000.0 
 		<<<

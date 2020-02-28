@@ -35,4 +35,4 @@ def write_PT_from_t2output(db_path):
 
 	conn.close()
 
-#write_PT_from_t2output(db_path)
+write_PT_from_t2output(db_path)
