@@ -1,8 +1,10 @@
 estado natural CGA
 
 > OBSERVATION
-  >> STEADY-STATE at TIME : 1
+	>> STEADY-STATE at TIME : 1
                        0
+	>> RESTART TIME : 1 with NEW save file
+                    	300
   <<
 
 > computation
@@ -14,7 +16,7 @@ estado natural CGA
 		<<<
 
 	>> OPTION
-		>>> solve forward
+		>>> solve FORWARD
 		>>> STEADY-STATE, use SAVE for restarts :  315569260000.0 
 		<<<
 

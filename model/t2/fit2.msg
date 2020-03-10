@@ -1,5 +1,5 @@
  =========================================================================
- i T O U G H 2 _ 1  R U N  date: jue feb 27 14:00:27 CST 2020
+ i T O U G H 2 _ 1  R U N  date: vie feb 28 11:43:07 CST 2020
  =========================================================================
 
 Command submitted: /home/erick/bin/itough2 fit2 t2 1
@@ -171,11 +171,11 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       S T A T U S   O F   i T O U G H 2   S I M U L A T I O N
  ==================================================================
 
- Date                        : 27-Feb-20  14:00
+ Date                        : 28-Feb-20  11:43
  iTOUGH2 file                : fit2
  TOUGH2 file                 : t2
  Working directory           : /home/erick/Reservorios/T2RES/model/t2
- Temporary directory         : /home/erick/it2_4606
+ Temporary directory         : /home/erick/it2_27341
  UNIX command line arguments : fit2 t2 1
  Comment                     : Input files read.                                                              
 
@@ -183,3 +183,5 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
  TOUGH2 runs completed       :              0    Unsuccessful steps    0
  TOUGH2 runs to go (approx.) :              1    Log(Levenberg)        0
  CPU time used [sec]         :           0.25    for last step      0.25
+cp: no se puede efectuar `stat' sobre '1': No existe el archivo o el directorio
+cp: no se puede efectuar `stat' sobre 'TECPLOT': No existe el archivo o el directorio

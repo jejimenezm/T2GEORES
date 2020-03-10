@@ -14,13 +14,13 @@
                                                   ALL RIGHTS RESERVED
 
  ==================================================================================================================================
-                                          >>>>>>>>>>>>> 27-Feb-20  14:00 <<<<<<<<<<<<<
+                                          >>>>>>>>>>>>> 28-Feb-20  11:43 <<<<<<<<<<<<<
  ==================================================================================================================================
  iTOUGH2 RUN NO.               :    1
  iTOUGH2 INPUT FILE            :  fit2
  TOUGH2 INPUT FILE             :  t2
  WORKING DIRECTORY             :  /home/erick/Reservorios/T2RES/model/t2
- TEMPORARY DIRECTORY           :  /home/erick/it2_4606
+ TEMPORARY DIRECTORY           :  /home/erick/it2_27341
  EQUATION OF STATE MODULE NO.  :  1 - Pure and traced water in liquid, vapor, and two-phase state
  COMPONENTS                    :  WATER     TRACER    HEAT                                    
  PHASES                        :  VAPOR     LIQUID              
@@ -47,6 +47,11 @@
  TIMES [sec]                                         
  -----------
   0.0000000E+00
+
+ RESTART TIMES [sec]
+ -------------------
+  0.3000000E+03
+ 
 
 
  ----------------------------------------------------------------------------------------------------------------------------------
@@ -101,7 +106,7 @@
  Executable                                      : /home/erick/itough2/Executable/itough2_1.erick-ws
 
 
- --- End of iTOUGH2 input job:   22 lines read,    0.25 CPU-seconds used
+ --- End of iTOUGH2 input job:   24 lines read,    0.25 CPU-seconds used
 
 
  **********************************************************************************************************************************
@@ -117,7 +122,7 @@
  ----------------------------------------------------------------------------------------------------------------------------------
  ITER TOUGH2 OBJ FUNC. MAX. RESID. EQU.
 
- ****  MESSAGE  *****     1: Assumed steady state (IQIT= 0). Time = 0.30282E+10 [sec]. Start transient run now.                                                        
+ ****  MESSAGE  *****     1: Assumed steady state (IQIT= 0). Time = 0.30284E+10 [sec]. Start transient run now.                                                        
 
  >>>>>  Forward run terminated at simulation time  0.00000000E+00 [sec] <<<<<
 
@@ -194,7 +199,7 @@
                                                                              A PRIORI    MARGINAL      C/M    OUTPUT   OBJ. FUNC.
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- ---  1190th iTOUGH2 simulation job stopped abnormally on 27-Feb-20  14:08 ---  CPU time used =     454.95 sec.
+ ---  1191st iTOUGH2 simulation job stopped abnormally on 28-Feb-20  11:50 ---  CPU time used =     453.71 sec.
 
 
      Error  >> Subroutine <<  Message
