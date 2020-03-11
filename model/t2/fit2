@@ -3,15 +3,16 @@ estado natural CGA
 > OBSERVATION
 	>> STEADY-STATE at TIME : 1
                        0
+
 	>> RESTART TIME : 1 with NEW save file
                     	300
   <<
 
-> computation
+> COMPUTATION
 	>> OUTPUT
-		>>> FORMAT contains : PLOPO
+		>>> FORMAT contains : COLUMN
 			PRINTOUT : 9
-			PLOTFILE: TECPLOT
+			PLOTFILE: COLUMN
 			PLOTTING: 1
 		<<<
 

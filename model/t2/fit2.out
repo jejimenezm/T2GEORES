@@ -14,13 +14,13 @@
                                                   ALL RIGHTS RESERVED
 
  ==================================================================================================================================
-                                          >>>>>>>>>>>>> 28-Feb-20  11:43 <<<<<<<<<<<<<
+                                          >>>>>>>>>>>>> 10-Mar-20  16:54 <<<<<<<<<<<<<
  ==================================================================================================================================
  iTOUGH2 RUN NO.               :    1
  iTOUGH2 INPUT FILE            :  fit2
  TOUGH2 INPUT FILE             :  t2
  WORKING DIRECTORY             :  /home/erick/Reservorios/T2RES/model/t2
- TEMPORARY DIRECTORY           :  /home/erick/it2_27341
+ TEMPORARY DIRECTORY           :  /home/erick/it2_13750
  EQUATION OF STATE MODULE NO.  :  1 - Pure and traced water in liquid, vapor, and two-phase state
  COMPONENTS                    :  WATER     TRACER    HEAT                                    
  PHASES                        :  VAPOR     LIQUID              
@@ -90,7 +90,7 @@
  Broyden rank-one update of Jacobian             :                             0
  Increment factor for computing derivatives      :                   0.10000E-01
  Variance for error analysis                     :                  a posteriori
- Format of plotfile                              :                    PLOPO (Km)
+ Format of plotfile                              :                       Columns
  Objective Function                              :                 Least-Squares
  Steady-State Simulation
 
@@ -106,7 +106,7 @@
  Executable                                      : /home/erick/itough2/Executable/itough2_1.erick-ws
 
 
- --- End of iTOUGH2 input job:   24 lines read,    0.25 CPU-seconds used
+ --- End of iTOUGH2 input job:   25 lines read,    0.25 CPU-seconds used
 
 
  **********************************************************************************************************************************
@@ -122,14 +122,14 @@
  ----------------------------------------------------------------------------------------------------------------------------------
  ITER TOUGH2 OBJ FUNC. MAX. RESID. EQU.
 
- ****  MESSAGE  *****     1: Assumed steady state (IQIT= 0). Time = 0.30284E+10 [sec]. Start transient run now.                                                        
+ ****  MESSAGE  *****     1: Assumed steady state (IQIT= 0). Time = 0.64307E+12 [sec]. Start transient run now.                                                        
 
- >>>>>  Forward run terminated at simulation time  0.00000000E+00 [sec] <<<<<
+ >>>>>  Forward run terminated at simulation time  0.32770000E+12 [sec] <<<<<
 
 
  *****  ERROR  *****
  * TOUGH2 terminated prematurely!
- * Simulation time 0.00000000E+00 [sec] was too short, i.e.,
+ * Simulation time 0.32770000E+12 [sec] was too short, i.e.,
  * run did not reach time of last calibration point at 0.10000000E+51 [sec]!
  *****  ERROR  *****
 
@@ -199,7 +199,7 @@
                                                                              A PRIORI    MARGINAL      C/M    OUTPUT   OBJ. FUNC.
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- ---  1191st iTOUGH2 simulation job stopped abnormally on 28-Feb-20  11:50 ---  CPU time used =     453.71 sec.
+ ---  1200th iTOUGH2 simulation job stopped abnormally on 10-Mar-20  16:54 ---  CPU time used =      15.51 sec.
 
 
      Error  >> Subroutine <<  Message
