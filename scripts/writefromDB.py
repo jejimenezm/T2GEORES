@@ -68,7 +68,6 @@ non_selected_PT='AH-4'
 con=psycopg2.connect(dbname='GMS', host='10.0.16.5',port=5432, user='andrea')
 cur=con.cursor()
 
-
 def write_survey_to_txt_from_GMS(wells,cur):
 	for well_name in wells:
 		q_geometry="""SELECT "fProfundidadMD","fIncrementoNorte",\

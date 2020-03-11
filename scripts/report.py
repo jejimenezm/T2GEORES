@@ -378,7 +378,6 @@ def plot_all_layer():
 	for layer in layer_coor:
 		print_layer_from_json(layer,'cubic',1000,1000,save=True,show=False,print_points=True,print_eleme_name=True,plot_type="P")
 
-
 plot_all_layer()
 
 name='AH-34A'
