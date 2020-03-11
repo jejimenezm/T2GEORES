@@ -230,121 +230,69 @@ def image_save_all_plots(db_path,wells,typePT):
 
 	fig.savefig('../output/PT/images/T_all.png') 
 
-def extract_json_from_t2out():
-	elemefile=open("../mesh/from_amesh/eleme","r")
+def print_layer_from_json(layer,method,ngridx,ngridy,save,show,print_points,print_eleme_name,variable_to_plot,source,print_mesh):
 
-	eleme_dict={}
-	for line in elemefile:
-		if len(line.split(" "))!=1:
-			eleme_dict[line.split(" ")[0].rstrip()]=[float(line.split(" ")[-3].rstrip()),
-													float(line.split(" ")[-2].rstrip()),
-													float(line.split(" ")[-1].rstrip())]
-	elemefile.close()
+	variables_to_plot_t2={"P":4,
+						   "T":5,
+						   "SG":6,
+						   "SW":7,
+						   "X1":8,
+						   "X2":9,
+						   "PCAP":10,
+						   "DG":11,
+						   "DW":12}
 
-	last=""
-	t2file=open("../model/t2/t2.out","r")
-	cnt=0
-	t2string=[]
-	for linet2 in t2file:
-		cnt+=1
-		t2string.append(linet2.rstrip())
-		if "OUTPUT DATA AFTER" in linet2.rstrip():
-			last=linet2.rstrip().split(",")
-			line=cnt
-	t2file.close()
+	variables_to_plot_sav={"P":3,
+	                       "T":4}
 
-	high_iteration=[int(s) for s in last[0].split() if s.isdigit()]
+	if source=="sav":
+		index=variables_to_plot_sav[variable_to_plot]
+		file="../output/PT/json/PT_json_from_sav.txt"
+	elif source=="t2":
+		index=variables_to_plot_t2[variable_to_plot]
+		file="../output/PT/json/PT_json.txt"
 
-	for elementx in eleme_dict:
-		cnt2=0
-		for lineout in t2string[line+cnt2:-1]:
-			if " @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"==lineout:
-				cnt2+=1
-			elif cnt2>2:
-				break
-			elif elementx in lineout:
-				lineselect=lineout.split("  ")
-				if len(lineselect)==13:
-					eleme_dict[elementx].extend([float(lineselect[2]),float(lineselect[3]),float(lineselect[4]),
-												 float(lineselect[5]),float(lineselect[6]),float(lineselect[7]),
-												 float(lineselect[8]),float(lineselect[9]),float(lineselect[11]),float(lineselect[12])])
-				else:
-					eleme_dict[elementx].extend([float(lineselect[1]),float(lineselect[2]),float(lineselect[3]),
-								 float(lineselect[4]),float(lineselect[5]),float(lineselect[6]),
-								 float(lineselect[7]),float(lineselect[8]),float(lineselect[10]),float(lineselect[11])])
-				break
-
-
-	with open("../output/PT/json/PT_json.txt",'w') as json_file:
-	  json.dump(eleme_dict, json_file,sort_keys=True, indent=1)
-
-def print_layer_from_json(layer,method,ngridx,ngridy,save,show,print_points,print_eleme_name,plot_type):
-
-	if os.path.isfile("../output/PT/json/PT_json.txt"):
-		with open("../output/PT/json/PT_json.txt") as f:
+	if os.path.isfile(file):
+		with open(file,"r") as f:
 	  		data=json.load(f)
+	  	
 	  	element_name=[]
 		x=[]
 		y=[]
 		z=[]
-		P=[]
-		T=[]
+		variable=[]
 
-		Tmax=0
-		Tmin=1000
-		Pmax=0
-		Pmin=100E8
+		variable_min=100E8
+		variable_max=0
 
 		for elementx in data:
-			if Tmax<data[elementx][5]:
-				Tmax=data[elementx][5]
+			if variable_max<data[elementx][index]:
+				variable_max=data[elementx][index]
 
-			if Tmin>data[elementx][5]:
-				Tmin=data[elementx][5]
-
-			if Pmax<data[elementx][4]:
-				Pmax=data[elementx][4]
-
-			if Pmin>data[elementx][4]:
-				Pmin=data[elementx][4]
+			if variable_min>data[elementx][index]:
+				variable_min=data[elementx][index]
 
 			if layer==elementx[0]:
 				x.append(data[elementx][0])
 				y.append(data[elementx][1])
 				z.append(data[elementx][2])
-				P.append(data[elementx][4])
-				T.append(data[elementx][5])
+				variable.append(data[elementx][index])
 				element_name.append(elementx)
 
+		variable_levels=np.linspace(variable_min,variable_max,num=10)
 
-		T_levels=np.linspace(Tmin,Tmax,num=10)
-
-		P_levels=np.linspace(Pmin,Pmax,num=10)
-
-		#ngridx=1000
-		#ngridy=1000
 		xi = np.linspace(min(x), max(x), ngridx)
 		yi = np.linspace(min(y), max(y), ngridy)
 
-		if plot_type=="T":
-			zi = griddata((x, y), T, (xi[None,:], yi[:,None]), method=method)
-			levels=T_levels
-		elif plot_type=="P":
-			zi = griddata((x, y), P, (xi[None,:], yi[:,None]), method=method)
-			levels=P_levels
-
+		zi = griddata((x, y), variable, (xi[None,:], yi[:,None]), method=method)
 
 		fig=plt.figure(figsize=(10,8))
 
 		ax1=fig.add_subplot(1,1,1)
 
+		ax1.contour(xi,yi,zi,15,linewidths=0.5,colors='k',levels=variable_levels)
 
-		#lev=[230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257]
-
-		ax1.contour(xi,yi,zi,15,linewidths=0.5,colors='k',levels=levels)
-		#ax1.contour(xi,yi,zi,15,linewidths=0.5,colors='k')
-		cntr3 = ax1.contourf(xi,yi,zi,15,cmap="jet",levels=levels)
-		#cntr3 = ax1.contourf(xi,yi,zi,15,cmap="jet",levels=lev)
+		cntr3 = ax1.contourf(xi,yi,zi,15,cmap="jet",levels=variable_levels)
 
 		fig.colorbar(cntr3,ax=ax1)
 
@@ -355,20 +303,27 @@ def print_layer_from_json(layer,method,ngridx,ngridy,save,show,print_points,prin
 			for n in range(len(element_name)):
 				ax1.text(x[n],y[n], element_name[n], color='k',fontsize=4)
 
+		if print_mesh:
+			mesh_segment=open("../mesh/to_steinar/segmt","r")
+			lines_x=[]
+			lines_y=[]
+			for line in mesh_segment:
+				lines_x.append([float(line[0:15]),float(line[30:45])])
+				lines_y.append([float(line[15:30]),float(line[45:60])])
+
+			ax1.plot(np.array(lines_x).T,np.array(lines_y).T,'-k',linewidth=1,alpha=0.75)
+
 		ax1.tick_params(axis='both', which='major', labelsize=6,pad=1)
 		ax1.set_ylabel('North [m]',fontsize = 8)
 		ax1.set_xlabel('East [m]',fontsize=8)
 		ax1.set_title("Layer %s"%layer,fontsize=10)
 
 		if save:
-			if plot_type=="T":
-				fig.savefig("../output/PT/images/layer_%s_T.png"%layer) 
-			elif plot_type=="P":
-				fig.savefig("../output/PT/images/layer_%s_P.png"%layer) 
+			fig.savefig("../output/PT/images/layer_%s_%s.png"%(layer,variable_to_plot)) 
 		if show:
 			plt.show()
 	else:
-		print "The PT_json file does not exist, run extract_json_from_t2out first"
+		print "The PT_json file does not exist, run extract_json_from_t2out  or from_sav_to_json from output.py first"
 
 def plot_all_layer():
 	layer_coor=[]
@@ -376,9 +331,11 @@ def plot_all_layer():
 		layer_coor.append(layers[l][0])
 
 	for layer in layer_coor:
-		print_layer_from_json(layer,'cubic',1000,1000,save=True,show=False,print_points=True,print_eleme_name=True,plot_type="P")
+		print_layer_from_json(layer,'cubic',1000,1000,save=True,show=False,print_points=True,print_eleme_name=False,\
+			variable_to_plot="T",source="t2",print_mesh=False)
 
 plot_all_layer()
+
 
 name='AH-34A'
 db_path='../input/model.db'

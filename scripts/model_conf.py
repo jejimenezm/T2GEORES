@@ -105,7 +105,7 @@ param=[{'empty':[1]} for i in range(1,6)]
 
 param[0]={1:['NOITE',None,'>2s'],
 			2:['KDATA',20,'>2s'],
-			3:['MCYC',9999,'>4s'],
+			3:['MCYC',2999,'>4s'],
 			4:['MSEC',None,'>4s'],
 			5:['MCYPR',5000,'>4s'],
 			6:['MOP1',1,'>1s'],

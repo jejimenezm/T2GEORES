@@ -100,6 +100,24 @@ def db_creation(db_path):
 						 [middle] REAL,
 						 [bottom] REAL)''')
 
+		#Create table - PT out
+		if checktable('t2PTout',c)==0:
+			c.execute('''CREATE TABLE  t2PTout
+						 ([blockcorr] TEXT PRIMARY KEY,
+						 [x] REAL,
+						 [y] REAL,
+						 [z] REAL,
+						 [index] REAL,
+						 [P] REAL,
+						 [T] REAL,
+						 [SG] REAL,
+						 [SW] REAL,
+						 [X1] REAL,
+						 [X2] REAL,
+						 [PCAP] REAL,
+						 [DG] REAL,
+						 [DW] REAL)''')
+
 		conn.commit()
 		conn.close()
 
@@ -435,7 +453,7 @@ db_path='../input/model.db'
 source_txt='../input/'
 
 
-"""
+
 db_creation(db_path)
 
 insert_mh_to_sqlite(db_path,source_txt)
@@ -449,7 +467,7 @@ insert_cooling_to_sqlite(db_path,source_txt)
 insert_wellblock_to_sqlite(db_path,source_txt,wells)
 
 insert_layers_to_sqlite(db_path,source_txt)
-"""
+
 
 
 #sqlite_to_json(db_path,source_txt)
