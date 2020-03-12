@@ -233,6 +233,4 @@ def write_geners_to_txt_and_sqlite(db_path,geners):
 db_path='../input/model.db'
 
 #write_gener_from_sqlite(db_path,wells)
-write_geners_to_txt_and_sqlite(db_path,geners)
-
-
+#write_geners_to_txt_and_sqlite(db_path,geners)

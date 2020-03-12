@@ -9,9 +9,11 @@ import math
 import matplotlib.gridspec as gridspec
 from scipy.interpolate import griddata
 import json
+from matplotlib.backends.backend_pdf import PdfPages
+import datetime
 
 
-def plot_compare_one(db_path,name):
+def plot_compare_one(db_path,name,inpath):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
@@ -36,7 +38,7 @@ def plot_compare_one(db_path,name):
 
 	#Model
 
-	in_file="../output/PT/txt/%s_PT.dat"%name
+	in_file="/%s_PT.dat"%(inpath,name)
 
 	if os.path.isfile(in_file):
 
@@ -279,6 +281,7 @@ def print_layer_from_json(layer,method,ngridx,ngridy,save,show,print_points,prin
 				variable.append(data[elementx][index])
 				element_name.append(elementx)
 
+
 		variable_levels=np.linspace(variable_min,variable_max,num=10)
 
 		xi = np.linspace(min(x), max(x), ngridx)
@@ -290,9 +293,13 @@ def print_layer_from_json(layer,method,ngridx,ngridy,save,show,print_points,prin
 
 		ax1=fig.add_subplot(1,1,1)
 
-		ax1.contour(xi,yi,zi,15,linewidths=0.5,colors='k',levels=variable_levels)
+		if variable_levels[0]!=variable_levels[-1]:
+			ax1.contour(xi,yi,zi,15,linewidths=0.5,colors='k',levels=variable_levels)
 
-		cntr3 = ax1.contourf(xi,yi,zi,15,cmap="jet",levels=variable_levels)
+			cntr3 = ax1.contourf(xi,yi,zi,15,cmap="jet",levels=variable_levels)
+		else:
+			ax1.contour(xi,yi,zi,15,linewidths=0.5,colors='k')
+			cntr3 = ax1.contourf(xi,yi,zi,15,cmap="jet")
 
 		fig.colorbar(cntr3,ax=ax1)
 
@@ -325,6 +332,166 @@ def print_layer_from_json(layer,method,ngridx,ngridy,save,show,print_points,prin
 	else:
 		print "The PT_json file does not exist, run extract_json_from_t2out  or from_sav_to_json from output.py first"
 
+def plot_compare_PT_curr_prev(db_path,name,inpath,previnpath,show):
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	fontsizex=10
+
+	fontsize_layer=8
+
+	#Define plot
+
+	fig= plt.figure(figsize=(8.27, 11.69), dpi=100)
+
+	axT=fig.add_subplot(121)
+
+	axP=fig.add_subplot(122)
+
+	#Real data
+	data_PT_real=pd.read_sql_query("SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well='%s';"%name,conn)
+
+
+	x_T,y_T,z_T,var_T=t2r.MD_to_TVD_one_var_array(name,data_PT_real['Temperature'].values,data_PT_real['MeasuredDepth'].values,100)
+
+	ln1T=axT.plot(var_T,z_T,'-r',linewidth=1,label='Measured')
+
+	x_P,y_P,z_P,var_P=t2r.MD_to_TVD_one_var_array(name,data_PT_real['Pressure'].values,data_PT_real['MeasuredDepth'].values,100)
+
+	ln1P=axP.plot(var_P,z_P,'-b',linewidth=1,label='Measured')
+
+	#Model
+
+	in_file="%s/%s_PT.dat"%(inpath,name)
+
+	prev_in_file="%s/%s_PT.dat"%(previnpath,name)
+
+	if os.path.isfile(in_file):
+
+		data=pd.read_csv(in_file)
+
+		blk_num=data['ELEM'].values
+
+		TVD_elem=[0 for n in range(len(blk_num))]
+		TVD_elem_top=[0 for n in range(len(blk_num))]
+
+		for n in range(len(blk_num)):
+			TVD_elem[n]=float(pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['middle'])
+			TVD_elem_top[n]=float(pd.read_sql_query("SELECT top FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['top'])
+
+		ln2T=axT.plot(data['T'],TVD_elem,'+r',linewidth=1,label='Calculated')
+
+		ln2P=axP.plot(data['P']/1E5,TVD_elem,'+b',linewidth=1,label='Calculated')
+
+		ax2P = axP.twinx()
+
+		layer_corr=[data['ELEM'].values[n][0] for n in range(len(blk_num))]
+
+		ax2P.set_yticks(TVD_elem_top,minor=True)
+
+		ax2P.set_yticks(TVD_elem,minor=False)
+
+		ax2P.tick_params(axis='y',which='major',length=0)
+
+		ax2P.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.1, lw=0.5)
+
+		ax2P.set_yticklabels(layer_corr,fontsize=fontsize_layer)
+
+		ax2P.set_ylim(axP.get_ylim())
+
+
+		ax2T = axT.twinx()
+
+		ax2T.set_yticks(TVD_elem_top,minor=True)
+
+		ax2T.set_yticks(TVD_elem,minor=False)
+		
+		ax2T.tick_params(axis='y',which='major',length=0)
+
+		ax2T.set_yticklabels(layer_corr,fontsize=fontsize_layer)
+
+		ax2T.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.1, lw=0.5)
+
+		ax2T.set_ylim(axT.get_ylim())
+
+	if os.path.isfile(prev_in_file):
+
+		data=pd.read_csv(prev_in_file)
+
+		blk_num=data['ELEM'].values
+
+		TVD_elem=[0 for n in range(len(blk_num))]
+		TVD_elem_top=[0 for n in range(len(blk_num))]
+
+		for n in range(len(blk_num)):
+			TVD_elem[n]=float(pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['middle'])
+			TVD_elem_top[n]=float(pd.read_sql_query("SELECT top FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['top'])
+
+		ln3T=axT.plot(data['T'],TVD_elem,'.',linewidth=1,label='Calculated previous', color="orangered")
+
+		ln3P=axP.plot(data['P']/1E5,TVD_elem,'.',linewidth=1,label='Calculated previous', color="indigo")
+
+		lnsT = ln1T+ln2T+ln3T
+
+		labsT = [l.get_label() for l in lnsT]
+
+		axT.legend(lnsT, labsT, loc='upper right', fontsize=fontsizex)
+
+		axT.set_xlabel('Temperature [C]',fontsize=fontsizex)
+
+		axT.xaxis.set_label_coords(0.5,1.1)
+
+		axT.xaxis.tick_top()
+
+		axT.set_ylabel('m.a.s.l.',fontsize = fontsizex)
+
+		axT.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
+		
+
+		lnsP = ln1P+ln2P+ln3P
+
+		labsP = [l.get_label() for l in lnsP]
+
+		axP.legend(lnsP, labsP, loc='upper right', fontsize=fontsizex)
+		
+		axP.set_xlabel('Pressure [bar]',fontsize=fontsizex)
+
+		axP.xaxis.set_label_coords(0.5,1.1)
+
+		axP.xaxis.tick_top()
+
+		axP.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
+
+		fig.suptitle("%s"%name, fontsize=fontsizex)
+	
+	if  os.path.isfile(prev_in_file) and  os.path.isfile(in_file):
+		fig.savefig('../calib/PT/images/PT_%s.png'%name) 
+
+	if show:
+		plt.show()
+
+	return fig
+
+def compare_runs_PT(wells,db_path):
+
+	pdf_pages=PdfPages('../calib/PT/run_'+str(datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S'))+'.pdf')
+	for name in sorted(wells):
+		print name
+		fig=plot_compare_PT_curr_prev(db_path,name,"../output/PT/txt","../output/PT/txt/prev",show=False)
+		pdf_pages.savefig(fig)
+
+	d = pdf_pages.infodict()
+	d['Title'] = 'CGA Calibration Model Plots'
+	d['Author'] = 'O&MReservorios'
+	d['Subject'] = 'TEST'
+	d['Keywords'] = 'Model, TOUGH2'
+	d['CreationDate'] = datetime.datetime.today()
+	d['ModDate'] = datetime.datetime.today()
+
+	# Write the PDF document to the disk
+	pdf_pages.close()
+
 def plot_all_layer():
 	layer_coor=[]
 	for l in layers:
@@ -332,15 +499,18 @@ def plot_all_layer():
 
 	for layer in layer_coor:
 		print_layer_from_json(layer,'cubic',1000,1000,save=True,show=False,print_points=True,print_eleme_name=False,\
-			variable_to_plot="T",source="t2",print_mesh=False)
+			variable_to_plot="P",source="t2",print_mesh=False)
 
 plot_all_layer()
 
-
-name='AH-34A'
+name='AH-34'
 db_path='../input/model.db'
+inpath="../output/PT/txt"
+
+#compare_runs_PT(wells,db_path)
+
+#plot_compare_one(db_path,name,inpath)
 """
-plot_compare_one(db_path,name)
 typePT='T'
 image_save_all_plots(db_path,wells,typePT) #typePT, could be T or P
 """

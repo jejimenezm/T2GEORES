@@ -67,6 +67,7 @@ plot_centers=1  #Plot a point in on the center of the block
 
 filepath=''
 filename='../input/well_feedzone.csv'
+db_path='../input/model.db'
 
 toler=0.1
 
@@ -86,11 +87,11 @@ type_dis='corey'
 
 ref_date= datetime.datetime(1975,01,01)
 
-
+#'CH-1'
 wells=['CH-7BIS','AH-7','AH-1','AH-2','AH-34A',\
         'AH-5','AH-6','AH-34B','AH-8','AH-9',\
         'CH-9A','CH-9B','AH-30','AH-31','AH-32',\
-        'AH-34','AH-36','AH-4BIS','CH-1','CH-7',\
+        'AH-34','AH-36','AH-4BIS','CH-7',\
         'AH-18','AH-19','CH-8','AH-13','CH-D',\
         'AH-11','AH-16','AH-17','AH-14','AH-15',\
         'AH-35D','AH-35B','AH-35C','AH-35A','AH-16A',\
@@ -98,6 +99,8 @@ wells=['CH-7BIS','AH-7','AH-1','AH-2','AH-34A',\
         'AH-25','AH-24','AH-23','AH-22','AH-21','AH-20',\
         'AH-29','AH-28']
 
+
+type_run='natural'
 
 #Define parameters
 
@@ -231,7 +234,7 @@ times[1]={1:['TIS1',10,'>10.3E'],
 
 geners=[{'empty':[1]} for i in range(1,50)]
 
-geners[1]={1:['block','AA110','>5s'],
+geners[1]={1:['block','NA452','>5s'],
 		2:['SL','GEN','>3s'],
 		3:['NS',10,'>2s'],
 		4:['NSEQ',None,'>5s'],
@@ -241,21 +244,6 @@ geners[1]={1:['block','AA110','>5s'],
 		8:['X',None,'>5s'],
 		9:['TYPE','MASS','>4s'],
 		10:['ITAB','s','>1s'],
-		11:['GX',0.1,'>10.3E'],
-		12:['EX',1000E3,'>10.3E'],
-		13:['HG',30,'>10.3E']}
-
-geners[2]={1:['block','AA111','>5s'],
-		2:['SL','GEN','>3s'],
-		3:['NS',20,'>2s'],
-		4:['NSEQ',None,'>5s'],
-		5:['NADD',None,'>5s'],
-		6:['NADS',None,'>5s'],
-		7:['LTAB',1,'>5s'],
-		8:['X',None,'>5s'],
-		9:['TYPE','MASS','>4s'],
-		10:['ITAB','s','>1s'],
-		11:['GX',0.1,'>10.3E'],
-		12:['EX',1000E3,'>10.3E'],
-		13:['HG',30,'>10.3E']}
-
+		11:['GX',0.5,'>10.3E'],
+		12:['EX',1200E3,'>10.3E'],
+		13:['HG',None,'>10.3E']}

@@ -1,0 +1,208 @@
+                                        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                        @                                             @
+                                        @   @  @@@@@   @@   @  @   @@@  @  @   @@@@   @
+                                        @        @    @  @  @  @  @     @  @  @    @  @
+                                        @   @    @    @  @  @  @  @ @@  @@@@     @@   @
+                                        @   @    @    @  @  @  @  @  @  @  @    @@    @
+                                        @   @    @     @@    @@    @@@  @  @  @@@@@@  @
+                                        @                                             @
+                                        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+                                      iTOUGH2 V6.4 (JANUARY, 2009) FOR LINUX, S. FINSTERLE 
+                                COPYRIGHT (C) 2007, THE REGENTS OF THE UNIVERSITY OF CALIFORNIA
+                                     THROUGH LAWRENCE BERKELEY NATIONAL LABORATORY
+                                                  ALL RIGHTS RESERVED
+
+ ==================================================================================================================================
+                                          >>>>>>>>>>>>> 12-Mar-20  11:53 <<<<<<<<<<<<<
+ ==================================================================================================================================
+ iTOUGH2 RUN NO.               :    1
+ iTOUGH2 INPUT FILE            :  fit2
+ TOUGH2 INPUT FILE             :  t2
+ WORKING DIRECTORY             :  /home/erick/Reservorios/T2RES/model/t2
+ TEMPORARY DIRECTORY           :  /home/erick/it2_27847
+ EQUATION OF STATE MODULE NO.  :  1 - Pure and traced water in liquid, vapor, and two-phase state
+ COMPONENTS                    :  WATER     TRACER    HEAT                                    
+ PHASES                        :  VAPOR     LIQUID              
+ TOUGH2 TITLE                  :  *Test runs                                                                      
+ ==================================================================================================================================
+
+ **********************************************************************************************************************************
+                                                              INPUT
+ **********************************************************************************************************************************
+
+
+ PARAMETERS
+ ==========
+
+ ----------------------------------------------------------------------------------------------------------------------------------
+  # ID ANNOTATION       PARAMETER TYPE   V/L/F  ROCKS    PRIOR INFO.     STD. DEV. LOWER BOUND  UPPER BOUND    MAX. STEP  PAR
+ ----------------------------------------------------------------------------------------------------------------------------------
+ ----------------------------------------------------------------------------------------------------------------------------------
+
+
+ OBSERVATIONS
+ ============
+
+ TIMES [sec]                                         
+ -----------
+  0.0000000E+00
+
+ RESTART TIMES [sec]
+ -------------------
+  0.3000000E+03
+ 
+
+
+ ----------------------------------------------------------------------------------------------------------------------------------
+ SET ANNOTATION       DATATYPE         ELEME/CONNE       STD. DEV. MIN. TIME MAX. TIME LOG(V/M/S) DATAPOINTS   FACTOR  IOBS
+ ----------------------------------------------------------------------------------------------------------------------------------
+ ----------------------------------------------------------------------------------------------------------------------------------
+
+
+ --------------------------------------------------
+ Number of datasets                    :    0
+ Number of calibration times           :    1                                          
+ Number of parameters                  :    0
+ Number of parameters with prior info. :          0
+ Number of regularization terms        :          0
+                                              -----
+ Total number of observations          :          0                                    
+                                              =====
+ Degree of freedom                     :    0
+ --------------------------------------------------
+
+
+ COMPUTATIONAL PARAMETERS
+ ========================
+
+ Application                                     :                   Forward Run                                                  
+ Maximum number of iTOUGH2 iterations            :                             1
+ Maximum number of TOUGH2 simulations            :                             1
+ Maximum number of uphill steps                  :                            10
+ Maximum size of scaled parameter step           :                     unlimited
+ Initial Levenberg parameter                     :                   0.10000E+01
+ Marquardt parameter                             :                   0.10000E+02
+ Finite difference quotient for Jacobian         :                       forward
+ Diagonal of Tikhonov matrix                     :                         (N/A)
+ Automatic FD update of Jacobian                 :                             0
+ Skip iterations with FD update of Jacobian      :                             0
+ Broyden rank-one update of Jacobian             :                             0
+ Increment factor for computing derivatives      :                   0.10000E-01
+ Variance for error analysis                     :                  a posteriori
+ Format of plotfile                              :                       Columns
+ Objective Function                              :                 Least-Squares
+ Steady-State Simulation
+
+
+ COMPUTER SYSTEM
+ ===============
+
+ Machine type                                    : Linux               
+ UNIX script file name                           : /home/erick/bin/itough2                                                         
+ UNIX command line arguments                     : fit2 t2 1
+ Host name                                       : erick-ws
+ User name                                       : erick
+ Executable                                      : /home/erick/itough2/Executable/itough2_1.erick-ws
+
+
+ --- End of iTOUGH2 input job:   25 lines read,    0.62 CPU-seconds used
+
+
+ **********************************************************************************************************************************
+                                                              OUTPUT
+ **********************************************************************************************************************************
+
+
+ SOLVE DIRECT PROBLEM                                        
+
+ I  = NEW ITERATION        J  = JACOBIAN           S  = STEP      U  = UNSUCCESSFUL STEP
+ PS = PARAMETER SELECTION  PU = PARAMETER UPDATE   B  = BOUNDS    M  = MESSAGE
+
+ ----------------------------------------------------------------------------------------------------------------------------------
+ ITER TOUGH2 OBJ FUNC. MAX. RESID. EQU.
+
+ ****  MESSAGE  *****     1: Assumed steady state (IQIT= 0). Time = 0.00000E+00 [sec]. Start transient run now.                                                        
+
+ >>>>>  Forward run terminated at simulation time  0.00000000E+00 [sec] <<<<<
+
+
+ *****  ERROR  *****
+ * TOUGH2 terminated prematurely!
+ * Simulation time 0.00000000E+00 [sec] was too short, i.e.,
+ * run did not reach time of last calibration point at 0.10000000E+51 [sec]!
+ *****  ERROR  *****
+
+
+ **********************************************************************************************************************************
+                                                         RESIDUAL ANALYSIS
+ **********************************************************************************************************************************
+
+ RESIDUAL : Measured - computed
+ C.O.F.   : Relative contribution to final objective function
+ STD. DEV.: A posteriori standard deviation of computed system response
+ Yi       : Local reliability or influence. Observations with Yi < 0.25 are poorly controlled.
+ Wi       : Normalized residual. If abs(Wi) > u(0.95) = 1.96 observation is potential outlier.
+
+ ----------------------------------------------------------------------------------------------------------------------------------
+   #  OBSERVATION   AT TIME [sec]     MEASURED     COMPUTED     RESIDUAL       WEIGHT    C.O.F [%]    STD. DEV.      Yi        Wi
+ ----------------------------------------------------------------------------------------------------------------------------------
+
+
+ Residual Plots
+ --------------
+
+
+ Objective Function                                                                                                         C.O.F.
+ ------------------
+ Initial value of objective function     :     0.0000E+00                                                                    0.00 %
+ Minimum value of objective function     :     0.1000E+51                                                                  100.00 %
+
+
+ ==================================================================================================================================
+
+ MEAN     : Mean of residuals = bias
+ MEDIAN   : Median of residuals
+ STD. DEV.: Root mean squared deviation of residuals from bias
+ AVE. DEV.: Mean absolute deviation of residuals from bias
+ SKEWNESS : Degree of asymmetry of residuals around bias
+ KURTOSIS : Relative peakedness of distribution
+ B/S      : Ratio of bias and standard deviation
+ C.O.F.   : Relative contribution to final objective function
+
+ ==================================================================================================================================
+ DATASET               DATAPOINTS          MEAN      MEDIAN   STD. DEV.   AVE. DEV.    SKEWNESS    KURTOSIS         B/S      C.O.F.
+ ----------------------------------------------------------------------------------------------------------------------------------
+ PRIOR INFORMATION              0                                                                                            0.00 %
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ ALL RESIDUALS     [-]          0     0.100E+01   0.100E+01   0.000E+00   0.000E+00       0.000       0.000       0.000    100.00 %
+ ==================================================================================================================================
+
+
+ ==================================================================================================================================
+ DATATYPE              DATAPOINTS          MEAN      MEDIAN   STD. DEV.   AVE. DEV.    SKEWNESS    KURTOSIS         B/S      C.O.F.
+ ----------------------------------------------------------------------------------------------------------------------------------
+ PRIOR INFORMATION              0                                                                                            0.00 %
+ ==================================================================================================================================
+
+
+ Linear Regression Analysis of Calculated Versus Observed Data      Runs Statistics of Residuals
+
+ ================================================================   ===============================================================
+ DATASET               DATAPOINTS     INTERCEPT       SLOPE  CORR   RES+  RES-  RUNS  E[R]  COMMENT ON RUNS STATISTICS
+ ----------------------------------------------------------------   ---------------------------------------------------------------
+ ================================================================   ===============================================================
+
+
+ ?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ESTIMATED PARAMETER  V/L/F   ROCKS   PAR  INITIAL GUESS    BEST ESTIMATE            STANDARD DEVIATIONS        SENSITIVITY
+                                                                             A PRIORI    MARGINAL      C/M    OUTPUT   OBJ. FUNC.
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ ---  1208th iTOUGH2 simulation job stopped abnormally on 12-Mar-20  11:53 ---  CPU time used =      21.80 sec.
+
+
+     Error  >> Subroutine <<  Message
+      5290  >>> OBSERVAT <<<  ERROR                --> Incomplete TOUGH2 simulation  
+
+ ---     1 error(s) and  0 warning(s) detected

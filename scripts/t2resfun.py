@@ -470,10 +470,10 @@ def conne_from_steinar_to_t2():
 		with open(file_source_dir+'/'+file_in) as rock_file:
 			for line in rock_file.readlines()[1:]:
 				linex=line.split()
-				if float(linex[8])>0:
-					string+="%10s%20s%10.3E%10.3E%10.3E%10.2f\n"%(linex[0],int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),-1*float(linex[8]))
-				else:
+				if float(linex[8])<=0:
 					string+="%10s%20s%10.3E%10.3E%10.3E%10.2f\n"%(linex[0],int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),float(linex[8]))
+				else:
+					string+="%10s%20s%10.3E%10.3E%10.3E%10.2f\n"%(linex[0],int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),-1*float(linex[8]))
 		file=open(file_output_dir+'/'+file_out,'w')
 		file.write(string)
 		file.close()
@@ -485,7 +485,6 @@ def merge_eleme_and_in_to_t2():
 	in_file="../mesh/to_steinar/in"
 	eleme_file="../mesh/to_steinar/eleme"
 
-
 	if os.path.isfile(in_file) and os.path.isfile(eleme_file):
 		string="ELEME----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 		data_in=pd.read_csv(in_file,delim_whitespace=True,skiprows=7,header=None,names=['block','li','X','Y','Z','h'])
@@ -495,7 +494,14 @@ def merge_eleme_and_in_to_t2():
 
 		for n in range(len(data_eleme['block'])):
 			selection=data_in.loc[data_in['block']==data_eleme['block'][n]].values.tolist()
-			string+="%5s%10s%5s%10.3E%10s%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n]," ",data_eleme['rocktype'][n],data_eleme['vol'][n]," "," ",selection[0][2],selection[0][3],selection[0][4])
+			string+="%5s%10s%5s%10s%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n],\
+				                                                                      " ",\
+				                                                data_eleme['rocktype'][n],\
+				                                                                       " ",\
+				                                                                       " ",\
+				                                                           selection[0][2],\
+				                                                           selection[0][3],\
+				                                                           selection[0][4])
 
 		file=open('../model/t2/sources/ELEME','w')
 		file.write(string)
@@ -736,7 +742,7 @@ db_path='../input/model.db'
 
 ###NATURAL STATE
 
-type_run='natural'
+
 
 #FROM txt2sqlite.py
 #insert_wellblock_to_sqlite(db_path,source_txt,wells)
@@ -750,7 +756,7 @@ type_run='natural'
 #FROM t2gener.py
 #write_gener_from_sqlite(db_path,wells)
 
-t2_input_creation(param,multi,solver,recap,type_run,title)
+#t2_input_creation(param,multi,solver,recap,type_run,title)
 
 #PRODUCTION STATE
 

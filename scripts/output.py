@@ -37,17 +37,18 @@ def write_PT_from_t2output(db_path):
 	conn.close()
 
 def extract_json_from_t2out():
-	if os.path.isfile("../mesh/from_amesh/eleme"):
-		elemefile=open("../mesh/from_amesh/eleme","r")
+	if os.path.isfile("../mesh/to_steinar/in"):
+		elemefile=open("../mesh/to_steinar/in","r")
 	else:
-		return "Theres is not eleme file on mesh/from_amesh"
+		return "Theres is not in file on mesh/to_steinar"
 
 	eleme_dict={}
 	for line in elemefile:
-		if len(line.split(" "))!=1:
-			eleme_dict[line.split(" ")[0].rstrip()]=[float(line.split(" ")[-3].rstrip()),
-													float(line.split(" ")[-2].rstrip()),
-													float(line.split(" ")[-1].rstrip())]
+		if len(line.split())==6:
+			
+			eleme_dict[line.split()[0].rstrip()]=[float(line.split()[2].rstrip()),
+													float(line.split()[3].rstrip()),
+													float(line.split()[4].rstrip())]
 	elemefile.close()
 
 	last=""
@@ -93,14 +94,18 @@ def extract_json_from_t2out():
 
 def from_sav_to_json():
 
-	if os.path.isfile("../mesh/from_amesh/eleme"):
-		elemefile=open("../mesh/from_amesh/eleme","r")
+	if os.path.isfile("../mesh/to_steinar/in"):
+		elemefile=open("../mesh/to_steinar/in","r")
+	else:
+		return "Theres is not in file on mesh/to_steinar"
+
 	eleme_dict={}
 	for line in elemefile:
-		if len(line.split(" "))!=1:
-			eleme_dict[line.split(" ")[0].rstrip()]=[float(line.split(" ")[-3].rstrip()),
-													float(line.split(" ")[-2].rstrip()),
-													float(line.split(" ")[-1].rstrip())]
+		if len(line.split())==6:
+			
+			eleme_dict[line.split()[0].rstrip()]=[float(line.split()[2].rstrip()),
+													float(line.split()[3].rstrip()),
+													float(line.split()[4].rstrip())]
 	elemefile.close()
 
 	#Creates a string from .sav file
@@ -190,6 +195,7 @@ def PTjson_to_sqlite(source):
 
 	conn.close()
 
-#from_sav_to_json()
-PTjson_to_sqlite(source="t2")#source="sav",t2
-#write_PT_from_t2output(db_path)
+write_PT_from_t2output(db_path)
+extract_json_from_t2out()
+from_sav_to_json()
+#PTjson_to_sqlite(source="t2")#source="sav",t2

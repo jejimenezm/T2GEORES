@@ -1,5 +1,5 @@
  =========================================================================
- i T O U G H 2 _ 1  R U N  date: mar mar 10 16:54:35 CST 2020
+ i T O U G H 2 _ 1  R U N  date: jue mar 12 11:59:06 CST 2020
  =========================================================================
 
 Command submitted: /home/erick/bin/itough2 fit2 t2 1
@@ -153,9 +153,6 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       ELINDX   5.0      12 JULY      2002      NEIGHBOR ELEMENT INDEXING
       REASSN   4.4      17 JANUARY   2001      ESTABLISH THE SPARSITY PATTERN FOR LUBAND
       MTRXIN   4.4      17 JANUARY   2001      ROUTINE FOR Z-PREPROCESSING 
-      RELP     4.5cd    18 DECEMBER  2007      RELATIVE PERMEABILITIES
-      TSAT     1.0      14 MARCH     1991      SATURATION TEMPERATURE AS FUNCTION OF PRESSURE
-      VIS      1.0      22 JANUARY   1990      VISCOSITY OF LIQUID WATER AND VAPOR AS FUNCTION OF TEMPERATURE AND PRESSURE
       CONVER   6.4      20 FEBRUARY  2009      UPDATE PRIMARY VARIABLES AFTER CONVERGENCE IS ACHIEVED
       FGTAB    1.00     28 MAY       1998      TABULATE ELEMENT, CONNECTION, AND GENERATION DATA VS. TIME FOR PLOTTING
       OUT      5.0      12 JULY      2002      PRINT RESULTS FOR ELEMENTS, CONNECTIONS, AND SINKS/SOURCES
@@ -173,15 +170,15 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       S T A T U S   O F   i T O U G H 2   S I M U L A T I O N
  ==================================================================
 
- Date                        : 10-Mar-20  16:54
+ Date                        : 12-Mar-20  11:59
  iTOUGH2 file                : fit2
  TOUGH2 file                 : t2
  Working directory           : /home/erick/Reservorios/T2RES/model/t2
- Temporary directory         : /home/erick/it2_13750
+ Temporary directory         : /home/erick/it2_30558
  UNIX command line arguments : fit2 t2 1
  Comment                     : Input files read.                                                              
 
  Iterations completed        :              0    Iterations to go      1
  TOUGH2 runs completed       :              0    Unsuccessful steps    0
  TOUGH2 runs to go (approx.) :              1    Log(Levenberg)        0
- CPU time used [sec]         :           0.25    for last step      0.25
+ CPU time used [sec]         :           0.64    for last step      0.64
