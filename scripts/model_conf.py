@@ -56,9 +56,10 @@ layers={1:['A', 100],\
 
 #Switches
 plot_layer=0    #If 1, it will plot and generate shapefile from the layer in the variable layer_to_plot
-to_steiner=1
+to_steinar=1
 to_GIS=0
 plot_all_GIS=0
+from_leapfrog=False
 
 layer_to_plot=3
 
@@ -66,7 +67,8 @@ plot_names=0    #Names of the blocks
 plot_centers=1  #Plot a point in on the center of the block
 
 filepath=''
-filename='../input/well_feedzone.csv'
+#filename='../input/well_feedzone.csv'
+filename='../input/ubication.csv'
 db_path='../input/model.db'
 
 toler=0.1

@@ -19,7 +19,7 @@ class py2amesh:
 		toler,layers,layer_to_plot,x_space,y_space,radius_criteria,\
 		x_from_boarder,y_from_boarder,\
 		x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,\
-		plot_names,plot_centers,z0_level,plot_all_GIS):
+		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog):
 
 		self.filename=filename
 		self.filepath=filepath
@@ -56,6 +56,7 @@ class py2amesh:
 		self.plot_names=plot_names
 		self.plot_centers=plot_centers
 		self.plot_all_GIS=plot_all_GIS
+		self.from_leapfrog=from_leapfrog
 
 		self.color_dict = {1:[['AA','AB','AC','AD','AE','AF','AG'],'ROCK1','red'],\
 						   2:[['BA','BB','BC','BD','BE','BF','BG'],'ROCK2','white'],\
@@ -121,10 +122,102 @@ class py2amesh:
 			boolean=0
 		return boolean
 
+	def from_leapfrog_mesh(self):
+		geometry_file="../mesh/from_leapfrog/LF_geometry.dat"
+		leapfrog_t2_file="../mesh/from_leapfrog/LF_t2.dat"
+
+		#Creates a dictionary using the layers
+		printlayer=False
+		layer_min=[]
+		layers={}
+		with open(geometry_file,'r') as f:
+		  for line in f.readlines():
+
+		  	if line.rstrip()=='LAYERS':
+		  		printlayer=True
+		  		continue
+		  	elif line.rstrip()=='SURFA' or line.rstrip()=='':
+		  		printlayer=False
+
+		  	if printlayer:
+				layer=line.rstrip()[0:2]
+				if layer==' 0':
+					layer_min.append(line.rstrip()[2:13])
+					layer_middle=line.rstrip()[13:23]
+					layer_max=line.rstrip()[13:23]
+					continue
+				else:
+					layer_max=layer_min[-1]
+					layer_min.append(line.rstrip()[2:13])
+					layer_middle=line.rstrip()[13:23]
+				layers[int(layer)]=[float(layer_max),float(layer_middle),float(layer_min[-1])]
+
+		max_layer=max(layers.keys())
+
+		xc=[]
+		yc=[]
+		self.LP_mesh=[]
+		printeleme=False
+		#Takes the elements at the selected leyer
+		with open(leapfrog_t2_file,'r') as f:
+		  for line in f.readlines():
+
+		  	if line.rstrip()=='ELEME':
+		  		printeleme=True
+		  		continue
+		  	elif line.rstrip()=='CONNE' or line.rstrip()=='':
+		  		printeleme=False
+
+			if printeleme and line.rstrip()[0:5]!="ATM 0" and int(line.rstrip()[3:5])==max_layer:
+				xc=float(line.rstrip()[51:60])
+				yc=float(line.rstrip()[60:70])
+				self.LP_mesh.append([xc,yc])
+
+
+		#Creates a dictionary of the VERTICES
+
+		printvertices=False
+		self.x_min=1E20
+		self.x_max=0
+
+		self.y_min=1E20
+		self.y_max=0
+		with open(geometry_file,'r') as f:
+		  for line in f.readlines():
+
+		    #It will read between the keywords GRID and CONNECTIONS
+		    if line.rstrip()=='VERTICES':
+		      printvertices=True
+		      continue
+		    elif line.rstrip()=='GRID' or line.rstrip()=="":
+		      printvertices=False
+
+		    if printvertices:
+		     	vertice_x=float(line.rstrip()[4:13])
+		     	vertice_y=float(line.rstrip()[13:23])
+
+		     	if vertice_x>self.x_max:
+		     		self.x_max=vertice_x
+
+		     	if vertice_y>self.y_max:
+		     		self.y_max=vertice_y
+
+		     	if vertice_x<self.x_min:
+		     		self.x_min=vertice_x
+
+		     	if vertice_y<self.y_min:
+		     		self.y_min=vertice_y
+
+		return self.x_max,self.x_min, self.y_min,self.y_max, self.LP_mesh
+
 	def data(self):
-		self.raw_data=np.loadtxt(self.filepath+self.filename,dtype={'names':('ID','X','Y','TYPE'),'formats':('S7','f4','f4','S4')},delimiter=',')
+		self.raw_data=np.loadtxt(self.filepath+self.filename,dtype={'names':('ID','X','Y','Z','TYPE','DRILLDATE'),'formats':('S7','f4','f4','f4','S4','f4',)},delimiter=',',skiprows=1)
 		self.IDXY={}
-		regular_mesh=self.regular_mesh()
+		if not self.from_leapfrog:
+			regular_mesh=self.regular_mesh()
+		else:
+			x,x1,y1,y2,regular_mesh=self.from_leapfrog_mesh()
+
 		for n in range(len(self.raw_data['ID'])):
 			self.IDXY["%s"%(self.raw_data['ID'][n])]=[self.raw_data['X'][n],self.raw_data['Y'][n],self.raw_data['TYPE'][n]]
 			to_delete=[]
@@ -196,8 +289,7 @@ class py2amesh:
 				                      data_dict['IDXY'][x][2],\
 				                      n+1,self.rock_dict[n+1][4],\
 				                      self.rock_dict[n+1][2],self.rock_dict[n+1][5]]
-				
-				if data_dict['IDXY'][x][2]=='WELL':
+				if data_dict['IDXY'][x][2]=='prod' or data_dict['IDXY'][x][2]=='reiny':
 					self.blocks_PT["%s"%(blockname)]=[x,\
 				                      str(data_dict['IDXY'][x][0]),\
 				                      str(data_dict['IDXY'][x][1]),\
@@ -216,11 +308,16 @@ class py2amesh:
 	def input_file_to_amesh(self):
 
 		welldict=self.well_blk_assign()['well_blocks_names']
-
-		Xarray=np.array([self.Xmin,self.Xmax])
-		Yarray=np.array([self.Ymin,self.Ymax])
+		if not self.from_leapfrog:
+			Xarray=np.array([self.Xmin,self.Xmax])
+			Yarray=np.array([self.Ymin,self.Ymax])
+		else:
+			xmax,xmin,ymin,ymax,regular_mesh=self.from_leapfrog_mesh()
+			Xarray=np.array([xmin,xmax])
+			Yarray=np.array([ymin,ymax])
 
 		limit_grid=np.meshgrid(Xarray, Yarray)
+
 
 		file=open(self.filename_out, "w")
 		file.write("locat\n")
@@ -236,11 +333,11 @@ class py2amesh:
 		for n in Xarray:
 			if n==Xarray[0]:
 				for i in Yarray:
-					string_bound="%10s%10s\n"%(n,i)
+					string_bound=" %9.3E %9.3E\n"%(n,i)
 					file.write(string_bound)
 			else:
 				for i in Yarray[::-1]:
-					string_bound="%10s%10s\n"%(n,i)
+					string_bound=" %9.3E %9.3E\n"%(n,i)
 					file.write(string_bound)
 		file.write("     \n")
 		file.write("toler")
@@ -401,10 +498,19 @@ class py2amesh:
 			in_file=open('../mesh/from_amesh/in','r')  
 			data_in=in_file.readlines()
 			in_file_st.write("bound\n")
-			in_file_st.write(" %6.2d %6.2d\n"%(self.Xmin,self.Ymin))
-			in_file_st.write(" %6.2d %6.2d\n"%(self.Xmin,self.Ymax))
-			in_file_st.write(" %6.2d %6.2d\n"%(self.Xmax,self.Ymax))
-			in_file_st.write(" %6.2d %6.2d\n\n"%(self.Xmax,self.Ymin))
+
+			if not self.from_leapfrog:
+				Xarray=np.array([self.Xmin,self.Xmax])
+				Yarray=np.array([self.Ymin,self.Ymax])
+			else:
+				xmax,xmin,ymin,ymax,regular_mesh=self.from_leapfrog_mesh()
+				Xarray=np.array([xmin,xmax])
+				Yarray=np.array([ymin,ymax])
+
+			in_file_st.write(" %6.2d %6.2d\n"%(Xarray[0],Yarray[0]))
+			in_file_st.write(" %6.2d %6.2d\n"%(Xarray[0],Yarray[1]))
+			in_file_st.write(" %6.2d %6.2d\n"%(Xarray[1],Yarray[1]))
+			in_file_st.write(" %6.2d %6.2d\n\n"%(Xarray[1],Yarray[0]))
 			in_file_st.write("locat\n")
 
 			cnt=0

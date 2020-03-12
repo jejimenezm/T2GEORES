@@ -52,13 +52,13 @@ def vertical_layer(layers,z0_level):
 def mesh_creation_func(filename,filepath,Xmin,Xmax,Ymin,Ymax,\
 			toler,layers,layer_to_plot,x_space,y_space,radius_criteria,x_from_boarder,y_from_boarder,\
 			x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,plot_names,plot_centers,z0_level,\
-			mesh_creation,plot_layer,to_steinar,to_GIS,plot_all_GIS):
+			mesh_creation,plot_layer,to_steinar,to_GIS,plot_all_GIS,from_leapfrog):
 	
 	layers_thick=map(float,np.array(layers.values())[:][:,1])
 
 	blocks=pya.py2amesh(filename,filepath,Xmin,Xmax,Ymin,Ymax,\
 			toler,layers_thick,layer_to_plot,x_space,y_space,radius_criteria,x_from_boarder,y_from_boarder,\
-			x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,plot_names,plot_centers,z0_level,plot_all_GIS)
+			x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog)
 	if mesh_creation==1:
 
 		blocks.input_file_to_amesh()
@@ -734,6 +734,12 @@ def write_well_sources_from_sqlite_to_FOFT(db_path):
 	file.close()
 
 db_path='../input/model.db'
+
+
+mesh_creation_func(filename,filepath,Xmin,Xmax,Ymin,Ymax,\
+			toler,layers,layer_to_plot,x_space,y_space,radius_criteria,x_from_boarder,y_from_boarder,\
+			x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,plot_names,plot_centers,z0_level,\
+			mesh_creation,plot_layer,to_steinar,to_GIS,plot_all_GIS,from_leapfrog)
 
 #write_gener_from_sqlite(db_path,wells)
 #plot_one_mh_from_txt('AH-28')
