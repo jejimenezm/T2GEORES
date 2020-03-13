@@ -3,6 +3,7 @@ from model_conf import *
 import sqlite3
 import t2resfun as t2r
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import os
 import math
@@ -11,7 +12,9 @@ from scipy.interpolate import griddata
 import json
 from matplotlib.backends.backend_pdf import PdfPages
 import datetime
-
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+import matplotlib.tri as mtri
 
 def plot_compare_one(db_path,name,inpath):
 	conn=sqlite3.connect(db_path)
@@ -501,7 +504,184 @@ def plot_all_layer():
 		print_layer_from_json(layer,'cubic',1000,1000,save=True,show=False,print_points=True,print_eleme_name=False,\
 			variable_to_plot="P",source="t2",print_mesh=False)
 
-plot_all_layer()
+def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wells):
+
+	x_points=[405000,420000,408000]
+	y_points=[304000,310000,318000]
+
+	variables_to_plot_t2={"P":4,
+						   "T":5,
+						   "SG":6,
+						   "SW":7,
+						   "X1":8,
+						   "X2":9,
+						   "PCAP":10,
+						   "DG":11,
+						   "DW":12}
+
+	variables_to_plot_sav={"P":3,
+	                       "T":4}
+
+	if source=="sav":
+		index=variables_to_plot_sav[variable_to_plot]
+		file="../output/PT/json/PT_json_from_sav.txt"
+	elif source=="t2":
+		index=variables_to_plot_t2[variable_to_plot]
+		file="../output/PT/json/PT_json.txt"
+
+	if os.path.isfile(file):
+		with open(file,"r") as f:
+	  		data=json.load(f)
+	  	
+
+	variable_min=100E8
+	variable_max=0
+
+	irregular_grid=np.array([[0,0,0]])
+	variable=np.array([])
+	for elementx in data:
+		if variable_max<data[elementx][index]:
+			variable_max=data[elementx][index]
+
+		if variable_min>data[elementx][index]:
+			variable_min=data[elementx][index]
+
+		irregular_grid=np.append(irregular_grid,[[data[elementx][0],data[elementx][1],data[elementx][2]]],axis=0)
+		variable=np.append(variable,data[elementx][index])
+
+
+	irregular_grid=irregular_grid[1:]
+
+	variable=variable[0:]
+
+	x=np.array([])
+	y=np.array([])
+	
+
+
+	for xy in range(len(x_points)):
+		if xy < len(x_points)-1:
+			xt=np.linspace(x_points[xy],x_points[xy+1]+(x_points[xy+1]-x_points[xy])/ngridx,num=ngridx)
+			yt=np.linspace(y_points[xy],y_points[xy+1]+(y_points[xy+1]-y_points[xy])/ngridy,num=ngridy)
+			x=np.append(x,xt)
+			y=np.append(y,yt)
+
+	projection_req=np.array([0])
+	for npr in range(1,len(x)):
+		if npr==len(x)-1:
+			break
+		if npr==1:
+			delta_x_pr=(x_points[0]-x[0])**2
+			delta_y_pr=(y_points[0]-y[0])**2
+			prj_prox=(delta_y_pr+delta_x_pr)**0.5
+		else:
+			delta_x_pr=(x[npr+1]-x[npr])**2
+			delta_y_pr=(y[npr+1]-y[npr])**2
+			prj_prox=(delta_y_pr+delta_x_pr)**0.5
+		projection_req=np.append(projection_req,prj_prox+projection_req[npr-1])
+
+	ztop,zlabels, zmid,zbottom=t2r.vertical_layer(layers,z0_level)
+
+	xi = np.linspace(min(x), max(x), ngridx)
+	yi = np.linspace(min(y), max(y), ngridy)
+	zi = np.array(zmid)
+
+
+	proj_req=np.array([])
+	z_req_proj=np.array([])
+
+	for nprj in range(len(projection_req)):
+		for nz in range(len(zi)):
+			proj_req=np.append(proj_req,projection_req[nprj])
+			z_req_proj=np.append(z_req_proj,zi[nz])
+
+	request_points=np.array([[0,0,0]])
+	x_req=np.array([])
+	y_req=np.array([])
+	z_req=np.array([])
+
+
+	for nx in range(len(x)):
+		for nz in range(len(zi)):
+			request_points= np.append(request_points,[[x[nx],y[nx],zi[nz]]],axis=0)
+			x_req=np.append(x_req,x[nx])
+			y_req=np.append(y_req,y[nx])
+			z_req=np.append(z_req,zi[nz])
+
+	request_points=request_points[1:]
+
+	requested_values = griddata(irregular_grid, variable, request_points)
+
+	"""
+	request_prj_grid=np.array([[0,0]])
+	for nx in range(len(proj_req)):
+		for nz in range(len(z_req_proj)):
+			request_prj_grid= np.append(request_prj_grid,[[proj_req[nx],z_req_proj[nz]]],axis=0)
+
+	request_prj_grid=request_prj_grid[1:]
+	"""
+	
+	xi_pr = np.linspace(min(proj_req), max(proj_req), 1000)
+	yi_pr = np.linspace(min(z_req_proj), max(z_req_proj), 1000)
+	zi_pr = griddata((proj_req, z_req_proj), requested_values[:-len(zmid)], (xi_pr[None,:], yi_pr[:,None]))
+
+	fig = plt.figure()
+
+	#Plot projection
+	
+	ax = fig.add_subplot(211)
+
+	ax.contour(xi_pr,yi_pr,zi_pr,15,linewidths=0.5,colors='k')
+	cntr = ax.contourf(xi_pr,yi_pr,zi_pr,15,cmap="jet")
+	ax.plot(proj_req,z_req_proj,'ok',ms=0.5)
+
+	fig.colorbar(cntr,ax=ax)
+
+	#Scatter 3D
+
+	ax3D = fig.add_subplot(212, projection='3d')
+
+	colorbar_source=ax3D.scatter3D(x_req,y_req,z_req,cmap='jet',c=requested_values)
+
+	ax3D.set_xlabel('East [m]')
+	ax3D.set_ylabel('North [m]')
+	ax3D.set_zlabel('m.a.s.l.')
+	fig.colorbar(colorbar_source, ax=ax3D)
+
+	#Plot wells on 3D
+
+	if show_wells:
+		conn=sqlite3.connect(db_path)
+		c=conn.cursor()
+
+		for name in sorted(wells):
+			data_position=pd.read_sql_query("SELECT east,north,elevation FROM wells WHERE well='%s';"%name,conn)
+			data=pd.read_sql_query("SELECT MeasuredDepth FROM survey WHERE well='%s' ORDER BY MeasuredDepth;"%name,conn)
+			
+			ax3D.text(data_position['east'][0], data_position['north'][0], data_position['elevation'][0], \
+				      name, color='black',alpha=0.75,fontsize=8)
+
+			x_real=[]
+			y_real=[]
+			z_real=[]
+
+			for v in range(len(data['MeasuredDepth'])):
+				xf,yf,zf=t2r.MD_to_TVD(name,data['MeasuredDepth'][v])
+				x_real.append(float(xf))
+				y_real.append(float(yf))
+				z_real.append(float(zf))
+		
+			ax3D.plot3D(x_real, y_real, z_real,'-k',alpha=0.75)
+
+	plt.show()
+	
+	
+
+vertical_cross_section(method='cubic',ngridx=100,ngridy=100,variable_to_plot="P",source="t2",show_wells=True)
+
+
+
+#plot_all_layer()
 
 name='AH-34'
 db_path='../input/model.db'

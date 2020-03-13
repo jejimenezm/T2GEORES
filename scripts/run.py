@@ -21,7 +21,7 @@ def update_rock_distribution(db_path,geners,param,multi,solver,recap,type_run,ti
 	t2r.conne_from_steinar_to_t2()
 	t2r.merge_eleme_and_in_to_t2()
 	t2r.t2_input_creation(param,multi,solver,recap,type_run,title)
-	incon_to_t2()
+	#incon_to_t2()
 
 def copy_folder(src,dest):
 	src_files = os.listdir(src)
@@ -53,7 +53,7 @@ def create_prev():
 	copy_folder(src,dest)
 
 #create_prev()
-#update_rock_distribution(db_path,geners,param,multi,solver,recap,type_run,title) 
+update_rock_distribution(db_path,geners,param,multi,solver,recap,type_run,title) 
 
 #update_gen(db_path,geners)
 #incon_to_t2()

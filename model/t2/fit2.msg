@@ -1,16 +1,12 @@
  =========================================================================
- i T O U G H 2 _ 1  R U N  date: jue mar 12 11:59:06 CST 2020
+ i T O U G H 2 _ 1  R U N  date: vie mar 13 08:58:56 CST 2020
  =========================================================================
 
 Command submitted: /home/erick/bin/itough2 fit2 t2 1
 
-STOP iTOUGH2 stopped in iTOUGH2Wrapper
+STOP iTOUGH2: Signal 1 received.
 
-
-     Error  >> Subroutine <<  Message
-      5290  >>> OBSERVAT <<<  ERROR                --> Incomplete TOUGH2 simulation  
-
- ---     1 error(s) and  0 warning(s) detected
+ ---     0 error(s) and  0 warning(s) detected
 
  Machine dependent real constants used in iTOUGH2
  ------------------------------------------------
@@ -39,6 +35,13 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
                         *                                                                                  *
                         ************************************************************************************
 
+
+ *****  WARNING  *****
+ * Found large permeability in Comlumns 41-50 fo ELEME blcok.
+ * Assume TOUGH2V2-style permeability modifiers are given.
+ * Internally converted to negative, iTOUGH2-style modifiers.
+ *****  WARNING  *****
+ Signal 1 received, 13-Mar-20  09:00
 
  ==================================================================================================================================
       ARRAY DIMENSIONS (SEE FILE maxsize.inc)
@@ -153,12 +156,11 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       ELINDX   5.0      12 JULY      2002      NEIGHBOR ELEMENT INDEXING
       REASSN   4.4      17 JANUARY   2001      ESTABLISH THE SPARSITY PATTERN FOR LUBAND
       MTRXIN   4.4      17 JANUARY   2001      ROUTINE FOR Z-PREPROCESSING 
-      CONVER   6.4      20 FEBRUARY  2009      UPDATE PRIMARY VARIABLES AFTER CONVERGENCE IS ACHIEVED
-      FGTAB    1.00     28 MAY       1998      TABULATE ELEMENT, CONNECTION, AND GENERATION DATA VS. TIME FOR PLOTTING
-      OUT      5.0      12 JULY      2002      PRINT RESULTS FOR ELEMENTS, CONNECTIONS, AND SINKS/SOURCES
-      WRIFI    6.2       8 OCTOBER   2008      AT THE COMPLETION OF A TOUGH2 RUN, WRITE PRIMARY VARIABLES ON FILE *SAVE*
+      RELP     4.5cd    18 DECEMBER  2007      RELATIVE PERMEABILITIES
+      TSAT     1.0      14 MARCH     1991      SATURATION TEMPERATURE AS FUNCTION OF PRESSURE
       TERMINAT 6.4       3 MARCH     2009      PERFORM ERROR ANALYSIS AND TERMINATE iTOUGH2
       PLOTFILE 4.0      19 JANUARY   1999      WRITES PLOTFILE IN PLOPO-FORMAT
+      WRIFI    6.2       8 OCTOBER   2008      AT THE COMPLETION OF A TOUGH2 RUN, WRITE PRIMARY VARIABLES ON FILE *SAVE*
       QNORMAL  2.5      13 JANUARY   1996      RETURNS QUANTILE OF NORMAL DISTRIBUTION
       MOMENT   3.3      28 OCTOBER   1998      MOMENTS OF DISTRIBUTION
       PLOTIF   1.0      15 FEBRUARY  1993      PLOT INTERFACE
@@ -170,15 +172,17 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       S T A T U S   O F   i T O U G H 2   S I M U L A T I O N
  ==================================================================
 
- Date                        : 12-Mar-20  11:59
+ Date                        : 13-Mar-20  08:58
  iTOUGH2 file                : fit2
  TOUGH2 file                 : t2
  Working directory           : /home/erick/Reservorios/T2RES/model/t2
- Temporary directory         : /home/erick/it2_30558
+ Temporary directory         : /home/erick/it2_22921
  UNIX command line arguments : fit2 t2 1
  Comment                     : Input files read.                                                              
 
  Iterations completed        :              0    Iterations to go      1
  TOUGH2 runs completed       :              0    Unsuccessful steps    0
  TOUGH2 runs to go (approx.) :              1    Log(Levenberg)        0
- CPU time used [sec]         :           0.64    for last step      0.64
+ CPU time used [sec]         :           0.25    for last step      0.25
+cp: no se puede efectuar `stat' sobre '1': No existe el archivo o el directorio
+cp: no se puede efectuar `stat' sobre 'COLUMN': No existe el archivo o el directorio
