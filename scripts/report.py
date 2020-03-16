@@ -15,6 +15,7 @@ import datetime
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.tri as mtri
+import matplotlib.dates as mdates
 
 def plot_compare_one(db_path,name,inpath):
 	conn=sqlite3.connect(db_path)
@@ -41,7 +42,7 @@ def plot_compare_one(db_path,name,inpath):
 
 	#Model
 
-	in_file="/%s_PT.dat"%(inpath,name)
+	in_file="%s/%s_PT.dat"%(inpath,name)
 
 	if os.path.isfile(in_file):
 
@@ -397,7 +398,7 @@ def plot_compare_PT_curr_prev(db_path,name,inpath,previnpath,show):
 
 		ax2P.tick_params(axis='y',which='major',length=0)
 
-		ax2P.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.1, lw=0.5)
+		ax2P.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
 
 		ax2P.set_yticklabels(layer_corr,fontsize=fontsize_layer)
 
@@ -414,7 +415,7 @@ def plot_compare_PT_curr_prev(db_path,name,inpath,previnpath,show):
 
 		ax2T.set_yticklabels(layer_corr,fontsize=fontsize_layer)
 
-		ax2T.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.1, lw=0.5)
+		ax2T.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
 
 		ax2T.set_ylim(axT.get_ylim())
 
@@ -502,9 +503,9 @@ def plot_all_layer():
 
 	for layer in layer_coor:
 		print_layer_from_json(layer,'cubic',1000,1000,save=True,show=False,print_points=True,print_eleme_name=False,\
-			variable_to_plot="P",source="t2",print_mesh=False)
+			variable_to_plot="T",source="t2",print_mesh=False)
 
-def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wells):
+def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wells_3D):
 
 	x_points=[405000,420000,408000]
 	y_points=[304000,310000,318000]
@@ -537,6 +538,7 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 	variable_min=100E8
 	variable_max=0
 
+	#Creates an irregular grid with the form [[x,y,z],[x1,y1,z1]]
 	irregular_grid=np.array([[0,0,0]])
 	variable=np.array([])
 	for elementx in data:
@@ -551,20 +553,21 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 
 
 	irregular_grid=irregular_grid[1:]
-
 	variable=variable[0:]
 
+
+	#Creates the points a long the lines
 	x=np.array([])
 	y=np.array([])
 	
-
-
 	for xy in range(len(x_points)):
 		if xy < len(x_points)-1:
 			xt=np.linspace(x_points[xy],x_points[xy+1]+(x_points[xy+1]-x_points[xy])/ngridx,num=ngridx)
 			yt=np.linspace(y_points[xy],y_points[xy+1]+(y_points[xy+1]-y_points[xy])/ngridy,num=ngridy)
 			x=np.append(x,xt)
 			y=np.append(y,yt)
+
+	#Calculastes the distance of every point along the projection
 
 	projection_req=np.array([0])
 	for npr in range(1,len(x)):
@@ -582,10 +585,12 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 
 	ztop,zlabels, zmid,zbottom=t2r.vertical_layer(layers,z0_level)
 
+
+	#Creates the regular  mesh in 3D along all the layers
+
 	xi = np.linspace(min(x), max(x), ngridx)
 	yi = np.linspace(min(y), max(y), ngridy)
 	zi = np.array(zmid)
-
 
 	proj_req=np.array([])
 	z_req_proj=np.array([])
@@ -612,15 +617,8 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 
 	requested_values = griddata(irregular_grid, variable, request_points)
 
-	"""
-	request_prj_grid=np.array([[0,0]])
-	for nx in range(len(proj_req)):
-		for nz in range(len(z_req_proj)):
-			request_prj_grid= np.append(request_prj_grid,[[proj_req[nx],z_req_proj[nz]]],axis=0)
+	#Creates regular mesh on projection
 
-	request_prj_grid=request_prj_grid[1:]
-	"""
-	
 	xi_pr = np.linspace(min(proj_req), max(proj_req), 1000)
 	yi_pr = np.linspace(min(z_req_proj), max(z_req_proj), 1000)
 	zi_pr = griddata((proj_req, z_req_proj), requested_values[:-len(zmid)], (xi_pr[None,:], yi_pr[:,None]))
@@ -650,7 +648,7 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 
 	#Plot wells on 3D
 
-	if show_wells:
+	if show_wells_3D:
 		conn=sqlite3.connect(db_path)
 		c=conn.cursor()
 
@@ -673,14 +671,115 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 		
 			ax3D.plot3D(x_real, y_real, z_real,'-k',alpha=0.75)
 
+		conn.close()
+
 	plt.show()
 	
-	
+def plot_PT_evol_block_in_wells(well,layer,parameter,save,show):
 
-vertical_cross_section(method='cubic',ngridx=100,ngridy=100,variable_to_plot="P",source="t2",show_wells=True)
+	if parameter  not in ["P","T","SG","SW","X(WAT1)","X(WAT2)","PCAP","DG","DW"]:
+		print "Cant be printed, the parameter is  not register"
+	elif parameter=="P":
+		parameter_label="Pressure"
+		parameter_unit="bar"
+	elif parameter=="T":
+		parameter_label="Temperature"
+		parameter_unit="C"
+	elif parameter=="SW":
+		parameter_label="1-Quality"
+		parameter_unit=""
+	elif parameter=="SG":
+		parameter_label="Quality"
+		parameter_unit=""
+	elif parameter=="DG":
+		parameter_label="Density"
+		parameter_unit="kg/m3"
+	elif parameter=="DW":
+		parameter_label="Density"
+		parameter_unit="kg/m3"
+	else:
+		parameter_label=""
+		parameter_unit=""
 
+	#Read file, calculated
+	file="../output/PT/evol/%s_PT_%s_evol.dat"%(well,layer)
+	data=pd.read_csv(file)
 
+	times=data['TIME']
 
+	values=data[parameter]
+
+	dates=[]
+	values_to_plot=[]
+	for n in range(len(times)):
+		if float(times[n])>0:
+			try:
+				dates.append(ref_date+datetime.timedelta(days=int(times[n])))
+				if parameter!="P":
+					values_to_plot.append(values[n])
+				else:
+					values_to_plot.append(values[n]/1E5)
+			except OverflowError:
+				print ref_date,"plus",str(times[n]),"wont be plot"
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	depth=pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%layer,conn)
+
+	depth=depth.values[0][0]
+
+	#Read file, real
+	file="../input/drawdown/%s_DD.dat"%well
+	try:
+		data_real=pd.read_csv("../input/drawdown/%s_DD.dat"%well)
+		data_real.loc[data_real['TVD']==depth]['datetime']
+		dates_func=lambda datesX: datetime.datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+		dates_real=list(map(dates_func,data_real.loc[data_real['TVD']==depth]['datetime'].values))
+	except IOError:
+		return 
+
+	#Plotting
+
+	fig, ax = plt.subplots(figsize=(10,4))
+	ax.plot(dates,values_to_plot,'ob',linewidth=1,ms=3,label='Calculated %s'%parameter_label)
+	ax.plot(dates_real,data_real.loc[data_real['TVD']==depth]['pressure'].values,'or',linewidth=1,ms=3,label='Real %s'%parameter_label)
+	ax.set_title("Well: %s at %s masl (layer %s)"%(well,depth,layer) ,fontsize=8)
+	ax.set_xlabel("Time",fontsize = 8)
+	ax.set_ylabel('%s [%s]'%(parameter_label,parameter_unit),fontsize = 8)
+
+	ax.legend(loc="upper right")
+
+	#Plotting formating
+	xlims=[min(dates)-datetime.timedelta(days=365),max(dates)+datetime.timedelta(days=365)]
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+
+	ax.set_xlim(xlims)
+	ax.xaxis.set_major_formatter(years_fmt)
+
+	#ax.xaxis.set_major_locator(years)
+	#fig.autofmt_xdate()
+
+	#Grid style
+	ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.grid(True)
+
+	if save:
+		fig.savefig('../output/PT/images/%s_%s_%s_evol.png'%(well,layer,parameter)) 
+	if show:
+		plt.show()
+
+def save_all_PT_evol_from_layer(wells,layer,parameter):
+	save=True
+	for well in wells:
+		plot_PT_evol_block_in_wells(well,layer,parameter,save,show=False)
+
+#save_all_PT_evol_from_layer(wells,layer='D',parameter='T')
+plot_PT_evol_block_in_wells('AH-34',layer='D',parameter='T',save=False,show=True)
 #plot_all_layer()
 
 name='AH-34'
@@ -694,3 +793,5 @@ inpath="../output/PT/txt"
 typePT='T'
 image_save_all_plots(db_path,wells,typePT) #typePT, could be T or P
 """
+
+#vertical_cross_section(method='cubic',ngridx=100,ngridy=100,variable_to_plot="T",source="t2",show_wells_3D=True)

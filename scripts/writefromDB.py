@@ -360,7 +360,7 @@ def write_drawdown_to_txt_from_GMS(wells,cur,depth_TVD):
 				pass
 
 		for x in range(len(drawdown)):
-			string="%s,%s,%s\n"%(datetime.strptime(dates_dd[x]+' 00:00:00', "%Y%m%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")\
+			string="%s,%s,%s\n"%(datetime.datetime.strptime(dates_dd[x]+' 00:00:00', "%Y%m%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")\
 								,depth_TVD,drawdown[x])
 			file_dd.write(string)
 		file_dd.close()
@@ -422,13 +422,16 @@ def write_cooling_to_txt_from_GMS(wells,cur,depth_TVD):
 		file_dd.close()
 	print depth_TVD
 
+
+write_drawdown_to_txt_from_GMS(wells,cur,-25)
+
 """
 depths=[200,100,0,-100,-200]
 for d in depths:
 	write_cooling_to_txt_from_GMS(wells,cur,d)
 """
 #interval : millennium,century,decade,year,quarter,month,week,day,hour,minute,second,milliseconds,microseconds
-write_mh_to_txt_from_GMS(wells,cur,'week')
+#write_mh_to_txt_from_GMS(wells,cur,'week')
 #write_PT_to_txt_from_GMS(wells,cur)
 #write_ubication_to_txt_from_GMS(wells,cur)
 #write_survey_to_txt_from_GMS(wells,cur)

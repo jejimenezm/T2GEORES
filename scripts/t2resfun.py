@@ -494,14 +494,25 @@ def merge_eleme_and_in_to_t2():
 
 		for n in range(len(data_eleme['block'])):
 			selection=data_in.loc[data_in['block']==data_eleme['block'][n]].values.tolist()
-			string+="%5s%10s%5s%10s%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n],\
-				                                                                      " ",\
-				                                                data_eleme['rocktype'][n],\
-				                                                                       " ",\
-				                                                                       " ",\
-				                                                           selection[0][2],\
-				                                                           selection[0][3],\
-				                                                           selection[0][4])
+			if data_eleme['vol'][n]>-1E100:
+				string+="%5s%10s%5s%10.3E%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n],\
+	                                                                      " ",\
+	                                                data_eleme['rocktype'][n],\
+	                                                     data_eleme['vol'][n],\
+	                                                                       " ",\
+	                                                           selection[0][2],\
+	                                                           selection[0][3],\
+	                                                           selection[0][4])
+
+			else:
+				string+="%5s%10s%5s%10s%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n],\
+					                                                                      " ",\
+					                                                data_eleme['rocktype'][n],\
+					                                                                       " ",\
+					                                                                       " ",\
+					                                                           selection[0][2],\
+					                                                           selection[0][3],\
+					                                                           selection[0][4])
 
 		file=open('../model/t2/sources/ELEME','w')
 		file.write(string)

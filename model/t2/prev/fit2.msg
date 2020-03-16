@@ -1,5 +1,5 @@
  =========================================================================
- i T O U G H 2 _ 1  R U N  date: jue mar 12 11:53:32 CST 2020
+ i T O U G H 2 _ 1  R U N  date: lun mar 16 15:47:05 CST 2020
  =========================================================================
 
 Command submitted: /home/erick/bin/itough2 fit2 t2 1
@@ -24,6 +24,17 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
  HAVE READ UNKNOWN BLOCK LABEL "     " --- IGNORE THIS, AND CONTINUE READING INPUT DATA
  HAVE READ UNKNOWN BLOCK LABEL "     " --- IGNORE THIS, AND CONTINUE READING INPUT DATA
  HAVE READ UNKNOWN BLOCK LABEL "     " --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 2.68" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 3.94" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 5.20" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 6.46" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 7.73" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 8.99" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 1.02" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 1.15" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 1.27" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 1.40" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+ HAVE READ UNKNOWN BLOCK LABEL " 1.53" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
  HAVE READ UNKNOWN BLOCK LABEL "     " --- IGNORE THIS, AND CONTINUE READING INPUT DATA
 
  PRIMARY VARIABLE NO. 2 HOLDS SATURATION (RIGHT?)
@@ -148,14 +159,13 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       QUV2     2.0       2 APRIL     2002      ASSEMBLE ALL SOURCE AND SINK TERMS
                                                "RIGOROUS" STEP RATE CAPABILITY FOR MOP(12) = 2,
                                                AND CAPABILITY FOR FLOWING WELLBORE PRESSURE CORRECTIONS
+      CONVER   6.4      20 FEBRUARY  2009      UPDATE PRIMARY VARIABLES AFTER CONVERGENCE IS ACHIEVED
+      FGTAB    1.00     28 MAY       1998      TABULATE ELEMENT, CONNECTION, AND GENERATION DATA VS. TIME FOR PLOTTING
       LINEQ    2.1      30 JANUARY   2007      INTERFACE FOR LINEAR EQUATION SOLVERS
 
       ELINDX   5.0      12 JULY      2002      NEIGHBOR ELEMENT INDEXING
       REASSN   4.4      17 JANUARY   2001      ESTABLISH THE SPARSITY PATTERN FOR LUBAND
       MTRXIN   4.4      17 JANUARY   2001      ROUTINE FOR Z-PREPROCESSING 
-      RELP     4.5cd    18 DECEMBER  2007      RELATIVE PERMEABILITIES
-      TSAT     1.0      14 MARCH     1991      SATURATION TEMPERATURE AS FUNCTION OF PRESSURE
-      VIS      1.0      22 JANUARY   1990      VISCOSITY OF LIQUID WATER AND VAPOR AS FUNCTION OF TEMPERATURE AND PRESSURE
       OUT      5.0      12 JULY      2002      PRINT RESULTS FOR ELEMENTS, CONNECTIONS, AND SINKS/SOURCES
       WRIFI    6.2       8 OCTOBER   2008      AT THE COMPLETION OF A TOUGH2 RUN, WRITE PRIMARY VARIABLES ON FILE *SAVE*
       TERMINAT 6.4       3 MARCH     2009      PERFORM ERROR ANALYSIS AND TERMINATE iTOUGH2
@@ -171,15 +181,15 @@ STOP iTOUGH2 stopped in iTOUGH2Wrapper
       S T A T U S   O F   i T O U G H 2   S I M U L A T I O N
  ==================================================================
 
- Date                        : 12-Mar-20  11:53
+ Date                        : 16-Mar-20  15:47
  iTOUGH2 file                : fit2
  TOUGH2 file                 : t2
  Working directory           : /home/erick/Reservorios/T2RES/model/t2
- Temporary directory         : /home/erick/it2_27847
+ Temporary directory         : /home/erick/it2_10511
  UNIX command line arguments : fit2 t2 1
  Comment                     : Input files read.                                                              
 
  Iterations completed        :              0    Iterations to go      1
  TOUGH2 runs completed       :              0    Unsuccessful steps    0
  TOUGH2 runs to go (approx.) :              1    Log(Levenberg)        0
- CPU time used [sec]         :           0.62    for last step      0.62
+ CPU time used [sec]         :           0.63    for last step      0.63

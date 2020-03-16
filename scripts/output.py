@@ -15,6 +15,7 @@ from model_conf import *
 import sqlite3
 import subprocess
 import json
+import matplotlib.dates as mdates
 
 db_path='../input/model.db'
 
@@ -195,7 +196,30 @@ def PTjson_to_sqlite(source):
 
 	conn.close()
 
+def write_PT_of_wells_from_t2output_in_time(db_path):
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	data_layer=pd.read_sql_query("SELECT correlative FROM layers ORDER BY middle;",conn)
+
+	for name in sorted(wells):
+		data_block=pd.read_sql_query("SELECT blockcorr FROM t2wellblock  WHERE well='%s' ORDER BY blockcorr;"%name,conn)
+		string=""
+		if len(data_block)>0:
+			for n in sorted(data_layer['correlative'].values):
+				string+="%s\n"%(n+data_block['blockcorr'].values[0])
+
+		subprocess.call(['./shell/blocks_evol_times.sh',string,name])
+
+	conn.close()
+
+"""
 write_PT_from_t2output(db_path)
 extract_json_from_t2out()
 from_sav_to_json()
+"""
+
+write_PT_of_wells_from_t2output_in_time(db_path)
 #PTjson_to_sqlite(source="t2")#source="sav",t2
+
