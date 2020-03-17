@@ -79,6 +79,21 @@ def extract_json_from_t2out():
 				break
 			elif elementx in lineout:
 				lineselect=lineout.split("  ")
+				index=lineout[6:12]
+				p=lineout[12:25]
+				T=lineout[25:38]
+				val1=lineout[38:51]
+				val2=lineout[51:64]
+				val3=lineout[64:77]
+				val4=lineout[77:90]
+				val5=lineout[90:103]
+				val6=lineout[103:115]
+				val7=lineout[115:127]
+				eleme_dict[elementx].extend([float(index),float(p),float(T),
+												 float(val1),float(val2),float(val3),
+												 float(val4),float(val5),float(val6),float(val7)])
+
+				"""
 				if len(lineselect)==13:
 					eleme_dict[elementx].extend([float(lineselect[2]),float(lineselect[3]),float(lineselect[4]),
 												 float(lineselect[5]),float(lineselect[6]),float(lineselect[7]),
@@ -87,6 +102,7 @@ def extract_json_from_t2out():
 					eleme_dict[elementx].extend([float(lineselect[1]),float(lineselect[2]),float(lineselect[3]),
 								 float(lineselect[4]),float(lineselect[5]),float(lineselect[6]),
 								 float(lineselect[7]),float(lineselect[8]),float(lineselect[10]),float(lineselect[11])])
+				"""
 				break
 
 
@@ -214,12 +230,20 @@ def write_PT_of_wells_from_t2output_in_time(db_path):
 
 	conn.close()
 
+def gen_evol():
+
+	subprocess.call(['./shell/gen_evol.sh'])
+
+
+#write_PT_from_t2output(db_path)
+
+#extract_json_from_t2out()
 """
-write_PT_from_t2output(db_path)
-extract_json_from_t2out()
 from_sav_to_json()
 """
 
 write_PT_of_wells_from_t2output_in_time(db_path)
 #PTjson_to_sqlite(source="t2")#source="sav",t2
+
+#gen_evol()
 

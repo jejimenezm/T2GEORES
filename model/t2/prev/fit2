@@ -18,7 +18,7 @@ estado natural CGA
 
 	>> OPTION
 		>>> solve FORWARD
-		>>> STEADY-STATE, use SAVE for restarts :  3155692600000.0 
+		>>> STEADY-STATE, use SAVE for restarts :  31556926000000.0 
 		<<<
 
 	<<

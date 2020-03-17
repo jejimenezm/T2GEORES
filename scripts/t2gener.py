@@ -2,39 +2,132 @@ import t2resfun as t2r
 from model_conf import *
 import sqlite3
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
-def write_t2_format_gener(var_array,time_array,ref_date,var_type,var_enthalpy):
+def write_t2_format_gener(var_array,time_array,ref_date,var_type,var_enthalpy,type_flow):
 	string_time_R=''
 	string_flow_R=''
 	string_enthalpy_R=''
 	string_time_P=''
 	string_flow_P=''
 
-	cnt_P=1
-	cnt_R=1
+	t_min=-1E50
+	t_max=1E50
+	flow_min=0
+	enthalpy_min=500E3
+	time_zero=0
+
+	time_plus_the_last=365.25*24*3600/2
+
+
+	if type_flow=="invariable":
+		cnt_P=1
+		cnt_R=1
+	elif type_flow=="constant" or type_flow=="shutdown":
+		string_time_P+='%14.6E'%t_min
+		string_flow_P+='%14.6E'%flow_min
+		string_time_R+='%14.6E'%t_min
+		string_flow_R+='%14.6E'%flow_min
+		string_enthalpy_R+='%14.6E'%enthalpy_min
+
+		string_time_P+='%14.6E'%time_zero
+		string_flow_P+='%14.6E'%flow_min
+		string_time_R+='%14.6E'%time_zero
+		string_flow_R+='%14.6E'%flow_min
+		string_enthalpy_R+='%14.6E'%enthalpy_min
+
+		cnt_P=3
+		cnt_R=3
+
+
 	if len(var_array)==len(time_array):
 		for n in range(len(var_type)):
 			timex=(time_array[n]-ref_date).total_seconds()
 			if var_type[n]=='P':
-				string_time_P+='%14.3E'%timex
-				string_flow_P+='%14.3E'%-var_array[n]
+				well_type="P"
+				string_time_P+='%14.6E'%timex
+				string_flow_P+='%14.6E'%-var_array[n]
+				last_flow=-var_array[n]
 				if cnt_P%4==0 and n!=(len(var_type)-1):
 					string_time_P+='\n'
 					string_flow_P+='\n'
 				cnt_P+=1
 
 			if var_type[n]=='R':
-				string_time_R+='%14.3E'%timex
-				string_flow_R+='%14.3E'%var_array[n]
-				string_enthalpy_R+='%14.3E'%var_enthalpy[n]
+				well_type="R"
+				string_time_R+='%14.6E'%timex
+				string_flow_R+='%14.6E'%var_array[n]
+				string_enthalpy_R+='%14.6E'%var_enthalpy[n]
+				last_flow=var_array[n]
+				last_enthalpy=var_enthalpy[n]
 				if cnt_R%4==0 and n!=(len(var_type)-1):
 					string_time_R+='\n'
 					string_flow_R+='\n'
 					string_enthalpy_R+='\n'
 				cnt_R+=1
 
+			last_time=timex
+
+		if type_flow=="invariable":
+			pass
+		elif type_flow=="constant":
+			if cnt_R>3:
+				if cnt_R%4==0:
+					string_time_R+='\n'
+					string_flow_R+='\n'
+					string_enthalpy_R+='\n'
+				cnt_R+=1
+				string_time_R+='%14.6E'%t_max
+				string_flow_R+='%14.6E'%last_flow
+				string_enthalpy_R+='%14.6E'%last_enthalpy
+
+			if cnt_P>3:
+				if cnt_P%4==0:
+					string_time_P+='\n'
+					string_flow_P+='\n'
+				string_time_P+='%14.6E'%t_max
+				string_flow_P+='%14.6E'%last_flow
+				cnt_P+=1
+
+		elif type_flow=="shutdown":
+			if cnt_R>3:
+				if cnt_R%4==0:
+					string_time_R+='\n'
+					string_flow_R+='\n'
+					string_enthalpy_R+='\n'
+
+				cnt_R+=2
+
+				string_time_R+='%14.6E'%(last_time+time_plus_the_last)
+				string_flow_R+='%14.6E'%flow_min
+				string_enthalpy_R+='%14.6E'%last_enthalpy
+
+				string_time_R+='%14.6E'%t_max
+				string_flow_R+='%14.6E'%flow_min
+				string_enthalpy_R+='%14.6E'%last_enthalpy
+
+			if cnt_P>3:
+				if cnt_P%4==0:
+					string_time_P+='\n'
+					string_flow_P+='\n'
+				
+				cnt_P+=2
+
+				string_time_P+='%14.6E'%(last_time+time_plus_the_last)
+				string_flow_P+='%14.6E'%flow_min
+
+				string_time_P+='%14.6E'%t_max
+				string_flow_P+='%14.6E'%flow_min
+
+		if cnt_R==2 or cnt_R==3:
+			string_time_R=''
+			string_flow_R=''
+			string_enthalpy_R=''
+
+		if cnt_P==2 or cnt_P==3:
+			string_time_P=''
+			string_flow_P=''
 
 		string_time_P+='\n'
 		string_flow_P+='\n'
@@ -48,7 +141,7 @@ def write_t2_format_gener(var_array,time_array,ref_date,var_type,var_enthalpy):
 	else:
 		print "Time and variable array must have the same length"
 
-def write_gener_from_sqlite(db_path,wells):
+def write_gener_from_sqlite(db_path,wells,type_flow):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
@@ -126,14 +219,23 @@ def write_gener_from_sqlite(db_path,wells):
 					#If the block name exists it takes that value
 					source_corr=source_corr_num_sqlite
 
-			P,R, LTAB_P, LTAB_R= write_t2_format_gener(data['m_total'].values*porcentage[feedn],dates,ref_date,data['type'],data['flowing_enthalpy'])
+			P,R, LTAB_P, LTAB_R= write_t2_format_gener(data['m_total'].values*porcentage[feedn],dates,ref_date,data['type'],data['flowing_enthalpy'],type_flow)
 
-			if LTAB_R>1:
+
+			if type_flow=="invariable":
+				condition=1
+			elif type_flow=="constant":
+				condition=3
+			elif type_flow=="shutdown":
+				condition=4
+
+
+			if LTAB_R>condition:
 				gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr,LTAB_R-1)
 				gener+=R
 				source_corr_num+=1
 
-			if LTAB_P>1:
+			if LTAB_P>condition:
 				gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P-1)
 				gener+=P
 				source_corr_num+=1
@@ -156,6 +258,7 @@ def write_gener_from_sqlite(db_path,wells):
 
 def write_geners_to_txt_and_sqlite(db_path,geners):
 	#Bug, if the file already exits it appends the line and mantain the values
+	#Constant values from model_conf.py
 
 	#TYPE: HEAT, MASS, DELV
 
@@ -187,7 +290,7 @@ def write_geners_to_txt_and_sqlite(db_path,geners):
 				if not skip:
 					string+="\n"
 				
-				#if upate matters
+				#if update matters
 				"""
 				if os.path.isfile('../model/t2/sources/GENER_SOURCES'):
 					file=open('../model/t2/sources/GENER_SOURCES','a')
@@ -232,5 +335,8 @@ def write_geners_to_txt_and_sqlite(db_path,geners):
 
 db_path='../input/model.db'
 
-#write_gener_from_sqlite(db_path,wells)
+
+type_flow="constant" # "constant" "shutdown" "invariable"
+
+write_gener_from_sqlite(db_path,wells,type_flow)
 #write_geners_to_txt_and_sqlite(db_path,geners)

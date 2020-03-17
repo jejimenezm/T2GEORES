@@ -778,8 +778,156 @@ def save_all_PT_evol_from_layer(wells,layer,parameter):
 	for well in wells:
 		plot_PT_evol_block_in_wells(well,layer,parameter,save,show=False)
 
+def plot_compare_evol_PT_from_wells(well,layer,parameter,save,show):
+
+	if parameter  not in ["P","T","SG","SW","X(WAT1)","X(WAT2)","PCAP","DG","DW"]:
+		print "Cant be printed, the parameter is  not register"
+	elif parameter=="P":
+		parameter_label="Pressure"
+		parameter_unit="bar"
+	elif parameter=="T":
+		parameter_label="Temperature"
+		parameter_unit="C"
+	elif parameter=="SW":
+		parameter_label="1-Quality"
+		parameter_unit=""
+	elif parameter=="SG":
+		parameter_label="Quality"
+		parameter_unit=""
+	elif parameter=="DG":
+		parameter_label="Density"
+		parameter_unit="kg/m3"
+	elif parameter=="DW":
+		parameter_label="Density"
+		parameter_unit="kg/m3"
+	else:
+		parameter_label=""
+		parameter_unit=""
+
+	#Read file,  current calculated
+	file="../output/PT/evol/%s_PT_%s_evol.dat"%(well,layer)
+	data=pd.read_csv(file)
+
+	times=data['TIME']
+
+	values=data[parameter]
+
+	dates=[]
+	values_to_plot=[]
+	for n in range(len(times)):
+		if float(times[n])>0:
+			try:
+				dates.append(ref_date+datetime.timedelta(days=int(times[n])))
+				if parameter!="P":
+					values_to_plot.append(values[n])
+				else:
+					values_to_plot.append(values[n]/1E5)
+			except OverflowError:
+				print ref_date,"plus",str(times[n]),"wont be plot"
+
+
+	#Read file, previous calculated 
+	file="../output/PT/evol/prev/%s_PT_%s_evol.dat"%(well,layer)
+
+	data_prev=pd.read_csv(file)
+
+	times_prev=data_prev['TIME']
+
+	values_prev=data_prev[parameter]
+
+	dates_prev=[]
+	values_to_plot_prev=[]
+	for n in range(len(times)):
+		if float(times[n])>0:
+			try:
+				dates_prev.append(ref_date+datetime.timedelta(days=int(times_prev[n])))
+				if parameter!="P":
+					values_to_plot_prev.append(values_prev[n])
+				else:
+					values_to_plot_prev.append(values_prev[n]/1E5)
+			except OverflowError:
+				print ref_date,"plus",str(times_prev[n]),"wont be plot"
+
+
+
+	#knowing the masl
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	depth=pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%layer,conn)
+	depth=depth.values[0][0]
+
+	#Read file, real
+	file="../input/drawdown/%s_DD.dat"%well
+	try:
+		data_real=pd.read_csv("../input/drawdown/%s_DD.dat"%well)
+		data_real.loc[data_real['TVD']==depth]['datetime']
+		dates_func=lambda datesX: datetime.datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+		dates_real=list(map(dates_func,data_real.loc[data_real['TVD']==depth]['datetime'].values))
+	except IOError:
+		return 
+
+	#Plotting
+
+	fig, ax = plt.subplots(figsize=(10,4))
+	ax.plot(dates,values_to_plot,'ob',linewidth=1,ms=3,label='Current calculated %s'%parameter_label)
+	ax.plot(dates_prev,values_to_plot_prev,'+k',linewidth=1,ms=3,label='Previous calculated %s'%parameter_label)
+	ax.plot(dates_real,data_real.loc[data_real['TVD']==depth]['pressure'].values,'or',linewidth=1,ms=3,label='Real %s'%parameter_label)
+	ax.set_title("Well: %s at %s masl (layer %s)"%(well,depth,layer) ,fontsize=8)
+	ax.set_xlabel("Time",fontsize = 8)
+	ax.set_ylabel('%s [%s]'%(parameter_label,parameter_unit),fontsize = 8)
+
+	ax.legend(loc="upper right")
+
+	#Plotting formating
+	xlims=[min(dates)-datetime.timedelta(days=365),max(dates)+datetime.timedelta(days=365)]
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+
+	ax.set_xlim(xlims)
+	ax.xaxis.set_major_formatter(years_fmt)
+
+	#ax.xaxis.set_major_locator(years)
+	#fig.autofmt_xdate()
+
+	#Grid style
+	ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.grid(True)
+
+	if save:
+		fig.savefig('../calib/drawdown_cooling/images/%s_%s_%s_evol.png'%(well,layer,parameter)) 
+	if show:
+		plt.show()
+
+def compare_evol_runs_PT(wells,db_path):
+
+	layer='D'
+	parameter='T'
+
+	pdf_pages=PdfPages('../calib/drawdown_cooling/run_PT_evol'+str(datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S'))+'.pdf')
+	for well in sorted(wells):
+		print well
+		fig=plot_compare_evol_PT_from_wells(well,layer,parameter,save=True,show=False)
+		pdf_pages.savefig(fig)
+
+	d = pdf_pages.infodict()
+	d['Title'] = 'CGA Calibration Model Plots'
+	d['Author'] = 'O&MReservorios'
+	d['Subject'] = 'Cooling/Drawdown'
+	d['Keywords'] = 'Model, TOUGH2'
+	d['CreationDate'] = datetime.datetime.today()
+	d['ModDate'] = datetime.datetime.today()
+
+	# Write the PDF document to the disk
+	pdf_pages.close()
+
 #save_all_PT_evol_from_layer(wells,layer='D',parameter='T')
-plot_PT_evol_block_in_wells('AH-34',layer='D',parameter='T',save=False,show=True)
+plot_PT_evol_block_in_wells('AH-1',layer='D',parameter='T',save=False,show=True)
+
+#compare_evol_runs_PT(wells,db_path)
+
 #plot_all_layer()
 
 name='AH-34'

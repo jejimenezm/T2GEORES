@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 #Argument 1, list of blocks
 #Well name
 
@@ -11,7 +9,7 @@ fi_out_file="../model/t2/t2.out"
 
 #Times
 echo "TIME">times_temp
-grep "OUTPUT DATA AFTER"  $fi_out_file  | cut -c  117-127>>times_temp
+grep "OUTPUT DATA AFTER" $fi_out_file  | cut -c  117-127>>times_temp
 
 echo "$1" | head -n -1 > temp
 
