@@ -9,7 +9,7 @@ setup(
     author_email="erick@grogtp.is",
     url ="https://github.com/jejimenezm/T2GEORES",
     download_url='https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.1.2/T2GEORES-0.1.2.tar.gz',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 3 - Alpha",
@@ -17,7 +17,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'pandas==1.1.3',
+        'pandas>=1.1.3',
         'numpy>=1.14.5',
         'matplotlib>=3.3.2',
         'iapws>=1.5.2',
