@@ -596,5 +596,3 @@ def plot_init_conditions():
 	axP.set_ylim([min(depths),max(depths)])
 
 	plt.show()
-
-#plot_init_conditions()

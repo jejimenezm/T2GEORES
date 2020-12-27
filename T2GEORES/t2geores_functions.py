@@ -138,8 +138,4 @@ def create_structure(structure, current_path):
     else:
     	os.makedirs(current_path)
 
-#empty_model(structure,'../')
-#create_structure(structure,'.')
-
-
 

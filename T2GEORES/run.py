@@ -342,22 +342,3 @@ def run(EOS=1):
 				shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
 			except shutil.Error:
 				print("File already exist %s"%file_name)
-
-#Sostenibilidad Ahuachapan
-
-#incon_from_st_to_t2()
-
-#update_gen(db_path,geners)
-
-#incon_to_t2()
-
-#update_gen(db_path,geners)
-
-#create_prev()
-
-#incon_to_t2()
-#incon_delete()
-#update_gen()
-#update_rock_distribution(include_FOFT=True,include_SOLVR=True,include_COFT=True,include_GOFT=True,include_RPCAP=True,include_MULTI=True,include_START=True)
-
-#run()

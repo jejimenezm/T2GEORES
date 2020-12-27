@@ -15,6 +15,6 @@ T2GEORES/
       /scripts
 ```
 
-The library requires the use of a AMESH copy on the path to work on the library [pre-post TOUGH2 processors]('https://tough.lbl.gov/licensing-download/free-software-download/'). 
+The library requires the use of a AMESH copy on the path, others pre/post TOUGH2 processors can be found on [here]('https://tough.lbl.gov/licensing-download/free-software-download/'). 
 
 

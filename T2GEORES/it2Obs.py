@@ -343,9 +343,3 @@ def observations_to_it2(db_path=db_path,wells=input_data['WELLS'],T_DEV=input_da
 					outfile.write(line)
 		outfile.write("""	<<\n""")
 	outfile.close()
-
-#Sostenibilidad Ahuachapan
-#observations_to_it2()
-#observations_to_it2_h()
-#observations_to_it2_DD(include_pres=True,p_res_block='DA128')
-#observations_to_it2_PT()

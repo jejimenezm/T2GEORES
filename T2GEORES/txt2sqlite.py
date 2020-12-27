@@ -397,6 +397,42 @@ def insert_mh_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
 				conn.commit()
 	conn.close()
 
+def replace_mh(wells_to_replace,db_path=input_data['db_path'],source_txt=source_txt):
+	"""Toma la informacion contenida en los archivos de la carpeta  ../input/mh
+
+	Parameters
+	----------
+	db_path : str
+	  Direccion de base de datos sqlite, tomado de model_conf
+	source_txt : str
+	  Direccion de folder con datos fuentes
+
+	Note
+	----
+	Escribe los datos en la tabla mh, no permite actualizaciones, por lo que de modificar los archivos contenidos en la carpeta mh, es preferible eliminar registros en base y volver a ejecutar esta funcion
+
+	Examples
+	--------
+	>>>  insert_cooling_to_sqlite(db_path,'../input/')
+	"""
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	for f in os.listdir(source_txt+'mh'):
+		well_name=f.replace("'","").replace("_mh.dat","")
+		if well_name in wells_to_replace:
+			q="DELETE FROM mh WHERE well='%s'"%well_name
+			c.execute(q)
+			conn.commit()
+			if os.path.isfile(source_txt+'mh/'+f):
+				mh=pd.read_csv(source_txt+'mh/'+f)
+				for index, row in mh.iterrows():
+					q="INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES ('%s','%s','%s',%s,%s,%s,%s)"%\
+					(well_name,row['type'],row['date-time'],row['steam'],row['liquid'],row['enthalpy'],row['WHPabs'])
+					c.execute(q)
+					conn.commit()
+	conn.close()
+
+
 def sqlite_to_json(db_path=input_data['db_path'],source_txt=source_txt):
 	"""Transforma el contenido de la base de datos sqlite mode.db en formato json
 
@@ -629,80 +665,3 @@ def insert_layers_to_sqlite(input_dictionary=input_data):
 		except sqlite3.IntegrityError:
 			print("The layer %s is already define, correlative is a PRIMARY KEY"%correlative[n])
 	conn.close()
-
-
-"""
-Chinameca
-"""
-
-
-"""
-db_creation(db_path)
-
-
-insert_survey_to_sqlite(db_path,source_txt)
-insert_wells_sqlite(db_path,source_txt)
-insert_PT_to_sqlite(db_path,source_txt)
-insert_drawdown_to_sqlite(db_path,source_txt)
-insert_cooling_to_sqlite(db_path,source_txt)
-insert_layers_to_sqlite(db_path)
-"""
-
-"""
-insert_feedzone_to_sqlite(db_path,source_txt)
-
-
-insert_wellblock_to_sqlite(db_path,source_txt,wells)
-insert_layers_to_sqlite(db_path,source_txt)
-
-insert_mh_to_sqlite(db_path,source_txt)
-"""
-
-
-#sqlite_to_json(db_path,source_txt)
-#insert_wellblock_to_sqlite(db_path,source_txt,wells)
-#insert_feedzone_to_sqlite(db_path,source_txt)
-#insert_mh_to_sqlite(db_path,source_txt)
-
-
-#Sostenibilidad Ahuachapan
-
-"""
-db_creation(db_path)
-insert_survey_to_sqlite(db_path,source_txt)
-insert_wells_sqlite(db_path,source_txt)
-insert_PT_to_sqlite(db_path,source_txt)
-insert_drawdown_to_sqlite(db_path,source_txt)
-insert_cooling_to_sqlite(db_path,source_txt)
-insert_mh_to_sqlite(db_path,source_txt)
-
-
-insert_layers_to_sqlite(db_path) #Actualizar
-insert_feedzone_to_sqlite(db_path,source_txt)
-insert_wellblock_to_sqlite(db_path,source_txt,wells)
-
-"""
-
-#Cuando se crean los escenarios es necesario borrar los flujo previos para cuando el script lea la base para crear el GENER lea segun se han los flujos nuevos
-
-#insert_mh_to_sqlite(db_path,source_txt)
-
-"""
-db_creation()
-
-insert_survey_to_sqlite()
-insert_wells_sqlite()
-insert_PT_to_sqlite()
-insert_drawdown_to_sqlite()
-insert_cooling_to_sqlite()
-insert_mh_to_sqlite()
-
-
-insert_layers_to_sqlite() #Actualizar
-insert_feedzone_to_sqlite()
-insert_wellblock_to_sqlite()
-
-"""
-
-#insert_PT_to_sqlite()
-#insert_layers_to_sqlite()

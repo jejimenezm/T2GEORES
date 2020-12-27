@@ -8,6 +8,22 @@ import pandas as pd
 import sqlite3
 
 def converter(value,format_t2,def_value):
+	"""Returns the input value on the specified format
+
+	Parameters
+	----------
+	value : float-str
+	  Parameter to be written
+	format_t2 : dictionary
+	  Contains the format and default values for every variable
+	def_value : bool
+	  True in case the default values is used
+
+	Note
+	----
+	format_t2 comes from the file formats.py. In case a new type of section is included, the variable name needs to be specified on the file
+
+	"""
 	if 's' in format_t2:
 		if value==None:
 			eq_str_len=int(format_t2.replace(">","").replace("s",""))
@@ -29,6 +45,21 @@ def converter(value,format_t2,def_value):
 	return output
 
 def def_value_selector(section,key,input_dictionary):
+	"""Evaluate if the necessary parameter has been defined on the input file
+
+	Parameters
+	----------
+	section : str
+	  Section from TOUGH2 file such as PARAMETER, RPCAP, etc.
+	key : str
+	  Parameter to evaluate
+	input_dictionary : dictionary
+	  Dictionary with the defined input information
+
+	Note
+	----
+	"""
+
 	try:
 		value=input_dictionary[section][key]
 		def_value=False
@@ -38,6 +69,26 @@ def def_value_selector(section,key,input_dictionary):
 	return value,def_value
 
 def FCG_file_checker(name):
+	"""Evaluate if the the file defining the FOFT, COFT or GOFT section exits or if it contains more than 100 lines
+
+	Parameters
+	----------
+	name : str
+	  Name of the file to check
+
+	Note
+	----
+	Print messages are expected
+
+	Returns
+	-------
+	str
+	  string : string containing 100 lines of the selected file
+	bool
+	  isfile : True if the file exits
+
+	"""
+
 	string=""
 	if os.path.isfile("../model/t2/sources/%s"%name):
 		with open("../model/t2/sources/%s"%name) as file:
@@ -54,21 +105,49 @@ def FCG_file_checker(name):
 	return string,isfile
 
 def diff_seconds(ref,date):
-	#Both should be datetime
+	"""Return the difference in seconds
+
+	Parameters
+	----------
+	ref : datetime
+	  Model's reference time
+	date : datetime
+	  An arbitrary time
+
+	Returns
+	-------
+	int
+	  diff_seconds : difference in seconds
+
+	"""
+
 	if isinstance(date, datetime) and isinstance(ref, datetime):
 		diff_seconds=(date-ref).total_seconds()
 	else:
 		sys.exit("ref or date values are not datetime type")
 	return diff_seconds
 
-def PARAM_writer():
+def PARAM_writer(input_dictionary):
+	"""Return the PARAM section
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary with the defined parameter information
+
+	Returns
+	-------
+	str
+	  string : string containing PARAM section
+
+	"""
 	string="PARAM----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	params_levels=[1,2,3,4]
 	for level in params_levels:
 		for key in formats_t2['PARAMETERS']:
 			if formats_t2['PARAMETERS'][key][2]==level:
-				if key=='RE1' and 'DELTEN' in input_data['PARAMETERS'] and input_data['PARAMETERS']['DELTEN']<0 :
-					for index, time_step in enumerate(input_data['PARAMETERS']['DELTEN_LIST']):
+				if key=='RE1' and 'DELTEN' in input_dictionary['PARAMETERS'] and input_dictionary['PARAMETERS']['DELTEN']<0 :
+					for index, time_step in enumerate(input_dictionary['PARAMETERS']['DELTEN_LIST']):
 						string+=converter(time_step,formats_t2['DELTEN_LIST_FORMAT'][1],False)
 						if (index+1)%8==0:
 							string+='\n'
@@ -85,7 +164,21 @@ def PARAM_writer():
 	string+="\n"
 	return string
 
-def TIMES_writer(input_dictionary=input_data):
+def TIMES_writer(input_dictionary):
+	"""Return the TIMES section
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary with the defined TIMES information
+
+	Returns
+	-------
+	str
+	  string : string containing the TIMES section
+
+	"""
+
 	string="TIMES----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 
 	if any(input_dictionary['TIMES']['TIMES_N']):
@@ -109,61 +202,31 @@ def TIMES_writer(input_dictionary=input_data):
 	string+="\n\n"
 	return string
 
-def source_to_FOFT(db_path=input_data['db_path']):
-	"""Crea la seccion FOFT a partir de las fuentes en los pozos
+def wells_track_blocks_to_FOFT(input_dictionary,wells):
+	"""It creates the FOFT section base on the well track
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary : dictionary
+	  Dictionary with the data base location information
+	wells: list
+	  Wells to include on the FOFT section
 
 	Returns
 	-------
 	file
-	  FOFT: en ../model/t2/sources
-	  
-	Examples
-	--------
-	>>> write_well_sources_from_sqlite_to_FOFT(db_path)
-	"""
-
-	conn=sqlite3.connect(db_path)
-	c=conn.cursor()
-
-	data_blockcorr=pd.read_sql_query("SELECT blockcorr FROM t2wellsource WHERE source_nickname LIKE 'SRC%';",conn)
-
-	string=""
-	for n in sorted(data_blockcorr['blockcorr'].values):
-		string+="%s\n"%(n)
-
-	conn.close()
-	file=open("../model/t2/sources/FOFT",'w')
-	file.write(string)
-	file.close()
-
-def wells_track_blocks_to_FOFT(db_path=input_data['db_path']):
-	"""Crea la seccion FOFT a partir de la trayectoria del pozo
-
-	Parameters
-	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-
-	Returns
-	-------
-	file
-	  FOFT: en ../model/t2/sources
+	  FOFT: on ../model/t2/sources
 	  
 	Attention
 	---------
-	En general esta funcion contendra mas de 100 elementos por lo que para la version 6.x de TOUGH2 se recomienda utilizar la funcion write_well_sources_from_sqlite_to_FOFT
+	This function could have more than 100 elements depending on the number of layers and wells defined. For TOUGH2 6.x it is preffereable to use well_sources_to_FOFT
 
 	Examples
 	--------
-	>>> write_wells_track_blocks_from_sqlite_to_FOFT(db_path)
+	>>> wells_track_blocks_to_FOFT(input_dictionary)
 	"""
 
-	conn=sqlite3.connect(db_path)
+	conn=sqlite3.connect(input_dictionary['db_path'])
 	c=conn.cursor()
 
 	data_layer=pd.read_sql_query("SELECT correlative FROM layers ORDER BY middle;",conn)
@@ -179,7 +242,47 @@ def wells_track_blocks_to_FOFT(db_path=input_data['db_path']):
 	file.write(string)
 	file.close()
 
-def FOFT_writer():
+def well_sources_to_FOFT(input_dictionary,wells):
+	""""It creates the FOFT section base on the well feedzone position
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary with the data base location information
+	wells: list
+	  Wells to include on the FOFT section
+
+	Returns
+	-------
+	file
+	  FOFT: on ../model/t2/sources
+
+	Examples
+	--------
+	>>> well_sources_to_FOFT(input_dictionary)
+	"""
+
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	c=conn.cursor()
+
+	string=""
+	for name in sorted(wells):
+		data_block=pd.read_sql_query("SELECT blockcorr FROM t2wellsource WHERE well='%s';"%name,conn)
+		string+="%s\n"%(data_block['blockcorr'].values[0])
+	conn.close()
+	file=open("../model/t2/sources/FOFT",'w')
+	file.write(string)
+	file.close()
+
+def FOFT_writer(input_dictionary):
+	""""It wraps up the section FOFT
+
+	Returns
+	-------
+	str
+	  output: contains the FOFT section
+
+	"""
 	string,isfile=FCG_file_checker('FOFT')
 	if isfile:
 		output="""FOFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"""
@@ -188,7 +291,15 @@ def FOFT_writer():
 		output=""
 	return output
 
-def COFT_writer():
+def COFT_writer(input_dictionary):
+	""""It wraps up the section COFT
+
+	Returns
+	-------
+	str
+	  output: contains the COFT section
+
+	"""
 	string,isfile=FCG_file_checker('COFT')
 	if isfile:
 		output="""COFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"""
@@ -197,25 +308,26 @@ def COFT_writer():
 		output=""
 	return output
 
-def source_to_GOFT(db_path=input_data['db_path']):
-	"""Crea la seccion FOFT a partir de las fuentes en los pozos
+def source_to_GOFT(input_dictionary):
+	""""It creates the GOFT section base on the well feedzone position nickname
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary : dictionary
+	  Dictionary with the data base location information
 
 	Returns
 	-------
 	file
-	  FOFT: en ../model/t2/sources
-	  
+	  GOFT: on ../model/t2/sources
+
 	Examples
 	--------
-	>>> write_well_sources_from_sqlite_to_FOFT(db_path)
+	>>> source_to_GOFT(input_dictionary)
 	"""
 
-	conn=sqlite3.connect(db_path)
+
+	conn=sqlite3.connect(input_dictionary['db_path'])
 	c=conn.cursor()
 
 	data_blockcorr=pd.read_sql_query("SELECT source_nickname FROM t2wellsource WHERE source_nickname LIKE 'SRC%';",conn)
@@ -229,7 +341,15 @@ def source_to_GOFT(db_path=input_data['db_path']):
 	file.write(string)
 	file.close()
 
-def GOFT_writer():
+def GOFT_writer(input_dictionary):
+	""""It wraps up the section COFT
+
+	Returns
+	-------
+	str
+	  output: contains the COFT section
+
+	"""
 	string,isfile=FCG_file_checker('GOFT')
 	if isfile:
 		output="""GOFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"""
@@ -238,12 +358,20 @@ def GOFT_writer():
 		output=""
 	return output
 
-def SOLVR_writer():
+def SOLVR_writer(input_dictionary):
+	""""It wraps up the section SOLVR
+
+	Returns
+	-------
+	str
+	  output: contains the SOLVR section
+
+	"""
 	string="SOLVR----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	
 	cnt=0
 	for key in formats_t2['SOLVR']:
-		value,def_value=def_value_selector('SOLVR',key)
+		value,def_value=def_value_selector('SOLVR',key,input_dictionary)
 		if def_value: cnt+=1 
 		string+=converter(value,formats_t2['SOLVR'][key][1],def_value)
 	string+="\n\n"
@@ -252,16 +380,28 @@ def SOLVR_writer():
 		string=""
 	return string
 
-def GENER_adder(type_run=input_data['TYPE_RUN']):
-	string="GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
+def GENER_adder(input_dictionary):
+	""""It takes all the GENER section created depending on the type of run production or natural defined on the input dictionary
 
-	if os.path.isfile("../model/t2/sources/GENER_SOURCES") and type_run in ['natural','production']:
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary specficing the type of run
+
+	Returns
+	-------
+	str
+	  string : string containing the GENER section
+
+	"""
+	string="GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
+	if os.path.isfile("../model/t2/sources/GENER_SOURCES") and input_dictionary['TYPE_RUN'] in ['natural','production']:
 		with open("../model/t2/sources/GENER_SOURCES") as gener_source_file:
 			for line in gener_source_file.readlines()[:]:
 				string+="%s"%line
-		if type_run=='natural':
+		if input_dictionary['TYPE_RUN']=='natural':
 			string+="\n"
-		elif type_run=='production':
+		elif input_dictionary['TYPE_RUN']=='production':
 			if os.path.isfile("../model/t2/sources/GENER_PROD"):
 				with open("../model/t2/sources/GENER_PROD") as gener_prod_file:
 					for line in gener_prod_file.readlines()[:]:
@@ -284,23 +424,49 @@ def GENER_adder(type_run=input_data['TYPE_RUN']):
 
 	return string
 
-def RPCAP_writer():
+def RPCAP_writer(input_dictionary):
+	""""It wraps up the section RPCAP
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary containing the RPCAP information
+
+	Returns
+	-------
+	str
+	  output: contains the RPCAP section
+
+	"""
 	string="RPCAP----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	params_levels=[1,2]
 	for level in params_levels:
 		for key in formats_t2['RPCAP']:
 			if formats_t2['RPCAP'][key][2]==level:
-				value,def_value=def_value_selector('RPCAP',key)
+				value,def_value=def_value_selector('RPCAP',key,input_dictionary)
 				string+=converter(value,formats_t2['RPCAP'][key][1],def_value)
 		string+='\n'
 	string+="\n"
 	return string
 
-def MULTI_writer():
+def MULTI_writer(input_dictionary):
+	""""It wraps up the section MULTI
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary containing the MULTI information
+
+	Returns
+	-------
+	str
+	  output: contains the MULTI section
+
+	"""
 	string="MULTI----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	cnt=0
 	for key in formats_t2['MULTI']:
-		value,def_value=def_value_selector('MULTI',key)
+		value,def_value=def_value_selector('MULTI',key,input_dictionary)
 		if def_value: cnt+=1 
 		string+=converter(value,formats_t2['MULTI'][key][1],def_value)
 	string+="\n\n"
@@ -309,24 +475,37 @@ def MULTI_writer():
 		string=""
 	return string
 
-def TITLE_writer():
+def TITLE_writer(input_dictionary):
+	""""It writes the TITLE of TOUGH2 file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary containing the TITLE information
+
+	Returns
+	-------
+	str
+	  output: contains the TITLE section
+	"""
+
 	try:
-		value=input_data['TITLE']
+		value=input_dictionary['TITLE']
 	except KeyError:
 		value=formats_t2['TITLE'][1]
 	return  value[0:80].ljust(80) +'\n'
 
 def CONNE_from_steinar_to_t2():
-	"""Convierte archivo conne de salida de steinar a archivo CONNE en ../model/t2/sources
+	"""It takes the CONNE file from steinar and convertir into a CONNE TOUGH2 section (the vertical connections are affected by -1)
 
 	Returns
 	-------
 	file
-	  CONNE: conexiones de elementos
+	  CONNE: on ../model/t2/sources/
 	  
 	Attention
 	---------
-	Existen dos diferencias principales, a primera es el formato de steinar (ancho de columnas) y la segunda es la componente de la gravedad en steinar es +1 cuando cuando deberia ser -1 (debido al en como se escriben los bloques). Tambien introduce la cabezera del archivo.
+	Comparing with steinar CONNE format the column width changes with the standard TOUGH2 input file
 
 	Examples
 	--------
@@ -352,20 +531,20 @@ def CONNE_from_steinar_to_t2():
 		sys.exit("The file %s or directory do not exist"%source_file)
 
 def merge_ELEME_and_in_to_t2():
-	"""Convierte archivo eleme de salida de steinar a archivo ELEME en ../model/t2/sources
+	"""It takes the ELEME file from the steinar directory and convert it into a TOUGH2 format with coordinates 
 
 	Returns
 	-------
 	file
-	  ELEME: definicion de los elementos en formato TOUGH2
+	  ELEME: section from TOUGH2 file
 	  
 	Attention
 	---------
-	El archivo eleme de steinar no contiene xyz por lo que esta funcion introduce las coordenadas al archivo de salida ELEME, asi como la cabezera del mismo.
+	It adds the head of the section.
 
 	Examples
 	--------
-	>>> conne_from_steinar_to_t2()
+	>>> merge_ELEME_and_in_to_t2()
 	"""
 	source_file="../mesh/to_steinar/in"
 	eleme_file="../mesh/to_steinar/eleme"
@@ -408,7 +587,15 @@ def merge_ELEME_and_in_to_t2():
 	else:
 		sys.exit("The file %s or directory do not exist"%file_source_file)
 
-def ELEME_adder():
+def ELEME_adder(input_dictionary):
+	""""It takes the ELEME file from ../model/t2/sources and print it as a string
+
+	Returns
+	-------
+	str
+	  string : string containing the ELEME section
+
+	"""
 
 	source_file="../model/t2/sources/ELEME"
 	string=""
@@ -421,7 +608,15 @@ def ELEME_adder():
 
 	return string
 
-def CONNE_adder():
+def CONNE_adder(input_dictionary):
+	""""It takes the CONNE file from ../model/t2/sources and print it as a string
+
+	Returns
+	-------
+	str
+	  string : string containing the CONNE section
+
+	"""
 	source_file="../model/t2/sources/CONNE"
 	string=""
 	if os.path.isfile(source_file):
@@ -432,7 +627,37 @@ def CONNE_adder():
 		sys.exit("The file %s or directory do not exist"%source_file)
 	return string
 
-def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,type_run=input_data['TYPE_RUN']):
+def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,input_dictionary):
+	""""It creates the FOFT section base on the well feedzone position
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary with all the necessary information to define a model
+	include_FOFT: bool
+	  If true includes the FOFT section on the TOUGH2 file
+	include_SOLVR: bool
+	  If true includes the SOLVR section on the TOUGH2 file
+	include_COFT: bool
+	  If true includes the COFT section on the TOUGH2 file
+	include_GOFT: bool
+	  If true includes the GOFT section on the TOUGH2 file
+	include_RPCAP: bool
+	  If true includes the RPCAP section on the TOUGH2 file
+	include_MULTI: bool
+	  If true includes the MULTI section on the TOUGH2 file
+	include_START: bool
+	  If true includes the START sentence is added on the top of PARAM section
+
+	Returns
+	-------
+	file
+	  t2: on ../model/t2/t2
+
+	Examples
+	--------
+	>>> t2_input(include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,input_dictionary)
+	"""
 
 	secctions=[TITLE_writer,PARAM_writer,TIMES_writer,ELEME_adder,CONNE_adder]
 
@@ -451,15 +676,13 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 	for func in secctions:
 		if func==PARAM_writer and include_START:
 			output+="START----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
-		output+=func()
+		output+=func(input_dictionary)
 
-	output+=GENER_adder(type_run)
+	output+=GENER_adder(input_dictionary)
 
 	output+="ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 
 	input_fi_file="../model/t2/t2"
 	t2_file_out=open(input_fi_file, "w")
 	t2_file_out.write(output)
-	t2_file_out.close()	
-
-#t2_input(include_FOFT=True,include_RPCAP=True,include_SOLVR=True,include_COFT=True,include_GOFT=True,include_MULTI=True,include_START=True,type_run='production')
+	t2_file_out.close()

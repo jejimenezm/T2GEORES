@@ -1455,11 +1455,3 @@ def plot_3D_mesh():
 
 		grid = pv.UnstructuredGrid(cells_x, celltypes, np.array(points))
 		_ = grid.plot(show_edges=True)
-
-#mesh_creation_func()
-#ELEM_to_json()
-#plot_3D_mesh()
-#segmnt_to_json()
-#plot_voronoi()
-
-#change_ref_elevation(variation=-600)
