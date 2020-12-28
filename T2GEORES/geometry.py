@@ -1,4 +1,3 @@
-from model_conf import input_data
 from formats import formats_t2
 import numpy as np
 import csv
@@ -9,23 +8,19 @@ import shapefile
 import json
 from iapws import IAPWS97
 
-def vertical_layers(input_dictionary=input_data):
-	"""Regresa informacion relacionada a las capas
+def vertical_layers(input_dictionary):
+	"""It returns the layers information on a dictionary
 
 	Returns
 	-------
-	array
-	  Elevacion superior de capa
-	array
-	  Nombre de capa
-	array
-	  Elevacion media de capa
-	array
-	  Elevacion inferior de capa
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'.
+
+	Returns
+	-------
+	dictionary
+		layers_info: dictionary with keywords; name, top, middle and bottom. The last three are float values
 	
-	Examples
-	--------
-	>>> vertical_layer(layers,z0_level)
 	"""
 
 	layers_info={'name':[],'top':[],'middle':[],'bottom':[]}
@@ -52,37 +47,37 @@ def vertical_layers(input_dictionary=input_data):
 	return layers_info
 
 def MD_to_TVD(well,depth):
-	"""Retorna las posiciones xyz de una profundidad especifica
+	"""It returns the coordinates X,Y and Z at a desired depth.
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 	depth : float
-	  Profundidad seleccionada para extraccion de informacion
-
+	  Measure depth at which the X,Y,Z coordinate is needed
 
 	Returns
 	-------
 	float
-	  x_V : posicion x de profundidad especificada
+	  x_V :  x position of desire point
 	float
-	  y_V :  posicion y de profundidad especificada
+	  y_V :  y position of desire point
 	float
-	  z_V :  posicion z de profundidad especificada
+	  z_V :  z position of desire point
 	  
 	Attention
 	---------
-	Los archivos input/ubication.csv e input/survey/{pozo}_MD.dat deben existir
+	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.
 
 	Note
 	----
-	Se utiliza una regresion lineal entre cada punto del registro
+	A linear regression is used.
 
 	Examples
 	--------
-	>>> MD_to_TVD('AH-1',500)
+	>>> MD_to_TVD('WELL-1',500)
 	"""
+
 	file="../input/survey/%s_MD.dat"%well
 	MD,DeltaY,DeltaX=np.loadtxt(file,skiprows=1,unpack=True,delimiter=',')
 
@@ -129,46 +124,45 @@ def MD_to_TVD(well,depth):
 	return x_out,y_out,z_out
 
 def MD_to_TVD_one_var_array(well,var_array,MD_array,num_points):
-	"""Encuentra la posicion xyz de cada punto a lo largo de un registro,  junto con la temperatura asociada
+	"""It returns the position X, Y and Z for every point on a log along Pressure or Temperature.
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 	var_array : array
-	  Arreglo que contiene registro de valores de Presion o temperatura
-	MD_array   :array
-	  Arreglo que contiene registro de valores de profundidad medida
+	  It contains the log of pressure or temperature
+	MD_array :array
+	  It contains the measure depth values corresponding with every point on var_array
 	num_points	:int
-	  Numero de puntos a interpolar
+	  Number of points for the output array
 
 	Returns
 	-------
+	float
+	  x_V :  x position of desire point
+	float
+	  y_V :  y position of desire point
+	float
+	  z_V :  z position of desire point
 	array
-	  x_V : arreglo con posicion x de cada punto del registro
-	array
-	  y_V : arreglo con posicion y de cada punto del registro
-	array
-	  z_V : arreglo con posicion z de cada punto del registro
-	array
-	  v_V : arreglo con valores de Presion o Temperatura para cada punto xyz
+	  v_V : contains the values of pressure or temperature for every coordinate
 	  
 	Attention
 	---------
-	Los archivos input/ubication.csv e input/survey/{pozo}_MD.dat deben existir
+	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.
 
 	Note
 	----
-	Se utiliza una regresion lineal entre cada punto del registro
+	A linear regression is used.
 
 	Examples
 	--------
-	>>> MD_to_TVD_one_var_array('AH-16',data['Temp'],data['MD'],100)
+	>>> MD_to_TVD_one_var_array('WELL-1',data['Temp'],data['MD'],100)
 	"""
 
 	file="../input/survey/%s_MD.dat"%well
 	MD,DeltaY,DeltaX=np.loadtxt(file,skiprows=1,unpack=True,delimiter=',')
-	print(well)
 
 	reader = csv.DictReader(open("../input/ubication.csv", 'r'))
 	dict_ubication={}
@@ -224,31 +218,31 @@ def MD_to_TVD_one_var_array(well,var_array,MD_array,num_points):
 	return x_V,y_V,z_V,var_V
 
 def TVD_to_MD(well,TVD):
-	"""Encuentra la profundidad medida para un vapor de msnm solicitado
+	"""It returns the measure depth position for a well based on a true vertical depth
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 	TVD : float
-	  msnm de profundidad medida solicitada
+	  Desire true vertical depth
 
 	Returns
 	-------
 	float
-	  MD : profundidad medida
-	  
+	  MD :  measure depth
+
 	Attention
 	---------
-	Los archivos input/ubication.csv e input/survey/{pozo}_MD.dat deben existir
+	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.
 
 	Note
 	----
-	Se utiliza una regresion lineal entre cada punto del registro
+	A linear regression is used.
 
 	Examples
 	--------
-	>>> TVD_to_MD('AH-16',-100)
+	>>> TVD_to_MD('WELL-1',-100)
 	"""
 
 	file="../input/survey/%s_MD.dat"%well
@@ -291,31 +285,31 @@ def TVD_to_MD(well,TVD):
 	return MD
 
 def TVD_to_MD_array(well,TVD_array):
-	"""Retorna las profundidades medidas para una serie de valores TVD
+	"""It returns the measure depths for a desire list of true vertical depth values
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
-	TVD_array : array
-	  Arreglo de msnm
+	  Selected well
+	TVD_array : list
+	  List of true vertical depth values
 
 	Returns
 	-------
 	array
-	  MD : arreglo de profundidades medidas
+	  MD : list of measure depth values
 	  
 	Attention
 	---------
-	Los archivos input/ubication.csv e input/survey/{pozo}_MD.dat deben existir
+	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.
 
 	Note
 	----
-	Se utiliza una regresion lineal entre cada punto del registro
+	A linear regression is used.
 
 	Examples
 	--------
-	>>> TVD_to_MD_array('AH-34',data['TVD'])
+	>>>TVD_to_MD_array('WELL-1,data['TVD'])
 	"""
 
 	file="../input/survey/%s_MD.dat"%well
@@ -359,17 +353,17 @@ def TVD_to_MD_array(well,TVD_array):
 	return MD
 
 def line_intersect(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2):
-	"""Encentra el punto de interseccion de dos lineas
+	"""Finds the intersection point between two lines
 
 	Parameters
 	----------	  
 	{letter}{position}{corr} : float
-	  Identifica el punto A o B, la posicion ( x o y ) y el correlativo (1 o 2)
+	  Identifies the point A or B, the position (x or y ) and the correlative (1 or 2)
 
 	Returns
 	-------
 	tuple
-	  par (x,y), de no encontrar interseccion, returna none
+	  (x,y), if there is no intersection, None value is returned
 	"""
 
 	d = (By2 - By1) * (Ax2 - Ax1) - (Bx2 - Bx1) * (Ay2 - Ay1)
@@ -385,27 +379,26 @@ def line_intersect(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2):
 
 	return x, y
 
-#print(MD_to_TVD('AH-1',500))
-
-def write_well_track(input_dictionary=input_data,source_txt='../input/'):
-	"""Convierte el survey MD en TVD de todos los pozos
+def write_well_track(input_dictionary):
+	"""It converts every specified well survey using measure depth on true vertical depth survey
 
 	Parameters
 	----------	  
-	source_txt : str
-	  Ubicacion de archivos fuentes
-	wells : array
-	  Arreglo de nombre de pozos
+	input_dictionary : dictionary
+	   Contains list of wells under the keywords 'WELLS', 'MAKE_UP_WELLS' and 'NOT_PRODUCING_WELL'. It also needs to contain the input files path.
 
 	Returns
 	-------
 	file
-	  {pozo}_xyz.csv: en direccion ../input/survey/xyz
+	  {pozo}_xyz.csv: on ../input/survey/xyz
 
 	Examples
 	--------
-	>>> write_well_track(wells)
+	>>> write_well_track(input_dictionary)
 	"""
+
+	source_txt=input_dictionary['source_txt']
+
 	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
 	wells=[]
 	for scheme in types:
@@ -429,29 +422,29 @@ def write_well_track(input_dictionary=input_data,source_txt='../input/'):
 		except FileNotFoundError:
 			sys.exit("There is no MD file for the well %s"%well)
 
-#write_well_track(['AH-34'])
-
-def write_feedzone_position(source_txt='../input/'):
-	"""Genera un archivo con formato json que contiene la presion y temperatura para todos los bloques de un pozo asociados a una posicion en el espacio
+def write_feedzone_position(input_dictionary):
+	""" It generates a file on csv format containing the well feedzone position and coordinates.
 
 	Parameters
 	----------	  
-	source_txt : str
-	  Ubicacion de archivos fuentes
+	input_dictionary : dictionary
+	  Contains the path of the input files under the keyword 'sources_txt'
 
 	Returns
 	-------
 	file
-	  well_feezone_xyz: en direccion ../input
+	  well_feezone_xyz: on ../input
 
 	Note
 	----
-	Este archivo es utilizado por pyamesh para ubicar los pozos
+	regeo_mesh uses this file as an input
 
 	Examples
 	--------
 	>>> write_feedzone_position(source_txt='../input/')
 	"""
+
+	source_txt=input_dictionary['source_txt']
 
 	source_file=source_txt+'well_feedzone.csv'
 	try:
@@ -469,21 +462,38 @@ def write_feedzone_position(source_txt='../input/'):
 		file.write(string)
 	file.close()
 
-#write_feedzone_position()
+def PT_natural_to_GIS(input_dictionary):
+	"""It generates a shapefile containing pressure and temperature real data from every well at every layer elevation
 
-def PT_natural_to_GIS():
-	"""Genera un archivo shapefile con informacion de presion y temperatura para cada cada pozo segun el registro seleccionado
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'.
 
 	Returns
 	-------
 	file
-	  layer_{corr}_masl_{masl}.shp: en direccion ../input/PT/GIS/
+	  layer_{corr}_masl_{masl}.shp: on ../input/PT/GIS/
+
+	Note
+	----
+	The primary data comes from the defined formation data
 
 	Examples
 	--------
-	>>> PT_natural_to_GIS()
+	>>> PT_natural_to_GIS(input_dictionary)
 	"""
-	layers_info=vertical_layers()
+
+	wells=[]
+
+	for key in ['WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
+
+	layers_info=vertical_layers(input_dictionary)
 
 	layer_dict={}
 	for v in range(len(layers_info['middle'])):
@@ -493,7 +503,7 @@ def PT_natural_to_GIS():
 		w=shapefile.Writer('../input/PT/GIS/layer_%s_masl_%s.shp'%(layer_dict[elevation],elevation))
 		w.field('TEMPERATURE','F',decimal=2)
 		w.field('PRESSURE','F',decimal=2)
-		for well in sorted(input_data['WELLS']):
+		for well in sorted(wells):
 			file_source_name="../input/PT/%s_MDPT.dat"%well
 			try:
 				data=pd.read_csv(file_source_name)
@@ -512,8 +522,13 @@ def PT_natural_to_GIS():
 				pass
 		w.close()
 
-def PT_real_to_json():
-	"""Genera un archivo con formato json que contiene la presion y temperatura para todos los bloques de un pozo asociados a una posicion en el espacio
+def PT_real_to_json(input_dictionary):
+	"""It writes a json file based on the formation data (pressure and temperature) at the level of the defined mesh layers.
+
+	Parameters
+	----------	  
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'.
 
 	Returns
 	-------
@@ -522,10 +537,19 @@ def PT_real_to_json():
 
 	Examples
 	--------
-	>>> PT_real_to_json()
+	>>> PT_real_to_json(input_dictionary)
 	"""
 
-	layers_info=vertical_layers()
+	wells=[]
+
+	for key in ['WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
+
+	layers_info=vertical_layers(input_dictionary)
 
 	layer_dict={}
 	for v in range(len(layers_info['middle'])):
@@ -533,7 +557,7 @@ def PT_real_to_json():
 
 	eleme_dict={}
 
-	for well in sorted(input_data['WELLS']):
+	for well in sorted(wells):
 		file_source_name="../input/PT/%s_MDPT.dat"%well
 		try:
 			data=pd.read_csv(file_source_name)
@@ -554,25 +578,25 @@ def PT_real_to_json():
 		  json.dump(eleme_dict, json_file,sort_keys=True, indent=1)
 
 def P_from_T_TVD(T_array,TVD_array,water_level_TVD,Pmin):
-	"""Genera un perfil de presion basado en un registro de temperatura y un nivel hidroestatico
+	"""It generates a pressure log based on real temperature measurements and a hydrostatic level
 
 	Parameters
 	----------
 	T_array : array
-	  Arreglo de temperatura
+	  Temperature values
 	TVD_array : array
-	  Arreglo de profundidades verticales
+	  TVD values associate with every temperature record
 	water_level_TVD : float
-	  Profundiadad de nivel hidroestatico
+	  Hydrostatic level on TVD value
 
 	Returns
 	-------
-	float
-	  P: arreglo de presion 
+	array
+	  P: pressure values
 
 	Examples
 	--------
-	>>> P_from_Tlogging_TVD(T_array,TVD_array,water_level_TVD,Pmin)
+	>>> P_from_T_TVD(T_array,TVD_array,water_level_TVD,Pmin)
 	"""
 
 	P=[]
@@ -590,5 +614,3 @@ def P_from_T_TVD(T_array,TVD_array,water_level_TVD,Pmin):
 		else:
 			P.append(Pmin)
 	return P
-
-

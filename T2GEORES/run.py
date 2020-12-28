@@ -1,12 +1,31 @@
 import os
-from model_conf import *
 import subprocess
 import shutil
 import t2_writer as t2w
 import t2gener as t2g
-from model_conf import input_data,geners
 
 def incon_replace(incon_file,blocks,incon_file_len):
+	"""It rewrite the incon file without the porosity, depending if it comes from .sav file or INCON generated with T2GEORES
+
+	Parameters
+	----------
+	incon_file : str
+	  incon file to be rearange
+	blocks: str
+	  Declares if the file has the block information on even or odd lines
+	incon_file_len: int
+	  Length of incon file
+
+	Returns
+	-------
+	str
+	  string: formatted string with incon data
+	  
+	Attention
+	---------
+	The function is called by incon_to_t2()
+
+	"""
 	string=""
 	for index, incon_line in enumerate(incon_file):
 		if blocks=='even' and index!=0 and index<=incon_file_len-3:
@@ -22,6 +41,21 @@ def incon_replace(incon_file,blocks,incon_file_len):
 	return string
 
 def incon_delete():
+	"""It reads the TOUGH2 file assuming it is on ../model/t2/ and erases the INCON section
+
+	Returns
+	-------
+	file
+	  t2: file without INCON information
+	  
+	Attention
+	---------
+	There is no need of input argument
+
+	Examples
+	--------
+	>>> incon_delete()
+	"""
 	final_t2=""
 	incon_section=False
 	input_fi_file="../model/t2/t2"
@@ -41,20 +75,25 @@ def incon_delete():
 	else:
 		sys.exit("The file %s or directory do not exist"%input_fi_file)
 
-def incon_to_t2(incon_state='current'):
-	"""Introduce el bloque incon al archivo TOUGH2, proviniente del archivo .sav
+def incon_to_t2(input_dictionary):
+	"""Adds the INCON block to the TOUGH2 input file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary contanining the information of the source of incon with keyword 'incon_state' can take the value of 'current' or 'init'.
 
 	Returns
 	-------
 	file
-	  t2: modifica el archivo '../model/t2/t2' e introduce o actualiza el bloque INCON.
+	  t2: modified file on  ../model/t2/t2 
 
 	Examples
 	--------
-	>>> incon_to_t2()
+	>>> incon_to_t2(input_dictionary)
 	"""
 
-	#incon_state could be init or current
+	incon_state=input_dictionary['incon_state']
 
 	if incon_state=='current':
 		input_incon="../model/t2/t2.sav1"
@@ -104,28 +143,29 @@ def incon_to_t2(incon_state='current'):
 	else:
 		sys.exit("The file %s or directory do not exist"%input_fi_file)
 
-def update_gen(type_run=input_data['TYPE_RUN']):
-	"""Actualiza el archivo '../model/t2/sources/GENER_SOURCES', escribe los valores 
-	actualizados en la base sqlite e introduce el valor bloque de texto en el archivo t2
+def update_gen(input_dictionary):
+	"""It updates the file the TOUGH2 input file based on the previous updates of all files on ../model/t2/sources/GENER_*
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	geners : dictionary
-	  Diccionario que especifica un elemento del bloque GENER con condiciones constantes, es decir, en caso de ser tipo MASS solo admite un valor
+	input_dictionary : dictionary
+	  Dictionary contaning the type of desire run 'production' or 'natural' written on the keyword 'TYPE_RUN'
 
 	Returns
 	-------
 	file
-	  GENER_SOURCES: archivo de texto en direccion '../model/t2/sources/GENER_SOURCES' contiene la informacion de cada elemento definido como fuente o sumidero en model_conf
+	  t2: file with the modified version of GENER
+
+	Note
+	----
+	Some print sentences are expected depending on the availability of certain files
 
 	Examples
 	--------
-	>>> update_gen(db_path,geners)
+	>>> update_gen(input_dictionary)
 	"""
 
-	#t2g.write_geners_to_txt_and_sqlite()
+	type_run=input_dictionary['TYPE_RUN']
 
 	final_t2=""
 	incon_section=False
@@ -206,61 +246,59 @@ def update_gen(type_run=input_data['TYPE_RUN']):
 			sys.exit("The file %s or directory do not exist"%sources_file)
 	else:
 		sys.exit("The file %s or directory do not exist"%input_fi_file)
-	#subprocess.Popen(["sh","shell\\insert_geners.sh"])
-	#subprocess.call(['./shell/insert_geners.sh'])
 
-def update_rock_distribution(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,type_run=input_data['TYPE_RUN']):
-	"""Actualiza el archivo '../model/t2/sources/GENER_SOURCES', escribe los valores 
-	actualizados en la base sqlite e introduce el valor bloque de texto en el archivo t2
+def update_rock_distribution(input_dictionary):
+	"""It updates the file the TOUGH2 input file based on the new rock distribution
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	geners : dictionary
-	  Diccionario que especifica un elemento del bloque GENER con condiciones constantes, es decir, en caso de ser tipo MASS solo admite un valor
-	param : dictionary
-	  Diccionario que contiene los elementos del bloque PARAM definidos en model_conf
-	multi : dictionary
-	  Diccionario que contiene los elementos del bloque MULTI definidos en model_conf
-	solver : dictionary
-	  Diccionario que contiene los elementos del bloque SOLVER definidos en model_conf
-	recap : dictionary
-	  Diccionario que contiene los elementos del bloque RECAP definidos en model_conf
-	type_run : str
-	  Puede ser natural o production, el primero no introduce el archivo '../model/t2/sources/GENER_PROD' al archivo t2
-	recap : str
-	  Titulo del modelo, tomado de model_conf
+	input_dictionary : dictionary
+	  Dictionary contaning the information where the rock distribution comes from
 
 	Returns
 	-------
 	file
-	  t2: archivo de entrada TOUGH2
+	  t2: file with the modified version of ELEME and CONNE
 
 	Examples
 	--------
-	>>> update_rock_distribution(db_path,geners,param,multi,solver,recap,'natural',title)
+	>>> update_rock_distribution(input_dictionary)
 	"""
 
-	"""
-	value = input("How many times have you run copy_folder?\n")
-	if value==1:
-	"""
-	t2g.write_geners_to_txt_and_sqlite()
 	t2w.CONNE_from_steinar_to_t2()
 	t2w.merge_ELEME_and_in_to_t2()
-	t2w.t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START)
+
+	t2_string=""
+	input_fi_file="../model/t2/t2"
+
+	if os.path.isfile(input_fi_file):
+		t2_file=open(input_fi_file, "r")
+		indicator=False
+		for t2_line in t2_file:
+			if 'ELEME' not in t2_line and not indicator:
+				t2_string+=t2_line
+			elif indicator and 'GENER' in t2_line:
+				t2_string+=t2_line
+			else:
+				t2_string+=t2_writer.ELEME_adder(input_dictionary)
+				t2_string+=t2_writer.CONNE_adder(input_dictionary)
+				indicator=True
+
+		t2_file_out=open(input_fi_file, "w")
+		t2_file_out.write(t2_string)
+		t2_file_out.close()
+	else:
+		sys.exit("The file %s or directory do not exist"%input_fi_file)
 
 def copy_folder(src,dest):
-	"""Funcion generada para copiar todo el contenido de una carpeta en otra
+	"""It copies all the files on a folder to another folder
 
 	Parameters
 	----------
 	src : str
-	  Direccion de folder fuente
+	  Source directory
 	dest : str
-	  Direccion de folder destino
-
+	  Output directory
 
 	Examples
 	--------
@@ -276,18 +314,18 @@ def copy_folder(src,dest):
 				print("%s and %s didnt change"%(full_file_name,dest))
 
 def create_prev():
-	"""Genera una copia de carpetas con resultados de corrida para posterior comparacion
+	"""It creates a copy of several folder for further comparisson
 
 	Note
 	----
-	Las carpetas a copiar son: 
+	The folders to copy are: 
 	'../model/t2'
 	'../output/PT/images'
 	'../output/PT/json'
 	'../output/PT/txt'
 	'../output/PT/evol'
 	'../output/mh'
-	Todas son copiadas a un subfolder llamado prev
+	All of them contains a subfolder prev where the data is stored
 
 	Examples
 	--------
@@ -324,7 +362,21 @@ def create_prev():
 	dest='../output/mh/txt/prev'
 	copy_folder(src,dest)
 
-def run(EOS=1):
+def run(input_dictionary):
+	"""It runs the TOUGH2 input file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  A dictionary with the EOS used on the model
+
+	Returns
+	-------
+	files
+	  various: containing the output from modelling 
+	"""
+
+	EOS=input_dictionary['EOS']
 	current=os.path.abspath(os.getcwd())
 	t2_input_file='%s/model/t2/t2'%current.replace('/scripts','')
 	it2_input_file='%s/model/t2/fit2'%current.replace('/scripts','')

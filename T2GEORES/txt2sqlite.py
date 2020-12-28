@@ -2,26 +2,23 @@ import sqlite3
 import os
 import pandas as pd
 import json
-from model_conf import *
 import geometry as geomtr
-from model_conf import input_data
 
-source_txt='../input/'
 
 def checktable(table_name,c):
-	"""Verifica la existencia de una tabla en la base de datos sqlite model.db 
+	"""It verifies the existance of a table on the sqlite database
 
 	Parameters
 	----------
 	table_name : str
-	  Nombre de tabla
+	  Table name
 	c : cursor
-	  Conexion a la base de datos
+	  Conection to the database
 
 	Returns
 	-------
 	int
-		check: 1 si la tabla existe y 0 si la tabla no existe
+		check: if table exists returns 1
 
 	Examples
 	--------
@@ -36,28 +33,29 @@ def checktable(table_name,c):
 		check=0
 	return check
 
-def db_creation(db_path=input_data['db_path']):
-	"""Genera base de datos sqlite model.db 
+def db_creation(input_dictionary):
+	"""It creates a sqlite databa base 
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary : dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path', usually on '../input/'
 
 	Returns
 	-------
 	database
-		model.db: base de datos '../input/model.db'
+		name: database on desire path
 
 	Note
 	----
-	Se generan las tablas: wells, survey, PT, mh, drawdown, cooling, wellfeedzone, t2wellblock, t2wellsource, layers y t2PTout
-
+	The tables: wells, survey, PT, mh, drawdown, cooling, wellfeedzone, t2wellblock, t2wellsource, layers and t2PTout are generated
 
 	Examples
 	--------
-	>>> db_creation(db_path)
+	>>> db_creation(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
 
 	if not os.path.isfile(db_path):
 		conn=sqlite3.connect(db_path)
@@ -165,24 +163,27 @@ def db_creation(db_path=input_data['db_path']):
 		conn.commit()
 		conn.close()
 
-def insert_wells_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en el archivo ../input/ubication.csv
+def insert_wells_sqlite(input_dictionary):
+	"""It stores the data contain on the ubication.csv file and stores it on the database
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Escribe los datos en la tabla wells, no permite actualizaciones, por lo que de modificar el archivo ubication.csv, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	The well name is written as primary key. Thus, if the coordinates of the file ubication.csv change, it is better to 
+	eliminate the records and rerun this function again. Some print are expected.
 
 	Examples
 	--------
-	>>>  insert_wells_sqlite(db_path,'../input/')
+	>>>  insert_wells_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
+
 	conn=sqlite3.connect(db_path)
 	c = conn.cursor()
 
@@ -200,24 +201,21 @@ def insert_wells_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
 			print("The well %s is already on the database")
 	conn.close()
 
-def insert_feedzone_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en el archivo ../input/well_feedzone.csv
+def insert_feedzone_to_sqlite(input_dictionary):
+	"""It stores the data contain on the ubication.csv file and stores it on the database
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
-
-	Note
-	----
-	Escribe los datos en la tabla wellfeedzone, no permite actualizaciones, por lo que de modificar el archivo well_feedzone.csv, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Examples
 	--------
-	>>>  insert_feedzone_to_sqlite(db_path,'../input/')
+	>>>  insert_feedzone_to_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -227,30 +225,30 @@ def insert_feedzone_to_sqlite(db_path=input_data['db_path'],source_txt=source_tx
 	for index,row in feedzones.iterrows():
 		q="INSERT INTO wellfeedzone(well,MeasuredDepth,porcentage) VALUES ('%s',%s,%s)"%\
 		(row['well'],row['MeasuredDepth'],row['porcentage'])
-		print(q)
 		c.execute(q)
 		conn.commit()
 	conn.close()
 
-def insert_survey_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en los archivos de la carpeta  ../input/survey
+def insert_survey_to_sqlite(input_dictionary):
+	"""It stores all the data contain on the subfolder survey from the input file folder.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Escribe los datos en la tabla survey, no permite actualizaciones, por lo que de modificar los archivos contenidos en survey, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	The survey for every well must have the next headers MeasuredDepth,Delta_north,Delta_east
 
 	Examples
 	--------
-	>>>  insert_survey_to_sqlite(db_path,'../input/')
+	>>>  insert_survey_to_sqlite(input_dictionary)
 	"""
-	
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
+
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	
@@ -266,24 +264,25 @@ def insert_survey_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt)
 				conn.commit()
 	conn.close()
 
-def insert_PT_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en los archivos de la carpeta  ../input/survey
+def insert_PT_to_sqlite(input_dictionary):
+	"""It stores all the data contain on the subfolder PT from the input file folder.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Escribe los datos en la tabla PT, no permite actualizaciones, por lo que de modificar los archivos contenidos en la carpeta PT, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	The PT for every well must have the next headers MD,P,T. The file name must be well_MDPT.dat
 
 	Examples
 	--------
-	>>>  insert_PT_to_sqlite(db_path,'../input/')
+	>>>  insert_PT_to_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -300,24 +299,25 @@ def insert_PT_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
 						conn.commit()
 	conn.close()
 
-def insert_drawdown_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en los archivos de la carpeta  ../input/drawdown
+def insert_drawdown_to_sqlite(input_dictionary):
+	"""It stores all the data contain on the subfolder drawdown from the input file folder.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Escribe los datos en la tabla drawdown, no permite actualizaciones, por lo que de modificar los archivos contenidos en la carpeta drawdown, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	The drawdown register on every well must have the next headers datetime,TVD,pressure. The file name must be well_DD.dat
 
 	Examples
 	--------
-	>>>  insert_drawdown_to_sqlite(db_path,'../input/')
+	>>>  insert_drawdown_to_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -332,30 +332,30 @@ def insert_drawdown_to_sqlite(db_path=input_data['db_path'],source_txt=source_tx
 				conn.commit()
 	conn.close()
 
-def insert_cooling_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en los archivos de la carpeta  ../input/cooling
+def insert_cooling_to_sqlite(input_dictionary):
+	"""It stores all the data contain on the subfolder cooling from the input file folder.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Escribe los datos en la tabla cooling, no permite actualizaciones, por lo que de modificar los archivos contenidos en la carpeta cooling, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	The cooling register on every well must have the next headers datetime,TVD,temperature. The file name must be well_C.dat
 
 	Examples
 	--------
-	>>>  insert_cooling_to_sqlite(db_path,'../input/')
+	>>>  insert_cooling_to_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	for f in os.listdir(source_txt+'cooling'):
 		well_name=f.replace("'","").replace("_C.dat","")
-		print(well_name)
 		if os.path.isfile(source_txt+'cooling/'+f):
 			DD=pd.read_csv(source_txt+'cooling/'+f)
 			for index, row in DD.iterrows():
@@ -365,24 +365,26 @@ def insert_cooling_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt
 				conn.commit()
 	conn.close()
 
-def insert_mh_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en los archivos de la carpeta  ../input/mh
+def insert_mh_to_sqlite(input_dictionary):
+	"""It stores all the data contain on the subfolder mh from the input file folder.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Escribe los datos en la tabla mh, no permite actualizaciones, por lo que de modificar los archivos contenidos en la carpeta mh, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat
 
 	Examples
 	--------
-	>>>  insert_cooling_to_sqlite(db_path,'../input/')
+	>>>  insert_mh_to_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -397,24 +399,29 @@ def insert_mh_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt):
 				conn.commit()
 	conn.close()
 
-def replace_mh(wells_to_replace,db_path=input_data['db_path'],source_txt=source_txt):
-	"""Toma la informacion contenida en los archivos de la carpeta  ../input/mh
+def replace_mh(wells_to_replace,input_dictionary):
+	"""It stores all the data contain on the subfolder mh from the input file folder from some selected wells
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion de folder con datos fuentes
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
+	wells_to_replace: list
+	  Contains the data from the wells which flow data will be replace
 
 	Note
 	----
-	Escribe los datos en la tabla mh, no permite actualizaciones, por lo que de modificar los archivos contenidos en la carpeta mh, es preferible eliminar registros en base y volver a ejecutar esta funcion
+	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat
 
 	Examples
 	--------
-	>>>  insert_cooling_to_sqlite(db_path,'../input/')
+	>>>  replace_mh(wells_to_replace=['WELL-1','WELL-2'],input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
+
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	for f in os.listdir(source_txt+'mh'):
@@ -432,30 +439,30 @@ def replace_mh(wells_to_replace,db_path=input_data['db_path'],source_txt=source_
 					conn.commit()
 	conn.close()
 
-
-def sqlite_to_json(db_path=input_data['db_path'],source_txt=source_txt):
-	"""Transforma el contenido de la base de datos sqlite mode.db en formato json
+def sqlite_to_json(input_dictionary):
+	"""It exports the database into a single json file
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion donde se almacenara el archivo model.json
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Convierte a las tablas wells, survey, PT, mh, drawdown, wellfeedzone, t2wellblock y t2wellsource en formato json, utilizando como ID el campo well
+	It creates from the tables wells, survey, PT, mh, drawdown, wellfeedzone, t2wellblock and t2wellsource a  json file, using as ID the field well
 
 	Other Parameters
 	----------------
 	dictionary
-		levels : diccionario interno, indica el ID y el segundo parametro para categorizar una tabla
+		levels : configuration dictionary, indicates the table name, the ID to use and the field to use on each table
 
 	Examples
 	--------
-	>>>  sqlite_to_json(db_path,'../input/')
+	>>>  sqlite_to_json(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
 
 	levels={'wells':['well'],
 			'survey':['well'],
@@ -575,28 +582,25 @@ def sqlite_to_json(db_path=input_data['db_path'],source_txt=source_txt):
 
 	conn.close()
 
-def insert_wellblock_to_sqlite(db_path=input_data['db_path'],source_txt=source_txt,input_dictionary=input_data):
-	"""Escribe en la tabla t2wellblock, toma los pozos definidos en el arreglo wells y del json 'wells_correlative' creado 
-	al ejecutar la mesh se escribe el correlativo de cada pozo
+def insert_wellblock_to_sqlite(input_dictionary):
+	"""It stores the file wells_correlative.txt coming from regeo_mesh on the table t2wellblock
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	source_txt : str
-	  Direccion donde se almacenara el archivo model.json
-	wells : array
-	  Arreglo de pozos a ser introducidos, tomado de model_conf
+	input_dictionary : dictionary
+	  A dictionary containing the  name and path of database ans well types WELLS, MAKE_UP_WELLS and NOT_PRODUCING_WELLS
 
 	Note
 	----
-	Si el pozo W1 en la capa A tiene asignado el bloque AA110, el correlativo que se escribira en la tabla t2wellblock es A110.
+	The correlative from each wells just contains four characthers. Some print output are expected.
 
 
 	Examples
 	--------
-	>>>  insert_wellblock_to_sqlite(db_path,'../input/',wells)
+	>>>  insert_wellblock_to_sqlite(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
 
 	if os.path.isfile('../mesh/wells_correlative.txt'):
 
@@ -630,21 +634,21 @@ def insert_wellblock_to_sqlite(db_path=input_data['db_path'],source_txt=source_t
 	else:
 		print("The file well_correlative.txt do not exists")
 
-def insert_layers_to_sqlite(input_dictionary=input_data):
-	"""Escribe capas y sus elevaciones
+def insert_layers_to_sqlite(input_dictionary):
+	"""It stores layers and elevations
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Note
 	----
-	Toma los datos del diccionario layers definido en model_conf
+	The data information comes from the input_dictionary which must have a keyword layer with a similar structure as following: 'LAYERS':{1:['A',100],2:['B', 100]}. Some print output are expected.
 
 	Examples
 	--------
-	>>>  insert_layers_to_sqlite(db_path)
+	>>>  insert_layers_to_sqlite(input_dictionary)
 	"""
 
 	layers_info=geomtr.vertical_layers(input_dictionary)

@@ -1,3 +1,20 @@
+"""
+The file contains several dictionaries which declare the format and default values from most of the parameters
+for modeling.
+
+formats_t2: represents the parameters from TOUGH2 base on sections. For instance, 'PARAMETERS' is a dictionary, every data
+on it is formatted as following: 'PARAMETER1':[Default value,format,line section].
+
+plot_conf_color: it gives three color for every main output parameter, the first is for real data, second for current output and final for 
+previous run.
+
+plot_fonr_marker: gives the marker type and alpha value depending on the the of data in case same color is used when plotting.
+
+structure: gives the fix structure of T2GEORES, necessary as workspace.
+
+"""
+
+
 initial_conditions={'EOS1':[
 						    [100E5,'>20.13E',4,'P'],
 						    [250,'>20.13E',4,'T'],

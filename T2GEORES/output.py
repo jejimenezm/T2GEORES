@@ -2,45 +2,49 @@ import numpy as np
 import shutil
 import os
 import csv
-from datetime import datetime, timedelta
 import pandas as pd
 import os
 import sys
-from model_conf import *
 import sqlite3
 import subprocess
 import json
-from model_conf import input_data,geners
-import re
 
 """
-Se encarga de la extraccion de informacion de un archivo de salida TOUGH2 v6.x
+It extracts the blocks information containing on a TOUGH2 output file.
 """
 
-def write_PT_from_t2output(db_path=input_data['db_path'],wells=[i for x in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL'] for i in input_data[x]]):
-	"""Escribe la ultima linea de salida del archivo t2.out relativa a cada bloque de pozo
+def write_PT_from_t2output(input_dictionary):
+	"""It writes the parameter for every block from every well from the last output file of TOUGH2 simulation
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary : dictionary
+	 Dictionary contaning the path and name of database on keyword 'db_path', list of wells under the keywords 'WELLS', 'MAKE_UP_WELLS' and 'NOT_PRODUCING_WELL'
 
 	Returns
 	-------
 	file
-	  {well_name}_PT.txt: archivo de texto que contiene la informacion relacionado con bloques de todas la capas relacionados a un pozo
+	  {well_name}_PT.txt: file containing the information for every block from every well
 
 	Attention
 	---------
-	Genera los bloques a extraer de la base de datos sqlite
+	The layers and well block need  to be on the databse
 
-	Note
-	----
-	Se auxilia del archivo shell shell/write_PT.sh
 	Examples
 	--------
-	>>> write_PT_from_t2output(db_path)
+	>>> write_PT_from_t2output(input_dictionary)
 	"""
+
+	wells=[]
+
+	for key in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
+
+	db_path=input_dictionary['db_path']
 
 	t2_output_file="../model/t2/t2.out"
 	if os.path.isfile(t2_output_file):
@@ -48,6 +52,7 @@ def write_PT_from_t2output(db_path=input_data['db_path'],wells=[i for x in ['WEL
 	else:
 		return "Theres is not t2.out file on t2/t2.out"
 
+	#Extracts all the times the line 'OUTPUT DATA AFTER' was printed
 	output_headers=[]
 	with open(t2_output_file,'r') as t2_file:
 		t2_output_array = t2_file.readlines()
@@ -58,13 +63,12 @@ def write_PT_from_t2output(db_path=input_data['db_path'],wells=[i for x in ['WEL
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
-	#Listing all the wells and assigning them to a well
+	#Create a dictionary containing all the blocks in a well
 
 	blocks_wells={}
 	wells_data={}
 
 	data_layer=pd.read_sql_query("SELECT correlative FROM layers ORDER BY  middle DESC;",conn)
-
 	for name in sorted(wells):
 		wells_data[name]=""
 		data_block=pd.read_sql_query("SELECT blockcorr FROM t2wellblock  WHERE well='%s' ORDER BY blockcorr;"%name,conn)
@@ -72,11 +76,13 @@ def write_PT_from_t2output(db_path=input_data['db_path'],wells=[i for x in ['WEL
 			for n in data_layer['correlative'].values:
 				blocks_wells[n+data_block['blockcorr'].values[0]]=name
 	
+	#Select the last line of TOUGH2 output file
 	for line in t2_output_array[output_headers[-1]:-1]:
 		for block in blocks_wells:
 			if  block in line.split() and len(line.split())==11:
 				wells_data[blocks_wells[block]]+="%s\n"%(','.join(line.split()))
 
+	#Writes an output file for every well
 	for well in wells_data:
 		file_out=open("../output/PT/txt/%s_PT.dat"%(well), "w")
 		file_out.write("ELEM,INDEX,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW\n")
@@ -86,29 +92,30 @@ def write_PT_from_t2output(db_path=input_data['db_path'],wells=[i for x in ['WEL
 	conn.close()
 	
 def from_sav_to_json(sav_version='sav1'):
-	"""Escribre un json con las propiedades de salida de los archivo .sav o .sav1 (P,T) para cada bloque, identificandolos de forma espacial
+	"""It writes a json file with temperature and pressure data from the specified .sav for every block including coordinates
 	
 	Parameters
 	----------
-	src_file : str
-	  Nombre de archivo sav, puede ser t2.sav o t2.sav1
+	sav_version : str
+	  Extension of sav file, i.e. sav, sav1, sav2, etc.
 
 	Returns
 	-------
 	file
-	  PT_json_from_sav.txt : en direccion  "../output/PT/json/PT_json_from_sav.txt"
+	  PT_json_from_sav.txt : on  ../output/PT/json/
 
 	Attention
 	---------
-	Utiliza el archivo "../mesh/to_steinar/in" como criterio para atribuir coordenadas a cada bloque
+	The ELEME.json file needs to be updated
 
 	Examples
 	--------
-	>>> from_sav_to_json("t2.sav1")
+	>>> from_sav_to_json(sav_version='sav1')
 	"""
 
 	output_sav_file="../model/t2/t2.%s"%sav_version
 
+	#Generates a dictionary with block as keyword and x,y,z coordinates
 	with open('../mesh/ELEME.json') as file:
 	  	blocks_position=json.load(file)
 
@@ -123,6 +130,7 @@ def from_sav_to_json(sav_version='sav1'):
 		savstring.append(linesav.rstrip())
 	savfile.close()
 
+	#Stores Pressure and Temperature on the dictionary
 	if os.path.isfile(output_sav_file):
 		t2_sav_file=open(output_sav_file, "r")
 		contidion_found=False
@@ -139,22 +147,22 @@ def from_sav_to_json(sav_version='sav1'):
 	eleme_pd=pd.DataFrame.from_dict(eleme_dict,orient='index', columns=['X', 'Y','Z','P','T'])
 	eleme_pd.to_json("../output/PT/json/PT_json_from_sav.txt",orient="index",indent=2)
 
-def PTjson_to_sqlite(source='t2',db_path=input_data['db_path']):
-	"""Escribe la salida de extract_json_from_t2out o from_sav_to_json a base de datos sqlite
+def PTjson_to_sqlite(source='t2',input_dictionary):
+	"""It stores the defined json file into the database on the table t2PTout
 	
 	Parameters
 	----------
 	source : str
-	  Puede ser t2 o sav
-
-	Note
-	----
-	Escribe en la tabla t2PTout
+	  It can be 't2' or 'sav'
+	input_dictionary : dictionary
+	 Dictionary contaning the path and name of database on keyword 'db_path'.
 
 	Examples
 	--------
 	>>> PTjson_to_sqlite("t2")
 	"""
+
+	db_path=input_dictionary['db_path']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -218,22 +226,36 @@ def PTjson_to_sqlite(source='t2',db_path=input_data['db_path']):
 
 	conn.close()
 
-def write_PT_of_wells_from_t2output_in_time(db_path=input_data['db_path'],wells=[i for x in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL'] for i in input_data[x]]):
-	"""Extrae la evolucion de los bloques relacionados de todos los pozos en la direccion "../output/PT/evol"
+def write_PT_of_wells_from_t2output_in_time(input_dictionary):
+	"""It generates file containing the evolution of every block on every well
+
+	Extrae la evolucion de los bloques relacionados de todos los pozos en la direccion "../output/PT/evol"
 	
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary : dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path', list of wells under the keywords 'WELLS', 'MAKE_UP_WELLS' and 'NOT_PRODUCING_WELL'
 
-	Note
-	----
-	Se auxilia del archivo shell blocks_evol_times.sh
+	Returns
+	-------
+	file
+	  {well}_PT_{layer}.txt : on  ../output/PT/evol
 
 	Examples
 	--------
-	>>> write_PT_of_wells_from_t2output_in_time(db_path)
+	>>> write_PT_of_wells_from_t2output_in_time(input_dictionary)
 	"""
+
+	db_path=input_dictionary['db_path']
+
+	wells=[]
+
+	for key in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -241,8 +263,8 @@ def write_PT_of_wells_from_t2output_in_time(db_path=input_data['db_path'],wells=
 	blocks_wells={}
 	blocks_data={}
 
+	#Generates a dictionary with the blocks on a well as a keyword 
 	data_layer=pd.read_sql_query("SELECT correlative FROM layers ORDER BY  middle DESC;",conn)
-
 	for name in sorted(wells):
 		data_block=pd.read_sql_query("SELECT blockcorr FROM t2wellblock  WHERE well='%s' ORDER BY blockcorr;"%name,conn)
 		if len(data_block)>0:
@@ -250,6 +272,7 @@ def write_PT_of_wells_from_t2output_in_time(db_path=input_data['db_path'],wells=
 				blocks_wells[n+data_block['blockcorr'].values[0]]=name
 				blocks_data[n+data_block['blockcorr'].values[0]]=""
 
+	#Explore the TOUGH2 output file line by line and store the information if the block list generated on the previous step is on the line.
 	output_t2_file="../model/t2/t2.out"
 	if os.path.isfile(output_t2_file):
 		t2_file=open(output_t2_file, "r")
@@ -265,6 +288,7 @@ def write_PT_of_wells_from_t2output_in_time(db_path=input_data['db_path'],wells=
 	else:
 		sys.exit("The file %s or directory do not exist"%output_t2_file)
 
+	#Store the data from the dictionary in files
 	for block in blocks_data:
 		evol_file_out=open("../output/PT/evol/%s_PT_%s_evol.dat"%(blocks_wells[block],block[0]), "w")
 		evol_file_out.write("ELEM,INDEX,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW,TIME\n")
@@ -272,37 +296,33 @@ def write_PT_of_wells_from_t2output_in_time(db_path=input_data['db_path'],wells=
 		evol_file_out.close()	
 	conn.close()
 
-def gen_evol():
-	"""Extrae la evolucion (Flujo y entalpia) de las fuentes o sumideros "GEN" en la direccion "../output/mh/txt"
+def gen_evol(input_dictionary):
+	"""It generates an output file containing flow and flowing enthalpy for each GEN element. As a convention the library it is suggested to use GEN for any source/sink that is not a well
 
-	Note
-	----
-	Se auxilia del archivo shell gen_evol.sh
+	Parameters
+	----------
+	input_dictionary : dictionary
+	 Dictionary contaning the path and name of database on keyword 'db_path'.
 
-	Examples
-	--------
-	>>> gen_evol()
-	"""
-	"""Extrae la evolucion (Flujo y entalpia) de las fuentes o sumideros "SRC" (Estas se relacionan con cada pozo)en la direccion "../output/mh/txt"
-	
-	Note
-	----
-	Se auxilia del archivo shell src_evol.sh
+	Returns
+	-------
+	file
+	  {GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt
 
-	Examples
-	--------
-	>>> src_evol()
 	"""
 
-	conn=sqlite3.connect(input_data['db_path'])
+	db_path=input_dictionary['db_path']
+
+	#List the GEN elements
+	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE  source_nickname LIKE'GEN*' ORDER BY source_nickname;",conn)
 
 	final_t2=""
 	output_fi_file="../model/t2/t2.out"
 
+	#Initialize a dictionary containing the file path and name.
 	dictionary_files={}
-
 	for n in range(len(data_source)):
 		well=data_source['well'][n]
 		blockcorr=data_source['blockcorr'][n]
@@ -310,6 +330,7 @@ def gen_evol():
 		dictionary_files[well]={'filename':"../output/mh/txt/%s_%s_%s_evol_mh.dat"%(well,blockcorr,source),'file_container':"",'blockcorr':blockcorr,'source':source}
 		dictionary_files[well]['file_container']+="ELEMENT,SOURCEINDEX,GENERATION RATE,ENTHALPY,X1,X2,FF(GAS),FF(AQ.),P(WB),TIME\n"
 
+	#It reads the TOUGH2 output file line by line and store the data from each GEN element
 	output_t2_file="../model/t2/t2.out"
 	if os.path.isfile(output_t2_file):
 		t2_file=open(output_t2_file, "r")
@@ -326,6 +347,7 @@ def gen_evol():
 	else:
 		sys.exit("The file %s or directory do not exist"%output_t2_file)
 
+	#Creates a file for every GEN elemen
 	for well in dictionary_files:
 		t2_file_out=open(dictionary_files[well]['filename'], "w")
 		t2_file_out.write(dictionary_files[well]['file_container'])
@@ -333,17 +355,24 @@ def gen_evol():
 
 	conn.close()
 
-def src_evol():
-	"""Extrae la evolucion (Flujo y entalpia) de las fuentes o sumideros "SRC" (Estas se relacionan con cada pozo)en la direccion "../output/mh/txt"
-	
-	Note
-	----
-	Se auxilia del archivo shell src_evol.sh
+def src_evol(input_dictionary):
+	"""It generates an output file containing flow and flowing enthalpy for each SRC element. As a convention the library it is suggested to use SRC for any source/sink that is a well
 
-	Examples
-	--------
-	>>> src_evol()
+	Parameters
+	----------
+	input_dictionary : dictionary
+	 Dictionary contaning the path and name of database on keyword 'db_path'.
+
+	Returns
+	-------
+	file
+	  {GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt
+
 	"""
+
+	#See comment for gen_evol
+
+	db_path=input_dictionary['db_path']
 
 	conn=sqlite3.connect(input_data['db_path'])
 	c=conn.cursor()
@@ -384,31 +413,33 @@ def src_evol():
 
 	conn.close()
 
-def write_PT_from_t2output_from_prod(db_path=input_data['db_path'],wells=[i for x in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL'] for i in input_data[x]],sav_version='sav1'):
-	"""Escribe la presion y temperatura para un pozo a partir de la salida del estado de produccion, utiliza el archivo .sav1, generado a partir del uso de STEADY-STATE y  RESTART TIME en el archivo itough2
+def write_PT_from_t2output_from_prod(input_dictionary,sav_version='sav1'):
+	"""It writes a pressure and temperature comming from block on every well in the specified .sav file.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary : dictionary
+	 Dictionary contaning the path and name of database on keyword 'db_path'.
+	sav_version : str
+	  Extension of sav file, i.e. sav, sav1, sav2, etc.
 
 	Returns
 	-------
 	file
-	  {well_name}_PT.txt: archivo de texto que contiene la informacion relacionado con bloques de todas la capas relacionados a un pozo
+	  {well_name}_PT.txt: it contains the pressure and temperature information for every well
 
-	Attention
-	---------
-	Genera los bloques a extraer de la base de datos sqlite
-
-	Note
-	----
-	Se auxilia del archivo shell shell/write_PT_from_prod.sh
-	Examples
-	--------
-	>>> write_PT_from_t2output_from_prod(db_path)
 	"""
 
+	db_path=input_dictionary['db_path']
+
+	wells=[]
+
+	for key in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -452,21 +483,22 @@ def write_PT_from_t2output_from_prod(db_path=input_data['db_path'],wells=[i for 
 
 	conn.close()
 
-def extract_from_t2out(json_output=False):
-	"""Escribre un csv con todas las propiedades de salida (ELEM,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW) del archivo t2.out para cada bloque, junto con su identificacion espacial
+def extract_csv_from_t2out(json_output=False):
+	"""It writes the parameter for every block from the last output file of TOUGH2 simulation on csv or json
+
+	Parameters
+	----------
+	json_output : bool
+	  If True a json file is save on ../output/PT/json/
 
 	Returns
 	-------
 	file
-	  PT.csv : en direccion  '../output/PT/csv/PT_json.txt'
+	  PT.csv: on ../output/PT/csv/
 
 	Attention
 	---------
-	Utiliza el archivo "../mesh/to_steinar/in" como criterio para atribuir coordenadas a cada bloque
-
-	Examples
-	--------
-	>>> extract_json_from_t2out(db_path)
+	The file ELEME.json needs to be updated
 	"""
 	
 	eleme_dict={}

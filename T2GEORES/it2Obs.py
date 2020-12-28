@@ -1,41 +1,53 @@
 import geometry as geomtr
-from model_conf import *
 import sqlite3
 import pandas as pd
 from datetime import datetime
 import numpy as  np
 from scipy import interpolate
-from model_conf import input_data
 
-db_path=input_data['db_path']
-
-def observations_to_it2_PT(db_path=db_path,wells=input_data['WELLS'],T_DEV=input_data['IT2']['T_DEV'],P_DEV=input_data['IT2']['P_DEV']):
-	"""Genera archivo "../model/it2/observations_PT.dat"
+def observations_to_it2_PT(input_dictionary):
+	"""It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	wells : array
-	  Arreglo con nombre de pozos a ser incluidos, tomado de model_conf
-	T_DEV  : float
-	  Desviacion a considerar para las mediciones de temperatura, normalmente 5.0 [C]
-	P_DEV : float
-	  Desviacion a considerar para las mediciones de presion, sugerido 10 [bar]
+	input_dictionary : dictionary
+	  A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database a list of the wells for calibration. e.g. 
+			'IT2':{
+				'T_DEV':5,
+				'P_DEV':10,
+			},
 
 	Returns
 	-------
 	file
-	  observations_PT.dat: Archivo con observaciones de temperatura y presion en tipo 0 de corrida
+	  observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.
 
 	Attention
 	---------
-	La fuente de informacion es la base de datos sqlite
+	The input data comes from sqlite
 
 	Examples
 	--------
-	>>> observations_to_it2_PT(db_path,wells,5,10)
+	>>> observations_to_it2_PT(input_dictionary)
 	"""
+
+
+	#Preparing input data
+	T_DEV=input_dictionary['IT2']['T_DEV']
+	P_DEV=input_dictionary['IT2']['P_DEV']
+	db_path=input_dictionary['db_path']
+
+	source_txt=input_dictionary['source_txt']
+
+	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
+	wells=[]
+	for scheme in types:
+		try:
+			for well in input_dictionary[scheme]:
+				wells.append(well)
+		except KeyError:
+				pass
+
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
@@ -54,6 +66,7 @@ def observations_to_it2_PT(db_path=db_path,wells=input_data['WELLS'],T_DEV=input
 	string_T="""	>>TEMPERATURE"""
 	string_P="""	>>PRESSURE"""
 
+	#This blocks creates a linear interpolation on every layer depth with the formation temperature and pressure
 	for name in sorted(wells):
 
 		q_corr="SELECT blockcorr FROM t2wellblock WHERE well='%s'"%(name)
@@ -123,40 +136,53 @@ def observations_to_it2_PT(db_path=db_path,wells=input_data['WELLS'],T_DEV=input
 	observation_file.write(string)
 	observation_file.close()
 
-def observations_to_it2_h(db_path=db_path,wells=input_data['WELLS'],h_DEV=input_data['IT2']['h_DEV']):
-	"""Genera archivo "../model/it2/observations_h.dat"
+def observations_to_it2_h(input_dictionary):
+	"""It generates the flowing enthalpy observation section for the iTOUGH2 file
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	wells : array
-	  Arreglo con nombre de pozos a ser incluidos, tomado de model_conf
-	h_DEV :float
-	  Desviacion a considerar para las mediciones de entapia, sugerido 200 [kJ/kg]
+	input_dictionary : dictionary
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 
+			'IT2':{
+				'h_DEV':100,
+			},
 
 	Returns
 	-------
 	file
-	  observations_h.dat: Archivo con observaciones de entalpia a lo largo del tiempo
+	  observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time
 
 	Attention
 	---------
-	La fuente de informacion es la base de datos sqlite y referenciados al tiempo 0 (ref_date de model_conf)
+	The input data comes from sqlite
 
 	Examples
 	--------
-	>>> observations_to_it2_h(db_path,wells,200)
+	>>> observations_to_it2_h(input_dictionary)
 	"""
+
+	#Preparing input data
+	h_DEV=input_dictionary['IT2']['h_DEV']
+	db_path=input_dictionary['db_path']
+	ref_date=input_dictionary['ref_date']
+	source_txt=input_dictionary['source_txt']
+
+	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
+	wells=[]
+	for scheme in types:
+		try:
+			for well in input_dictionary[scheme]:
+				wells.append(well)
+		except KeyError:
+				pass
+
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
-	ref_date=input_data['ref_date']
-
+	
 	string="	>>ENTHALPY\n"
 
 	for name in sorted(wells):
 
-		#X and Z is reserved to new well, which do not have a real flow or enthalpy
 		q_source="SELECT source_nickname FROM t2wellsource WHERE well='%s'"%name
 		c.execute(q_source)
 		rows=c.fetchall()
@@ -166,7 +192,7 @@ def observations_to_it2_h(db_path=db_path,wells=input_data['WELLS'],h_DEV=input_
 		data=pd.read_sql_query("SELECT flowing_enthalpy, date_time,(steam_flow+liquid_flow) as flow FROM mh WHERE well='%s' ORDER BY date_time;"%name,conn)
 
 		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
-		#Read file cooling
+
 		dates=list(map(dates_func,data['date_time']))
 
 		if len(dates)>0:
@@ -193,35 +219,52 @@ def observations_to_it2_h(db_path=db_path,wells=input_data['WELLS'],h_DEV=input_
 	observation_file_h.write(string)
 	observation_file_h.close()
 
-def observations_to_it2_DD(db_path=db_path,wells=input_data['WELLS'],P_DEV=input_data['IT2']['P_DEV'],include_pres=False,p_res_block=None):
-	"""Genera archivo "../model/it2/observations_dd.dat"
+def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None):
+	"""It generates the drawdown observation section for the iTOUGH2 file
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	wells : array
-	  Arreglo con nombre de pozos a ser incluidos, tomado de model_conf
-	P_DEV : float
-	  Desviacion a considerar para las mediciones de presion, sugerido 10 [bar]
+	input_dictionary : dictionary
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 
+			'IT2':{
+				'P_DEV':5,
+			},
+	include_pres : bool
+	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
+	p_res_block : str
+	  Block name at which monitoring pressure data is recorded
 
 	Returns
 	-------
 	file
-	  observations_dd.dat: Archivo con observaciones de caida de presion a lo largo del tiempo
+	  observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time
 
 	Attention
 	---------
-	La fuente de informacion es la base de datos sqlite y referenciados al tiempo 0 (ref_date de model_conf)
+	The input data comes from sqlite
 
 	Examples
 	--------
-	>>> observations_to_it2_DD(db_path,wells,10)
+	>>> observations_to_it2_DD(input_dictionary)
 	"""
+
+	#Preparing input data
+	h_DEV=input_dictionary['IT2']['h_DEV']
+	db_path=input_dictionary['db_path']
+	ref_date=input_dictionary['ref_date']
+	source_txt=input_dictionary['source_txt']
+
+	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
+	wells=[]
+	for scheme in types:
+		try:
+			for well in input_dictionary[scheme]:
+				wells.append(well)
+		except KeyError:
+				pass
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
-	ref_date=input_data['ref_date']
 
 	string="	>>DRAWDOWN"
 
@@ -261,7 +304,7 @@ def observations_to_it2_DD(db_path=db_path,wells=input_data['WELLS'],P_DEV=input
 					string+="""			<<<<\n"""
 	
 
-	#iTOUGH2 de presion de reservorio
+	#iTOUGH2 reservoir pressure
 
 	if include_pres:
 		pres_data=pd.read_csv("../input/drawdown/p_res.csv",delimiter=';')
@@ -285,53 +328,56 @@ def observations_to_it2_DD(db_path=db_path,wells=input_data['WELLS'],P_DEV=input
 	observation_file_dd.write(string)
 	observation_file_dd.close()
 
-def observations_to_it2(db_path=db_path,wells=input_data['WELLS'],T_DEV=input_data['IT2']['T_DEV'],P_DEV=input_data['IT2']['P_DEV'],h_DEV=input_data['IT2']['h_DEV'],typer=input_data['TYPE_RUN']):
-	"""Genera bloque OBSERVATION
+def observations_to_it2(input_dictionary,include_pres=False,p_res_block=None):
+	"""It generaste the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
-	wells : array
-	  Arreglo con nombre de pozos a ser incluidos, tomado de model_conf
-	T_DEV  : float
-	  Desviacion a considerar para las mediciones de temperatura, normalmente 5.0 [C]
-	P_DEV : float
-	  Desviacion a considerar para las mediciones de presion, sugerido 10 [bar]
-	h_DEV :float
-	  Desviacion a considerar para las mediciones de entapia, sugerido 200 [kJ/kg]
-	typer :str
-	  Tipo de corrida:  natural o prod
+	input_dictionary : dictionary
+	  A dictionary containing:the standard deviation allowed for the temperature (in C), pressure (in bar) and flowing enthalpy (in kJ/kg).
+	  The name and path of the database a list of the wells for calibration and finally the type of run ('natural' or 'production') e.g. 
+	  		{
+	  		'TYPE_RUN':'production',
+			'IT2':{
+				'T_DEV':5,
+				'P_DEV':10,
+				'h_DEV':100}
+			}
+	include_pres : bool
+	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
+	p_res_block : str
+	  Block name at which monitoring pressure data is recorded
 
 	Returns
 	-------
 	file
-	  observations_PT.dat: Archivo con observaciones de temperatura y presion en tipo 0 de corrida
+	  observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.
 	file
-	  observations_h.dat : archivo con entalpia de flujo a lo largo del tiempo
+	  observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time
 	file
-	  observations_dd.dat : archivo con variacion de presion en elemento a lo largo del tiempo
+	  observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time
 	file
-	  it2_ob_prod.dat : archivo que recopila observations_PT, observations_h y observations_dd en caso de selccionar corrida tipo 'prod'
+	  it2_ob_prod.dat : it compiles the information during the transient stage. This is when time is higher than zero
 	file
-	  it2_ob_nat.dat : archivo que recopila observations_PT en caso de selccionar corrida tipo 'natural'
-
+	  it2_ob_nat.dat : it compiles the information at time zero.
 
 	Attention
 	---------
-	La fuente de informacion es la base de datos sqlite y referenciados al tiempo 0 (ref_date de model_conf)
+	The input data comes from sqlite
 
 	Examples
 	--------
-	>>> observations_to_it2(db_path,wells,5,10,200,'prod')
+	>>> observations_to_it2(input_dictionary)
 	"""
-	if typer=='production':
+
+	type_run=input_dictionary['TYPE_RUN']
+	if type_run=='production':
 		observations_to_it2_PT(db_path,wells,T_DEV,P_DEV)
 		observations_to_it2_h(db_path,wells,h_DEV)
 		observations_to_it2_DD(db_path,wells,P_DEV)
 		filenames = ["../model/it2/observations_PT.dat","../model/it2/observations_h.dat","../model/it2/observations_dd.dat"]
 		filename='it2_ob_prod'
-	elif typer=='natural':
+	elif type_run=='natural':
 		observations_to_it2_PT(db_path,wells,T_DEV,P_DEV)
 		filenames = ["../model/it2/observations_PT.dat"]
 		filename='it2_ob_nat'

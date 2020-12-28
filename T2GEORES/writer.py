@@ -1,5 +1,4 @@
 from formats import formats_t2
-from model_conf import input_data
 import numpy as np
 from datetime import datetime
 import sys

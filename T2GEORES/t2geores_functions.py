@@ -1,7 +1,6 @@
 import numpy as np
 from iapws import IAPWS97
 import geometry as geomtr
-from model_conf import input_data
 from formats import formats_t2,structure
 import pandas as pd
 import os
@@ -10,13 +9,17 @@ import sys
 
 
 def patmfromelev(elev):
-	"""Encuentra presion atmosferica basada en elevacion
+	"""It fines the atmospheric pressure base on an approximate formula
+	
+	Parameters
+	----------
+	elev
+	  masl where the pressure is needed
 
 	Returns
 	-------
-
 	float
-	  Presion atmosferica en bares
+	  Atmospheric pressure in bar
 
 	Examples
 	--------
@@ -27,23 +30,23 @@ def patmfromelev(elev):
 	return p_atm
 
 def water_level_projection(MD,P,Tmin):
-	"""Proyecta el nivel de agua considerando un perfil de presion estatico cualquiera
+	"""It projects the water level based on a pressure log
 
 	Parameters
 	----------
 	MD : array
-	  Arreglo de profundidad medida
+	  Measure depth array
 	P : array
-	  Arreglo de presion
+	  Pressure array
 	Tmin : float
-	  Temperatura minima de registro de temperatura de referencia
+	  Minimun temperature allowed
 
 	Returns
 	-------
 	float
-	  D2: profundidad de nivel de agua
+	  D2: water leverl projection
 	float
-	  Pmin: presion en nivel hidrostatico	  
+	  Pmin: pressure at water level  
 
 	Examples
 	--------
@@ -73,6 +76,28 @@ def water_level_projection(MD,P,Tmin):
 	return D2,Pmin
 
 def initial_conditions(input_dictionary):
+	"""Generates the tempearture and pressure initial conditions assuming boiling from top to bottom layer
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. Also it contains the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:
+	  'INCONS_PARAM':{
+			'To':30,
+			'GRADTZ':0.08,
+			'DEPTH_TO_SURF':100,
+			'DELTAZ':20
+			}
+
+	Returns
+	-------
+	list
+	  T: initial list of temperature
+	list
+	  P: initial list of pressure
+	list
+	  depth: range of depth coming from layers
+	"""
 
 	layers_info=geomtr.vertical_layers(input_dictionary)
 	
@@ -96,7 +121,39 @@ def initial_conditions(input_dictionary):
 
 	return T, P, depths[::-1]
 
-def incons(input_dictionary=input_data):
+def incons(input_dictionary):
+	"""It returns the coordinates X,Y and Z at a desired depth.
+
+	Parameters
+	----------
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. Also it contains the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:
+	  'INCONS_PARAM':{
+			'To':30,
+			'GRADTZ':0.08,
+			'DEPTH_TO_SURF':100,
+			'DELTAZ':20
+			}
+
+	Returns
+	-------
+	file
+	  INCON : on model/t2/sources
+
+	Attention
+	---------
+	It requires an updated ELEME.json
+
+	Note
+	----
+	Boiling conditions are assumed
+
+	Examples
+	--------
+	>>> incons(input_dictionary)
+	"""
 	input_file='../mesh/ELEME.json'
 	T,P,depth=initial_conditions(input_dictionary)
 	print(T,P,depth)
@@ -112,7 +169,6 @@ def incons(input_dictionary=input_data):
 			Pi=Pfunc(zi)*1E5
 			string+="%5s%35s\n"%(index,' ')
 			string+=" %19.13E %19.13E\n"%(Pi,Ti)
-
 		file=open(output_file,'w')
 		file.write(string)
 		file.close()
@@ -120,6 +176,24 @@ def incons(input_dictionary=input_data):
 		sys.exit("The file %s or directory do not exist"%input_file)
 
 def empty_model(structure, current_path):
+	"""It erases all the file on the  T2GEORES structure except the input and scripts folders
+
+	Parameters
+	----------
+	structure : dictionary
+	  It is an internal structure dictionary defined on formats.py	
+	current_path : str
+	  It specifies the top folder of the structure, if the function is executed from scripts current_path is '../'
+
+	Attention
+	---------
+	It will erase all the output data, mesh and images on the model.
+
+
+	Examples
+	--------
+	>>> empty_model(current_path='../')
+	"""
     if structure!=None and len(structure):
         for direc in structure:
             empty_model(structure[direc], os.path.join(current_path, direc))
@@ -131,11 +205,26 @@ def empty_model(structure, current_path):
     			except IsADirectoryError:
     				continue
 
-def create_structure(structure, current_path):
-    if structure!=None and len(structure):
-        for direc in structure:
-            empty_model(structure[direc], os.path.join(current_path, direc))
-    else:
-    	os.makedirs(current_path)
+def create_structure(current_path,structure=structure):
+	"""It creates the necessary structure for T2GEORES to work
 
+	Parameters
+	----------
+	structure : dictionary
+	  It is an internal structure dictionary defined on formats.py	
+	current_path : str
+	  It specifies the path where the structure will be constructed
 
+	Note
+	----
+	A good practice is to create a folder for the whole model
+
+	Examples
+	--------
+	>>> create_structure(current_path='.')
+	"""
+	if structure!=None and len(structure):
+		for direc in structure:
+			empty_model(structure[direc], os.path.join(current_path, direc))
+	else:
+		os.makedirs(current_path)

@@ -12,40 +12,33 @@ from iapws import IAPWS97
 import t2geores_functions as t2funcs
 
 
-def plot_vertical_layer_distribution(show_fig,sav_fig):
-	"""Regresa informacion relacionada a las capas
+def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
+	"""It plots the layers defined for the mesh
 
 	Parameters
 	----------
-	layers : dictionary
-	  Diccionario generado en model_conf
-	z0_level : int
-	  Elevacion de referencia de model_conf
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'.
 	show_fig: bool
-	  Muestra figura
+	  If True shows the figure
 	sav_fig: bool
-	  Guarda figura
+	  If True saves the figure on ../output/
 
-	Other Parameters
-	----------------
-	int
-	  font_title_size: tamanio de letra de titulo
-	int
-	  fontsizey_layers: Tamanio de letra de etiqueta vertical [m.a.s.l.]
-	int
-	  fontsize_label: Tamanio de letra de etiqueta vertical [layer]
+	Returns
+	-------
+	image
+		vertical_distribution.png: output figure
 
 	Examples
 	--------
-	>>> plot_vertical_layer_distribution(layers,z0_level,show_fig=True,sav_fig=False)
-
+	>>> plot_vertical_layer_distribution(show_fig=True,sav_fig=False,input_dictionary)
 	"""
 
 	font_title_size=12
 	fontsizey_layers=10
 	fontsize_label=8
 
-	layers_info=geometry.vertical_layers(input_data['LAYERS'],input_data['z_ref'])
+	layers_info=geometry.vertical_layers(input_dictionary)
 
 	fig=plt.figure(figsize=(2.5, 8), dpi=100)
 
@@ -83,30 +76,33 @@ def plot_vertical_layer_distribution(show_fig,sav_fig):
 	if show_fig:
 		plt.show()
 	if sav_fig:
-		fig.savefig("../report/images/vertical_distribution.png", format='png')
+		fig.savefig("../output/vertical_distribution.png", format='png',dpi=300)
 
-#plot_vertical_layer_distribution(show_fig=True,sav_fig=False)
-
-def permeability_plot(IRP,slr,sgr,show_fig,sav_fig):
-	"""Genera imagen de distribucion de permeabilidades relativas. La imagen es almacenada en formato .svg en la direccion ../report/images/coreys_permeabilities.svg
+def permeability_plot(input_dictionary,show_fig,sav_fig):
+	"""It generates a plot for the permeability distribution. Currently just 'Corey' is available.
 
 	Parameters
 	----------
-	show_fig: bool
-	  Muestra figura
+	input_dictionary: dictionary
+	  Contains the permeability distribution information under the keyword of 'RPCAP'
 	sav_fig: bool
-	  Guarda figura
+	  If true saves the figure on ../output
 	slr: float
 	  Saturacion de liquido, tomado de model_conf
-	sgr: float
-	  Saturacion de gas, tomado de model_conf
-	IRP: int
-	  Tipo de distribucion de permeabilidades relativas, actualmente solo 'corey'
+
+	Returns
+	-------
+	image
+		coreys_permeabilities.png: output figure
 
 	Examples
 	--------
-	>>> permeability_plot(IRP,slr,sgr,show_fig,sav_fig)
+	>>> permeability_plot(input_dictionary,show_fig=True,sav_fig=True)
 	"""
+
+	IRP=input_dictionary['IRP']
+	slr=input_dictionary['RP1']
+	sgr=input_dictionary['RP2']
 
 	fontsize_=26
 	if IRP==3:
@@ -153,36 +149,34 @@ def permeability_plot(IRP,slr,sgr,show_fig,sav_fig):
 			plt.show()
 
 		if sav_fig:
-			fig.savefig("../report/images/coreys_permeabilities.svg", format='svg') 
-
-#permeability_plot(input_data['RPCAP']['IRP'],input_data['RPCAP']['RP1'],input_data['RPCAP']['RP2'],show_fig=True,sav_fig=False)
+			fig.savefig("../output/coreys_permeabilities.png", idp=300) 
 
 def plot_one_drawdown_from_txt(well,depth):
-	"""Genera una grafica utilizando la informacion almacenada en ../input/drawdown para el pozo solicitado
+	"""From the real drawndown data a plot is generated for a desired well
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 	depth : float
-	  Profundidad vertical de grafico solicitado
+	  Meters above the see level of desire plot
 
 	Returns
 	-------
-	graph
-	  Presion vs tiempo para una profundidad especifica
+	plot
+	  Pressure vs time
 	  
 	Attention
 	---------
-	El archivo input/drawdown/{pozo}_DD.dat debe existir
+	The file  input/drawdown/{pozo}_DD.dat must exist
 
 	Note
 	----
-	La profundidad seleccionada debe estar en registrada en el archivo .dat
+	The depth must exists on the drawdown file
 
 	Examples
 	--------
-	>>> plot_one_drawdown_from_txt('AH-34',0)
+	>>> plot_one_drawdown_from_txt('WELL-1',0)
 	"""
 
 	#Read file
@@ -226,34 +220,32 @@ def plot_one_drawdown_from_txt(well,depth):
 		sys.exit("""Error message: there is no drawdown data at %s for the well %s"""%(depth,well))
 	return plt.show()
 
-#plot_one_drawdown_from_txt('AH-34',0)
-
 def plot_one_cooling_from_txt(well,depth):
-	"""Genera una grafica utilizando la informacion almacenada en ../input/cooling para el pozo solicitado
+	"""From the real cooling data a plot is generated for a desired well
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 	depth : float
-	  Profundidad de grafico solicitado
+	  Meters above the see level of desire plot
 
 	Returns
 	-------
-	graph
-	  Temperatura vs tiempo para una profundidad especifica
+	plot
+	  Pressure vs time
 	  
 	Attention
 	---------
-	El archivo input/cooling/{pozo}_C.dat debe existir
+	The file  input/cooling/{pozo}_DD.dat must exist
 
 	Note
 	----
-	La profundidad seleccionada debe estar en registrada en el archivo .dat
+	The depth must exists on the cooling file
 
 	Examples
 	--------
-	>>> plot_one_cooling_from_txt('AH-34',0)
+	>>> plot_one_cooling_from_txt('WELL-1',0)
 	"""
 
 	#Read file
@@ -293,35 +285,34 @@ def plot_one_cooling_from_txt(well,depth):
 
 	return plt.show()
 
-#plot_one_cooling_from_txt('AH-34',0)
-
 def plot_one_cooling_and_drawdown_from_txt(well,depth):
-	"""Genera una grafica utilizando la informacion almacenada en ../input/cooling y ../input/cooling para el pozo solicitado
+	"""From the real cooling and drawdown data a plot is generated for a desired well
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 	depth : float
-	  Profundidad de grafico solicitado
+	  Meters above the see level of desire plot
 
 	Returns
 	-------
-	graph
-	  Temperatura (eje1), presion (eje2) vs tiempo para una profundidad especifica
+	plot
+	  Temperature (yaxis1), pressure (yaxis2) and time
 	  
 	Attention
 	---------
-	El archivo ../input/drawdown/{pozo}_DD.dat e input/cooling/{pozo}_C.dat debe existir
+	The file  input/cooling/{pozo}_DD.dat and  input/drawdown/{pozo}_DD.dat must exist
 
 	Note
 	----
-	La profundidad seleccionada debe estar en registrada en el archivo .dat
+	The depth must exists on the cooling and drawdown files
 
 	Examples
 	--------
-	>>> plot_one_cooling_and_drawdown_from_txt('AH-34',0)
+	>>> plot_one_cooling_and_drawdown_from_txt('WELL-1',0)
 	"""
+
 	dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
 
 	#Read file cooling
@@ -332,8 +323,7 @@ def plot_one_cooling_and_drawdown_from_txt(well,depth):
 	data_d=pd.read_csv("../input/drawdown/%s_DD.dat"%well)
 	dates_d=list(map(dates_func,data_d.loc[data_d['TVD']==depth]['datetime'].values))
 	if len(dates_d)==0:
-		#print("There is not values for this depth")
-		print("There is not values for this depth")
+		print("There are no values for this depth")
 	else:
 		#Plotting
 
@@ -373,29 +363,27 @@ def plot_one_cooling_and_drawdown_from_txt(well,depth):
 		
 		return plt.show()
 
-#plot_one_cooling_and_drawdown_from_txt('AH-34',0)
-
 def plot_one_mh_from_txt(well):
-	"""Genera una grafica utilizando la informacion almacenada en ../input/mh
+	"""Creates a plot using the flow and enthalpy measurements
 
 	Parameters
 	----------
 	well : str
-	  Pozo seleccionado
+	  Selected well
 
 	Returns
 	-------
-	graph
-	  Entalpia (eje1), flujo (eje2) vs tiempo 
+	plot
+	  Enthalpy (yaxis1), flow (yaxis2) vs time 
 	  
 	Attention
 	---------
-	El archivo ../input/mh/{pozo}_mh.dat debe existir
+	The file ../input/mh/{well}_mh.dat must exist
 
 
 	Examples
 	--------
-	>>> plot_one_mh_from_txt('AH-16A')
+	>>> plot_one_mh_from_txt('WELL-1')
 	"""
 
 
@@ -457,28 +445,22 @@ def plot_one_mh_from_txt(well):
 
 	plt.show()
 
-#plot_one_mh_from_txt('AH-16A')
-
-def check_layers_and_feedzones(show_fig,sav_fig,source_txt = '../input/'):
+def check_layers_and_feedzones(input_dictionary, show_fig,sav_fig,source_txt = '../input/'):
 	"""Regresa informacion relacionada a las capas
 
 	Parameters
 	----------
 	show_fig: bool
-	  Muestra figura
+	  If True shows the figure
 	sav_fig: bool
-	  Guarda figura
-	source_txt: str
-	  Indica el directorio donde se encuentran los archivos de entrada
+	  If True saves the figure on ../output/
+	input_dictionary : dictionary
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. It also needs to specify the input files path under the keyword 'source_txt'
 
-	Other Parameters
-	----------------
-	int
-	  font_title_size: tamanio de letra de titulo
-	int
-	  fontsizey_layers: Tamanio de letra de etiqueta vertical [m.a.s.l.]
-	int
-	  fontsize_label: Tamanio de letra de etiqueta vertical [layer]
+	Returns
+	-------
+	plot
+	  well names on horizontal axis and feedzone depth on vertical axis
 
 	Examples
 	--------
@@ -490,8 +472,7 @@ def check_layers_and_feedzones(show_fig,sav_fig,source_txt = '../input/'):
 	fontsizey_layers=8
 	fontsize_label=8
 
-	layers_info=geometry.vertical_layers(input_data['LAYERS'],input_data['z_ref'])
-
+	layers_info=geometry.vertical_layers(input_dictionary)
 
 	#Plot setting 
 	fig=plt.figure(figsize=(20, 10), dpi=100)
@@ -550,13 +531,33 @@ def check_layers_and_feedzones(show_fig,sav_fig,source_txt = '../input/'):
 	if show_fig:
 		plt.show()
 	if sav_fig:
-		fig.savefig("../report/images/vertical_distribution_wells.png", format='png') 
+		fig.savefig("../output/vertical_distribution_wells.png", format='png',dpi=300) 
 
-#check_layers_and_feedzones(show_fig=True,sav_fig=False)
+def plot_init_conditions(input_dictionary):
+	"""Creates a plot for the initial pressure and temperature values
 
-def plot_init_conditions():
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  A dictionary containing the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:
+	  'INCONS_PARAM':{
+			'To':30,
+			'GRADTZ':0.08,
+			'DEPTH_TO_SURF':100,
+			'DELTAZ':20
+			}
 
-	T, P, depths =t2funcs.initial_conditions()
+	Returns
+	-------
+	plot
+	  Pressure vs depth and temperature vs depth
+	  
+	Examples
+	--------
+	>>> plot_init_conditions(input_dictionary)
+	"""
+
+	T, P, depths =t2funcs.initial_conditions(input_dictionary)
 
 	fig= plt.figure(figsize=(8, 8), dpi=300)
 

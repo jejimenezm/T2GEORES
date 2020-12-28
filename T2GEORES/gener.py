@@ -4,7 +4,6 @@ import sqlite3
 import pandas as pd
 from datetime import datetime, timedelta
 import os
-from model_conf import input_data
 import t2_writer as t2w
 from formats import formats_t2
 import geometry as geomtr
@@ -12,53 +11,44 @@ import txt2sqlite as txt2sql
 import matplotlib.pyplot as plt
 
 def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,input_dictionary):
-	"""Genera bloque de tiempos, flujos y entalpia para cada pozo
+	"""It generaates the block of time, flow and enthalpy for each flow
 
 	Parameters
 	----------
 	var_array : array
-	  Arreglo que contiene los flujos de pozo
+	  Contains the flow data
 	time_array : array
-	  Arreglo que contiene una lista de fechas en formato datetime
-	ref_date   :date
-	  Fecha de referencia, utilizada para calcular delta de tiempo
+	  Contains the time data on datetime format
+	input_dictionary   :dictionary
+	  It contains the reference date on datatime format
 	var_type	:str
-	  Indica el tipo de pozo 'P' o 'R'
+	  It indicates the type of well producer 'R' or injector 'R'
 	var_enthalpy :array
-	  Arreglo que contiene las entalpias para el caso de los pozos reinyectores
+	  Contains the flowing enthalpy data
 	type_flow :str
-	  Tipo de flujo a proyectar: invariable, constant o shutdown
+	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
+	  'invariable' writes the GENER section for every well as it is written on the input file
 
 	Returns
 	-------
 	str
-	  string_P: Cadena de texto que contiene la entrada TOUGH2 para un pozo productor
+	  string_P: contains the defined format for the GENER section for a particular producer well.
 	str
-	  string_R : Cadena de texto que contiene la entrada TOUGH2 para un pozo reinyector
+	  string_R : contains the defined format for the GENER section for a particular injector well.
 	int
-	  cnt_P : Numero de elementos (tiempos o flujos) contenidos en la cada string_P de pozo productor
+	  cnt_P : defines the number of flows records on every string_P for each producer well
 	int
-	  cnt_R : Numero de elementos (tiempos, flujos o entalpias) contenidos en la cada string_P de pozo productor
+	  cnt_R : defines the number of flows records on every string_R for each injector well
 	  
-	Other Parameters
-	----------------
-	float
-		extra_time : parametro interno, tiempo en segundos, utilizado cuando el tipo de flujo es 'shutdown'
 
 	Attention
 	---------
-	La longitud de var_array, time_array y var_enthalpy deben ser iguales
+	The legth of  var_array, time_array and var_enthalpy must be the same
 
 	Note
 	----
-	Para todos los casos se incorpora un flujo cero para un tiempo -1E50 y en tiempo minimo 
-	Para el tipo flujo 'constant': reproduce el ultimo flujo  en un tiempo 1E50
-	Para el tipo flujo 'invariable': traduce al formato TOUGH2 los arreglos sin hacer cambios
-	Para el tipo flujo 'shutdown': reproduce el ultimo flujo  por un tiempo extra_time y luego igual a cero el flujo
+	For every well a valur of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.
 
-	Examples
-	--------
-	>>> write_t2_format_gener(data['flow'],dates,ref_date,'P',data['flowing_enthalpy'],'constant')
 	"""
 	ref_date=input_dictionary['ref_date']
 	string_time_R=''
@@ -72,6 +62,8 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	flow_min=0
 	enthalpy_min=500E3
 	time_zero=0
+
+	#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value
 	extra_time=365.25*24*3600/2
 
 	if type_flow=="invariable":
@@ -194,42 +186,47 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	else:
 		print("Time and variable array must have the same length")
 
-def write_gener_from_sqlite(type_flow,forecast,wells,input_dictionary=input_data,make_up=False):
-	"""Genera el bloque GENER para todos los pozos
+def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
+	"""It is the main function on this modulo, it writes the GENER section from the mh input files
 
 	Parameters
 	----------
-	db_path : str
-	  Direccion de base de datos sqlite, tomado de model_conf
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file and the reference date on datime format
 	wells : array
 	  Arreglo con nombre de pozos a ser incluidos en la etapa de produccion
 	type_flow :str
-	  Tipo de flujo a proyectar: invariable, constant o shutdown
+	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
+	  'invariable' writes the GENER section for every well as it is written on the input file
 	forecast : bool
-	   Se introducen los flujo de pozos nuevos al GENER
-
+	   If true the data is written on the sqlite database
+	make_up  : bool
+	   If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD
 
 	Returns
 	-------
 	file
-	  GENER_PROD: archivo de texto en direccion '../model/t2/sources/GENER_PROD' contiene toda la informacion GENER de cada  pozo
-	  
-	Other Parameters
-	----------------
-	int
-		source_corr_num : los correlativos de fuentes seran generados de la siguiente forma 'SRC'+source_corr_num
+	  GENER_PROD:  a text file on '../model/t2/sources/'
 
 	Attention
 	---------
-		De existir otras fuentes definidas en el archivo model_conf con el prefijo SRC deben ingresarse primero  a la base de datos 
-		sqlite ejecutando la funcion write_geners_to_txt_and_sqlite, de ser asi el correlativo de fuentes sera enumerado con el valor mas alto
-		de SRCXX
+	All the information comes from the sqlite databse. If there are some other sources or sinks define with the prefix SRC, they should be written first on the database
+	by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will be +1 for the first well
 
 
 	Examples
 	--------
-	>>> write_gener_from_sqlite(db_path,wells,type_flow,'constant')
+	>>> write_gener_from_sqlite(input_dictionary,type_flow='constant',forecast=True)
 	"""
+
+	types=['WELLS']
+	wells=[]
+	try:
+		for well in input_dictionary[types]:
+			wells.append(well)
+	except KeyError:
+			pass
+
 
 	db_path=input_dictionary['db_path']
 
@@ -237,7 +234,8 @@ def write_gener_from_sqlite(type_flow,forecast,wells,input_dictionary=input_data
 	c=conn.cursor()
 
 	gener=''
-	source_corr_num=10
+
+	source_corr_num=10 #The first source value will have this correlative
 
 
 	for name in sorted(wells):
@@ -415,39 +413,73 @@ def write_gener_from_sqlite(type_flow,forecast,wells,input_dictionary=input_data
 	gener_file.write(gener)
 	gener_file.close()
 
-def def_gener_selector(section,key,geners):
+def def_gener_selector(block,key,geners):
+	"""If gener block is not completely define, the default value is use
+
+	Parameters
+	----------
+	block : str
+	  Referes to the mesh
+	key : str
+	  Referes to a GENER parameters
+	geners : dictionary
+	  Contains the neccesary information to define a sink/source. g.e.  
+	  		'DA110':{'SL':'GEN',
+				     'NS':10,
+                     'TYPE':'MASS',
+                     'GX':1,
+                     'EX':1.1E6},
+
+	Returns
+	-------
+	value
+	  float: the selecte value for a parameter
+	def_value
+	  bool: if True the default value is used
+
+	Attention
+	---------
+	No data is needed from sqlite
+
+	"""
 	try:
-		value=geners[section][key]
+		value=geners[block][key]
 		def_value=False
 	except KeyError:
 		value=formats_t2['GENER'][key][0]
 		def_value=True
 	return value,def_value
 
-def write_geners_to_txt_and_sqlite(db_path=input_data['db_path'],geners=geners):
-	"""Genera GENER para cada source
+def write_geners_to_txt_and_sqlite(input_dictionary,geners):
+	"""It writes the GENER section for the constant sink/sources from the model  on a text file and at the sqlite database
 
 	Parameters
 	----------
-	db_path : str
-	   Direccion de base de datos sqlite, tomado de model_conf
-	geners : dicionary
-	  Diccionario definido en model_conf con todos los parametros para un sumidero o fuente
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
+	geners : dictionary
+	  Contains the neccesary information to define every constant sink/source on the model. g.e.  
+	  		'DA110':{'SL':'GEN',
+				     'NS':10,
+                     'TYPE':'MASS',
+                     'GX':1,
+                     'EX':1.1E6},
 
 	Returns
 	-------
 	file
-	  GENER_SOURCES: archivo de texto en direccion '../model/t2/sources/GENER_SOURCES' contiene la informacion de cada elemento definido como fuente o sumidero en model_conf
+	  GENER_SOURCES: text file on  '../model/t2/sources/GENER_SOURCES'
 	  
 	Attention
 	---------
-		El archivo GENER_SOURCES es reemplazado cuando se ejecuta esta funcion y las fuentes o sumideros actualizados en la base de datos.
-		Elimina los elementos que ya no estan definidos en model_conf
+	Every time the function is executed it overwrites the file
 
 	Examples
 	--------
-	>>> write_geners_to_txt_and_sqlite(db_path,geners)
+	>>> write_geners_to_txt_and_sqlite(input_dictionary,geners)
 	"""
+
+	db_path=input_dictionary['db_path']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -469,13 +501,13 @@ def write_geners_to_txt_and_sqlite(db_path=input_data['db_path'],geners=geners):
 		except sqlite3.IntegrityError:
 			print("The blockcorr %s is already used by another source"%(gener))
 		string+="\n"
-	#string+="\n"
+
 
 	file=open('../model/t2/sources/GENER_SOURCES','w')
 	file.write(string)
 	file.close()
 
-	#As the sources defined on model_conf are the only allowed any other source not incluaded on the geners dictionary will be erased
+	#As the sources defined on geners are the only allowed any other source not included  dictionary will be erased
 	list_geners_string=''.join(["'%s',"%str(i) for i in list_geners])
 	query="DELETE FROM t2wellsource WHERE source_nickname NOT IN (%s) AND  source_nickname LIKE'GEN*' "%(list_geners_string[0:-1])
 	c.execute(query)
@@ -483,37 +515,34 @@ def write_geners_to_txt_and_sqlite(db_path=input_data['db_path'],geners=geners):
 
 	conn.close()
 
-def create_well_flow(flow_times,include_gener=True,input_dictionary=input_data):
-  """Crea un archivo mh para cada los pozos en flow_times, los cuales a su vez deben haber sido definidos en alguna de las secciones 'WELLS','MAKE_UP_WELLS' o 'NOT_PRODUCING_WELL' de input_data
+def create_well_flow(flow_times,include_gener=True,input_dictionary):
+  """It creates a mh text file for every well on the input dictionary. These wells need to have been defined on the general input_dictionary before the mesh was created
   
   Parameters
   ----------
-  flow_times : dicionary
-    Diccionario contiene: nombre de pozo, tiempos (En meses), flujos vapor, flujo agua, entalpia,  presion y tipo de pozo.
+  flow_times : dictionary
+	e.g. 'WELL-1':[[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)], #Initial day of operation
+			           [1.5,1.5],   #Steam value for every time step
+			           [15,15],     #Brine value for every time step
+			           [1100,1100], #Flowing enthalpy value for every time step
+			           [7,7],       #WHP
+			           'P'],        #P for producer and I for injector
   include_gener: bool
-  	True convierte en formato T2 a gener y lo adiciona al final del archivo GENER_PROD
+    If True it creates a file GENER_MAKEUP, from which the wells define on this section can be included on the TOUGH2 input file and 
+    the data from newly generated file is added/overwritten to the sqlite databse
+  input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
   
   Returns
   -------
-  str
-    string: imprime en pantalla el bloque de texto
   file
- 	En la ubicacion ../input/mh/
-    
-  Attention
-  ---------
-  El dictionario debe ser ingresado manualmente y el 
+    {well}_mh.dat: it contains the dictionary information on a text file format
+  file
+ 	GENER_MAKEUP: on ../model/t2/t2/SOURCES
   
-  Examples
-  --------
-  Ejemplo de diccionario de entrada:
-  >>> flow_times={'CHI-3A':[[0,300],
-  >>> [10,10],
-  >>> [45,45],
-  >>> [1100,1100],
-  >>> [6.9,6.9],
-  >>> 'P']}
-  
+  Note
+  ----
+  This function can be use to generate production scenarios on a calibrated model
   """
 
   for name in flow_times:
@@ -534,12 +563,33 @@ def create_well_flow(flow_times,include_gener=True,input_dictionary=input_data):
       string="%s,%s,%s,%s,%s,%s\n"%(type_well,date,steam,brine,enthlapy,pressure)
       file.write(string)
   if include_gener:
-  	txt2sql.replace_mh(low_times.keys(),db_path=input_data['db_path'],source_txt=source_txt='../input/'):
+  	txt2sql.replace_mh(low_times.keys(),db_path=input_dictionary['db_path'],source_txt=input_dictionary['../input/']):
   	write_gener_from_sqlite(type_flow='constant',forecast=True,wells=flow_times.keys(),make_up=True,input_dictionary=input_dictionary)
 
 def plot_makeup_wells(flow_times):
+	"""It plots a defined scenario of production including injector wells
 
-	# Plotting
+	Parameters
+	----------
+	flow_times : dictionary
+	  e.g. 'WELL-1':[[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)], #Initial day of operation
+			           [1.5,1.5],   #Steam value for every time step
+			           [15,15],     #Brine value for every time step
+			           [1100,1100], #Flowing enthalpy value for every time step
+			           [7,7],       #WHP
+			           'P'],        #P for producer and I for injector
+
+	Returns
+	-------
+	plot
+	  wells_flow: horizontal histogram
+	  
+	Attention
+	---------
+	No data is needed from sqlite
+
+	"""
+
 	fig = plt.figure(figsize=(8, 2))
 	ax = fig.add_subplot(111)
 
@@ -559,8 +609,6 @@ def plot_makeup_wells(flow_times):
 		well_tick.append(str(well).replace("X","").replace("Z",""))
 
 	ax.set_xlabel("Time")
-	xlims=[datetime(2025,1,1),datetime(2031,1,1)]
-	ax.set_xlim(xlims)
 	plt.yticks(y_positions, well_tick)
 	plt.show()
-	fig.savefig('well_flow.png')
+	fig.savefig('wells_flow.png')

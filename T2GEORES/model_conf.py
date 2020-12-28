@@ -2,7 +2,10 @@ from datetime import datetime, timedelta
 import numpy as np
 
 
-input_data={'ref_date':datetime(1975,1,1,0,0,0),
+input_data={'incon_state':'current',
+			'EOS':1,
+			'source_txt':'../input/',
+			'ref_date':datetime(1975,1,1,0,0,0),
 			'z_ref':600,
 			'db_path':'../input/model_month.db',
 			'LAYERS':{1:['A',100],
