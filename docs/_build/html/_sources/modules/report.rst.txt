@@ -1,7 +1,0 @@
-report
-=======
-
-.. automodule:: report
-   :members:
-   :undoc-members:
-   :show-inheritance:

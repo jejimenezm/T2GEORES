@@ -1,7 +1,0 @@
-gener module
-============
-
-.. automodule:: gener
-   :members:
-   :undoc-members:
-   :show-inheritance:

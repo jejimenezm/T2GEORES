@@ -1,7 +1,0 @@
-writer
-======
-
-.. automodule:: writer
-   :members:
-   :undoc-members:
-   :show-inheritance:
