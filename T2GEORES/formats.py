@@ -8,7 +8,7 @@ on it is formatted as following: 'PARAMETER1':[Default value,format,line section
 plot_conf_color: it gives three color for every main output parameter, the first is for real data, second for current output and final for 
 previous run.
 
-plot_fonr_marker: gives the marker type and alpha value depending on the the of data in case same color is used when plotting.
+plot_conf_marker: gives the marker type and alpha value depending on the the of data in case same color is used when plotting.
 
 structure: gives the fix structure of T2GEORES, necessary as workspace.
 

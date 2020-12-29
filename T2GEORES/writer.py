@@ -55,8 +55,6 @@ def def_value_selector(section,key,input_dictionary):
 	input_dictionary : dictionary
 	  Dictionary with the defined input information
 
-	Note
-	----
 	"""
 
 	try:

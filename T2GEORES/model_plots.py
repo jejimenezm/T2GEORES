@@ -539,13 +539,7 @@ def plot_init_conditions(input_dictionary):
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  A dictionary containing the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:
-	  'INCONS_PARAM':{
-			'To':30,
-			'GRADTZ':0.08,
-			'DEPTH_TO_SURF':100,
-			'DELTAZ':20
-			}
+	  A dictionary containing the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.: 'INCONS_PARAM':{'To':30,'GRADTZ':0.08,'DEPTH_TO_SURF':100,'DELTAZ':20}
 
 	Returns
 	-------

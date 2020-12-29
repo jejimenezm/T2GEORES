@@ -81,13 +81,7 @@ def initial_conditions(input_dictionary):
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. Also it contains the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:
-	  'INCONS_PARAM':{
-			'To':30,
-			'GRADTZ':0.08,
-			'DEPTH_TO_SURF':100,
-			'DELTAZ':20
-			}
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. Also it contains the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:'INCONS_PARAM':{'To':30,'GRADTZ':0.08,'DEPTH_TO_SURF':100,'DELTAZ':20}
 
 	Returns
 	-------
@@ -129,13 +123,7 @@ def incons(input_dictionary):
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. Also it contains the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:
-	  'INCONS_PARAM':{
-			'To':30,
-			'GRADTZ':0.08,
-			'DEPTH_TO_SURF':100,
-			'DELTAZ':20
-			}
+	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. Also it contains the keyword 'INCONS_PARAM' with the specified initial conditions, i.e.:'INCONS_PARAM':{'To':30,'GRADTZ':0.08,'DEPTH_TO_SURF':100,'DELTAZ':20}
 
 	Returns
 	-------
@@ -194,16 +182,16 @@ def empty_model(structure, current_path):
 	--------
 	>>> empty_model(current_path='../')
 	"""
-    if structure!=None and len(structure):
-        for direc in structure:
-            empty_model(structure[direc], os.path.join(current_path, direc))
-    else:
-    	for file in os.listdir(current_path):
-    		if not any(x in current_path for x in ['input','scripts']):
-    			try:
-    				os.remove(os.path.join(current_path,file))
-    			except IsADirectoryError:
-    				continue
+	if structure!=None and len(structure):
+		for direc in structure:
+			empty_model(structure[direc], os.path.join(current_path, direc))
+	else:
+		for file in os.listdir(current_path):
+			if not any(x in current_path for x in ['input','scripts']):
+				try:
+					os.remove(os.path.join(current_path,file))
+				except IsADirectoryError:
+					continue
 
 def create_structure(current_path,structure=structure):
 	"""It creates the necessary structure for T2GEORES to work

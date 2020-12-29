@@ -1,8 +1,8 @@
 import os
 import subprocess
 import shutil
-import t2_writer as t2w
-import t2gener as t2g
+import writer as t2w
+import gener as t2g
 
 def incon_replace(incon_file,blocks,incon_file_len):
 	"""It rewrite the incon file without the porosity, depending if it comes from .sav file or INCON generated with T2GEORES

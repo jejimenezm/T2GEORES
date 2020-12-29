@@ -147,7 +147,7 @@ def from_sav_to_json(sav_version='sav1'):
 	eleme_pd=pd.DataFrame.from_dict(eleme_dict,orient='index', columns=['X', 'Y','Z','P','T'])
 	eleme_pd.to_json("../output/PT/json/PT_json_from_sav.txt",orient="index",indent=2)
 
-def PTjson_to_sqlite(source='t2',input_dictionary):
+def PTjson_to_sqlite(input_dictionary,source='t2',):
 	"""It stores the defined json file into the database on the table t2PTout
 	
 	Parameters

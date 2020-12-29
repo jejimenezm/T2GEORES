@@ -1339,12 +1339,7 @@ def plot_voronoi(input_mesh_dictionary, geners,layer='D',plot_center=False,mark_
 	input_mesh_dictionary : dictionary
 	  Contains a unique color for every rocktype.
 	geners : dictionary
-	  Contains the neccesary information to define a sink/source. g.e.  
-	  		'DA110':{'SL':'GEN',
-				     'NS':10,
-                     'TYPE':'MASS',
-                     'GX':1,
-                     'EX':1.1E6},
+	  Contains the neccesary information to define a sink/source. g.e. 'DA110':{'SL':'GEN','NS':10,'TYPE':'MASS','GX':1,'EX':1.1E6}
 	
 	Returns
 	-------
@@ -1541,7 +1536,6 @@ def plot_3D_mesh():
 			cells_x.extend(cells[i])
 
 		cells_x=np.array(cells_x)
-		print(cells_x.ravel())
 
 		grid = pv.UnstructuredGrid(cells_x, celltypes, np.array(points))
 		_ = grid.plot(show_edges=True)

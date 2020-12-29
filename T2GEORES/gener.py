@@ -4,7 +4,7 @@ import sqlite3
 import pandas as pd
 from datetime import datetime, timedelta
 import os
-import t2_writer as t2w
+import writer as t2w
 from formats import formats_t2
 import geometry as geomtr
 import txt2sqlite as txt2sql
@@ -423,12 +423,7 @@ def def_gener_selector(block,key,geners):
 	key : str
 	  Referes to a GENER parameters
 	geners : dictionary
-	  Contains the neccesary information to define a sink/source. g.e.  
-	  		'DA110':{'SL':'GEN',
-				     'NS':10,
-                     'TYPE':'MASS',
-                     'GX':1,
-                     'EX':1.1E6},
+	  Contains the neccesary information to define a sink/source. g.e. 'DA110':{'SL':'GEN','NS':10,'TYPE':'MASS','GX':1,'EX':1.1E6},
 
 	Returns
 	-------
@@ -458,12 +453,7 @@ def write_geners_to_txt_and_sqlite(input_dictionary,geners):
 	input_dictionary: dictionary
 	  Dictionary containing the path and name of database and the path of the input file
 	geners : dictionary
-	  Contains the neccesary information to define every constant sink/source on the model. g.e.  
-	  		'DA110':{'SL':'GEN',
-				     'NS':10,
-                     'TYPE':'MASS',
-                     'GX':1,
-                     'EX':1.1E6},
+	  Contains the neccesary information to define every constant sink/source on the model. g.e.'DA110':{'SL':'GEN','NS':10,'TYPE':'MASS','GX':1,'EX':1.1E6}
 
 	Returns
 	-------
@@ -515,18 +505,13 @@ def write_geners_to_txt_and_sqlite(input_dictionary,geners):
 
 	conn.close()
 
-def create_well_flow(flow_times,include_gener=True,input_dictionary):
+def create_well_flow(flow_times,input_dictionary,include_gener=True):
   """It creates a mh text file for every well on the input dictionary. These wells need to have been defined on the general input_dictionary before the mesh was created
   
   Parameters
   ----------
   flow_times : dictionary
-	e.g. 'WELL-1':[[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)], #Initial day of operation
-			           [1.5,1.5],   #Steam value for every time step
-			           [15,15],     #Brine value for every time step
-			           [1100,1100], #Flowing enthalpy value for every time step
-			           [7,7],       #WHP
-			           'P'],        #P for producer and I for injector
+    e.g. 'WELL-1' : [[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)]  #Initial day of operation , [1.5,1.5]  #Steam value for every time step,   [15,15]#Brine value for every time step, [1100,1100] #Flowing enthalpy value for every time step , [7,7]  #WHP, 'P'  #P for producer and I for injector],       
   include_gener: bool
     If True it creates a file GENER_MAKEUP, from which the wells define on this section can be included on the TOUGH2 input file and 
     the data from newly generated file is added/overwritten to the sqlite databse
@@ -563,7 +548,7 @@ def create_well_flow(flow_times,include_gener=True,input_dictionary):
       string="%s,%s,%s,%s,%s,%s\n"%(type_well,date,steam,brine,enthlapy,pressure)
       file.write(string)
   if include_gener:
-  	txt2sql.replace_mh(low_times.keys(),db_path=input_dictionary['db_path'],source_txt=input_dictionary['../input/']):
+  	txt2sql.replace_mh(low_times.keys(),db_path=input_dictionary['db_path'],source_txt=input_dictionary['../input/'])
   	write_gener_from_sqlite(type_flow='constant',forecast=True,wells=flow_times.keys(),make_up=True,input_dictionary=input_dictionary)
 
 def plot_makeup_wells(flow_times):
@@ -572,22 +557,16 @@ def plot_makeup_wells(flow_times):
 	Parameters
 	----------
 	flow_times : dictionary
-	  e.g. 'WELL-1':[[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)], #Initial day of operation
-			           [1.5,1.5],   #Steam value for every time step
-			           [15,15],     #Brine value for every time step
-			           [1100,1100], #Flowing enthalpy value for every time step
-			           [7,7],       #WHP
-			           'P'],        #P for producer and I for injector
+	  e.g. 'WELL-1' : [[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)]  #Initial day of operation , [1.5,1.5]  #Steam value for every time step,   [15,15]#Brine value for every time step, [1100,1100] #Flowing enthalpy value for every time step , [7,7]  #WHP, 'P'  #P for producer and I for injector],       
 
 	Returns
 	-------
 	plot
 	  wells_flow: horizontal histogram
-	  
+
 	Attention
 	---------
 	No data is needed from sqlite
-
 	"""
 
 	fig = plt.figure(figsize=(8, 2))

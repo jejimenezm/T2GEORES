@@ -11,11 +11,7 @@ def observations_to_it2_PT(input_dictionary):
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database and a list of the wells for calibration. e.g. 
-			'IT2':{
-				'T_DEV':5,
-				'P_DEV':10,
-			},
+	  A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database and a list of the wells for calibration. e.g. 'IT2':{'T_DEV':5,'P_DEV':10}
 
 	Returns
 	-------
@@ -142,10 +138,7 @@ def observations_to_it2_h(input_dictionary):
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 
-			'IT2':{
-				'h_DEV':100,
-			},
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 'IT2':{'h_DEV':100},
 
 	Returns
 	-------
@@ -221,14 +214,11 @@ def observations_to_it2_h(input_dictionary):
 
 def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None):
 	"""It generates the drawdown observation section for the iTOUGH2 file
-
+	
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 
-			'IT2':{
-				'P_DEV':5,
-			},
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 'IT2':{P_DEV':5}
 	include_pres : bool
 	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
 	p_res_block : str
@@ -329,20 +319,13 @@ def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None)
 	observation_file_dd.close()
 
 def observations_to_it2(input_dictionary,include_pres=False,p_res_block=None):
-	"""It generaste the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.
-
+	"""It generates the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.
+	
 	Parameters
 	----------
 	input_dictionary : dictionary
 	  A dictionary containing:the standard deviation allowed for the temperature (in C), pressure (in bar) and flowing enthalpy (in kJ/kg).
-	  The name and path of the database a list of the wells for calibration and finally the type of run ('natural' or 'production') e.g. 
-	  		{
-	  		'TYPE_RUN':'production',
-			'IT2':{
-				'T_DEV':5,
-				'P_DEV':10,
-				'h_DEV':100}
-			}
+	  The name and path of the database a list of the wells for calibration and finally the type of run ('natural' or 'production') e.g. input_dictionary={'TYPE_RUN':'production','IT2':{'T_DEV':5,'P_DEV':10,'h_DEV':100}}
 	include_pres : bool
 	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
 	p_res_block : str
