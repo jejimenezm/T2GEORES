@@ -1,0 +1,870 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>txt2sqlite &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>txt2sqlite</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for txt2sqlite</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geomtr</span>
+
+
+<div class="viewcode-block" id="checktable"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.checktable">[docs]</a><span class="k">def</span> <span class="nf">checktable</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It verifies the existance of a table on the sqlite database</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	table_name : str</span>
+<span class="sd">	  Table name</span>
+<span class="sd">	c : cursor</span>
+<span class="sd">	  Conection to the database</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	int</span>
+<span class="sd">		check: if table exists returns 1</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  checktable(table_name,c)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT COUNT(name) from sqlite_master WHERE type=&#39;table&#39; AND name=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+		<span class="n">check</span><span class="o">=</span><span class="mi">1</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">check</span><span class="o">=</span><span class="mi">0</span>
+	<span class="k">return</span> <span class="n">check</span></div>
+
+<div class="viewcode-block" id="db_creation"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.db_creation">[docs]</a><span class="k">def</span> <span class="nf">db_creation</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It creates a sqlite databa base </span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary contaning the path and name of database on keyword &#39;db_path&#39;, usually on &#39;../input/&#39;</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	database</span>
+<span class="sd">		name: database on desire path</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The tables: wells, survey, PT, mh, drawdown, cooling, wellfeedzone, t2wellblock, t2wellsource, layers and t2PTout are generated</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; db_creation(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+		<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+		<span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+		<span class="c1"># Create table - wells</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;wells&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE wells</span>
+<span class="s1">		             ([well] TEXT PRIMARY KEY,</span>
+<span class="s1">		              [type] TEXT,</span>
+<span class="s1">		              [east] REAL,</span>
+<span class="s1">		              [north] REAL,</span>
+<span class="s1">		              [elevation] REAL,</span>
+<span class="s1">		              [drilldate] datetime)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - survey</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;survey&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  survey</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [MeasuredDepth] REAL,</span>
+<span class="s1">						 [Delta_east] REAL,</span>
+<span class="s1">						 [Delta_north] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - PT</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;PT&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  PT</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [MeasuredDepth] REAL,</span>
+<span class="s1">						 [Pressure] REAL,</span>
+<span class="s1">						 [Temperature] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - mh</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;mh&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  mh</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [type] TEXT,</span>
+<span class="s1">						 [date_time] datetime,</span>
+<span class="s1">						 [steam_flow] REAL,</span>
+<span class="s1">						 [liquid_flow] REAL,</span>
+<span class="s1">						 [flowing_enthalpy] REAL,</span>
+<span class="s1">						 [well_head_pressure] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - drawdown</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;drawdown&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  drawdown</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [date_time] datetime,</span>
+<span class="s1">						 [TVD] REAL,</span>
+<span class="s1">						 [pressure] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - cooling</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;cooling&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  cooling</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [date_time] datetime,</span>
+<span class="s1">						 [TVD] REAL,</span>
+<span class="s1">						 [temp] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - wellfeedzone</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;wellfeedzone&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  wellfeedzone</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [MeasuredDepth] REAL,</span>
+<span class="s1">						 [porcentage] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - TOUGH2 well block(correlative)</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2wellblock&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  t2wellblock</span>
+<span class="s1">						 ([well] TEXT PRIMARY KEY,</span>
+<span class="s1">						 [blockcorr] TEXT)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - TOUGH2 well source</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2wellsource&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  t2wellsource</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [blockcorr] TEXT ,</span>
+<span class="s1">						 [source_nickname] TEXT PRIMARY KEY)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - layers levels</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;layers&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  layers</span>
+<span class="s1">						 ([correlative] TEXT PRIMARY KEY,</span>
+<span class="s1">						 [top] REAL,</span>
+<span class="s1">						 [middle] REAL,</span>
+<span class="s1">						 [bottom] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - PT out</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2PTout&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  t2PTout</span>
+<span class="s1">						 ([blockcorr] TEXT PRIMARY KEY,</span>
+<span class="s1">						 [x] REAL,</span>
+<span class="s1">						 [y] REAL,</span>
+<span class="s1">						 [z] REAL,</span>
+<span class="s1">						 [index] REAL,</span>
+<span class="s1">						 [P] REAL,</span>
+<span class="s1">						 [T] REAL,</span>
+<span class="s1">						 [SG] REAL,</span>
+<span class="s1">						 [SW] REAL,</span>
+<span class="s1">						 [X1] REAL,</span>
+<span class="s1">						 [X2] REAL,</span>
+<span class="s1">						 [PCAP] REAL,</span>
+<span class="s1">						 [DG] REAL,</span>
+<span class="s1">						 [DW] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_wells_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_wells_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_wells_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores the data contain on the ubication.csv file and stores it on the database</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The well name is written as primary key. Thus, if the coordinates of the file ubication.csv change, it is better to </span>
+<span class="sd">	eliminate the records and rerun this function again. Some print are expected.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_wells_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">wells</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;ubication.csv&#39;</span><span class="p">)</span>
+
+	<span class="n">wells</span><span class="p">[</span><span class="s1">&#39;drilldate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">wells</span><span class="p">[</span><span class="s1">&#39;drilldate&#39;</span><span class="p">],</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+
+	<span class="k">for</span>  <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">wells</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO wells(well,type,east,north,elevation,drilldate) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span>\
+			<span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;masl&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;drilldate&#39;</span><span class="p">])</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The well </span><span class="si">%s</span><span class="s2"> is already on the database&quot;</span><span class="p">)</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_feedzone_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_feedzone_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_feedzone_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores the data contain on the ubication.csv file and stores it on the database</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_feedzone_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">feedzones</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;well_feedzone.csv&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">feedzones</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+		<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO wellfeedzone(well,MeasuredDepth,porcentage) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+		<span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;porcentage&#39;</span><span class="p">])</span>
+		<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+		<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_survey_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_survey_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_survey_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder survey from the input file folder.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The survey for every well must have the next headers MeasuredDepth,Delta_north,Delta_east</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_survey_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	
+	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;survey/&#39;</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_txt</span><span class="p">,</span> <span class="s1">&#39;survey/&#39;</span><span class="p">,</span><span class="n">f</span><span class="p">)):</span>
+			<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_MD.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="n">well_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_txt</span><span class="p">,</span> <span class="s1">&#39;survey/&#39;</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+			<span class="n">survey</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">well_file</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">survey</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO survey(well,MeasuredDepth,Delta_north,Delta_east) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Delta_north&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Delta_east&#39;</span><span class="p">])</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_PT_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_PT_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_PT_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder PT from the input file folder.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The PT for every well must have the next headers MD,P,T. The file name must be well_MDPT.dat</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_PT_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;PT&#39;</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;PT/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
+			<span class="k">if</span> <span class="s1">&#39;_MDPT&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_MDPT.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;PT/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
+					<span class="n">PT</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;PT/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+					<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">PT</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+						<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO PT(well,MeasuredDepth,Pressure,Temperature) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+						<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span>
+						<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+						<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_drawdown_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_drawdown_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_drawdown_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder drawdown from the input file folder.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The drawdown register on every well must have the next headers datetime,TVD,pressure. The file name must be well_DD.dat</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_drawdown_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown&#39;</span><span class="p">):</span>
+		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_DD.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span> <span class="ow">and</span> <span class="n">f</span><span class="o">!=</span><span class="s1">&#39;p_res.csv&#39;</span><span class="p">:</span>
+			<span class="n">C</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">C</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO drawdown(well,date_time,TVD,pressure) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">])</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_cooling_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_cooling_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_cooling_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder cooling from the input file folder.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The cooling register on every well must have the next headers datetime,TVD,temperature. The file name must be well_C.dat</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_cooling_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling&#39;</span><span class="p">):</span>
+		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_C.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
+			<span class="n">DD</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">DD</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO cooling(well,date_time,TVD,temp) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">])</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_mh_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_mh_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder mh from the input file folder.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:</span>
+<span class="sd">	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_mh_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh&#39;</span><span class="p">):</span>
+		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_mh.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
+			<span class="n">mh</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">mh</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;date-time&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">])</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="replace_mh"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.replace_mh">[docs]</a><span class="k">def</span> <span class="nf">replace_mh</span><span class="p">(</span><span class="n">wells_to_replace</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder mh from the input file folder from some selected wells</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+<span class="sd">	wells_to_replace: list</span>
+<span class="sd">	  Contains the data from the wells which flow data will be replace</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:</span>
+<span class="sd">	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  replace_mh(wells_to_replace=[&#39;WELL-1&#39;,&#39;WELL-2&#39;],input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh&#39;</span><span class="p">):</span>
+		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_mh.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">well_name</span> <span class="ow">in</span> <span class="n">wells_to_replace</span><span class="p">:</span>
+			<span class="n">q</span><span class="o">=</span><span class="s2">&quot;DELETE FROM mh WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="n">well_name</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
+				<span class="n">mh</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">mh</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+					<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+					<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;date-time&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">])</span>
+					<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+					<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="sqlite_to_json"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.sqlite_to_json">[docs]</a><span class="k">def</span> <span class="nf">sqlite_to_json</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It exports the database into a single json file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	It creates from the tables wells, survey, PT, mh, drawdown, wellfeedzone, t2wellblock and t2wellsource a  json file, using as ID the field well</span>
+
+<span class="sd">	Other Parameters</span>
+<span class="sd">	----------------</span>
+<span class="sd">	dictionary</span>
+<span class="sd">		levels : configuration dictionary, indicates the table name, the ID to use and the field to use on each table</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  sqlite_to_json(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">levels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;wells&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;survey&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;PT&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">,</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;mh&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">,</span><span class="s1">&#39;date_time&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;drawdown&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">,</span><span class="s1">&#39;date_time&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;wellfeedzone&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;t2wellblock&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span>
+			<span class="s1">&#39;t2wellsource&#39;</span><span class="p">:[</span><span class="s1">&#39;well&#39;</span><span class="p">]}</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">dict_to_json</span><span class="o">=</span><span class="nb">dict</span><span class="p">((</span><span class="n">n</span><span class="p">,{})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">levels</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+	
+	<span class="k">for</span> <span class="n">lv</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span>
+		<span class="n">cnt</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">for</span> <span class="n">lv2</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">[</span><span class="n">lv</span><span class="p">]:</span>
+			
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="n">lv</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+
+				<span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT DISTINCT </span><span class="si">%s</span><span class="s2"> from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">lv2</span><span class="p">,</span><span class="n">lv</span><span class="p">)</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+				<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+				<span class="n">dict_keys</span><span class="o">=</span><span class="p">[]</span>
+				<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+					<span class="n">dict_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+				<span class="n">dict_of_wells_on_table</span><span class="o">=</span><span class="nb">dict</span><span class="p">((</span><span class="n">n</span><span class="p">,{})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">dict_keys</span><span class="p">)</span>
+				<span class="n">dict_to_json</span><span class="p">[</span><span class="n">lv</span><span class="p">]</span><span class="o">=</span><span class="n">dict_of_wells_on_table</span>
+
+				<span class="n">query</span><span class="o">=</span><span class="s2">&quot;PRAGMA table_info(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span><span class="n">lv</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+				<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+				<span class="n">colums</span><span class="o">=</span><span class="p">[]</span>
+				<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+					<span class="n">colums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+				<span class="n">partq</span><span class="o">=</span><span class="p">[]</span>
+
+				<span class="n">q_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+				<span class="k">for</span> <span class="n">nv</span> <span class="ow">in</span> <span class="n">colums</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">nv</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">[</span><span class="n">lv</span><span class="p">]</span> <span class="p">:</span>
+						<span class="n">partq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
+						<span class="n">q_string</span><span class="o">+=</span><span class="s2">&quot; </span><span class="si">%s</span><span class="s2">,&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
+
+				<span class="k">for</span> <span class="n">nv</span> <span class="ow">in</span> <span class="n">dict_keys</span><span class="p">:</span>
+					<span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT </span><span class="si">%s</span><span class="s2"> from </span><span class="si">%s</span><span class="s2"> WHERE </span><span class="si">%s</span><span class="s2">=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">q_string</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">lv</span><span class="p">,</span><span class="n">lv2</span><span class="p">,</span><span class="n">nv</span><span class="p">)</span>
+
+					<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+					<span class="n">conn</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
+					<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+					<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+					<span class="n">dict_to_json</span><span class="p">[</span><span class="n">lv</span><span class="p">][</span><span class="n">nv</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+
+			<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="n">lv</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">cnt</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+					<span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT DISTINCT </span><span class="si">%s</span><span class="s2"> from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">lv2</span><span class="p">,</span><span class="n">lv</span><span class="p">)</span>
+					<span class="n">prev_key</span><span class="o">=</span><span class="n">lv2</span>
+
+					<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+					<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+					<span class="n">dict_keys</span><span class="o">=</span><span class="p">[]</span>
+					<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+						<span class="n">dict_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+					<span class="n">dict_of_wells_on_table</span><span class="o">=</span><span class="nb">dict</span><span class="p">((</span><span class="n">n</span><span class="p">,{})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">dict_keys</span><span class="p">)</span>
+					<span class="n">dict_to_json</span><span class="p">[</span><span class="n">lv</span><span class="p">]</span><span class="o">=</span><span class="n">dict_of_wells_on_table</span>
+					<span class="n">cnt</span><span class="o">+=</span><span class="mi">1</span>
+
+				<span class="k">else</span><span class="p">:</span>
+
+					<span class="c1">#Extract the colums which are not on the results</span>
+					<span class="n">query</span><span class="o">=</span><span class="s2">&quot;PRAGMA table_info(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span><span class="n">lv</span>
+					<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+					<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+					<span class="n">colums</span><span class="o">=</span><span class="p">[]</span>
+					<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+						<span class="n">colums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+					<span class="n">partq</span><span class="o">=</span><span class="p">[]</span>
+
+					<span class="n">q_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+					<span class="k">for</span> <span class="n">nv</span> <span class="ow">in</span> <span class="n">colums</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">nv</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">[</span><span class="n">lv</span><span class="p">]</span> <span class="p">:</span>
+							<span class="n">partq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
+							<span class="n">q_string</span><span class="o">+=</span><span class="s2">&quot; </span><span class="si">%s</span><span class="s2">,&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
+
+					<span class="k">for</span> <span class="n">prev_result</span> <span class="ow">in</span> <span class="n">dict_keys</span><span class="p">:</span>
+
+						<span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT DISTINCT </span><span class="si">%s</span><span class="s2"> from </span><span class="si">%s</span><span class="s2"> WHERE </span><span class="si">%s</span><span class="s2">=&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">lv2</span><span class="p">,</span><span class="n">lv</span><span class="p">,</span><span class="n">prev_key</span><span class="p">,</span><span class="n">prev_result</span><span class="p">)</span>
+
+						<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+						<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+						<span class="n">dict_keys</span><span class="o">=</span><span class="p">[]</span>
+						<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+							<span class="n">dict_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+						<span class="n">dict_of_wells_on_table</span><span class="o">=</span><span class="nb">dict</span><span class="p">((</span><span class="n">n</span><span class="p">,{})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">dict_keys</span><span class="p">)</span>
+						<span class="n">dict_to_json</span><span class="p">[</span><span class="n">lv</span><span class="p">][</span><span class="n">prev_result</span><span class="p">]</span><span class="o">=</span><span class="n">dict_of_wells_on_table</span>
+
+						<span class="k">for</span> <span class="n">nv</span> <span class="ow">in</span> <span class="n">dict_keys</span><span class="p">:</span>
+
+							<span class="n">query</span><span class="o">=</span><span class="s2">&quot;SELECT </span><span class="si">%s</span><span class="s2"> from </span><span class="si">%s</span><span class="s2"> WHERE </span><span class="si">%s</span><span class="s2">=&#39;</span><span class="si">%s</span><span class="s2">&#39; AND </span><span class="si">%s</span><span class="s2">=&#39;</span><span class="si">%s</span><span class="s2">&#39; &quot;</span><span class="o">%</span><span class="p">(</span><span class="n">q_string</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">lv</span><span class="p">,</span><span class="n">lv2</span><span class="p">,</span><span class="n">nv</span><span class="p">,</span><span class="n">prev_key</span><span class="p">,</span><span class="n">prev_result</span><span class="p">)</span>
+
+							<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+							<span class="n">conn</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
+							<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+							<span class="n">rows</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+							<span class="n">dict_to_json</span><span class="p">[</span><span class="n">lv</span><span class="p">][</span><span class="n">prev_result</span><span class="p">][</span><span class="n">nv</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+	
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;model.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">jlines</span><span class="p">:</span>
+		<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_to_json</span><span class="p">,</span> <span class="n">jlines</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	
+
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_wellblock_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_wellblock_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_wellblock_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores the file wells_correlative.txt coming from regeo_mesh on the table t2wellblock</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  A dictionary containing the  name and path of database ans well types WELLS, MAKE_UP_WELLS and NOT_PRODUCING_WELLS</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The correlative from each wells just contains four characthers. Some print output are expected.</span>
+
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_wellblock_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../mesh/wells_correlative.txt&#39;</span><span class="p">):</span>
+
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../mesh/wells_correlative.txt&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+		    <span class="n">wells_correlative</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+
+		<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+		<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+		<span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;MAKE_UP_WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;NOT_PRODUCING_WELL&#39;</span><span class="p">]</span>
+		<span class="n">wells</span><span class="o">=</span><span class="p">[]</span>
+		<span class="k">for</span> <span class="n">scheme</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="n">scheme</span><span class="p">]:</span>
+					<span class="n">wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+					<span class="k">pass</span>
+
+		<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">blocknumer</span><span class="o">=</span><span class="n">wells_correlative</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellblock(well,blockcorr) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">blocknumer</span><span class="p">)</span>
+				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">pass</span>
+			<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The block  number is already assing for the well: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span>
+		<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file well_correlative.txt do not exists&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="insert_layers_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_layers_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_layers_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores layers and elevations</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The data information comes from the input_dictionary which must have a keyword layer with a similar structure as following: &#39;LAYERS&#39;:{1:[&#39;A&#39;,100],2:[&#39;B&#39;, 100]}. Some print output are expected.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_layers_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+	<span class="n">top</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span>
+	<span class="n">correlative</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+	<span class="n">middle</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">]</span>
+	<span class="n">bottom</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">top</span><span class="p">)):</span>
+		<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO layers(correlative,top,middle,bottom) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span>\
+			<span class="o">%</span><span class="p">(</span><span class="n">correlative</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">top</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">middle</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">bottom</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The layer </span><span class="si">%s</span><span class="s2"> is already define, correlative is a PRIMARY KEY&quot;</span><span class="o">%</span><span class="n">correlative</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

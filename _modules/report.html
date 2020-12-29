@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>report &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>report</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for report</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_pdf</span> <span class="kn">import</span> <span class="n">PdfPages</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.tri</span> <span class="k">as</span> <span class="nn">mtri</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
+<span class="kn">import</span> <span class="nn">writer</span> <span class="k">as</span> <span class="nn">t2w</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span>
+<span class="kn">import</span> <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geomtr</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">plot_conf_color</span><span class="p">,</span><span class="n">plot_conf_marker</span>
+
+<span class="c1">#It is a must to change the way a json is loaded</span>
+
+<div class="viewcode-block" id="plot_compare_one"><a class="viewcode-back" href="../modules/report.html#report.plot_compare_one">[docs]</a><span class="k">def</span> <span class="nf">plot_compare_one</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">savefig</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">,</span> <span class="n">no_real_data</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">TVD_elem</span><span class="p">,</span> <span class="n">TVD_elem_top</span><span class="p">,</span><span class="n">axT</span><span class="p">,</span><span class="n">axP</span><span class="p">,</span><span class="n">PT_real_dictionary</span><span class="p">,</span><span class="n">layer_bottom</span><span class="p">,</span><span class="n">limit_layer</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">def_colors</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Genera una area con dos graficas, en una se muestra la grafica de temperatura real y la temperatura calculada vs la profundidad real, en la otra la presion real y la calculada vs la profundidad real.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  A dictionary containing the reference level under the keyword &#39;z_ref&#39;</span>
+<span class="sd">	db_path : str</span>
+<span class="sd">	  Direccion de base de datos sqlite, tomado de model_conf</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Name of selected well</span>
+<span class="sd">	savefig : bool</span>
+<span class="sd">	  If true the plot is saved on ../output/PT/images/logging/</span>
+<span class="sd">	data_PT_real : str</span>
+<span class="sd">	  Direccion de archivo de entrada</span>
+
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	image</span>
+<span class="sd">		PT_{well}.png: archivo con direccion ../output/PT/images/logging</span>
+
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	La temperatura rel es tomada de la base de datos</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_compare_one(db_path,=&#39;AH-34&#39;,&quot;../output/PT/txt&quot;,savefig=True)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">fontsize_plot</span><span class="o">=</span><span class="mi">8</span>
+	<span class="n">fontsize_layer</span><span class="o">=</span><span class="mi">6</span>
+
+	<span class="n">z_ref</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;z_ref&#39;</span><span class="p">]</span>
+
+	<span class="c1">#Define plot</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">no_real_data</span><span class="p">:</span>
+
+		<span class="c1">#Plotting real data</span>
+
+		<span class="n">ln1T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;var_T&#39;</span><span class="p">],</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;z_T&#39;</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+
+		<span class="n">ln1P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;var_P&#39;</span><span class="p">],</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;z_P&#39;</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+
+		<span class="n">lnsT</span> <span class="o">=</span> <span class="n">ln1T</span>
+
+		<span class="n">lnsP</span> <span class="o">=</span> <span class="n">ln1P</span>
+
+	<span class="c1">#Plotting the calculated data</span>
+
+	<span class="n">ln2T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
+
+	<span class="n">ln2P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">def_colors</span><span class="p">:</span>
+		<span class="n">color_real_T</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">color_real_P</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+		<span class="n">ln1T</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_real_T</span><span class="p">)</span>
+		<span class="n">ln2T</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_real_T</span><span class="p">)</span>
+
+		<span class="n">ln1P</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_real_P</span><span class="p">)</span>
+		<span class="n">ln2P</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_real_P</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">layer_bottom</span><span class="p">[</span><span class="n">limit_layer</span><span class="p">],</span><span class="n">z_ref</span><span class="p">])</span>
+
+	<span class="n">axP</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">layer_bottom</span><span class="p">[</span><span class="n">limit_layer</span><span class="p">],</span><span class="n">z_ref</span><span class="p">])</span>
+
+	<span class="c1">#Preparing the layer axis side for pressure</span>
+
+	<span class="n">ax2P</span> <span class="o">=</span> <span class="n">axP</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+	<span class="n">ax2P</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">TVD_elem_top</span><span class="p">,</span><span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">ax2P</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+	<span class="n">ax2P</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+	<span class="n">ax2P</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+	<span class="n">ax2P</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;correlative&#39;</span><span class="p">],</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_layer</span><span class="p">)</span>
+
+	<span class="n">ax2P</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">axP</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+
+	<span class="c1">#Preparing the layer axis side for temperature</span>
+
+	<span class="n">ax2T</span> <span class="o">=</span> <span class="n">axT</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+	<span class="n">ax2T</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">TVD_elem_top</span><span class="p">,</span><span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">ax2T</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	
+	<span class="n">ax2T</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+	<span class="n">ax2T</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;correlative&#39;</span><span class="p">],</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_layer</span><span class="p">)</span>
+
+	<span class="n">ax2T</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+	<span class="n">ax2T</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">axT</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+
+	<span class="c1">#Preparing the legends on temperature side</span>
+	<span class="k">if</span> <span class="n">no_real_data</span><span class="p">:</span>
+		<span class="n">lnsT</span><span class="o">=</span><span class="n">ln2T</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">lnsT</span><span class="o">+=</span><span class="n">ln2T</span>
+
+	<span class="n">labsT</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lnsT</span><span class="p">]</span>
+
+	<span class="c1">#axT.legend(lnsT, labsT, loc=&#39;upper right&#39;, fontsize=fontsize_plot)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_plot</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Temperature [$^\circ$C]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_plot</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.05</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;m.a.s.l.&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_plot</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsize_plot</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">#Preparing the legends on pressure side</span>
+	<span class="k">if</span> <span class="n">no_real_data</span><span class="p">:</span>
+		<span class="n">lnsP</span><span class="o">=</span><span class="n">ln2P</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">lnsP</span><span class="o">+=</span><span class="n">ln2P</span>
+
+	<span class="n">labsP</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lnsP</span><span class="p">]</span>
+
+	<span class="c1">#axP.legend(lnsP, labsP, loc=&#39;upper right&#39;, fontsize=fontsize_plot)</span>
+	
+	<span class="n">axP</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_plot</span><span class="p">)</span>
+
+	<span class="n">axP</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bar]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_plot</span><span class="p">)</span>
+
+	<span class="n">axP</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.05</span><span class="p">)</span>
+
+	<span class="n">axP</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+
+	<span class="n">axP</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsize_plot</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">#Title for both plots</span>
+
+	<span class="c1">#plt.subplots_adjust(top=0.92)</span>
+
+	<span class="k">if</span> <span class="n">savefig</span><span class="p">:</span>
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/PT/images/logging/PT_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
