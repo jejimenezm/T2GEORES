@@ -11,7 +11,7 @@ def observations_to_it2_PT(input_dictionary):
 	Parameters
 	----------
 	input_dictionary : dictionary
-	  A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database a list of the wells for calibration. e.g. 
+	  A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database and a list of the wells for calibration. e.g. 
 			'IT2':{
 				'T_DEV':5,
 				'P_DEV':10,
