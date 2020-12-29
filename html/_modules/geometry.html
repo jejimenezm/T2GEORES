@@ -1,0 +1,815 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>geometry &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>geometry</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for geometry</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">shapefile</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
+
+<div class="viewcode-block" id="vertical_layers"><a class="viewcode-back" href="../modules/geometry.html#geometry.vertical_layers">[docs]</a><span class="k">def</span> <span class="nf">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns the layers information on a dictionary</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dictionary</span>
+<span class="sd">		layers_info: dictionary with keywords; name, top, middle and bottom. The last three are float values</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:[],</span><span class="s1">&#39;top&#39;</span><span class="p">:[],</span><span class="s1">&#39;middle&#39;</span><span class="p">:[],</span><span class="s1">&#39;bottom&#39;</span><span class="p">:[]}</span>
+
+	<span class="n">depth</span><span class="o">=</span><span class="mi">0</span>
+
+	<span class="n">layers</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">layers</span><span class="p">)):</span>
+		<span class="n">depth</span><span class="o">+=</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">z_bottom</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;z_ref&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">depth</span>
+		<span class="k">if</span> <span class="n">cnt</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">z_top</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;z_ref&#39;</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">z_top</span><span class="o">+=-</span><span class="n">layers</span><span class="p">[</span><span class="n">last_key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">last_key</span><span class="o">=</span><span class="n">layer</span>
+
+		<span class="n">z_mid</span><span class="o">=</span><span class="p">(</span><span class="n">z_top</span><span class="o">+</span><span class="n">z_bottom</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span>
+
+		<span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_top</span><span class="p">)</span>
+		<span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_mid</span><span class="p">)</span>
+		<span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_bottom</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">layers_info</span></div>
+
+<div class="viewcode-block" id="MD_to_TVD"><a class="viewcode-back" href="../modules/geometry.html#geometry.MD_to_TVD">[docs]</a><span class="k">def</span> <span class="nf">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns the coordinates X,Y and Z at a desired depth.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	depth : float</span>
+<span class="sd">	  Measure depth at which the X,Y,Z coordinate is needed</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	float</span>
+<span class="sd">	  x_V :  x position of desire point</span>
+<span class="sd">	float</span>
+<span class="sd">	  y_V :  y position of desire point</span>
+<span class="sd">	float</span>
+<span class="sd">	  z_V :  z position of desire point</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	A linear regression is used.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; MD_to_TVD(&#39;WELL-1&#39;,500)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/survey/</span><span class="si">%s</span><span class="s2">_MD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+	<span class="n">MD</span><span class="p">,</span><span class="n">DeltaY</span><span class="p">,</span><span class="n">DeltaX</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+	<span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../input/ubication.csv&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span> <span class="c1">#&#39;rb&#39;</span>
+	<span class="n">dict_ubication</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+		<span class="n">dict_ubication</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">line</span>
+	<span class="n">z_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;masl&#39;</span><span class="p">])</span>
+	<span class="n">x_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;east&#39;</span><span class="p">])</span>
+	<span class="n">y_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;north&#39;</span><span class="p">])</span>
+
+	<span class="c1">#Initialize the delta z values</span>
+	<span class="n">z_delta</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+
+	<span class="c1">#Assuming straight line between points</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">j</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="p">((</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">+</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	
+	<span class="c1">#Convertion delta to absolute</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">x_0</span><span class="o">+</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+		<span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">y_0</span><span class="o">+</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+		<span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">z_0</span><span class="o">-</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+	<span class="c1">#Function of X-Y-Z with MD</span>
+	<span class="n">funxmd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+	<span class="n">funymd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+	<span class="n">funzmd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">x_out</span><span class="o">=</span><span class="n">funxmd</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+		<span class="n">y_out</span><span class="o">=</span><span class="n">funymd</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+		<span class="n">z_out</span><span class="o">=</span><span class="n">funzmd</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+		<span class="n">x_out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+		<span class="n">y_out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+		<span class="n">z_out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+	<span class="k">return</span> <span class="n">x_out</span><span class="p">,</span><span class="n">y_out</span><span class="p">,</span><span class="n">z_out</span></div>
+
+<div class="viewcode-block" id="MD_to_TVD_one_var_array"><a class="viewcode-back" href="../modules/geometry.html#geometry.MD_to_TVD_one_var_array">[docs]</a><span class="k">def</span> <span class="nf">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">var_array</span><span class="p">,</span><span class="n">MD_array</span><span class="p">,</span><span class="n">num_points</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns the position X, Y and Z for every point on a log along Pressure or Temperature.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	var_array : array</span>
+<span class="sd">	  It contains the log of pressure or temperature</span>
+<span class="sd">	MD_array :array</span>
+<span class="sd">	  It contains the measure depth values corresponding with every point on var_array</span>
+<span class="sd">	num_points	:int</span>
+<span class="sd">	  Number of points for the output array</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	float</span>
+<span class="sd">	  x_V :  x position of desire point</span>
+<span class="sd">	float</span>
+<span class="sd">	  y_V :  y position of desire point</span>
+<span class="sd">	float</span>
+<span class="sd">	  z_V :  z position of desire point</span>
+<span class="sd">	array</span>
+<span class="sd">	  v_V : contains the values of pressure or temperature for every coordinate</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	A linear regression is used.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; MD_to_TVD_one_var_array(&#39;WELL-1&#39;,data[&#39;Temp&#39;],data[&#39;MD&#39;],100)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/survey/</span><span class="si">%s</span><span class="s2">_MD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+	<span class="n">MD</span><span class="p">,</span><span class="n">DeltaY</span><span class="p">,</span><span class="n">DeltaX</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+	<span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../input/ubication.csv&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span>
+	<span class="n">dict_ubication</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+		<span class="n">dict_ubication</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">line</span>
+	<span class="n">z_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;masl&#39;</span><span class="p">])</span>
+	<span class="n">x_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;east&#39;</span><span class="p">])</span>
+	<span class="n">y_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;north&#39;</span><span class="p">])</span>
+
+	<span class="c1">#Initialize the delta z values</span>
+	<span class="n">z_delta</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+
+	<span class="c1">#Assuming straight line between points</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">j</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="p">((</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">+</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	
+	<span class="c1">#Convertion delta to absolute</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">x_0</span><span class="o">+</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+		<span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">y_0</span><span class="o">+</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+		<span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">z_0</span><span class="o">-</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+	<span class="c1">#Function of X-Y-Z with MD</span>
+	<span class="n">funxmd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+	<span class="n">funymd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+	<span class="n">funzmd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+
+	<span class="c1">#Working with variable</span>
+
+	<span class="n">funcV</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">MD_array</span><span class="p">,</span><span class="n">var_array</span><span class="p">)</span>
+	<span class="n">x_V</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">y_V</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">z_V</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">var_V</span><span class="o">=</span><span class="p">[]</span>
+
+	<span class="n">MD_array_reconvert</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">MD_array</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">MD_array</span><span class="p">),</span><span class="n">num_points</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD_array_reconvert</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">x_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funxmd</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="n">y_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funymd</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="n">z_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funzmd</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="n">var_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funcV</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+		<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+	<span class="k">return</span> <span class="n">x_V</span><span class="p">,</span><span class="n">y_V</span><span class="p">,</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span></div>
+
+<div class="viewcode-block" id="TVD_to_MD"><a class="viewcode-back" href="../modules/geometry.html#geometry.TVD_to_MD">[docs]</a><span class="k">def</span> <span class="nf">TVD_to_MD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">TVD</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns the measure depth position for a well based on a true vertical depth</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	TVD : float</span>
+<span class="sd">	  Desire true vertical depth</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	float</span>
+<span class="sd">	  MD :  measure depth</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	A linear regression is used.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; TVD_to_MD(&#39;WELL-1&#39;,-100)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/survey/</span><span class="si">%s</span><span class="s2">_MD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+	<span class="n">MD</span><span class="p">,</span><span class="n">DeltaY</span><span class="p">,</span><span class="n">DeltaX</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+	<span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../input/ubication.csv&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span> <span class="c1">#&#39;rb&#39;</span>
+	<span class="n">dict_ubication</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+
+		<span class="n">dict_ubication</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">line</span>
+	<span class="n">z_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;masl&#39;</span><span class="p">])</span>
+	<span class="n">x_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;east&#39;</span><span class="p">])</span>
+	<span class="n">y_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;north&#39;</span><span class="p">])</span>
+
+	<span class="c1">#Initialize the delta z values</span>
+	<span class="n">z_delta</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+
+	<span class="c1">#Assuming straight line between points</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">j</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="p">((</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">+</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	
+	<span class="c1">#Convertion delta to absolute</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">z_0</span><span class="o">-</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+	<span class="c1">#Function of X-Y-Z with MD</span>
+	<span class="n">funzmd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">MD</span><span class="p">)</span>
+
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">MD</span><span class="o">=</span><span class="n">funzmd</span><span class="p">(</span><span class="n">TVD</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+		<span class="n">MD</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+	<span class="k">return</span> <span class="n">MD</span></div>
+
+<div class="viewcode-block" id="TVD_to_MD_array"><a class="viewcode-back" href="../modules/geometry.html#geometry.TVD_to_MD_array">[docs]</a><span class="k">def</span> <span class="nf">TVD_to_MD_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">TVD_array</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns the measure depths for a desire list of true vertical depth values</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	TVD_array : list</span>
+<span class="sd">	  List of true vertical depth values</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	array</span>
+<span class="sd">	  MD : list of measure depth values</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The input information comes from the files input/ubication.csv and  input/survey/{well}_MD.dat.</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	A linear regression is used.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;TVD_to_MD_array(&#39;WELL-1,data[&#39;TVD&#39;])</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/survey/</span><span class="si">%s</span><span class="s2">_MD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+	<span class="n">MD</span><span class="p">,</span><span class="n">DeltaY</span><span class="p">,</span><span class="n">DeltaX</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+	<span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../input/ubication.csv&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">))</span> <span class="c1">#&#39;rb&#39;</span>
+	<span class="n">dict_ubication</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+
+		<span class="n">dict_ubication</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">line</span>
+	<span class="n">z_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;masl&#39;</span><span class="p">])</span>
+	<span class="n">x_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;east&#39;</span><span class="p">])</span>
+	<span class="n">y_0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dict_ubication</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;north&#39;</span><span class="p">])</span>
+
+	<span class="c1">#Initialize the delta z values</span>
+	<span class="n">z_delta</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+	<span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD</span><span class="p">]</span>
+
+	<span class="c1">#Assuming straight line between points</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">j</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="p">((</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">MD</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaX</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="p">(</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">DeltaY</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">+</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	
+	<span class="c1">#Convertion delta to absolute</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MD</span><span class="p">)):</span>
+		<span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">z_0</span><span class="o">-</span><span class="n">z_delta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+	<span class="c1">#Function of X-Y-Z with MD</span>
+	<span class="n">funzmd</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">MD</span><span class="p">)</span>
+
+	<span class="n">MD</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">TVD_array</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">MD</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funzmd</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+		<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+			<span class="n">MD</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">MD</span></div>
+
+<div class="viewcode-block" id="line_intersect"><a class="viewcode-back" href="../modules/geometry.html#geometry.line_intersect">[docs]</a><span class="k">def</span> <span class="nf">line_intersect</span><span class="p">(</span><span class="n">Ax1</span><span class="p">,</span> <span class="n">Ay1</span><span class="p">,</span> <span class="n">Ax2</span><span class="p">,</span> <span class="n">Ay2</span><span class="p">,</span> <span class="n">Bx1</span><span class="p">,</span> <span class="n">By1</span><span class="p">,</span> <span class="n">Bx2</span><span class="p">,</span> <span class="n">By2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Finds the intersection point between two lines</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	{letter}{position}{corr} : float</span>
+<span class="sd">	  Identifies the point A or B, the position (x or y ) and the correlative (1 or 2)</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	tuple</span>
+<span class="sd">	  (x,y), if there is no intersection, None value is returned</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">By2</span> <span class="o">-</span> <span class="n">By1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ax2</span> <span class="o">-</span> <span class="n">Ax1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">Bx2</span> <span class="o">-</span> <span class="n">Bx1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ay2</span> <span class="o">-</span> <span class="n">Ay1</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+		<span class="n">uA</span> <span class="o">=</span> <span class="p">((</span><span class="n">Bx2</span> <span class="o">-</span> <span class="n">Bx1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ay1</span> <span class="o">-</span> <span class="n">By1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">By2</span> <span class="o">-</span> <span class="n">By1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ax1</span> <span class="o">-</span> <span class="n">Bx1</span><span class="p">))</span> <span class="o">/</span> <span class="n">d</span>
+		<span class="n">uB</span> <span class="o">=</span> <span class="p">((</span><span class="n">Ax2</span> <span class="o">-</span> <span class="n">Ax1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ay1</span> <span class="o">-</span> <span class="n">By1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">Ay2</span> <span class="o">-</span> <span class="n">Ay1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ax1</span> <span class="o">-</span> <span class="n">Bx1</span><span class="p">))</span> <span class="o">/</span> <span class="n">d</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span>
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">uA</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">uB</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="k">return</span>
+	<span class="n">x</span> <span class="o">=</span> <span class="n">Ax1</span> <span class="o">+</span> <span class="n">uA</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ax2</span> <span class="o">-</span> <span class="n">Ax1</span><span class="p">)</span>
+	<span class="n">y</span> <span class="o">=</span> <span class="n">Ay1</span> <span class="o">+</span> <span class="n">uA</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ay2</span> <span class="o">-</span> <span class="n">Ay1</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="write_well_track"><a class="viewcode-back" href="../modules/geometry.html#geometry.write_well_track">[docs]</a><span class="k">def</span> <span class="nf">write_well_track</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It converts every specified well survey using measure depth on true vertical depth survey</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	   Contains list of wells under the keywords &#39;WELLS&#39;, &#39;MAKE_UP_WELLS&#39; and &#39;NOT_PRODUCING_WELL&#39;. It also needs to contain the input files path.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  {pozo}_xyz.csv: on ../input/survey/xyz</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; write_well_track(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;MAKE_UP_WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;NOT_PRODUCING_WELL&#39;</span><span class="p">]</span>
+	<span class="n">wells</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">scheme</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="n">scheme</span><span class="p">]:</span>
+				<span class="n">wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="k">pass</span>
+
+	<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">well_survey</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;survey/&#39;</span><span class="o">+</span><span class="n">well</span><span class="o">+</span><span class="s2">&quot;_MD.dat&quot;</span><span class="p">)</span>
+			<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;survey/&#39;</span><span class="o">+</span><span class="n">well</span><span class="o">+</span><span class="s2">&quot;_xyz.csv&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+			<span class="n">string</span><span class="o">=</span><span class="s2">&quot;x,y,z</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">well_survey</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+				<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])</span>
+				<span class="n">string</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+				<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+			<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;There is no MD file for the well </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="write_feedzone_position"><a class="viewcode-back" href="../modules/geometry.html#geometry.write_feedzone_position">[docs]</a><span class="k">def</span> <span class="nf">write_feedzone_position</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; It generates a file on csv format containing the well feedzone position and coordinates.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the path of the input files under the keyword &#39;sources_txt&#39;</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  well_feezone_xyz: on ../input</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	regeo_mesh uses this file as an input</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; write_feedzone_position(source_txt=&#39;../input/&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">source_file</span><span class="o">=</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;well_feedzone.csv&#39;</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">feedzones</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>	
+	<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;There is no MD file for the well </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">source_file</span><span class="p">)</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;well_feedzone_xyz.csv&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;well,MD,x,y,z,type</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">feedzones</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+		<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])</span>
+		<span class="n">string</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">],</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PT_natural_to_GIS"><a class="viewcode-back" href="../modules/geometry.html#geometry.PT_natural_to_GIS">[docs]</a><span class="k">def</span> <span class="nf">PT_natural_to_GIS</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generates a shapefile containing pressure and temperature real data from every well at every layer elevation</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  layer_{corr}_masl_{masl}.shp: on ../input/PT/GIS/</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The primary data comes from the defined formation data</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; PT_natural_to_GIS(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">wells</span><span class="o">=</span><span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;NOT_PRODUCING_WELL&#39;</span><span class="p">]:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+				<span class="n">wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">layer_dict</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">])):</span>
+		<span class="n">layer_dict</span><span class="p">[</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">]]</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">]</span>
+
+	<span class="k">for</span> <span class="n">elevation</span> <span class="ow">in</span> <span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">]:</span>
+		<span class="n">w</span><span class="o">=</span><span class="n">shapefile</span><span class="o">.</span><span class="n">Writer</span><span class="p">(</span><span class="s1">&#39;../input/PT/GIS/layer_</span><span class="si">%s</span><span class="s1">_masl_</span><span class="si">%s</span><span class="s1">.shp&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">layer_dict</span><span class="p">[</span><span class="n">elevation</span><span class="p">],</span><span class="n">elevation</span><span class="p">))</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;TEMPERATURE&#39;</span><span class="p">,</span><span class="s1">&#39;F&#39;</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;PRESSURE&#39;</span><span class="p">,</span><span class="s1">&#39;F&#39;</span><span class="p">,</span><span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
+			<span class="n">file_source_name</span><span class="o">=</span><span class="s2">&quot;../input/PT/</span><span class="si">%s</span><span class="s2">_MDPT.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_source_name</span><span class="p">)</span>
+				<span class="n">fun_T</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span>
+				<span class="n">fun_P</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">])</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">masl_MD</span><span class="o">=</span><span class="n">TVD_to_MD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">elevation</span><span class="p">)</span>
+					<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">masl_MD</span><span class="p">)</span>
+					<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">fun_T</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">fun_P</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">)):</span>
+						<span class="n">w</span><span class="o">.</span><span class="n">point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+						<span class="n">w</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">fun_T</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">)),</span><span class="nb">float</span><span class="p">(</span><span class="n">fun_P</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">)))</span>
+				<span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span><span class="n">shapefile</span><span class="o">.</span><span class="n">ShapefileException</span><span class="p">)</span> <span class="p">:</span>
+					<span class="k">pass</span>
+
+			<span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">,</span><span class="n">shapefile</span><span class="o">.</span><span class="n">ShapefileException</span><span class="p">):</span>
+				<span class="k">pass</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PT_real_to_json"><a class="viewcode-back" href="../modules/geometry.html#geometry.PT_real_to_json">[docs]</a><span class="k">def</span> <span class="nf">PT_real_to_json</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It writes a json file based on the formation data (pressure and temperature) at the level of the defined mesh layers.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  PT_real_json: en direccion ../input/PT/PT_real_json.txt</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; PT_real_to_json(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">wells</span><span class="o">=</span><span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;NOT_PRODUCING_WELL&#39;</span><span class="p">]:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+				<span class="n">wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">layer_dict</span><span class="o">=</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">])):</span>
+		<span class="n">layer_dict</span><span class="p">[</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">]]</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">]</span>
+
+	<span class="n">eleme_dict</span><span class="o">=</span><span class="p">{}</span>
+
+	<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
+		<span class="n">file_source_name</span><span class="o">=</span><span class="s2">&quot;../input/PT/</span><span class="si">%s</span><span class="s2">_MDPT.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_source_name</span><span class="p">)</span>
+			<span class="n">fun_T</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span>
+			<span class="n">fun_P</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">])</span>
+			<span class="k">for</span> <span class="n">masl</span> <span class="ow">in</span> <span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">]:</span>
+				<span class="n">masl_MD</span><span class="o">=</span><span class="n">TVD_to_MD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">masl</span><span class="p">)</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">):</span>
+						<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">masl_MD</span><span class="p">)</span>
+						<span class="n">eleme_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">layer_dict</span><span class="p">[</span><span class="n">masl</span><span class="p">])]</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="n">masl</span><span class="p">,</span><span class="nb">float</span><span class="p">(</span><span class="n">fun_T</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">)),</span><span class="nb">float</span><span class="p">(</span><span class="n">fun_P</span><span class="p">(</span><span class="n">masl_MD</span><span class="p">))]</span>
+				<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+					<span class="k">pass</span>
+		<span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../input/PT/PT_real_json.txt&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+		  <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">eleme_dict</span><span class="p">,</span> <span class="n">json_file</span><span class="p">,</span><span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="P_from_T_TVD"><a class="viewcode-back" href="../modules/geometry.html#geometry.P_from_T_TVD">[docs]</a><span class="k">def</span> <span class="nf">P_from_T_TVD</span><span class="p">(</span><span class="n">T_array</span><span class="p">,</span><span class="n">TVD_array</span><span class="p">,</span><span class="n">water_level_TVD</span><span class="p">,</span><span class="n">Pmin</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generates a pressure log based on real temperature measurements and a hydrostatic level</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	T_array : array</span>
+<span class="sd">	  Temperature values</span>
+<span class="sd">	TVD_array : array</span>
+<span class="sd">	  TVD values associate with every temperature record</span>
+<span class="sd">	water_level_TVD : float</span>
+<span class="sd">	  Hydrostatic level on TVD value</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	array</span>
+<span class="sd">	  P: pressure values</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; P_from_T_TVD(T_array,TVD_array,water_level_TVD,Pmin)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">P</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">g</span><span class="o">=</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">TVD_array</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">TVD_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">water_level_TVD</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+				<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Pmin</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">C0</span><span class="o">=</span><span class="n">IAPWS97</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="p">(</span><span class="n">T_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+</span><span class="mf">273.15</span><span class="p">),</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+					<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">water_level_TVD</span><span class="o">-</span><span class="n">TVD_array</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">*</span><span class="n">g</span><span class="o">*</span><span class="n">C0</span><span class="o">.</span><span class="n">rho</span><span class="o">/</span><span class="mf">1E5</span><span class="o">+</span><span class="n">Pmin</span><span class="p">)</span>
+				<span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+					<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Pmin</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">P</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

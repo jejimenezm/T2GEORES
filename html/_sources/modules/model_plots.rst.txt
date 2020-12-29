@@ -1,0 +1,7 @@
+model_plots
+===========
+
+.. automodule:: model_plots
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,581 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>regeo_mesh &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="run" href="run.html" />
+    <link rel="prev" title="output" href="output.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">output</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formats.html">formats</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>regeo_mesh</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/regeo_mesh.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-regeo_mesh">
+<span id="regeo-mesh"></span><h1>regeo_mesh<a class="headerlink" href="#module-regeo_mesh" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="regeo_mesh.CONNE_to_json">
+<code class="descclassname">regeo_mesh.</code><code class="descname">CONNE_to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#CONNE_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.CONNE_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>It creates a json file from the CONNE file on mesh/to_steinar foler</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">CONNE.json: on ../mesh/</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">Currently, it uses the steinar folder because it assume the modeler will perfome the block assignation on it</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CONNE_to_json</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.ELEM_to_json">
+<code class="descclassname">regeo_mesh.</code><code class="descname">ELEM_to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#ELEM_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.ELEM_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>It combines the files eleme and in from the steinar folder into a single json file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ELEME.json: on ../mesh/</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">Currently, it uses the steinar function because it assume the modeler will perfome the block assignation on it</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ELEM_to_json</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.change_ref_elevation">
+<code class="descclassname">regeo_mesh.</code><code class="descname">change_ref_elevation</code><span class="sig-paren">(</span><em>variation=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#change_ref_elevation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.change_ref_elevation" title="Permalink to this definition">¶</a></dt>
+<dd><p>It modifies the in files from the folders to_steinar and from_amesh by increasing (or decreasing) a fixed value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>variation</strong> (<em>float</em>) – Defined value change the elevation of the in file from amesh</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">in: modified on folders  ../mesh/to_steinar and ../mesh/from_amesh</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The change is generated on all the elements. It is recommened to run ELEM_to_json() after this execution</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">change_ref_elevation</span><span class="p">(</span><span class="n">variation</span><span class="o">=-</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.empty_mesh">
+<code class="descclassname">regeo_mesh.</code><code class="descname">empty_mesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#empty_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.empty_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the suggested T2GEORES folder structure is used. The folder mesh/to_steinar, mesh/from_amesh and mesh/GIS are emptied</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No input parameter is needed</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">empty_mesh</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.mesh_creation_func">
+<code class="descclassname">regeo_mesh.</code><code class="descname">mesh_creation_func</code><span class="sig-paren">(</span><em>input_mesh_dictionary</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#mesh_creation_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.mesh_creation_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a grid</p>
+<p>Most of the paramters are keywords from the input dictionary input_mesh_dictionary. Otherwise, the input dictionary is specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – File name with well feedzone location</li>
+<li><strong>filepath</strong> (<em>str</em>) – Path of input files</li>
+<li><strong>Xmin</strong> (<em>float</em>) – Minimun X coordinates for the grid</li>
+<li><strong>Xmax</strong> (<em>float</em>) – Maximun X coordinates for the grid</li>
+<li><strong>Ymin</strong> (<em>float</em>) – Minimun Y coordinates for the grid</li>
+<li><strong>Ymax</strong> (<em>float</em>) – Maximun Y coordinates for the grid</li>
+<li><strong>toler</strong> (<em>float</em>) – AMESH parameter</li>
+<li><strong>layers</strong> (<em>dictionary</em>) – Name (correlative) and thickness of every layer on the model, keyword on input_dictionary</li>
+<li><strong>layer_to_plot</strong> (<em>int</em>) – In case it is specified a voronoi plot will be performed</li>
+<li><strong>x_space</strong> (<em>float</em>) – Horizontal distance between elements for the outerfield</li>
+<li><strong>y_space</strong> (<em>float</em>) – Vertical distance between elements for the outerfield</li>
+<li><strong>radius_criteria</strong> (<em>float</em>) – Minimun distance between well location and a regular element</li>
+<li><strong>x_from_boarder</strong> (<em>float</em>) – Horizontal distance from the first element to the east border</li>
+<li><strong>y_from_boarder</strong> (<em>float</em>) – Vertical distance from the first element to the south border</li>
+<li><strong>x_gap_min</strong> (<em>float</em>) – Minimun X coordinates on the grid for the well field</li>
+<li><strong>x_gap_max</strong> (<em>float</em>) – Maximun X coordinates on the grid for the well field</li>
+<li><strong>x_gap_space</strong> (<em>float</em>) – Horizontal distance between elements for the farfield</li>
+<li><strong>y_gap_min</strong> (<em>float</em>) – Minimun Y coordinates on the grid for the well field o</li>
+<li><strong>y_gap_max</strong> (<em>float</em>) – Maximun X coordinates on the grid for the well field</li>
+<li><strong>y_gap_space</strong> (<em>float</em>) – Vertical distance between elements for the farfield</li>
+<li><strong>plot_names</strong> (<em>bool</em>) – If true it plots the name of the blocks from the selected layer to plot</li>
+<li><strong>plot_centers</strong> (<em>bool</em>) – If true it plots the centers of the blocks from the selected layer to plot</li>
+<li><strong>z0_level</strong> (<em>float</em>) – Reference level (elevation) for all the grid, keyword on input_dictionary</li>
+<li><strong>mesh_creation</strong> (<em>bool</em>) – If true the mesh is created</li>
+<li><strong>plot_layer</strong> (<em>bool</em>) – If true it plots the selected layer</li>
+<li><strong>to_steinar</strong> (<em>bool</em>) – If true it creates the input files for steinar</li>
+<li><strong>to_GIS</strong> (<em>bool</em>) – If true it generates a shapefile of the selected layer</li>
+<li><strong>plot_all_GIS</strong> (<em>bool</em>) – If true it generates a shapefile of all  layers</li>
+<li><strong>from_leapfrog</strong> (<em>bool</em>) – lee archivos leapfrong ../mesh/from_leapfrog/LF_geometry.dat y ../mesh/from_leapfrog/LF_t2.dat, sin embargo se pierde la simbologia usada en leapfrog y no te utiliza la malla regular ni los pozos. Solamente se crea la malla utilizando amesh</li>
+<li><strong>line_file</strong> (<em>str</em>) – It defines the path and name of a line that can represented a fault or other structure on the mesh, The input file must contain the header: ID,X,Y on csv format. ID referes to the same
+structure, thus, more than one structure can be defined on a single file.</li>
+<li><strong>fault_distance</strong> (<em>float</em>) – In case a line_file is define, some paralels elements will be created at a defined distance</li>
+<li><strong>with_polygon</strong> (<em>bool</em>) – If true a shapefile will be read to define the wellfield.</li>
+<li><strong>polygon_shape</strong> (<em>str</em>) – The shapefile deines the wellfield boundaries. The shape must not contain any cavity</li>
+<li><strong>set_inac_from_poly</strong> (<em>bool</em>) – If true all the elements on the outside of the shapefile are defined as inactive</li>
+<li><strong>set_inac_from_inner</strong> (<em>bool</em>) – If true all the elements on the outerfield are defined as inactive</li>
+<li><strong>rotate</strong> (<em>bool</em>) – If true it rotates the mesh a defined angle</li>
+<li><strong>angle</strong> (<em>float</em>) – Angle in degrees</li>
+<li><strong>inner_mesh_type</strong> (<em>string</em>) – Type of mesh on the inner part of the mesh, it could be ‘honeycomb’ or ‘regular’</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>file</em> – eleme: list of blocks from the grid</li>
+<li><em>file</em> – conne : list of connections on the grid</li>
+<li><em>shapefile</em> – mesh_{field}_layer_{layer} : shapefile of a defined (or all) layer including rock distribution</li>
+<li><em>plot</em> – Voronoi plot (in case is specified)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">A copy of AMESH must be on the path or directory</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.plot_3D_mesh">
+<code class="descclassname">regeo_mesh.</code><code class="descname">plot_3D_mesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#plot_3D_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.plot_3D_mesh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.plot_voronoi">
+<code class="descclassname">regeo_mesh.</code><code class="descname">plot_voronoi</code><span class="sig-paren">(</span><em>input_mesh_dictionary</em>, <em>geners</em>, <em>layer='D'</em>, <em>plot_center=False</em>, <em>mark_elements=False</em>, <em>cross_section=None</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#plot_voronoi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.plot_voronoi" title="Permalink to this definition">¶</a></dt>
+<dd><p>It plots a selected layer, showing the rock distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>layer</strong> (<em>str</em>) – It defines the layer correlative to plot</li>
+<li><strong>plot_center</strong> (<em>bool</em>) – If True it plots the center point for each element</li>
+<li><strong>mark_elements</strong> (<em>bool</em>) – If True it considers the final four identifiers from each constant sink/source element defined on geners and fill the block with a different color.</li>
+<li><strong>cross_section</strong> (<em>bool</em>) – If true plot a line where a vertical cross section is created with the output module</li>
+<li><strong>savefig</strong> (<em>bool</em>) – If true a png file is saved on ../mesh</li>
+<li><strong>input_mesh_dictionary</strong> (<em>dictionary</em>) – Contains a unique color for every rocktype.</li>
+<li><strong>geners</strong> (<em>dictionary</em>) – Contains the neccesary information to define a sink/source. g.e. ‘DA110’:{‘SL’:’GEN’,’NS’:10,’TYPE’:’MASS’,’GX’:1,’EX’:1.1E6}</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">layer_{layer}: containing the rock distribution from the selected layer</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">plot</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The functions ELEM_to_json()</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">segmnt_to_json</span><span class="p">()</span> <span class="ow">and</span> <span class="n">segmnt_to_json</span><span class="p">()</span> <span class="n">should</span> <span class="n">be</span> <span class="n">executed</span> <span class="n">previously</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="regeo_mesh.py2amesh">
+<em class="property">class </em><code class="descclassname">regeo_mesh.</code><code class="descname">py2amesh</code><span class="sig-paren">(</span><em>filename</em>, <em>filepath</em>, <em>Xmin</em>, <em>Xmax</em>, <em>Ymin</em>, <em>Ymax</em>, <em>toler</em>, <em>layers</em>, <em>layer_to_plot</em>, <em>x_space</em>, <em>y_space</em>, <em>radius_criteria</em>, <em>x_from_boarder</em>, <em>y_from_boarder</em>, <em>x_gap_min</em>, <em>x_gap_max</em>, <em>x_gap_space</em>, <em>y_gap_min</em>, <em>y_gap_max</em>, <em>y_gap_space</em>, <em>plot_names</em>, <em>plot_centers</em>, <em>z0_level</em>, <em>plot_all_GIS</em>, <em>from_leapfrog</em>, <em>line_file</em>, <em>fault_distance</em>, <em>with_polygon</em>, <em>polygon_shape</em>, <em>set_inac_from_poly</em>, <em>set_inac_from_inner</em>, <em>rotate</em>, <em>angle</em>, <em>inner_mesh_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>It creates a mesh based on well positions and irregular blocks</p>
+<p>The main characteristics are:</p>
+<p>-It generates the mesh based on defined boundaries</p>
+<p>-The inner section is called wellfield and can contain elements with hexagonal  or square shape</p>
+<p>-The wellfield can be delimited by a shapefile or by fixed squared boundaries.</p>
+<p>-It allows to generates elements along a line to represent structures.</p>
+<p>-The voronoi elements are generated by AMESH.</p>
+<p>-The elements name cannot contain two consecutive zeros.</p>
+<p>-The well blocks are the first on the list</p>
+<p>-It creates the input files to work on Steinar (RockEditor)</p>
+<p>-It can export a defined layer on a shapefile format</p>
+<p>-It can plot a selected layer (It is recommended to use the function plot_voronoi() to plot)</p>
+<p>-Two json file are generated with the correlative block for each well, from which can be track during all the modelling steps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) – File name with well feedzone location</li>
+<li><strong>filepath</strong> (<em>str</em>) – Path of input files</li>
+<li><strong>Xmin</strong> (<em>float</em>) – Minimun X coordinates for the grid</li>
+<li><strong>Xmax</strong> (<em>float</em>) – Maximun X coordinates for the grid</li>
+<li><strong>Ymin</strong> (<em>float</em>) – Minimun Y coordinates for the grid</li>
+<li><strong>Ymax</strong> (<em>float</em>) – Maximun Y coordinates for the grid</li>
+<li><strong>toler</strong> (<em>float</em>) – AMESH parameter</li>
+<li><strong>layers</strong> (<em>dictionary</em>) – Name (correlative) and thickness of every layer on the model, keyword on input_dictionary</li>
+<li><strong>layer_to_plot</strong> (<em>int</em>) – In case it is specified a voronoi plot will be performed</li>
+<li><strong>x_space</strong> (<em>float</em>) – Horizontal distance between elements for the outerfield</li>
+<li><strong>y_space</strong> (<em>float</em>) – Vertical distance between elements for the outerfield</li>
+<li><strong>radius_criteria</strong> (<em>float</em>) – Minimun distance between well location and a regular element</li>
+<li><strong>x_from_boarder</strong> (<em>float</em>) – Horizontal distance from the first element to the east border</li>
+<li><strong>y_from_boarder</strong> (<em>float</em>) – Vertical distance from the first element to the south border</li>
+<li><strong>x_gap_min</strong> (<em>float</em>) – Minimun X coordinates on the grid for the well field</li>
+<li><strong>x_gap_max</strong> (<em>float</em>) – Maximun X coordinates on the grid for the well field</li>
+<li><strong>x_gap_space</strong> (<em>float</em>) – Horizontal distance between elements for the farfield</li>
+<li><strong>y_gap_min</strong> (<em>float</em>) – Minimun Y coordinates on the grid for the well field o</li>
+<li><strong>y_gap_max</strong> (<em>float</em>) – Maximun X coordinates on the grid for the well field</li>
+<li><strong>y_gap_space</strong> (<em>float</em>) – Vertical distance between elements for the farfield</li>
+<li><strong>plot_names</strong> (<em>bool</em>) – If true it plots the name of the blocks from the selected layer to plot</li>
+<li><strong>plot_centers</strong> (<em>bool</em>) – If true it plots the centers of the blocks from the selected layer to plot</li>
+<li><strong>z0_level</strong> (<em>float</em>) – Reference level (elevation) for all the grid, keyword on input_dictionary</li>
+<li><strong>mesh_creation</strong> (<em>bool</em>) – If true the mesh is created</li>
+<li><strong>plot_layer</strong> (<em>bool</em>) – If true it plots the selected layer</li>
+<li><strong>to_steinar</strong> (<em>bool</em>) – If true it creates the input files for steinar</li>
+<li><strong>to_GIS</strong> (<em>bool</em>) – If true it generates a shapefile of the selected layer</li>
+<li><strong>plot_all_GIS</strong> (<em>bool</em>) – If true it generates a shapefile of all  layers</li>
+<li><strong>from_leapfrog</strong> (<em>bool</em>) – lee archivos leapfrong ../mesh/from_leapfrog/LF_geometry.dat y ../mesh/from_leapfrog/LF_t2.dat, sin embargo se pierde la simbologia usada en leapfrog y no te utiliza la malla regular ni los pozos. Solamente se crea la malla utilizando amesh</li>
+<li><strong>line_file</strong> (<em>str</em>) – It defines the path and name of a line that can represented a fault or other structure on the mesh, The input file must contain the header: ID,X,Y on csv format. ID referes to the same
+structure, thus, more than one structure can be defined on a single file.</li>
+<li><strong>fault_distance</strong> (<em>float</em>) – In case a line_file is define, some paralels elements will be created at a defined distance</li>
+<li><strong>with_polygon</strong> (<em>bool</em>) – If true a shapefile will be read to define the wellfield.</li>
+<li><strong>polygon_shape</strong> (<em>str</em>) – The shapefile deines the wellfield boundaries. The shape must not contain any cavity</li>
+<li><strong>set_inac_from_poly</strong> (<em>bool</em>) – If true all the elements on the outside of the shapefile are defined as inactive</li>
+<li><strong>set_inac_from_inner</strong> (<em>bool</em>) – If true all the elements on the outerfield are defined as inactive</li>
+<li><strong>rotate</strong> (<em>bool</em>) – If true it rotates the mesh a defined angle</li>
+<li><strong>angle</strong> (<em>float</em>) – Angle in degrees</li>
+<li><strong>inner_mesh_type</strong> (<em>string</em>) – Type of mesh on the inner part of the mesh, it could be ‘honeycomb’ or ‘regular’</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>file</em> – eleme: list of blocks from the grid</li>
+<li><em>file</em> – conne : list of connections on the grid</li>
+<li><em>shapefile</em> – mesh_{field}_layer_{layer} : shapefile of a defined (or all) layer including rock distribution</li>
+<li><em>plot</em> – Voronoi plot (in case is specified)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">A copy of AMESH must be on the path or directory</p>
+</div>
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.check_in_out">
+<code class="descname">check_in_out</code><span class="sig-paren">(</span><em>point</em>, <em>source</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.check_in_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.check_in_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifica si un punto de la malla del campo cercano esta dentro o fuera del poligo definido por el shapefile de entrada o del campo cercano</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.data">
+<code class="descname">data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define los puntos que ingresaran al archivo de entrada para amesh. Adicionalmente, en caso de definir un linea en el archivo de entrada &lt;i&gt;&lt;lines_data/i&gt; se procedera a ingresar estos puntos y crear puntos paralelos en ambos extremos de la linea</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.from_leapfrog_mesh">
+<code class="descname">from_leapfrog_mesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.from_leapfrog_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.from_leapfrog_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extrae puntos mas extremos y la posicion de los elementos de un set de datos provinientes de leapfrog, sin embargo no considera los elementos asociados a la roca ATM 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.input_file_to_amesh">
+<code class="descname">input_file_to_amesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.input_file_to_amesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.input_file_to_amesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Genera el archivo de entrada para amesh</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.plot_voronoi">
+<code class="descname">plot_voronoi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.plot_voronoi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.plot_voronoi" title="Permalink to this definition">¶</a></dt>
+<dd><p>En caso de ser solicitado, grafica la  malla a partir de los archivo en la carpeta ../mesh/from_amesh</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.radius_select">
+<code class="descname">radius_select</code><span class="sig-paren">(</span><em>x0</em>, <em>y0</em>, <em>xr</em>, <em>yr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.radius_select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.radius_select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifica si dos puntos estan mas cerca que el criterio seleccionado</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.reg_pol_mesh">
+<code class="descname">reg_pol_mesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.reg_pol_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.reg_pol_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crea malla regular cuando existe un poligono de entrada</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.regular_mesh">
+<code class="descname">regular_mesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.regular_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.regular_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Genera malla regular en en toda la extension de la region definida por Xmin,Xmax,Ymin y Ymax</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.to_GIS">
+<code class="descname">to_GIS</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.to_GIS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.to_GIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Toma como entrada el archivo segment de ../mesh/from_amesh y eleme de ../mesh/to_stainar y los convierte en shapefile con atributos de roca, nombre y volumen</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.to_steinar">
+<code class="descname">to_steinar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.to_steinar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.to_steinar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convierte los archivos de salida amesh en formato de entrada para Steinar</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="regeo_mesh.py2amesh.well_blk_assign">
+<code class="descname">well_blk_assign</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#py2amesh.well_blk_assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.py2amesh.well_blk_assign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asigna el nombre a cada bloque, priorizando los pozos, es decir, estos llevan los correlativos mas bajos. Por ultimo almacena dos archivo json para registro de los bloques asignados a los pozos</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="regeo_mesh.segmnt_to_json">
+<code class="descclassname">regeo_mesh.</code><code class="descname">segmnt_to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regeo_mesh.html#segmnt_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#regeo_mesh.segmnt_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>It combines the information from eleme and segmt from folder mesh/to_steinar into a single json</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">segmt.json: on ../mesh/</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">Currently, it uses the steinar folder because it assume the modeler will perfome the block assignation on it.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">segmnt_to_json</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="run.html" class="btn btn-neutral float-right" title="run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="output.html" class="btn btn-neutral float-left" title="output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>t2geores_functions &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>t2geores_functions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for t2geores_functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
+<span class="kn">import</span> <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geomtr</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span><span class="p">,</span><span class="n">structure</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<div class="viewcode-block" id="patmfromelev"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.patmfromelev">[docs]</a><span class="k">def</span> <span class="nf">patmfromelev</span><span class="p">(</span><span class="n">elev</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It fines the atmospheric pressure base on an approximate formula</span>
+<span class="sd">	</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	elev</span>
+<span class="sd">	  masl where the pressure is needed</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	float</span>
+<span class="sd">	  Atmospheric pressure in bar</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; patmfromelev(750)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">p_atm</span><span class="o">=</span><span class="p">(</span><span class="mi">101325</span><span class="o">*</span><span class="p">((</span><span class="mi">288</span><span class="o">+</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0065</span><span class="o">*</span><span class="n">elev</span><span class="p">))</span><span class="o">/</span><span class="mi">288</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">9.8</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0065</span><span class="o">*</span><span class="mi">287</span><span class="p">)))</span><span class="o">/</span><span class="mi">100000</span>
+	<span class="k">return</span> <span class="n">p_atm</span></div>
+
+<div class="viewcode-block" id="water_level_projection"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.water_level_projection">[docs]</a><span class="k">def</span> <span class="nf">water_level_projection</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">Tmin</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It projects the water level based on a pressure log</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	MD : array</span>
+<span class="sd">	  Measure depth array</span>
+<span class="sd">	P : array</span>
+<span class="sd">	  Pressure array</span>
+<span class="sd">	Tmin : float</span>
+<span class="sd">	  Minimun temperature allowed</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	float</span>
+<span class="sd">	  D2: water leverl projection</span>
+<span class="sd">	float</span>
+<span class="sd">	  Pmin: pressure at water level  </span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; water_level_projection(MD,P,120)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#Creation of array with pressure</span>
+	<span class="n">P_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">P</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+	<span class="n">P0</span><span class="o">=</span><span class="n">P_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">P1</span><span class="o">=</span><span class="n">P_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+	<span class="c1">#Pressure vs MD function</span>
+	<span class="n">MDfunc</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">MD</span><span class="p">)</span>
+	<span class="n">MD0</span><span class="o">=</span><span class="n">MDfunc</span><span class="p">(</span><span class="n">P0</span><span class="p">)</span>
+	<span class="n">MD1</span><span class="o">=</span><span class="n">MDfunc</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span>
+
+	<span class="c1">#water_level_assuming saturation temperature at surface</span>
+	<span class="n">delta_MD</span><span class="o">=</span><span class="n">MD0</span><span class="o">-</span><span class="n">MD1</span>
+	<span class="n">delta_P</span><span class="o">=</span><span class="n">P0</span><span class="o">-</span><span class="n">P1</span>
+	<span class="n">m</span><span class="o">=</span><span class="n">delta_MD</span><span class="o">/</span><span class="n">delta_P</span>
+	<span class="n">b</span><span class="o">=</span><span class="n">MD0</span><span class="o">-</span><span class="n">m</span><span class="o">*</span><span class="n">P0</span>
+
+	<span class="n">Pmin</span><span class="o">=</span><span class="n">IAPWS97</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="p">(</span><span class="n">Tmin</span><span class="o">+</span><span class="mf">273.15</span><span class="p">),</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">P</span><span class="o">*</span><span class="mi">10</span>
+
+	<span class="n">D2</span><span class="o">=</span><span class="n">m</span><span class="o">*</span><span class="n">Pmin</span><span class="o">+</span><span class="n">b</span>
+
+	<span class="k">return</span> <span class="n">D2</span><span class="p">,</span><span class="n">Pmin</span></div>
+
+<div class="viewcode-block" id="initial_conditions"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.initial_conditions">[docs]</a><span class="k">def</span> <span class="nf">initial_conditions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Generates the tempearture and pressure initial conditions assuming boiling from top to bottom layer</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;. Also it contains the keyword &#39;INCONS_PARAM&#39; with the specified initial conditions, i.e.:&#39;INCONS_PARAM&#39;:{&#39;To&#39;:30,&#39;GRADTZ&#39;:0.08,&#39;DEPTH_TO_SURF&#39;:100,&#39;DELTAZ&#39;:20}</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	list</span>
+<span class="sd">	  T: initial list of temperature</span>
+<span class="sd">	list</span>
+<span class="sd">	  P: initial list of pressure</span>
+<span class="sd">	list</span>
+<span class="sd">	  depth: range of depth coming from layers</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+	
+	<span class="n">depths</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]),</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;DELTAZ&#39;</span><span class="p">])</span>
+
+	<span class="n">Pi</span><span class="o">=</span><span class="mi">1</span> <span class="c1">#[bar]</span>
+	<span class="n">To</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;To&#39;</span><span class="p">]</span>
+	<span class="n">depth</span><span class="o">=</span><span class="mi">0</span>
+	<span class="n">T</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">P</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">TVD</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">depths</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+		<span class="k">if</span> <span class="n">cnt</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">z_ref</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">])</span><span class="o">+</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;DEPTH_TO_SURF&#39;</span><span class="p">]</span>
+		<span class="n">depth</span><span class="o">=</span><span class="n">z_ref</span><span class="o">-</span><span class="n">TVD</span>
+		<span class="n">Ti</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;GRADTZ&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">depth</span><span class="o">+</span><span class="n">To</span>
+		<span class="n">rho</span><span class="o">=</span><span class="n">IAPWS97</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="p">(</span><span class="n">Ti</span><span class="o">+</span><span class="mf">273.15</span><span class="p">),</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">rho</span>
+		<span class="n">P_colum</span><span class="o">=</span><span class="n">rho</span><span class="o">*</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;DELTAZ&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;GF&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">Pi</span><span class="o">+=</span><span class="n">P_colum</span><span class="o">/</span><span class="mf">1E5</span>
+		<span class="n">T</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ti</span><span class="p">)</span>
+		<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Pi</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">depths</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="incons"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.incons">[docs]</a><span class="k">def</span> <span class="nf">incons</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns the coordinates X,Y and Z at a desired depth.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;. Also it contains the keyword &#39;INCONS_PARAM&#39; with the specified initial conditions, i.e.:&#39;INCONS_PARAM&#39;:{&#39;To&#39;:30,&#39;GRADTZ&#39;:0.08,&#39;DEPTH_TO_SURF&#39;:100,&#39;DELTAZ&#39;:20}</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  INCON : on model/t2/sources</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	It requires an updated ELEME.json</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	Boiling conditions are assumed</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; incons(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">input_file</span><span class="o">=</span><span class="s1">&#39;../mesh/ELEME.json&#39;</span>
+	<span class="n">T</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">depth</span><span class="o">=</span><span class="n">initial_conditions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">depth</span><span class="p">)</span>
+	<span class="n">Tfunc</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span><span class="n">T</span><span class="p">)</span>
+	<span class="n">Pfunc</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
+	<span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;../model/t2/sources/INCON&#39;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
+		<span class="n">eleme_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+		<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">eleme_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+			<span class="n">zi</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Z&#39;</span><span class="p">]</span>
+			<span class="n">Ti</span><span class="o">=</span><span class="n">Tfunc</span><span class="p">(</span><span class="n">zi</span><span class="p">)</span>
+			<span class="n">Pi</span><span class="o">=</span><span class="n">Pfunc</span><span class="p">(</span><span class="n">zi</span><span class="p">)</span><span class="o">*</span><span class="mf">1E5</span>
+			<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%5s%35s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+			<span class="n">string</span><span class="o">+=</span><span class="s2">&quot; </span><span class="si">%19.13E</span><span class="s2"> </span><span class="si">%19.13E</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">Pi</span><span class="p">,</span><span class="n">Ti</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="empty_model"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.empty_model">[docs]</a><span class="k">def</span> <span class="nf">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">current_path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It erases all the file on the  T2GEORES structure except the input and scripts folders</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	structure : dictionary</span>
+<span class="sd">	  It is an internal structure dictionary defined on formats.py	</span>
+<span class="sd">	current_path : str</span>
+<span class="sd">	  It specifies the top folder of the structure, if the function is executed from scripts current_path is &#39;../&#39;</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	It will erase all the output data, mesh and images on the model.</span>
+
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; empty_model(current_path=&#39;../&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">structure</span><span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">:</span>
+			<span class="n">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">direc</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span> <span class="n">direc</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">current_path</span><span class="p">):</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">current_path</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span><span class="s1">&#39;scripts&#39;</span><span class="p">]):</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span><span class="n">file</span><span class="p">))</span>
+				<span class="k">except</span> <span class="ne">IsADirectoryError</span><span class="p">:</span>
+					<span class="k">continue</span></div>
+
+<div class="viewcode-block" id="create_structure"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.create_structure">[docs]</a><span class="k">def</span> <span class="nf">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It creates the necessary structure for T2GEORES to work</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	structure : dictionary</span>
+<span class="sd">	  It is an internal structure dictionary defined on formats.py	</span>
+<span class="sd">	current_path : str</span>
+<span class="sd">	  It specifies the path where the structure will be constructed</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	A good practice is to create a folder for the whole model</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; create_structure(current_path=&#39;.&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">structure</span><span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">:</span>
+			<span class="n">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">direc</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span> <span class="n">direc</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
