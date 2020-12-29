@@ -1,0 +1,595 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>run &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>run</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for run</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">writer</span> <span class="k">as</span> <span class="nn">t2w</span>
+<span class="kn">import</span> <span class="nn">gener</span> <span class="k">as</span> <span class="nn">t2g</span>
+
+<div class="viewcode-block" id="incon_replace"><a class="viewcode-back" href="../modules/run.html#run.incon_replace">[docs]</a><span class="k">def</span> <span class="nf">incon_replace</span><span class="p">(</span><span class="n">incon_file</span><span class="p">,</span><span class="n">blocks</span><span class="p">,</span><span class="n">incon_file_len</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It rewrite the incon file without the porosity, depending if it comes from .sav file or INCON generated with T2GEORES</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	incon_file : str</span>
+<span class="sd">	  incon file to be rearange</span>
+<span class="sd">	blocks: str</span>
+<span class="sd">	  Declares if the file has the block information on even or odd lines</span>
+<span class="sd">	incon_file_len: int</span>
+<span class="sd">	  Length of incon file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string: formatted string with incon data</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The function is called by incon_to_t2()</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">incon_line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">incon_file</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">blocks</span><span class="o">==</span><span class="s1">&#39;even&#39;</span> <span class="ow">and</span> <span class="n">index</span><span class="o">!=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">index</span><span class="o">&lt;=</span><span class="n">incon_file_len</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">index</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="n">incon_line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="n">incon_line</span>
+		<span class="k">if</span> <span class="n">blocks</span><span class="o">==</span><span class="s1">&#39;odd&#39;</span> <span class="p">:</span>
+			<span class="k">if</span> <span class="n">index</span><span class="o">%</span><span class="mi">2</span><span class="o">!=</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="n">incon_line</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="n">incon_line</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="incon_delete"><a class="viewcode-back" href="../modules/run.html#run.incon_delete">[docs]</a><span class="k">def</span> <span class="nf">incon_delete</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;It reads the TOUGH2 file assuming it is on ../model/t2/ and erases the INCON section</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  t2: file without INCON information</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	There is no need of input argument</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; incon_delete()</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">final_t2</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="n">incon_section</span><span class="o">=</span><span class="kc">False</span>
+	<span class="n">input_fi_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">):</span>
+		<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">t2_line</span> <span class="ow">in</span> <span class="n">t2_file</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s1">&#39;INCON&#39;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+				<span class="n">incon_section</span><span class="o">=</span><span class="kc">True</span>
+			<span class="k">elif</span> <span class="s1">&#39;ELEME&#39;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+				<span class="n">incon_section</span><span class="o">=</span><span class="kc">False</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">incon_section</span><span class="p">:</span>
+				<span class="n">final_t2</span><span class="o">+=</span><span class="n">t2_line</span>
+		<span class="n">t2_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="n">t2_file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+		<span class="n">t2_file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">final_t2</span><span class="p">)</span>
+		<span class="n">t2_file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>	
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_fi_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="incon_to_t2"><a class="viewcode-back" href="../modules/run.html#run.incon_to_t2">[docs]</a><span class="k">def</span> <span class="nf">incon_to_t2</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Adds the INCON block to the TOUGH2 input file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary contanining the information of the source of incon with keyword &#39;incon_state&#39; can take the value of &#39;current&#39; or &#39;init&#39;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  t2: modified file on  ../model/t2/t2 </span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; incon_to_t2(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">incon_state</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;incon_state&#39;</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="n">incon_state</span><span class="o">==</span><span class="s1">&#39;current&#39;</span><span class="p">:</span>
+		<span class="n">input_incon</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2.sav1&quot;</span>
+		<span class="n">blocks</span><span class="o">=</span><span class="s1">&#39;even&#39;</span>
+		<span class="n">incon_file_len</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">input_incon</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+	<span class="k">elif</span> <span class="n">incon_state</span><span class="o">==</span><span class="s1">&#39;init&#39;</span><span class="p">:</span>
+		<span class="n">input_incon</span><span class="o">=</span><span class="s2">&quot;../model/t2/sources/INCON&quot;</span>
+		<span class="n">blocks</span><span class="o">=</span><span class="s1">&#39;odd&#39;</span>
+		<span class="n">incon_file_len</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">input_incon</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+
+	<span class="n">input_fi_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2&quot;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_incon</span><span class="p">):</span>
+			<span class="n">incon_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_incon</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+			<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="s1">&#39;INCON&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+				<span class="n">final_t2</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+				<span class="k">for</span> <span class="n">t2_line</span> <span class="ow">in</span> <span class="n">t2_file</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;ELEME&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="n">t2_line</span>
+					<span class="k">elif</span> <span class="s1">&#39;ELEME&#39;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="s1">&#39;INCON</span><span class="se">\n</span><span class="s1">&#39;</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="n">incon_replace</span><span class="p">(</span><span class="n">incon_file</span><span class="p">,</span><span class="n">blocks</span><span class="p">,</span><span class="n">incon_file_len</span><span class="p">)</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">ELEME----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">final_t2</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+				<span class="n">incon_section</span><span class="o">=</span><span class="kc">False</span>
+				<span class="k">for</span> <span class="n">t2_line</span> <span class="ow">in</span> <span class="n">t2_file</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;INCON&#39;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+						<span class="n">incon_section</span><span class="o">=</span><span class="kc">True</span>
+					<span class="k">elif</span> <span class="s1">&#39;ELEME&#39;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+						<span class="n">incon_section</span><span class="o">=</span><span class="kc">False</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="s1">&#39;INCON</span><span class="se">\n</span><span class="s1">&#39;</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="n">incon_replace</span><span class="p">(</span><span class="n">incon_file</span><span class="p">,</span><span class="n">blocks</span><span class="p">,</span><span class="n">incon_file_len</span><span class="p">)</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+					<span class="k">if</span> <span class="ow">not</span> <span class="n">incon_section</span><span class="p">:</span>
+						<span class="n">final_t2</span><span class="o">+=</span><span class="n">t2_line</span>
+
+			<span class="n">incon_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+			<span class="n">t2_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+			<span class="n">t2_file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+			<span class="n">t2_file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">final_t2</span><span class="p">)</span>
+			<span class="n">t2_file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_fi_file</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_fi_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="update_gen"><a class="viewcode-back" href="../modules/run.html#run.update_gen">[docs]</a><span class="k">def</span> <span class="nf">update_gen</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It updates the file the TOUGH2 input file based on the previous updates of all files on ../model/t2/sources/GENER_*</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary contaning the type of desire run &#39;production&#39; or &#39;natural&#39; written on the keyword &#39;TYPE_RUN&#39;</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  t2: file with the modified version of GENER</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	Some print sentences are expected depending on the availability of certain files</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; update_gen(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">type_run</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TYPE_RUN&#39;</span><span class="p">]</span>
+
+	<span class="n">final_t2</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="n">incon_section</span><span class="o">=</span><span class="kc">False</span>
+	<span class="n">input_fi_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2&quot;</span>
+	<span class="n">sources_file</span><span class="o">=</span><span class="s1">&#39;../model/t2/sources/GENER_SOURCES&#39;</span>
+	<span class="n">well_sources_file</span><span class="o">=</span><span class="s1">&#39;../model/t2/sources/GENER_PROD&#39;</span>
+	<span class="n">makeup_well_sources_file</span><span class="o">=</span><span class="s1">&#39;../model/t2/sources/GENER_MAKEUP&#39;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sources_file</span><span class="p">):</span>
+			<span class="k">if</span> <span class="s1">&#39;GENER&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+				<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+				<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+				
+				<span class="n">gener_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">gener_source_file</span><span class="p">:</span>
+					<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="n">type_run</span><span class="o">==</span><span class="s1">&#39;production&#39;</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">well_sources_file</span><span class="p">):</span>
+						<span class="n">well_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+						<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_source_file</span><span class="p">:</span>
+							<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+						<span class="n">well_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
+
+					<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">):</span>
+						<span class="n">well_makeup_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+						<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_makeup_source_file</span><span class="p">:</span>
+							<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+						<span class="n">well_makeup_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
+
+				<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+				<span class="n">t2_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+				<span class="n">gener_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">t2_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+				<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">t2_line</span> <span class="ow">in</span> <span class="n">t2_file</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;GENER&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+						<span class="n">t2_string</span><span class="o">+=</span><span class="n">t2_line</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span>
+						<span class="n">gener_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+						<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">gener_source_file</span><span class="p">:</span>
+							<span class="n">t2_string</span><span class="o">+=</span><span class="n">sources</span>
+
+						<span class="k">if</span> <span class="n">type_run</span><span class="o">==</span><span class="s1">&#39;production&#39;</span><span class="p">:</span>
+							<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">well_sources_file</span><span class="p">):</span>
+								<span class="n">well_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+								<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_source_file</span><span class="p">:</span>
+									<span class="n">t2_string</span><span class="o">+=</span><span class="n">sources</span>
+								<span class="n">well_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+							<span class="k">else</span><span class="p">:</span>
+								<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
+						<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+						<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">):</span>
+							<span class="n">well_makeup_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+							<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_makeup_source_file</span><span class="p">:</span>
+								<span class="n">t2_string</span><span class="o">+=</span><span class="n">sources</span>
+							<span class="n">well_makeup_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
+
+						<span class="k">break</span>
+					
+				<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">t2_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+				<span class="n">t2_file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+				<span class="n">t2_file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">t2_string</span><span class="p">)</span>
+				<span class="n">t2_file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>	
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">sources_file</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_fi_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="update_rock_distribution"><a class="viewcode-back" href="../modules/run.html#run.update_rock_distribution">[docs]</a><span class="k">def</span> <span class="nf">update_rock_distribution</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It updates the file the TOUGH2 input file based on the new rock distribution</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary contaning the information where the rock distribution comes from</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  t2: file with the modified version of ELEME and CONNE</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; update_rock_distribution(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">t2w</span><span class="o">.</span><span class="n">CONNE_from_steinar_to_t2</span><span class="p">()</span>
+	<span class="n">t2w</span><span class="o">.</span><span class="n">merge_ELEME_and_in_to_t2</span><span class="p">()</span>
+
+	<span class="n">t2_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="n">input_fi_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2&quot;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">):</span>
+		<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+		<span class="n">indicator</span><span class="o">=</span><span class="kc">False</span>
+		<span class="k">for</span> <span class="n">t2_line</span> <span class="ow">in</span> <span class="n">t2_file</span><span class="p">:</span>
+			<span class="k">if</span> <span class="s1">&#39;ELEME&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">t2_line</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">indicator</span><span class="p">:</span>
+				<span class="n">t2_string</span><span class="o">+=</span><span class="n">t2_line</span>
+			<span class="k">elif</span> <span class="n">indicator</span> <span class="ow">and</span> <span class="s1">&#39;GENER&#39;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+				<span class="n">t2_string</span><span class="o">+=</span><span class="n">t2_line</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">t2_string</span><span class="o">+=</span><span class="n">t2_writer</span><span class="o">.</span><span class="n">ELEME_adder</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+				<span class="n">t2_string</span><span class="o">+=</span><span class="n">t2_writer</span><span class="o">.</span><span class="n">CONNE_adder</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+				<span class="n">indicator</span><span class="o">=</span><span class="kc">True</span>
+
+		<span class="n">t2_file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+		<span class="n">t2_file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">t2_string</span><span class="p">)</span>
+		<span class="n">t2_file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_fi_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="copy_folder"><a class="viewcode-back" href="../modules/run.html#run.copy_folder">[docs]</a><span class="k">def</span> <span class="nf">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It copies all the files on a folder to another folder</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	src : str</span>
+<span class="sd">	  Source directory</span>
+<span class="sd">	dest : str</span>
+<span class="sd">	  Output directory</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; copy_folder(&#39;../model/t2&#39;,&#39;../model/t2/prev&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">src_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">src_files</span><span class="p">:</span>
+		<span class="n">full_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">full_file_name</span><span class="p">):</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">full_file_name</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+			<span class="k">except</span> <span class="n">shutil</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> and </span><span class="si">%s</span><span class="s2"> didnt change&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">full_file_name</span><span class="p">,</span><span class="n">dest</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="create_prev"><a class="viewcode-back" href="../modules/run.html#run.create_prev">[docs]</a><span class="k">def</span> <span class="nf">create_prev</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;It creates a copy of several folder for further comparisson</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The folders to copy are: </span>
+<span class="sd">	&#39;../model/t2&#39;</span>
+<span class="sd">	&#39;../output/PT/images&#39;</span>
+<span class="sd">	&#39;../output/PT/json&#39;</span>
+<span class="sd">	&#39;../output/PT/txt&#39;</span>
+<span class="sd">	&#39;../output/PT/evol&#39;</span>
+<span class="sd">	&#39;../output/mh&#39;</span>
+<span class="sd">	All of them contains a subfolder prev where the data is stored</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; create_prev()</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#Copy t2 output</span>
+	<span class="n">src</span><span class="o">=</span><span class="s1">&#39;../model/t2&#39;</span>
+	<span class="n">dest</span><span class="o">=</span> <span class="s1">&#39;../model/t2/prev&#39;</span>
+	<span class="n">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">)</span>
+
+	<span class="c1">#Copy prev images output</span>
+	<span class="n">src</span><span class="o">=</span><span class="s1">&#39;../output/PT/images&#39;</span>
+	<span class="n">dest</span><span class="o">=</span><span class="s1">&#39;../output/PT/images/prev&#39;</span>
+	<span class="n">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">)</span>
+
+	<span class="c1">#Copy prev json output</span>
+	<span class="n">src</span><span class="o">=</span><span class="s1">&#39;../output/PT/json&#39;</span>
+	<span class="n">dest</span><span class="o">=</span><span class="s1">&#39;../output/PT/json/prev&#39;</span>
+	<span class="n">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">)</span>
+
+	<span class="c1">#Copy prev txt output</span>
+	<span class="n">src</span><span class="o">=</span><span class="s1">&#39;../output/PT/txt&#39;</span>
+	<span class="n">dest</span><span class="o">=</span><span class="s1">&#39;../output/PT/txt/prev&#39;</span>
+	<span class="n">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">)</span>
+
+	<span class="c1">#Copy prev txt output</span>
+	<span class="n">src</span><span class="o">=</span><span class="s1">&#39;../output/PT/evol&#39;</span>
+	<span class="n">dest</span><span class="o">=</span><span class="s1">&#39;../output/PT/evol/prev&#39;</span>
+	<span class="n">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">)</span>
+
+	<span class="c1">#Copy prev txt output</span>
+	<span class="n">src</span><span class="o">=</span><span class="s1">&#39;../output/mh/txt&#39;</span>
+	<span class="n">dest</span><span class="o">=</span><span class="s1">&#39;../output/mh/txt/prev&#39;</span>
+	<span class="n">copy_folder</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">dest</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../modules/run.html#run.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It runs the TOUGH2 input file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  A dictionary with the EOS used on the model</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	files</span>
+<span class="sd">	  various: containing the output from modelling </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">EOS</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;EOS&#39;</span><span class="p">]</span>
+	<span class="n">current</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+	<span class="n">t2_input_file</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/model/t2/t2&#39;</span><span class="o">%</span><span class="n">current</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/scripts&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+	<span class="n">it2_input_file</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/model/t2/fit2&#39;</span><span class="o">%</span><span class="n">current</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/scripts&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+	<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">t2_input_file</span><span class="p">,</span> <span class="n">current</span><span class="o">+</span><span class="s1">&#39;/t2&#39;</span><span class="p">)</span>
+	<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">it2_input_file</span><span class="p">,</span> <span class="n">current</span><span class="o">+</span><span class="s1">&#39;/fit2&#39;</span><span class="p">)</span>
+
+	<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;itough2&quot;</span><span class="p">,</span> <span class="s1">&#39;fit2&#39;</span><span class="p">,</span><span class="s1">&#39;t2&#39;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">EOS</span><span class="p">)])</span>
+
+	<span class="n">target_dir</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/scripts&#39;</span><span class="p">,</span><span class="s1">&#39;/model/t2&#39;</span><span class="p">)</span>
+	<span class="n">file_names</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s1">&#39;t2.&#39;</span> <span class="ow">in</span> <span class="n">file_name</span> <span class="ow">or</span> <span class="s1">&#39;fit2&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">file_name</span><span class="p">),</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span> <span class="p">)</span>
+			<span class="k">except</span> <span class="n">shutil</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File already exist </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">file_name</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
