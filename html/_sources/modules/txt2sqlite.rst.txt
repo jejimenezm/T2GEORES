@@ -1,7 +1,0 @@
-txt2sqlite
-==========
-
-.. automodule:: txt2sqlite
-   :members:
-   :undoc-members:
-   :show-inheritance:

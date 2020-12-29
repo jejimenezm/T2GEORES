@@ -1,7 +1,0 @@
-regeo_mesh
-==========
-
-.. automodule:: regeo_mesh
-   :members:
-   :undoc-members:
-   :show-inheritance:
