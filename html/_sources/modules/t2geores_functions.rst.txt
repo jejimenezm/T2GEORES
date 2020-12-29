@@ -1,7 +1,0 @@
-t2geores_functions
-==================
-
-.. automodule:: t2geores_functions
-   :members:
-   :undoc-members:
-   :show-inheritance:
