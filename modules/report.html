@@ -160,23 +160,23 @@
   <div class="section" id="module-report">
 <span id="report"></span><h1>report<a class="headerlink" href="#module-report" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="report.plot_compare_one">
-<code class="descclassname">report.</code><code class="descname">plot_compare_one</code><span class="sig-paren">(</span><em>well</em>, <em>savefig</em>, <em>data_PT_real</em>, <em>no_real_data</em>, <em>data</em>, <em>TVD_elem</em>, <em>TVD_elem_top</em>, <em>axT</em>, <em>axP</em>, <em>PT_real_dictionary</em>, <em>layer_bottom</em>, <em>limit_layer</em>, <em>input_dictionary</em>, <em>label=None</em>, <em>def_colors=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_one" title="Permalink to this definition">¶</a></dt>
-<dd><p>Genera una area con dos graficas, en una se muestra la grafica de temperatura real y la temperatura calculada vs la profundidad real, en la otra la presion real y la calculada vs la profundidad real.</p>
+<dt id="report.image_save_all_plots">
+<code class="descclassname">report.</code><code class="descname">image_save_all_plots</code><span class="sig-paren">(</span><em>typePT</em>, <em>input_dictionary</em>, <em>width=4</em>, <em>height=4.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#image_save_all_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.image_save_all_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>It plots all the wells defined on input_dictionay and compare real data with model output</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the reference level under the keyword ‘z_ref’</li>
 <li><strong>db_path</strong> (<em>str</em>) – Direccion de base de datos sqlite, tomado de model_conf</li>
-<li><strong>well</strong> (<em>str</em>) – Name of selected well</li>
-<li><strong>savefig</strong> (<em>bool</em>) – If true the plot is saved on ../output/PT/images/logging/</li>
-<li><strong>data_PT_real</strong> (<em>str</em>) – Direccion de archivo de entrada</li>
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’. Lastly, it contains the information of the top level of the mesh on under the key ‘z_ref’</li>
+<li><strong>typePT</strong> (<em>str</em>) – ‘T’ for temperature or ‘P’ for pressure</li>
+<li><strong>height</strong> (<em>float</em>) – Defines the ratio height/width</li>
+<li><strong>width</strong> (<em>float</em>) – By dividing the number of wells defines the number of rows on the chart</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">PT_{well}.png: archivo con direccion ../output/PT/images/logging</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{typePT}_all.png: on path ../output/PT/images/logging/</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
@@ -186,11 +186,87 @@
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">La temperatura rel es tomada de la base de datos</p>
+<p class="last">The real data is taken from the the sqlite database. Depending on the number of wells defined the default values for width and height migth be changed</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_one</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span><span class="o">=</span><span class="s1">&#39;AH-34&#39;</span><span class="p">,</span><span class="s2">&quot;../output/PT/txt&quot;</span><span class="p">,</span><span class="n">savefig</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image_save_all_plots</span><span class="p">(</span><span class="n">typePT</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.plot_compare_one">
+<code class="descclassname">report.</code><code class="descname">plot_compare_one</code><span class="sig-paren">(</span><em>well</em>, <em>savefig</em>, <em>no_real_data</em>, <em>data</em>, <em>TVD_elem</em>, <em>TVD_elem_top</em>, <em>axT</em>, <em>axP</em>, <em>PT_real_dictionary</em>, <em>layer_bottom</em>, <em>limit_layer</em>, <em>input_dictionary</em>, <em>label=None</em>, <em>def_colors=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates two plots, they compare real downhole temperature and pressure measurements with model output</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>well</strong> (<em>str</em>) – Selected well</li>
+<li><strong>savefig</strong> (<em>bool</em>) – If true the plot is saved on ../output/PT/images/logging/</li>
+<li><strong>PT_real_dictionary</strong> (<em>dictionary</em>) – Contains real  measurements on temperature, pressure and measure depth</li>
+<li><strong>no_real_data</strong> (<em>bool</em>) – If True, no real measurements are provides</li>
+<li><strong>data</strong> (<em>pandas dataframe</em>) – Contains model output information for each element assigned to a well</li>
+<li><strong>TVD_elem</strong> (<em>array</em>) – Contains the masl data at the middle for each element assigned to a well</li>
+<li><strong>TVD_elem_top</strong> (<em>array</em>) – Contains the masl data at the top  for each element assigned to a well</li>
+<li><strong>axT</strong> (<em>matplotlib_axis</em>) – Framework where temperature data is plotted</li>
+<li><strong>axP</strong> (<em>matplotlib_axis</em>) – Framework where temperature data is plotted</li>
+<li><strong>layer_bottom</strong> (<em>array</em>) – Contains the masl data at the bottom for each element assigned to a well</li>
+<li><strong>limit_layer</strong> (<em>str</em>) – Layer correlative at which plotting stops</li>
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the information of the top level of the mesh on under the key ‘z_ref’</li>
+<li><strong>label</strong> (<em>str</em>) – Contains the legend of the plotted line</li>
+<li><strong>def_colors</strong> (<em>True</em>) – If True uses the colors defined on formats</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>image</em> – PT_{well}.png: on the path../output/PT/images/logging</li>
+<li><em>matplotlib_axis</em> – axT: contains real and simulated downhole temperature data</li>
+<li><em>matplotlib_axis</em> – axP: contains real and simulated downhole pressure data</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is used in combination of the function plot_compare_one_data</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.plot_compare_one_data">
+<code class="descclassname">report.</code><code class="descname">plot_compare_one_data</code><span class="sig-paren">(</span><em>well</em>, <em>input_dictionary</em>, <em>inpath='../output/PT/txt'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_one_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compiles real and output for temperature and pressure data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>well</strong> (<em>str</em>) – Selected well</li>
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’</li>
+<li><strong>inpath</strong> (<em>str</em>) – Constains path for input files. Default value is “../output/PT/txt”</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>PT_real_dictionary</strong> (<em>dictionary</em>) – Contains real  measurements on temperature, pressure and measure depth</li>
+<li><strong>no_real_data</strong> (<em>bool</em>) – If True, no real measurements are provides</li>
+<li><strong>data</strong> (<em>pandas dataframe</em>) – Contains model output information for each element assigned to a well</li>
+<li><strong>TVD_elem</strong> (<em>array</em>) – Contains the masl data at the middle for each element assigned to a well</li>
+<li><strong>TVD_elem_top</strong> (<em>array</em>) – Contains the masl data at the top  for each element assigned to a well</li>
+<li><strong>layer_bottom</strong> (<em>array</em>) – Contains the masl data at the bottom for each element assigned to a well</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The real data is taken from the the sqlite database</p>
 </div>
 </dd></dl>
 
