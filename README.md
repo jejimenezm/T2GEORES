@@ -6,13 +6,13 @@ Currently the library uses a fix scheme of directories to prevent the user to in
 
 ```
 T2GEORES/
-      /calib
-      /input
-      /mesh
-      /model
-      /ouput
-      /report
-      /scripts
+/calib
+/input
+/mesh
+/model
+/ouput
+/report
+/scripts
 ```
 
 The library requires the use of a AMESH copy on the path, others pre/post TOUGH2 processors can be found on [here]('https://tough.lbl.gov/licensing-download/free-software-download/'). 
