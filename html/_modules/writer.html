@@ -1,0 +1,884 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>writer &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>writer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for writer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<div class="viewcode-block" id="converter"><a class="viewcode-back" href="../modules/writer.html#writer.converter">[docs]</a><span class="k">def</span> <span class="nf">converter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">format_t2</span><span class="p">,</span><span class="n">def_value</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Returns the input value on the specified format</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	value : float-str</span>
+<span class="sd">	  Parameter to be written</span>
+<span class="sd">	format_t2 : dictionary</span>
+<span class="sd">	  Contains the format and default values for every variable</span>
+<span class="sd">	def_value : bool</span>
+<span class="sd">	  True in case the default values is used</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	format_t2 comes from the file formats.py. In case a new type of section is included, the variable name needs to be specified on the file</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="n">format_t2</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">value</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+			<span class="n">eq_str_len</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">format_t2</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+			<span class="n">value</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="n">eq_str_len</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="s1">&#39;E&#39;</span> <span class="ow">in</span> <span class="n">format_t2</span> <span class="ow">and</span> <span class="n">def_value</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">value</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+			<span class="n">eq_str_len</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">format_t2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">value</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="n">eq_str_len</span>
+			<span class="n">format_t2</span><span class="o">=</span><span class="s2">&quot;&gt;</span><span class="si">%s</span><span class="s2">s&quot;</span><span class="o">%</span><span class="n">eq_str_len</span>
+	<span class="k">elif</span> <span class="s1">&#39;d&#39;</span> <span class="ow">in</span> <span class="n">format_t2</span> <span class="ow">and</span> <span class="n">def_value</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">value</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+			<span class="n">eq_str_len</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">format_t2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">value</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="n">eq_str_len</span>
+			<span class="n">format_t2</span><span class="o">=</span><span class="s2">&quot;&gt;</span><span class="si">%s</span><span class="s2">s&quot;</span><span class="o">%</span><span class="n">eq_str_len</span>
+	<span class="n">output</span><span class="o">=</span><span class="nb">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">format_t2</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="def_value_selector"><a class="viewcode-back" href="../modules/writer.html#writer.def_value_selector">[docs]</a><span class="k">def</span> <span class="nf">def_value_selector</span><span class="p">(</span><span class="n">section</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Evaluate if the necessary parameter has been defined on the input file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	section : str</span>
+<span class="sd">	  Section from TOUGH2 file such as PARAMETER, RPCAP, etc.</span>
+<span class="sd">	key : str</span>
+<span class="sd">	  Parameter to evaluate</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with the defined input information</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">value</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+		<span class="n">def_value</span><span class="o">=</span><span class="kc">False</span>
+	<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+		<span class="n">value</span><span class="o">=</span><span class="n">formats_t2</span><span class="p">[</span><span class="n">section</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">def_value</span><span class="o">=</span><span class="kc">True</span>
+	<span class="k">return</span> <span class="n">value</span><span class="p">,</span><span class="n">def_value</span></div>
+
+<div class="viewcode-block" id="FCG_file_checker"><a class="viewcode-back" href="../modules/writer.html#writer.FCG_file_checker">[docs]</a><span class="k">def</span> <span class="nf">FCG_file_checker</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Evaluate if the the file defining the FOFT, COFT or GOFT section exits or if it contains more than 100 lines</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	name : str</span>
+<span class="sd">	  Name of the file to check</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	Print messages are expected</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string : string containing 100 lines of the selected file</span>
+<span class="sd">	bool</span>
+<span class="sd">	  isfile : True if the file exits</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+			<span class="n">isfile</span><span class="o">=</span><span class="kc">True</span>
+			<span class="k">for</span> <span class="n">cnt</span><span class="p">,</span><span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:]):</span>
+				<span class="k">if</span> <span class="n">cnt</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">:</span>
+					<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Values above E</span><span class="si">%s</span><span class="s2">(100) will not be printed, </span><span class="si">%s</span><span class="s2"> is not included&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">line</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error message: the </span><span class="si">%s</span><span class="s2"> file on ../model/t2/sources/</span><span class="si">%s</span><span class="s2"> is not prepared&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">name</span><span class="p">))</span>
+		<span class="n">isfile</span><span class="o">=</span><span class="kc">False</span>
+	<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>	
+	<span class="k">return</span> <span class="n">string</span><span class="p">,</span><span class="n">isfile</span></div>
+
+<div class="viewcode-block" id="diff_seconds"><a class="viewcode-back" href="../modules/writer.html#writer.diff_seconds">[docs]</a><span class="k">def</span> <span class="nf">diff_seconds</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="n">date</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Return the difference in seconds</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	ref : datetime</span>
+<span class="sd">	  Model&#39;s reference time</span>
+<span class="sd">	date : datetime</span>
+<span class="sd">	  An arbitrary time</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	int</span>
+<span class="sd">	  diff_seconds : difference in seconds</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+		<span class="n">diff_seconds</span><span class="o">=</span><span class="p">(</span><span class="n">date</span><span class="o">-</span><span class="n">ref</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;ref or date values are not datetime type&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">diff_seconds</span></div>
+
+<div class="viewcode-block" id="PARAM_writer"><a class="viewcode-back" href="../modules/writer.html#writer.PARAM_writer">[docs]</a><span class="k">def</span> <span class="nf">PARAM_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Return the PARAM section</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with the defined parameter information</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string : string containing PARAM section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;PARAM----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">params_levels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">params_levels</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="n">level</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;RE1&#39;</span> <span class="ow">and</span> <span class="s1">&#39;DELTEN&#39;</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;DELTEN&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span> <span class="p">:</span>
+					<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">time_step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;DELTEN_LIST&#39;</span><span class="p">]):</span>
+						<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">time_step</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;DELTEN_LIST_FORMAT&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="kc">False</span><span class="p">)</span>
+						<span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+							<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+					<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+				<span class="n">value</span><span class="p">,</span><span class="n">def_value</span><span class="o">=</span><span class="n">def_value_selector</span><span class="p">(</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+					<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">def_value</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">cnt</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+						<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">cnt</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span><span class="n">def_value</span><span class="p">)</span>
+		<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+	<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="TIMES_writer"><a class="viewcode-back" href="../modules/writer.html#writer.TIMES_writer">[docs]</a><span class="k">def</span> <span class="nf">TIMES_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Return the TIMES section</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with the defined TIMES information</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string : string containing the TIMES section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;TIMES----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+	<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">][</span><span class="s1">&#39;TIMES_N&#39;</span><span class="p">]):</span>
+		<span class="n">len_times</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">][</span><span class="s1">&#39;TIMES_N&#39;</span><span class="p">])</span>
+		<span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">][</span><span class="s1">&#39;ITI&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">len_times</span>
+		<span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">][</span><span class="s1">&#39;ITE&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">len_times</span>
+		<span class="k">if</span> <span class="n">len_times</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">:</span>
+			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;ITI cannot be higher than 100, reduce the number of times&quot;</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">]:</span>
+
+		<span class="n">value</span><span class="p">,</span><span class="n">def_value</span><span class="o">=</span><span class="n">def_value_selector</span><span class="p">(</span><span class="s1">&#39;TIMES&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+			<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">def_value</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+				<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">diff_seconds</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">],</span><span class="n">var</span><span class="p">),</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;TIMES&#39;</span><span class="p">][</span><span class="s1">&#39;TIMES_N&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="kc">False</span><span class="p">)</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+					<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+	<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="wells_track_blocks_to_FOFT"><a class="viewcode-back" href="../modules/writer.html#writer.wells_track_blocks_to_FOFT">[docs]</a><span class="k">def</span> <span class="nf">wells_track_blocks_to_FOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">wells</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It creates the FOFT section base on the well track</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with the data base location information</span>
+<span class="sd">	wells: list</span>
+<span class="sd">	  Wells to include on the FOFT section</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  FOFT: on ../model/t2/sources</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	This function could have more than 100 elements depending on the number of layers and wells defined. For TOUGH2 6.x it is preffereable to use well_sources_to_FOFT</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; wells_track_blocks_to_FOFT(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">data_layer</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT correlative FROM layers ORDER BY middle;&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
+		<span class="n">data_block</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT blockcorr FROM t2wellblock  WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39; ORDER BY blockcorr;&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_block</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data_layer</span><span class="p">[</span><span class="s1">&#39;correlative&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">data_block</span><span class="p">[</span><span class="s1">&#39;blockcorr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/FOFT&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="well_sources_to_FOFT"><a class="viewcode-back" href="../modules/writer.html#writer.well_sources_to_FOFT">[docs]</a><span class="k">def</span> <span class="nf">well_sources_to_FOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">wells</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It creates the FOFT section base on the well feedzone position</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with the data base location information</span>
+<span class="sd">	wells: list</span>
+<span class="sd">	  Wells to include on the FOFT section</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  FOFT: on ../model/t2/sources</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; well_sources_to_FOFT(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
+		<span class="n">data_block</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT blockcorr FROM t2wellsource WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39;;&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+		<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">data_block</span><span class="p">[</span><span class="s1">&#39;blockcorr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/FOFT&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FOFT_writer"><a class="viewcode-back" href="../modules/writer.html#writer.FOFT_writer">[docs]</a><span class="k">def</span> <span class="nf">FOFT_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It wraps up the section FOFT</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the FOFT section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="p">,</span><span class="n">isfile</span><span class="o">=</span><span class="n">FCG_file_checker</span><span class="p">(</span><span class="s1">&#39;FOFT&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">isfile</span><span class="p">:</span>
+		<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;FOFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+		<span class="n">output</span><span class="o">+=</span><span class="n">string</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="COFT_writer"><a class="viewcode-back" href="../modules/writer.html#writer.COFT_writer">[docs]</a><span class="k">def</span> <span class="nf">COFT_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It wraps up the section COFT</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the COFT section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="p">,</span><span class="n">isfile</span><span class="o">=</span><span class="n">FCG_file_checker</span><span class="p">(</span><span class="s1">&#39;COFT&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">isfile</span><span class="p">:</span>
+		<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;COFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+		<span class="n">output</span><span class="o">+=</span><span class="n">string</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="source_to_GOFT"><a class="viewcode-back" href="../modules/writer.html#writer.source_to_GOFT">[docs]</a><span class="k">def</span> <span class="nf">source_to_GOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It creates the GOFT section base on the well feedzone position nickname</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with the data base location information</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  GOFT: on ../model/t2/sources</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; source_to_GOFT(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">data_blockcorr</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT source_nickname FROM t2wellsource WHERE source_nickname LIKE &#39;SRC%&#39;;&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data_blockcorr</span><span class="p">[</span><span class="s1">&#39;source_nickname&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+		<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GOFT&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GOFT_writer"><a class="viewcode-back" href="../modules/writer.html#writer.GOFT_writer">[docs]</a><span class="k">def</span> <span class="nf">GOFT_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It wraps up the section COFT</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the COFT section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="p">,</span><span class="n">isfile</span><span class="o">=</span><span class="n">FCG_file_checker</span><span class="p">(</span><span class="s1">&#39;GOFT&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">isfile</span><span class="p">:</span>
+		<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;GOFT ----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span>
+		<span class="n">output</span><span class="o">+=</span><span class="n">string</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="SOLVR_writer"><a class="viewcode-back" href="../modules/writer.html#writer.SOLVR_writer">[docs]</a><span class="k">def</span> <span class="nf">SOLVR_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It wraps up the section SOLVR</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the SOLVR section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;SOLVR----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+	
+	<span class="n">cnt</span><span class="o">=</span><span class="mi">0</span>
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;SOLVR&#39;</span><span class="p">]:</span>
+		<span class="n">value</span><span class="p">,</span><span class="n">def_value</span><span class="o">=</span><span class="n">def_value_selector</span><span class="p">(</span><span class="s1">&#39;SOLVR&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">def_value</span><span class="p">:</span> <span class="n">cnt</span><span class="o">+=</span><span class="mi">1</span> 
+		<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;SOLVR&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">def_value</span><span class="p">)</span>
+	<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+	<span class="k">if</span> <span class="n">cnt</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;SOLVR&#39;</span><span class="p">]):</span>
+		<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="GENER_adder"><a class="viewcode-back" href="../modules/writer.html#writer.GENER_adder">[docs]</a><span class="k">def</span> <span class="nf">GENER_adder</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It takes all the GENER section created depending on the type of run production or natural defined on the input dictionary</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary specficing the type of run</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string : string containing the GENER section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GENER_SOURCES&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TYPE_RUN&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;natural&#39;</span><span class="p">,</span><span class="s1">&#39;production&#39;</span><span class="p">]:</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GENER_SOURCES&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">gener_source_file</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gener_source_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:]:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span>
+		<span class="k">if</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TYPE_RUN&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;natural&#39;</span><span class="p">:</span>
+			<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="k">elif</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TYPE_RUN&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;production&#39;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GENER_PROD&quot;</span><span class="p">):</span>
+				<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GENER_PROD&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">gener_prod_file</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gener_prod_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:]:</span>
+						<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Error message: the GENER_PROD file on ../model/t2/sources/GENER_PROD is not prepared</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">					        you might want to run write_gener_from_sqlite on t2gener.py file&quot;&quot;&quot;</span><span class="p">)</span>
+			
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GENER_MAKEUP&quot;</span><span class="p">):</span>
+				<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../model/t2/sources/GENER_MAKEUP&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">gener_prod_file</span><span class="p">:</span>
+					<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gener_prod_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:]:</span>
+						<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Error message: the GENER_MAKEUP file on ../model/t2/sources/GENER_MAKEUP is not prepared</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">					        you might want to run write_gener_from_sqlite on t2gener.py file&quot;&quot;&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Error message: the GENER_SOURCES file on ..\model</span><span class="se">\t</span><span class="s2">2\sources\GENER_SOURCES is not prepared</span><span class="se">\n</span><span class="s2"></span>
+<span class="s2">			        you might want to run write_geners_to_txt_and_sqlite on t2gener.py file or the type_run is not correct (natural or production)&quot;&quot;&quot;</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="RPCAP_writer"><a class="viewcode-back" href="../modules/writer.html#writer.RPCAP_writer">[docs]</a><span class="k">def</span> <span class="nf">RPCAP_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It wraps up the section RPCAP</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary containing the RPCAP information</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the RPCAP section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;RPCAP----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">params_levels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">params_levels</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;RPCAP&#39;</span><span class="p">]:</span>
+			<span class="k">if</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;RPCAP&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="n">level</span><span class="p">:</span>
+				<span class="n">value</span><span class="p">,</span><span class="n">def_value</span><span class="o">=</span><span class="n">def_value_selector</span><span class="p">(</span><span class="s1">&#39;RPCAP&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
+				<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;RPCAP&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">def_value</span><span class="p">)</span>
+		<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+	<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="MULTI_writer"><a class="viewcode-back" href="../modules/writer.html#writer.MULTI_writer">[docs]</a><span class="k">def</span> <span class="nf">MULTI_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It wraps up the section MULTI</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary containing the MULTI information</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the MULTI section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;MULTI----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">cnt</span><span class="o">=</span><span class="mi">0</span>
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;MULTI&#39;</span><span class="p">]:</span>
+		<span class="n">value</span><span class="p">,</span><span class="n">def_value</span><span class="o">=</span><span class="n">def_value_selector</span><span class="p">(</span><span class="s1">&#39;MULTI&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">def_value</span><span class="p">:</span> <span class="n">cnt</span><span class="o">+=</span><span class="mi">1</span> 
+		<span class="n">string</span><span class="o">+=</span><span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;MULTI&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">def_value</span><span class="p">)</span>
+	<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+	<span class="k">if</span> <span class="n">cnt</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;MULTI&#39;</span><span class="p">]):</span>
+		<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="TITLE_writer"><a class="viewcode-back" href="../modules/writer.html#writer.TITLE_writer">[docs]</a><span class="k">def</span> <span class="nf">TITLE_writer</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It writes the TITLE of TOUGH2 file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary containing the TITLE information</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  output: contains the TITLE section</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">value</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;TITLE&#39;</span><span class="p">]</span>
+	<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+		<span class="n">value</span><span class="o">=</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;TITLE&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">return</span>  <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">80</span><span class="p">]</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+
+<div class="viewcode-block" id="CONNE_from_steinar_to_t2"><a class="viewcode-back" href="../modules/writer.html#writer.CONNE_from_steinar_to_t2">[docs]</a><span class="k">def</span> <span class="nf">CONNE_from_steinar_to_t2</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;It takes the CONNE file from steinar and convertir into a CONNE TOUGH2 section (the vertical connections are affected by -1)</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  CONNE: on ../model/t2/sources/</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	Comparing with steinar CONNE format the column width changes with the standard TOUGH2 input file</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; CONNE_from_steinar_to_t2()</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;../mesh/to_steinar/conne&quot;</span>
+	<span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/sources/CONNE&quot;</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;CONNE----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_file</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">source_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">rock_file</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">rock_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]:</span>
+				<span class="n">linex</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">:</span>
+					<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%10s%20s%10.3E%10.3E%10.3E%10.2f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">7</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">8</span><span class="p">]))</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%10s%20s%10.3E%10.3E%10.3E%10.2f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">7</span><span class="p">]),</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">linex</span><span class="p">[</span><span class="mi">8</span><span class="p">]))</span>
+		<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">source_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="merge_ELEME_and_in_to_t2"><a class="viewcode-back" href="../modules/writer.html#writer.merge_ELEME_and_in_to_t2">[docs]</a><span class="k">def</span> <span class="nf">merge_ELEME_and_in_to_t2</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;It takes the ELEME file from the steinar directory and convert it into a TOUGH2 format with coordinates </span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  ELEME: section from TOUGH2 file</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	It adds the head of the section.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; merge_ELEME_and_in_to_t2()</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;../mesh/to_steinar/in&quot;</span>
+	<span class="n">eleme_file</span><span class="o">=</span><span class="s2">&quot;../mesh/to_steinar/eleme&quot;</span>
+	<span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/sources/ELEME&quot;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_file</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">eleme_file</span><span class="p">):</span>
+		<span class="n">string</span><span class="o">=</span><span class="s2">&quot;ELEME----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">data_in</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span><span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">,</span><span class="s1">&#39;li&#39;</span><span class="p">,</span><span class="s1">&#39;X&#39;</span><span class="p">,</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span><span class="s1">&#39;h&#39;</span><span class="p">])</span>
+		<span class="n">data_eleme</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">eleme_file</span><span class="p">,</span><span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">,</span><span class="s1">&#39;rocktype&#39;</span><span class="p">,</span><span class="s1">&#39;vol&#39;</span><span class="p">])</span>
+		<span class="n">data_in</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">)</span>
+		<span class="n">data_eleme</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">])):</span>
+			<span class="n">selection</span><span class="o">=</span><span class="n">data_in</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_in</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;vol&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%5s%10s%5s%10.3E%10s%10s%10.3E%10.3E%10.3E</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">],</span>\
+	                                                                      <span class="s2">&quot; &quot;</span><span class="p">,</span>\
+	                                                <span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;rocktype&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">],</span>\
+	                                                     <span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;vol&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">],</span>\
+	                                                                       <span class="s2">&quot; &quot;</span><span class="p">,</span>\
+	                                                                       <span class="s2">&quot; &quot;</span><span class="p">,</span>\
+	                                                           <span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>\
+	                                                           <span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>\
+	                                                           <span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">])</span>
+
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%5s%10s%5s%10s%10s%10.3E%10.3E%10.3E</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">],</span>\
+					                                                                      <span class="s2">&quot; &quot;</span><span class="p">,</span>\
+					                                                <span class="n">data_eleme</span><span class="p">[</span><span class="s1">&#39;rocktype&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">],</span>\
+					                                                                       <span class="s2">&quot; &quot;</span><span class="p">,</span>\
+					                                                                       <span class="s2">&quot; &quot;</span><span class="p">,</span>\
+					                                                           <span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>\
+					                                                           <span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>\
+					                                                           <span class="n">selection</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">])</span>
+
+		<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">file_source_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ELEME_adder"><a class="viewcode-back" href="../modules/writer.html#writer.ELEME_adder">[docs]</a><span class="k">def</span> <span class="nf">ELEME_adder</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It takes the ELEME file from ../model/t2/sources and print it as a string</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string : string containing the ELEME section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/sources/ELEME&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_file</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">source_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">eleme_source_file</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">eleme_source_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:]:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">source_file</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="CONNE_adder"><a class="viewcode-back" href="../modules/writer.html#writer.CONNE_adder">[docs]</a><span class="k">def</span> <span class="nf">CONNE_adder</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It takes the CONNE file from ../model/t2/sources and print it as a string</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string : string containing the CONNE section</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/sources/CONNE&quot;</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_file</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">source_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">conne_source_file</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">conne_source_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:]:</span>
+				<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">source_file</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="t2_input"><a class="viewcode-back" href="../modules/writer.html#writer.t2_input">[docs]</a><span class="k">def</span> <span class="nf">t2_input</span><span class="p">(</span><span class="n">include_FOFT</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="p">,</span><span class="n">include_COFT</span><span class="p">,</span><span class="n">include_GOFT</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="p">,</span><span class="n">include_MULTI</span><span class="p">,</span><span class="n">include_START</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;&quot;It creates the FOFT section base on the well feedzone position</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary with all the necessary information to define a model</span>
+<span class="sd">	include_FOFT: bool</span>
+<span class="sd">	  If true includes the FOFT section on the TOUGH2 file</span>
+<span class="sd">	include_SOLVR: bool</span>
+<span class="sd">	  If true includes the SOLVR section on the TOUGH2 file</span>
+<span class="sd">	include_COFT: bool</span>
+<span class="sd">	  If true includes the COFT section on the TOUGH2 file</span>
+<span class="sd">	include_GOFT: bool</span>
+<span class="sd">	  If true includes the GOFT section on the TOUGH2 file</span>
+<span class="sd">	include_RPCAP: bool</span>
+<span class="sd">	  If true includes the RPCAP section on the TOUGH2 file</span>
+<span class="sd">	include_MULTI: bool</span>
+<span class="sd">	  If true includes the MULTI section on the TOUGH2 file</span>
+<span class="sd">	include_START: bool</span>
+<span class="sd">	  If true includes the START sentence is added on the top of PARAM section</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  t2: on ../model/t2/t2</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; t2_input(include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">secctions</span><span class="o">=</span><span class="p">[</span><span class="n">TITLE_writer</span><span class="p">,</span><span class="n">PARAM_writer</span><span class="p">,</span><span class="n">TIMES_writer</span><span class="p">,</span><span class="n">ELEME_adder</span><span class="p">,</span><span class="n">CONNE_adder</span><span class="p">]</span>
+
+	<span class="n">if_functions_dictionary</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;RPCAP&#39;</span><span class="p">:[</span><span class="n">include_RPCAP</span><span class="p">,</span><span class="n">RPCAP_writer</span><span class="p">],</span>
+							 <span class="s1">&#39;MULTI&#39;</span><span class="p">:[</span><span class="n">include_MULTI</span><span class="p">,</span><span class="n">MULTI_writer</span><span class="p">],</span>
+							 <span class="s1">&#39;FOFT&#39;</span><span class="p">:[</span><span class="n">include_FOFT</span><span class="p">,</span><span class="n">FOFT_writer</span><span class="p">],</span>
+							 <span class="s1">&#39;SOLVR&#39;</span><span class="p">:[</span><span class="n">include_SOLVR</span><span class="p">,</span><span class="n">SOLVR_writer</span><span class="p">],</span>
+							 <span class="s1">&#39;COFT&#39;</span><span class="p">:[</span><span class="n">include_COFT</span><span class="p">,</span><span class="n">COFT_writer</span><span class="p">],</span>
+							 <span class="s1">&#39;GOFT&#39;</span><span class="p">:[</span><span class="n">include_GOFT</span><span class="p">,</span><span class="n">GOFT_writer</span><span class="p">]}</span>
+
+	<span class="k">for</span> <span class="n">bools</span> <span class="ow">in</span> <span class="n">if_functions_dictionary</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">if_functions_dictionary</span><span class="p">[</span><span class="n">bools</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="n">secctions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">if_functions_dictionary</span><span class="p">[</span><span class="n">bools</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+	<span class="n">output</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">secctions</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">func</span><span class="o">==</span><span class="n">PARAM_writer</span> <span class="ow">and</span> <span class="n">include_START</span><span class="p">:</span>
+			<span class="n">output</span><span class="o">+=</span><span class="s2">&quot;START----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">output</span><span class="o">+=</span><span class="n">func</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">output</span><span class="o">+=</span><span class="n">GENER_adder</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">output</span><span class="o">+=</span><span class="s2">&quot;ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+	<span class="n">input_fi_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2&quot;</span>
+	<span class="n">t2_file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+	<span class="n">t2_file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+	<span class="n">t2_file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

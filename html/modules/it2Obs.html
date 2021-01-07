@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>it2Obs &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="model_plots" href="model_plots.html" />
+    <link rel="prev" title="geometry" href="geometry.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formats.html">formats</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>it2Obs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/it2Obs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-it2Obs">
+<span id="it2obs"></span><h1>it2Obs<a class="headerlink" href="#module-it2Obs" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="it2Obs.observations_to_it2">
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>include_pres=False</em>, <em>p_res_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing:the standard deviation allowed for the temperature (in C), pressure (in bar) and flowing enthalpy (in kJ/kg).
+The name and path of the database a list of the wells for calibration and finally the type of run (‘natural’ or ‘production’) e.g. input_dictionary={‘TYPE_RUN’:’production’,’IT2’:{‘T_DEV’:5,’P_DEV’:10,’h_DEV’:100}}</li>
+<li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
+<li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>file</em> – observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.</li>
+<li><em>file</em> – observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</li>
+<li><em>file</em> – observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</li>
+<li><em>file</em> – it2_ob_prod.dat : it compiles the information during the transient stage. This is when time is higher than zero</li>
+<li><em>file</em> – it2_ob_nat.dat : it compiles the information at time zero.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="it2Obs.observations_to_it2_DD">
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_DD</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>include_pres=False</em>, <em>p_res_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_DD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_DD" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the drawdown observation section for the iTOUGH2 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</li>
+<li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
+<li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_DD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="it2Obs.observations_to_it2_PT">
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_PT</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_PT" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database and a list of the wells for calibration. e.g. ‘IT2’:{‘T_DEV’:5,’P_DEV’:10}</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_PT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="it2Obs.observations_to_it2_h">
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_h</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_h" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the flowing enthalpy observation section for the iTOUGH2 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{‘h_DEV’:100},</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_h</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="model_plots.html" class="btn btn-neutral float-right" title="model_plots" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="geometry.html" class="btn btn-neutral float-left" title="geometry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>model_plots &mdash; T2GEORES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> T2GEORES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/it2Obs.html">it2Obs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/model_plots.html">model_plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/output.html">output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/regeo_mesh.html">regeo_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/run.html">run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/t2geores_functions.html">t2geores_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/txt2sqlite.html">txt2sqlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/writer.html">writer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/report.html">report</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">T2GEORES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>model_plots</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for model_plots</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span>  <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geometry</span>
+<span class="kn">from</span> <span class="nn">model_conf</span> <span class="kn">import</span> <span class="n">input_data</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">plot_conf_color</span><span class="p">,</span><span class="n">plot_conf_marker</span><span class="p">,</span><span class="n">formats_t2</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
+<span class="kn">import</span> <span class="nn">t2geores_functions</span> <span class="k">as</span> <span class="nn">t2funcs</span>
+
+
+<div class="viewcode-block" id="plot_vertical_layer_distribution"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.plot_vertical_layer_distribution">[docs]</a><span class="k">def</span> <span class="nf">plot_vertical_layer_distribution</span><span class="p">(</span><span class="n">show_fig</span><span class="p">,</span><span class="n">sav_fig</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It plots the layers defined for the mesh</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;.</span>
+<span class="sd">	show_fig: bool</span>
+<span class="sd">	  If True shows the figure</span>
+<span class="sd">	sav_fig: bool</span>
+<span class="sd">	  If True saves the figure on ../output/</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	image</span>
+<span class="sd">		vertical_distribution.png: output figure</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_vertical_layer_distribution(show_fig=True,sav_fig=False,input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">font_title_size</span><span class="o">=</span><span class="mi">12</span>
+	<span class="n">fontsizey_layers</span><span class="o">=</span><span class="mi">10</span>
+	<span class="n">fontsize_label</span><span class="o">=</span><span class="mi">8</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+	<span class="n">y_layer_plot</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span>
+	<span class="n">x_layer_plot</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">])</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_layer_plot</span><span class="p">,</span><span class="n">y_layer_plot</span><span class="p">,</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">Depth_lims</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">])]</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">Depth_lims</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">95</span><span class="p">,</span><span class="mi">105</span><span class="p">])</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;m.a.s.l.&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsizey_layers</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">labeltop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.05</span><span class="p">])</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.15</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsize_label</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">#Set layers</span>
+
+	<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>            
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span> <span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_label</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Layers&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsizey_layers</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">1.15</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">sav_fig</span><span class="p">:</span>
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../output/vertical_distribution.png&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="permeability_plot"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.permeability_plot">[docs]</a><span class="k">def</span> <span class="nf">permeability_plot</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">show_fig</span><span class="p">,</span><span class="n">sav_fig</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generates a plot for the permeability distribution. Currently just &#39;Corey&#39; is available.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Contains the permeability distribution information under the keyword of &#39;RPCAP&#39;</span>
+<span class="sd">	sav_fig: bool</span>
+<span class="sd">	  If true saves the figure on ../output</span>
+<span class="sd">	slr: float</span>
+<span class="sd">	  Saturacion de liquido, tomado de model_conf</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	image</span>
+<span class="sd">		coreys_permeabilities.png: output figure</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; permeability_plot(input_dictionary,show_fig=True,sav_fig=True)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">IRP</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;IRP&#39;</span><span class="p">]</span>
+	<span class="n">slr</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;RP1&#39;</span><span class="p">]</span>
+	<span class="n">sgr</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;RP2&#39;</span><span class="p">]</span>
+
+	<span class="n">fontsize_</span><span class="o">=</span><span class="mi">26</span>
+	<span class="k">if</span> <span class="n">IRP</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+
+		<span class="n">krl</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">krg</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">saturation</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Times New Roman&quot;</span>
+
+		<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">):</span>
+			<span class="n">S</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">slr</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">slr</span><span class="o">-</span><span class="n">sgr</span><span class="p">)</span>
+			<span class="n">to_krl</span><span class="o">=</span><span class="n">S</span><span class="o">**</span><span class="mi">4</span>
+			<span class="n">to_krg</span><span class="o">=</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">S</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">S</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">to_krl</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">to_krl</span><span class="o">=</span><span class="mi">1</span>
+			<span class="k">if</span> <span class="n">to_krg</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">to_krg</span><span class="o">=</span><span class="mi">1</span>
+
+			<span class="k">if</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">slr</span> <span class="ow">and</span> <span class="n">to_krg</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+				<span class="n">to_krl</span><span class="o">=</span><span class="mi">0</span>
+
+			<span class="k">if</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">slr</span> <span class="ow">and</span> <span class="n">to_krl</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">to_krl</span><span class="o">=</span><span class="mi">1</span>
+
+			<span class="n">krl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_krl</span><span class="p">)</span>
+			<span class="n">krg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_krg</span><span class="p">)</span>
+			<span class="n">saturation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+		<span class="n">fig</span><span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+		<span class="n">ax1</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">saturation</span><span class="p">,</span><span class="n">krl</span><span class="p">,</span><span class="s1">&#39;--k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Liquid&#39;</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">saturation</span><span class="p">,</span><span class="n">krg</span><span class="p">,</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Vapor&#39;</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Corey RPF&quot;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Water saturation&quot;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Relative permeabilty&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_</span><span class="p">)</span>
+		<span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsize_</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">yticks</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_major_ticks</span><span class="p">()</span> 
+		<span class="n">yticks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">sav_fig</span><span class="p">:</span>
+			<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../output/coreys_permeabilities.png&quot;</span><span class="p">,</span> <span class="n">idp</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span> </div>
+
+<div class="viewcode-block" id="plot_one_drawdown_from_txt"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.plot_one_drawdown_from_txt">[docs]</a><span class="k">def</span> <span class="nf">plot_one_drawdown_from_txt</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;From the real drawndown data a plot is generated for a desired well</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	depth : float</span>
+<span class="sd">	  Meters above the see level of desire plot</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	plot</span>
+<span class="sd">	  Pressure vs time</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The file  input/drawdown/{pozo}_DD.dat must exist</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The depth must exists on the drawdown file</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_one_drawdown_from_txt(&#39;WELL-1&#39;,0)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#Read file</span>
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/drawdown/</span><span class="si">%s</span><span class="s2">_DD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+	<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../input/drawdown/</span><span class="si">%s</span><span class="s2">_DD.dat&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+	<span class="n">fontsize_layout</span><span class="o">=</span><span class="mi">8</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+
+		<span class="n">dates_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">datesX</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datesX</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+		<span class="n">dates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dates_func</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+		<span class="c1">#Plotting</span>
+
+		<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;drawdown&#39;</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Drawdown at well: </span><span class="si">%s</span><span class="s2"> at </span><span class="si">%s</span><span class="s2"> masl&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">)</span> <span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_layout</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_layout</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bar]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_layout</span><span class="p">)</span>
+
+
+		<span class="c1">#Plotting formating</span>
+		<span class="n">xlims</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">)]</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+		<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+		<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlims</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+		<span class="c1">#ax.xaxis.set_major_locator(years)</span>
+		<span class="c1">#fig.autofmt_xdate()</span>
+
+		<span class="c1">#Grid style</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+	
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Error message: there is no drawdown data at </span><span class="si">%s</span><span class="s2"> for the well </span><span class="si">%s</span><span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span><span class="n">well</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plot_one_cooling_from_txt"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.plot_one_cooling_from_txt">[docs]</a><span class="k">def</span> <span class="nf">plot_one_cooling_from_txt</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;From the real cooling data a plot is generated for a desired well</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	depth : float</span>
+<span class="sd">	  Meters above the see level of desire plot</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	plot</span>
+<span class="sd">	  Pressure vs time</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The file  input/cooling/{pozo}_DD.dat must exist</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The depth must exists on the cooling file</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_one_cooling_from_txt(&#39;WELL-1&#39;,0)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#Read file</span>
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/drawdown/</span><span class="si">%s</span><span class="s2">_C.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+	<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../input/cooling/</span><span class="si">%s</span><span class="s2">_C.dat&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+	<span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span>
+	<span class="n">dates_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">datesX</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datesX</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+	<span class="n">dates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dates_func</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+	<span class="n">fontsize_layout</span><span class="o">=</span><span class="mi">8</span>
+
+	<span class="c1">#Plotting</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+		<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;cooling&#39;</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Well: </span><span class="si">%s</span><span class="s2"> at </span><span class="si">%s</span><span class="s2"> masl&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">)</span> <span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_layout</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_layout</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature [$^\circ$C]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_layout</span><span class="p">)</span>
+
+		<span class="c1">#Plotting formating</span>
+		<span class="n">xlims</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">)]</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+		<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+		<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlims</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+		<span class="c1">#Grid style</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Error message: there is no cooling data at </span><span class="si">%s</span><span class="s2"> for the well </span><span class="si">%s</span><span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span><span class="n">well</span><span class="p">))</span>	
+
+	<span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plot_one_cooling_and_drawdown_from_txt"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.plot_one_cooling_and_drawdown_from_txt">[docs]</a><span class="k">def</span> <span class="nf">plot_one_cooling_and_drawdown_from_txt</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;From the real cooling and drawdown data a plot is generated for a desired well</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+<span class="sd">	depth : float</span>
+<span class="sd">	  Meters above the see level of desire plot</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	plot</span>
+<span class="sd">	  Temperature (yaxis1), pressure (yaxis2) and time</span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The file  input/cooling/{pozo}_DD.dat and  input/drawdown/{pozo}_DD.dat must exist</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The depth must exists on the cooling and drawdown files</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_one_cooling_and_drawdown_from_txt(&#39;WELL-1&#39;,0)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">dates_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">datesX</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datesX</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+	<span class="c1">#Read file cooling</span>
+	<span class="n">data_c</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../input/cooling/</span><span class="si">%s</span><span class="s2">_C.dat&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+	<span class="n">dates_c</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dates_func</span><span class="p">,</span><span class="n">data_c</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_c</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+	<span class="c1">#Read file DRAWDOWN</span>
+	<span class="n">data_d</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../input/drawdown/</span><span class="si">%s</span><span class="s2">_DD.dat&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+	<span class="n">dates_d</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dates_func</span><span class="p">,</span><span class="n">data_d</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_d</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates_d</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are no values for this depth&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="c1">#Plotting</span>
+
+		<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+		<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+		<span class="c1">#Plotting drawdown</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates_d</span><span class="p">,</span><span class="n">data_d</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_d</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;drawdown&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Well: </span><span class="si">%s</span><span class="s2"> at </span><span class="si">%s</span><span class="s2"> masl&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">)</span> <span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bar]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+		<span class="c1">#Plotting cooling</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates_c</span><span class="p">,</span><span class="n">data_c</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data_c</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;cooling&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature [$^\circ$C]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+
+		<span class="c1">#Plotting formating</span>
+		<span class="n">xlims</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">dates_d</span><span class="p">)</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">dates_d</span><span class="p">)</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">365</span><span class="p">)]</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+		<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+		<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlims</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+		<span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.26</span><span class="p">))</span>
+
+		<span class="c1">#ax.xaxis.set_major_locator(years)</span>
+		<span class="c1">#fig.autofmt_xdate()</span>
+
+		<span class="c1">#Grid style</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plot_one_mh_from_txt"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.plot_one_mh_from_txt">[docs]</a><span class="k">def</span> <span class="nf">plot_one_mh_from_txt</span><span class="p">(</span><span class="n">well</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Creates a plot using the flow and enthalpy measurements</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Selected well</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	plot</span>
+<span class="sd">	  Enthalpy (yaxis1), flow (yaxis2) vs time </span>
+<span class="sd">	  </span>
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The file ../input/mh/{well}_mh.dat must exist</span>
+
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_one_mh_from_txt(&#39;WELL-1&#39;)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="n">fontsize_ylabel</span><span class="o">=</span><span class="mi">8</span>
+	<span class="n">fontsize_title</span><span class="o">=</span><span class="mi">9</span>
+
+	<span class="n">dates_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">datesX</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datesX</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+	<span class="c1">#Read file cooling</span>
+	<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../input/mh/</span><span class="si">%s</span><span class="s2">_mh.dat&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+	<span class="n">dates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dates_func</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date-time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+
+	<span class="c1">#Setting plot</span>
+	<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+
+	<span class="c1">#Flow plot</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">ln1</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;ms&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Steam&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+	<span class="n">ax1b</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+	<span class="n">ln2</span><span class="o">=</span><span class="n">ax1b</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;ml&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Liquid&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow s[kg/s]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+	<span class="n">ax1b</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow l[kg/s]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+	
+	<span class="c1"># legend for flow</span>
+	<span class="n">lns</span> <span class="o">=</span> <span class="n">ln1</span><span class="o">+</span><span class="n">ln2</span>
+	<span class="n">labs</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lns</span><span class="p">]</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">lns</span><span class="p">,</span> <span class="n">labs</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+	<span class="c1">#Enthalpy plot</span>
+	<span class="n">ax2</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Enthalpy&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Enthalpy [kJ/kg]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+
+	<span class="c1">#WHPressure plot</span>
+	<span class="n">ax3</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Pressure&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bara]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+	<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+	<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax2</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+	<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Production history of well </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">well</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_title</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="check_layers_and_feedzones"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.check_layers_and_feedzones">[docs]</a><span class="k">def</span> <span class="nf">check_layers_and_feedzones</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">show_fig</span><span class="p">,</span><span class="n">sav_fig</span><span class="p">,</span><span class="n">source_txt</span> <span class="o">=</span> <span class="s1">&#39;../input/&#39;</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Regresa informacion relacionada a las capas</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	show_fig: bool</span>
+<span class="sd">	  If True shows the figure</span>
+<span class="sd">	sav_fig: bool</span>
+<span class="sd">	  If True saves the figure on ../output/</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Contains the infomation of the layer under the keyword &#39;LAYER&#39; and &#39;z_ref&#39;. It also needs to specify the input files path under the keyword &#39;source_txt&#39;</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	plot</span>
+<span class="sd">	  well names on horizontal axis and feedzone depth on vertical axis</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_vertical_layer_distribution(layers,z0_level,show_fig,sav_fig=True)</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">font_title_size</span><span class="o">=</span><span class="mi">12</span>
+	<span class="n">fontsizey_layers</span><span class="o">=</span><span class="mi">8</span>
+	<span class="n">fontsize_label</span><span class="o">=</span><span class="mi">8</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="c1">#Plot setting </span>
+	<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+	<span class="n">feedzones</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;well_feedzone_xyz.csv&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+	<span class="n">index2plot</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">wells_ticks</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">z_wells</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">feedzones</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+		<span class="n">index2plot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+		<span class="n">wells_ticks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">])</span>
+		<span class="n">z_wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">])</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="p">[</span><span class="n">index</span><span class="o">*</span><span class="mi">4</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">z0_level</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">],</span><span class="mi">5</span><span class="p">),</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+		<span class="c1">#ax.text(index*4,row[&#39;z&#39;],row[&#39;well&#39;],fontsize=6)</span>
+	
+	<span class="c1">#Set feedzones position </span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">index2plot</span><span class="p">,</span><span class="n">z_wells</span><span class="p">,</span><span class="s1">&#39;ok&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">index2plot</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">wells_ticks</span><span class="p">,</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+
+	<span class="n">y_layer_plot</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span>
+	<span class="n">x_layer_plot</span><span class="o">=</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">])</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+	
+	<span class="n">Depth_lims</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">])]</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">Depth_lims</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;m.a.s.l.&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsizey_layers</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	
+	<span class="n">ax</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.05</span><span class="p">])</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.15</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsizey_layers</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">#Set layers</span>
+
+	<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>            
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_label</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Layer&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsizey_layers</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">sav_fig</span><span class="p">:</span>
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../output/vertical_distribution_wells.png&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span> </div>
+
+<div class="viewcode-block" id="plot_init_conditions"><a class="viewcode-back" href="../modules/model_plots.html#model_plots.plot_init_conditions">[docs]</a><span class="k">def</span> <span class="nf">plot_init_conditions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Creates a plot for the initial pressure and temperature values</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  A dictionary containing the keyword &#39;INCONS_PARAM&#39; with the specified initial conditions, i.e.: &#39;INCONS_PARAM&#39;:{&#39;To&#39;:30,&#39;GRADTZ&#39;:0.08,&#39;DEPTH_TO_SURF&#39;:100,&#39;DELTAZ&#39;:20}</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	plot</span>
+<span class="sd">	  Pressure vs depth and temperature vs depth</span>
+<span class="sd">	  </span>
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_init_conditions(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">T</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">depths</span> <span class="o">=</span><span class="n">t2funcs</span><span class="o">.</span><span class="n">initial_conditions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">fig</span><span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+
+	<span class="n">axP</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+
+	<span class="n">ln1T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="n">depths</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="n">ln1P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">depths</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">#Plot configuration</span>
+
+	<span class="n">fontsizex</span><span class="o">=</span><span class="mi">8</span>
+	<span class="n">fontsize_axis</span><span class="o">=</span><span class="mi">4</span>
+	<span class="n">fontsize_tick</span><span class="o">=</span><span class="mi">3</span>
+	<span class="n">fontsize_legend</span><span class="o">=</span><span class="mi">2</span>
+
+	<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Initial conditions&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsizex</span><span class="p">)</span>
+
+	<span class="n">axT</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Temperature [$^\circ$C]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_axis</span><span class="p">)</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.08</span><span class="p">)</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsize_tick</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;TVD [m]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_tick</span><span class="p">)</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">T</span><span class="p">)])</span>
+	<span class="n">axT</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">depths</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="p">)])</span>
+
+	<span class="n">axP</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bar]&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize_axis</span><span class="p">)</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.08</span><span class="p">)</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="n">fontsize_tick</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;TVD [m]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_tick</span><span class="p">)</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">)])</span>
+	<span class="n">axP</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">depths</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="p">)])</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Erick Jimenez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
