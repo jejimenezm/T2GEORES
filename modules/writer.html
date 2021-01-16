@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="txt2sqlite.html">txt2sqlite</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">writer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">report</a></li>
 </ul>
 
             
@@ -330,6 +331,26 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="writer.OUTPU_writer">
+<code class="descclassname">writer.</code><code class="descname">OUTPU_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#OUTPU_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.OUTPU_writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>“It writes the OUTPU of TOUGH2 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the OUTPU information</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output: contains the OUTPU section</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>‘OUTPU’:{‘FORMAT’:[‘CSV’],’ELEMENT_RELATED’:{‘ENTHALPY’:[1],’SECONDARY’:[1,5]},’CONNECTION_RELATED’:{‘FLOW’:[1,2],},’GENER_RELATED’:{‘GENERATION’:[None],’FRACTIONAL FLOW’:[1]}}</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="writer.PARAM_writer">
 <code class="descclassname">writer.</code><code class="descname">PARAM_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#PARAM_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.PARAM_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the PARAM section</p>
@@ -531,7 +552,7 @@
 
 <dl class="function">
 <dt id="writer.t2_input">
-<code class="descclassname">writer.</code><code class="descname">t2_input</code><span class="sig-paren">(</span><em>include_FOFT</em>, <em>include_SOLVR</em>, <em>include_COFT</em>, <em>include_GOFT</em>, <em>include_RPCAP</em>, <em>include_MULTI</em>, <em>include_START</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#t2_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.t2_input" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">writer.</code><code class="descname">t2_input</code><span class="sig-paren">(</span><em>include_FOFT</em>, <em>include_SOLVR</em>, <em>include_COFT</em>, <em>include_GOFT</em>, <em>include_RPCAP</em>, <em>include_MULTI</em>, <em>include_START</em>, <em>include_TIMES</em>, <em>include_OUTPU</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#t2_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.t2_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It creates the FOFT section base on the well feedzone position</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -546,6 +567,8 @@
 <li><strong>include_RPCAP</strong> (<em>bool</em>) – If true includes the RPCAP section on the TOUGH2 file</li>
 <li><strong>include_MULTI</strong> (<em>bool</em>) – If true includes the MULTI section on the TOUGH2 file</li>
 <li><strong>include_START</strong> (<em>bool</em>) – If true includes the START sentence is added on the top of PARAM section</li>
+<li><strong>include_OUTPU</strong> (<em>bool</em>) – If true includes the OUTPU section on the TOUGH2 file</li>
+<li><strong>include_TIMES</strong> (<em>bool</em>) – If true includes the TIMES section on the TOUGH2 file</li>
 </ul>
 </td>
 </tr>
@@ -558,7 +581,7 @@
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_input</span><span class="p">(</span><span class="n">include_FOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_COFT</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_GOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_MULTI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_START</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_input</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">include_FOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_COFT</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_GOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_MULTI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_START</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_OUTPU</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
