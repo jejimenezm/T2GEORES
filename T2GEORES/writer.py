@@ -150,7 +150,7 @@ def PARAM_writer(input_dictionary):
 							string+='\n'
 					string+='\n'
 
-				value,def_value=def_value_selector('PARAMETERS',key)
+				value,def_value=def_value_selector('PARAMETERS',key,input_dictionary)
 
 				if not isinstance(value,list):
 					string+=converter(value,formats_t2['PARAMETERS'][key][1],def_value)
@@ -363,6 +363,7 @@ def SOLVR_writer(input_dictionary):
 	str
 	  output: contains the SOLVR section
 
+
 	"""
 	string="SOLVR----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	
@@ -489,7 +490,7 @@ def TITLE_writer(input_dictionary):
 	try:
 		value=input_dictionary['TITLE']
 	except KeyError:
-		value=formats_t2['TITLE'][1]
+		value=formats_t2['TITLE'][0]
 	return  value[0:80].ljust(80) +'\n'
 
 def CONNE_from_steinar_to_t2():
@@ -624,7 +625,59 @@ def CONNE_adder(input_dictionary):
 		sys.exit("The file %s or directory do not exist"%source_file)
 	return string
 
-def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,input_dictionary):
+def OUTPU_writer(input_dictionary):
+	""""It writes the OUTPU of TOUGH2 file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary containing the OUTPU information
+
+	Returns
+	-------
+	str
+	  output: contains the OUTPU section
+
+	Examples
+	--------
+	'OUTPU':{'FORMAT':['CSV'],'ELEMENT_RELATED':{'ENTHALPY':[1],'SECONDARY':[1,5]},'CONNECTION_RELATED':{'FLOW':[1,2],},'GENER_RELATED':{'GENERATION':[None],'FRACTIONAL FLOW':[1]}}
+
+	"""
+
+	string="OUTPU----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
+
+	for outpu in input_dictionary['OUTPU']:
+		for key in input_dictionary['OUTPU'][outpu]:
+			if outpu=='FORMAT':
+				string+="%s\n"%(key)
+				n_variables=0
+				string_temp=''
+			else:
+				string_temp+=format(key,formats_t2['OUTPU']['FORMAT'][0])
+				n_variables+=1
+				for i,parameter in enumerate(input_dictionary['OUTPU'][outpu][key]):
+					try:
+						if type(parameter)==formats_t2['OUTPU'][outpu][key][i]:
+							if parameter!=None:
+								string_temp+=format(str(parameter),formats_t2['OUTPU']['FORMAT'][1])
+						else:
+							sys.exit("OUTPU %s %s %s not correctly formatted"%(outpu,key,parameter))
+					except KeyError:
+						sys.exit("Key %s does not exist for OUTPU"%key)
+
+				if not all(ft2==type(None) for ft2 in formats_t2['OUTPU'][outpu][key]):
+					cnt=0
+					for value in formats_t2['OUTPU'][outpu][key]:
+						if value!=type(None):
+							cnt+=1
+					if i!=(cnt-1):
+						sys.exit("For the key %s the number of arguments required are not enough"%key)
+				string_temp+='\n'
+	string=string+str(n_variables)+'\n'+string_temp+'\n'
+
+	return string
+
+def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,include_TIMES,include_OUTPU,input_dictionary):
 	""""It creates the FOFT section base on the well feedzone position
 
 	Parameters
@@ -645,6 +698,10 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 	  If true includes the MULTI section on the TOUGH2 file
 	include_START: bool
 	  If true includes the START sentence is added on the top of PARAM section
+	include_OUTPU: bool
+	  If true includes the OUTPU section on the TOUGH2 file
+	include_TIMES: bool
+	  If true includes the TIMES section on the TOUGH2 file
 
 	Returns
 	-------
@@ -653,17 +710,19 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 
 	Examples
 	--------
-	>>> t2_input(include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,input_dictionary)
+	>>> t2_input(input_dictionary,include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,include_OUTPU=True)
 	"""
 
-	secctions=[TITLE_writer,PARAM_writer,TIMES_writer,ELEME_adder,CONNE_adder]
+	secctions=[TITLE_writer,PARAM_writer,ELEME_adder,CONNE_adder]
 
 	if_functions_dictionary={'RPCAP':[include_RPCAP,RPCAP_writer],
 							 'MULTI':[include_MULTI,MULTI_writer],
 							 'FOFT':[include_FOFT,FOFT_writer],
+							 'TIMES':[include_TIMES,TIMES_writer],
 							 'SOLVR':[include_SOLVR,SOLVR_writer],
 							 'COFT':[include_COFT,COFT_writer],
-							 'GOFT':[include_GOFT,GOFT_writer]}
+							 'GOFT':[include_GOFT,GOFT_writer],
+							 'OUTPU':[include_OUTPU,OUTPU_writer]}
 
 	for bools in if_functions_dictionary:
 		if if_functions_dictionary[bools][0]:
