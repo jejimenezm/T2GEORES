@@ -193,7 +193,7 @@ def empty_model(structure=structure, current_path='../'):
 				except IsADirectoryError:
 					continue
 
-def create_structure(current_path=='.',structure=structure):
+def create_structure(current_path='.',structure=structure):
 	"""It creates the necessary structure for T2GEORES to work
 
 	Parameters
