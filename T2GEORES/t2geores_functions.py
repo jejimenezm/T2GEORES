@@ -163,7 +163,7 @@ def incons(input_dictionary):
 	else:
 		sys.exit("The file %s or directory do not exist"%input_file)
 
-def empty_model(structure, current_path):
+def empty_model(structure=structure, current_path='../'):
 	"""It erases all the file on the  T2GEORES structure except the input and scripts folders
 
 	Parameters
@@ -193,7 +193,7 @@ def empty_model(structure, current_path):
 				except IsADirectoryError:
 					continue
 
-def create_structure(current_path,structure=structure):
+def create_structure(current_path=='.',structure=structure):
 	"""It creates the necessary structure for T2GEORES to work
 
 	Parameters

@@ -61,7 +61,7 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	t_max=1E50
 	flow_min=0
 	enthalpy_min=500E3
-	time_zero=0
+	time_zero=(time_array[0]-ref_date).total_seconds()
 
 	#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value
 	extra_time=365.25*24*3600/2
@@ -186,7 +186,125 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	else:
 		print("Time and variable array must have the same length")
 
-def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
+
+def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_flow):
+	"""It generaates the block of time, flow and enthalpy for each flow on datetime format
+
+	Parameters
+	----------
+	var_array : array
+	  Contains the flow data
+	time_array : array
+	  Contains the time data on datetime format
+	var_type	:str
+	  It indicates the type of well producer 'R' or injector 'R'
+	var_enthalpy :array
+	  Contains the flowing enthalpy data
+	type_flow :str
+	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
+	  'invariable' writes the GENER section for every well as it is written on the input file
+	"""
+	string_time_R=''
+	string_flow_R=''
+	string_enthalpy_R=''
+	string_time_P=''
+	string_flow_P=''
+
+	t_min='-infinity'
+	t_max='infinity'
+	flow_min=0
+	enthalpy_min=500E3
+	time_zero=0
+
+	#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value
+	extra_time=365.25*24*3600/2
+
+	if type_flow=="invariable":
+		cnt_P=1
+		cnt_R=1
+	elif type_flow=="constant" or type_flow=="shutdown":
+
+		string_P+=format(t_min,'>20s')
+		string_P+=format(flow_min,'>10s')+'\n'
+
+		string_P+=format(time_array[0].strftime("%Y-%M-%d_00:00:00"),'<20s')
+		string_P+=format(time_zero,'>10s')+'\n'
+
+		string_R+=format(t_min,'>20s')
+		string_R+=format(flow_min,'>10s')
+		string_R+=format(enthalpy_min,'>10.3E')+'\n'
+
+		string_R+=format(t_min,'>20s')
+		string_R+=format(time_array[0].strftime("%Y-%M-%d_00:00:00"),'<20s')
+		string_R+=format(enthalpy_min,'>10.3E')+'\n'
+
+		cnt_P=2
+		cnt_R=2
+
+	if len(var_array)==len(time_array):
+		for n in range(len(var_type)):
+			if var_type[n]=='P':
+				string_P+=format(time_array[n].strftime("%Y-%M-%d_00:00:00"),'<20s')
+				string_P+=format(-var_array[n],'>10.6E')+'\n'
+				last_flow=var_array[n]
+				cnt_P+=1
+			elif var_type[n]=='R':
+				string_P+=format(time_array[n].strftime("%Y-%M-%d_00:00:00"),'<20s')
+				string_P+=format(var_array[n],'>10.6E')
+				string_P+=format(var_enthalpy[n],'>10.6E')+'\n'
+				last_flow=var_array[n]
+				last_enthalpy=var_enthalpy[n]
+				cnt_R+=1
+			last_time=time_array[n]
+
+		if type_flow=="invariable":
+			pass
+		elif type_flow=="constant":
+			if cnt_R>3:
+				string_P+='\n'
+				cnt_R+=1
+				string_R+=format(t_max,'>20s')
+				string_R+=format(last_flow,'>10.6E')
+				string_R+=format(last_enthalpy,'>10.6E')+'\n'
+			if cnt_P>3:
+				string_P+=format(t_max,'>20s')
+				string_P+=format(-last_flow,'>10.6E')+'\n'
+				cnt_P+=1
+		elif type_flow=="shutdown":
+
+			if cnt_R>3:
+				cnt_R+=2
+
+				string_R+=format((time_array[n]+extra_time).strftime("%Y-%M-%d_00:00:00"),'<20s')
+				string_R+=format(last_flow,'>10.6E')
+				string_R+=format(last_enthalpy,'>10.6E')+'\n'
+
+				string_R+=format(t_max,'>20s')
+				string_R+=format(flow_min,'>10.6E')
+				string_R+=format(last_enthalpy,'>10.6E')+'\n'
+
+			if cnt_P>3:
+				cnt_P+=2
+				string_P+=format((time_array[n]+extra_time).strftime("%Y-%M-%d_00:00:00"),'<20s')
+				string_P+=format(-last_flow,'>10.6E')+'\n'
+
+				string_P+=format(t_max,'>20s')
+				string_P+=format(-flow_min,'>10.6E')+'\n'
+
+		if cnt_R==2 or cnt_R==3:
+			string_R=''
+
+		if cnt_P==2 or cnt_P==3:
+			string_P=''
+
+		string_P+='\n'
+		string_R+='\n'
+		return string_P, string_R, cnt_P, cnt_R
+	else:
+		print("Time and variable array must have the same length")
+
+
+def write_gener_from_sqlite(type_flow,forecast,input_dictionary,t2_ver,make_up=False):
 	"""It is the main function on this modulo, it writes the GENER section from the mh input files
 
 	Parameters
@@ -202,6 +320,8 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
 	   If true the data is written on the sqlite database
 	make_up  : bool
 	   If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD
+	t2_ver  : int
+		TOUGH2 version if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.
 
 	Returns
 	-------
@@ -216,7 +336,7 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
 
 	Examples
 	--------
-	>>> write_gener_from_sqlite(input_dictionary,type_flow='constant',forecast=True)
+	>>> write_gener_from_sqlite(input_dictionary,type_flow='constant',t2_ver=7,forecast=True)
 	"""
 
 	types=['WELLS']
@@ -309,7 +429,10 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
 					#If the block name exists it takes that value
 					source_corr=source_corr_num_sqlite
 
-			P,R, LTAB_P, LTAB_R= write_t2_format_gener(data['m_total'].values*porcentage[feedn],dates,data['type'],data['flowing_enthalpy']*1E3,type_flow,input_dictionary=input_dictionary)
+			if t2_ver<7:
+				P,R, LTAB_P, LTAB_R= write_t2_format_gener(data['m_total'].values*porcentage[feedn],dates,data['type'],data['flowing_enthalpy']*1E3,type_flow,input_dictionary=input_dictionary)
+			else:
+				P,R, LTAB_P, LTAB_R=write_t2_format_gener_dates(data['m_total'].values*porcentage[feedn],dates,data['type'],data['flowing_enthalpy']*1E3,type_flow)
 
 			if type_flow=="invariable":
 				condition=1
@@ -321,38 +444,25 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
 			r_check=False
 			
 			if LTAB_R>condition:
-				if forecast :
+				if t2_ver<7:
 					gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr,LTAB_R)
-					gener+=R
-					try:
-						q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
-						print(q)
-						c.execute(q)
-						conn.commit()
-						r_check=True
-					except sqlite3.IntegrityError:
-						print("""Two reasons:
-								 1-There is already a SOURCE nickname assign to this block (%s),
-								 	in this case is better to erase the table content on table t2wellsource, 
-								 	be sure about the data on wellfeedzone table
-								 	and rerun this function
-								 2-Skip the message if you are just updating the flowrates"""%source_block)
-
 				else:
-					gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr,LTAB_R)
-					gener+=R
-					try:
-						q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
-						c.execute(q)
-						conn.commit()
-						r_check=True
-					except sqlite3.IntegrityError:
-						print("""Two reasons:
-								 1-There is already a SOURCE nickname assign to this block (%s),
-								 	in this case is better to erase the table content on table t2wellsource, 
-								 	be sure about the data on wellfeedzone table
-								 	and rerun this function
-								 2-Skip the message if you are just updating the flowrates"""%source_block)
+					gener+=format(source_block+source_corr,'<10s')
+					gener+=format('COUNT','>20s')
+					gener+=format('MASSi','>10s')+'\n'
+				gener+=R
+				try:
+					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
+					c.execute(q)
+					conn.commit()
+					r_check=True
+				except sqlite3.IntegrityError:
+					print("""Two reasons:
+							 1-There is already a SOURCE nickname assign to this block (%s),
+							 	in this case is better to erase the table content on table t2wellsource, 
+							 	be sure about the data on wellfeedzone table
+							 	and rerun this function
+							 2-Skip the message if you are just updating the flowrates"""%source_block)
 
 			p_check=False
 			if LTAB_P>condition:
@@ -360,37 +470,25 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,make_up=False):
 					source_corr_num+=1
 					source_corr="SRC%s"%source_corr_num
 
-				if  forecast :
+				if t2_ver<7:
 					gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P)
-					gener+=P
-					try:
-						q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
-						c.execute(q)
-						conn.commit()
-						p_check=True
-					except sqlite3.IntegrityError:
-						print("""Two reasons:
-								 1-There is already a SOURCE nickname assign to this block (%s),
-								 	in this case is better to erase the table content on table t2wellsource, 
-								 	be sure about the data on wellfeedzone table
-								 	and rerun this function
-								 2-Skip the message if you are just updating the flowrates"""%source_block)
-
 				else:
-					gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P)
-					gener+=P
-					try:
-						q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
-						c.execute(q)
-						conn.commit()
-						p_check=True
-					except sqlite3.IntegrityError:
-						print("""Two reasons:
-								 1-There is already a SOURCE nickname assign to this block (%s),
-								 	in this case is better to erase the table content on table t2wellsource, 
-								 	be sure about the data on wellfeedzone table
-								 	and rerun this function
-								 2-Skip the message if you are just updating the flowrates"""%source_block)
+					gener+=format(source_block+source_corr,'<10s')
+					gener+=format('COUNT','>20s')
+					gener+=format('MASS ','>10s')+'\n'
+				gener+=P
+				try:
+					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
+					c.execute(q)
+					conn.commit()
+					p_check=True
+				except sqlite3.IntegrityError:
+					print("""Two reasons:
+							 1-There is already a SOURCE nickname assign to this block (%s),
+							 	in this case is better to erase the table content on table t2wellsource, 
+							 	be sure about the data on wellfeedzone table
+							 	and rerun this function
+							 2-Skip the message if you are just updating the flowrates"""%source_block)
 
 			#Insert feedzones for new wells and wells with no flow during history, in case it is need it
 			if not (r_check or p_check):
