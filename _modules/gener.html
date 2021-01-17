@@ -218,7 +218,7 @@
 	<span class="n">t_max</span><span class="o">=</span><span class="mf">1E50</span>
 	<span class="n">flow_min</span><span class="o">=</span><span class="mi">0</span>
 	<span class="n">enthalpy_min</span><span class="o">=</span><span class="mf">500E3</span>
-	<span class="n">time_zero</span><span class="o">=</span><span class="mi">0</span>
+	<span class="n">time_zero</span><span class="o">=</span><span class="p">(</span><span class="n">time_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">ref_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
 
 	<span class="c1">#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value</span>
 	<span class="n">extra_time</span><span class="o">=</span><span class="mf">365.25</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">3600</span><span class="o">/</span><span class="mi">2</span>
@@ -343,7 +343,125 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time and variable array must have the same length&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="write_gener_from_sqlite"><a class="viewcode-back" href="../modules/gener.html#gener.write_gener_from_sqlite">[docs]</a><span class="k">def</span> <span class="nf">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">make_up</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="write_t2_format_gener_dates"><a class="viewcode-back" href="../modules/gener.html#gener.write_t2_format_gener_dates">[docs]</a><span class="k">def</span> <span class="nf">write_t2_format_gener_dates</span><span class="p">(</span><span class="n">var_array</span><span class="p">,</span><span class="n">time_array</span><span class="p">,</span><span class="n">var_type</span><span class="p">,</span><span class="n">var_enthalpy</span><span class="p">,</span><span class="n">type_flow</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generaates the block of time, flow and enthalpy for each flow on datetime format</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	var_array : array</span>
+<span class="sd">	  Contains the flow data</span>
+<span class="sd">	time_array : array</span>
+<span class="sd">	  Contains the time data on datetime format</span>
+<span class="sd">	var_type	:str</span>
+<span class="sd">	  It indicates the type of well producer &#39;R&#39; or injector &#39;R&#39;</span>
+<span class="sd">	var_enthalpy :array</span>
+<span class="sd">	  Contains the flowing enthalpy data</span>
+<span class="sd">	type_flow :str</span>
+<span class="sd">	  It defines the type of flow on the well. &#39;constant&#39; adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, &#39;shutdown&#39; closes the well after the last record, &#39;invariable&#39;</span>
+<span class="sd">	  &#39;invariable&#39; writes the GENER section for every well as it is written on the input file</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">string_time_R</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+	<span class="n">string_flow_R</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+	<span class="n">string_enthalpy_R</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+	<span class="n">string_time_P</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+	<span class="n">string_flow_P</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+	<span class="n">t_min</span><span class="o">=</span><span class="s1">&#39;-infinity&#39;</span>
+	<span class="n">t_max</span><span class="o">=</span><span class="s1">&#39;infinity&#39;</span>
+	<span class="n">flow_min</span><span class="o">=</span><span class="mi">0</span>
+	<span class="n">enthalpy_min</span><span class="o">=</span><span class="mf">500E3</span>
+	<span class="n">time_zero</span><span class="o">=</span><span class="mi">0</span>
+
+	<span class="c1">#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value</span>
+	<span class="n">extra_time</span><span class="o">=</span><span class="mf">365.25</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">3600</span><span class="o">/</span><span class="mi">2</span>
+
+	<span class="k">if</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;invariable&quot;</span><span class="p">:</span>
+		<span class="n">cnt_P</span><span class="o">=</span><span class="mi">1</span>
+		<span class="n">cnt_R</span><span class="o">=</span><span class="mi">1</span>
+	<span class="k">elif</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;constant&quot;</span> <span class="ow">or</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;shutdown&quot;</span><span class="p">:</span>
+
+		<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_min</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+		<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">flow_min</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+		<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">time_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2">_00:00:00&quot;</span><span class="p">),</span><span class="s1">&#39;&lt;20s&#39;</span><span class="p">)</span>
+		<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">time_zero</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+		<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_min</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+		<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">flow_min</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span>
+		<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">enthalpy_min</span><span class="p">,</span><span class="s1">&#39;&gt;10.3E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+		<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_min</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+		<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">time_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2">_00:00:00&quot;</span><span class="p">),</span><span class="s1">&#39;&lt;20s&#39;</span><span class="p">)</span>
+		<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">enthalpy_min</span><span class="p">,</span><span class="s1">&#39;&gt;10.3E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+		<span class="n">cnt_P</span><span class="o">=</span><span class="mi">2</span>
+		<span class="n">cnt_R</span><span class="o">=</span><span class="mi">2</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_array</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">time_array</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">var_type</span><span class="p">)):</span>
+			<span class="k">if</span> <span class="n">var_type</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;P&#39;</span><span class="p">:</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">time_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2">_00:00:00&quot;</span><span class="p">),</span><span class="s1">&#39;&lt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="o">-</span><span class="n">var_array</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">last_flow</span><span class="o">=</span><span class="n">var_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+				<span class="n">cnt_P</span><span class="o">+=</span><span class="mi">1</span>
+			<span class="k">elif</span> <span class="n">var_type</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;R&#39;</span><span class="p">:</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">time_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2">_00:00:00&quot;</span><span class="p">),</span><span class="s1">&#39;&lt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">var_array</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">var_enthalpy</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">last_flow</span><span class="o">=</span><span class="n">var_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+				<span class="n">last_enthalpy</span><span class="o">=</span><span class="n">var_enthalpy</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+				<span class="n">cnt_R</span><span class="o">+=</span><span class="mi">1</span>
+			<span class="n">last_time</span><span class="o">=</span><span class="n">time_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;invariable&quot;</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="k">elif</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;constant&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">cnt_R</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">cnt_R</span><span class="o">+=</span><span class="mi">1</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_max</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">last_flow</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">last_enthalpy</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+			<span class="k">if</span> <span class="n">cnt_P</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_max</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="o">-</span><span class="n">last_flow</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">cnt_P</span><span class="o">+=</span><span class="mi">1</span>
+		<span class="k">elif</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;shutdown&quot;</span><span class="p">:</span>
+
+			<span class="k">if</span> <span class="n">cnt_R</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+				<span class="n">cnt_R</span><span class="o">+=</span><span class="mi">2</span>
+
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">((</span><span class="n">time_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+</span><span class="n">extra_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2">_00:00:00&quot;</span><span class="p">),</span><span class="s1">&#39;&lt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">last_flow</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">last_enthalpy</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_max</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">flow_min</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span>
+				<span class="n">string_R</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">last_enthalpy</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+			<span class="k">if</span> <span class="n">cnt_P</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+				<span class="n">cnt_P</span><span class="o">+=</span><span class="mi">2</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">((</span><span class="n">time_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+</span><span class="n">extra_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2">_00:00:00&quot;</span><span class="p">),</span><span class="s1">&#39;&lt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="o">-</span><span class="n">last_flow</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">t_max</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+				<span class="n">string_P</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="o">-</span><span class="n">flow_min</span><span class="p">,</span><span class="s1">&#39;&gt;10.6E&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+		<span class="k">if</span> <span class="n">cnt_R</span><span class="o">==</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">cnt_R</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+			<span class="n">string_R</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+		<span class="k">if</span> <span class="n">cnt_P</span><span class="o">==</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">cnt_P</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+			<span class="n">string_P</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+		<span class="n">string_P</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="n">string_R</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+		<span class="k">return</span> <span class="n">string_P</span><span class="p">,</span> <span class="n">string_R</span><span class="p">,</span> <span class="n">cnt_P</span><span class="p">,</span> <span class="n">cnt_R</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time and variable array must have the same length&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_gener_from_sqlite"><a class="viewcode-back" href="../modules/gener.html#gener.write_gener_from_sqlite">[docs]</a><span class="k">def</span> <span class="nf">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">t2_ver</span><span class="p">,</span><span class="n">make_up</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It is the main function on this modulo, it writes the GENER section from the mh input files</span>
 
 <span class="sd">	Parameters</span>
@@ -359,6 +477,8 @@
 <span class="sd">	   If true the data is written on the sqlite database</span>
 <span class="sd">	make_up  : bool</span>
 <span class="sd">	   If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</span>
+<span class="sd">	t2_ver  : int</span>
+<span class="sd">		TOUGH2 version if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
@@ -373,7 +493,7 @@
 
 <span class="sd">	Examples</span>
 <span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; write_gener_from_sqlite(input_dictionary,type_flow=&#39;constant&#39;,forecast=True)</span>
+<span class="sd">	&gt;&gt;&gt; write_gener_from_sqlite(input_dictionary,type_flow=&#39;constant&#39;,t2_ver=7,forecast=True)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">]</span>
@@ -466,7 +586,10 @@
 					<span class="c1">#If the block name exists it takes that value</span>
 					<span class="n">source_corr</span><span class="o">=</span><span class="n">source_corr_num_sqlite</span>
 
-			<span class="n">P</span><span class="p">,</span><span class="n">R</span><span class="p">,</span> <span class="n">LTAB_P</span><span class="p">,</span> <span class="n">LTAB_R</span><span class="o">=</span> <span class="n">write_t2_format_gener</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;m_total&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">*</span><span class="n">porcentage</span><span class="p">[</span><span class="n">feedn</span><span class="p">],</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;flowing_enthalpy&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1E3</span><span class="p">,</span><span class="n">type_flow</span><span class="p">,</span><span class="n">input_dictionary</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">t2_ver</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">:</span>
+				<span class="n">P</span><span class="p">,</span><span class="n">R</span><span class="p">,</span> <span class="n">LTAB_P</span><span class="p">,</span> <span class="n">LTAB_R</span><span class="o">=</span> <span class="n">write_t2_format_gener</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;m_total&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">*</span><span class="n">porcentage</span><span class="p">[</span><span class="n">feedn</span><span class="p">],</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;flowing_enthalpy&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1E3</span><span class="p">,</span><span class="n">type_flow</span><span class="p">,</span><span class="n">input_dictionary</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">P</span><span class="p">,</span><span class="n">R</span><span class="p">,</span> <span class="n">LTAB_P</span><span class="p">,</span> <span class="n">LTAB_R</span><span class="o">=</span><span class="n">write_t2_format_gener_dates</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;m_total&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">*</span><span class="n">porcentage</span><span class="p">[</span><span class="n">feedn</span><span class="p">],</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;flowing_enthalpy&#39;</span><span class="p">]</span><span class="o">*</span><span class="mf">1E3</span><span class="p">,</span><span class="n">type_flow</span><span class="p">)</span>
 
 			<span class="k">if</span> <span class="n">type_flow</span><span class="o">==</span><span class="s2">&quot;invariable&quot;</span><span class="p">:</span>
 				<span class="n">condition</span><span class="o">=</span><span class="mi">1</span>
@@ -478,38 +601,25 @@
 			<span class="n">r_check</span><span class="o">=</span><span class="kc">False</span>
 			
 			<span class="k">if</span> <span class="n">LTAB_R</span><span class="o">&gt;</span><span class="n">condition</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">forecast</span> <span class="p">:</span>
+				<span class="k">if</span> <span class="n">t2_ver</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">:</span>
 					<span class="n">gener</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">                </span><span class="si">%4d</span><span class="s2">     MASSi</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">,</span><span class="n">LTAB_R</span><span class="p">)</span>
-					<span class="n">gener</span><span class="o">+=</span><span class="n">R</span>
-					<span class="k">try</span><span class="p">:</span>
-						<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">)</span>
-						<span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-						<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-						<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-						<span class="n">r_check</span><span class="o">=</span><span class="kc">True</span>
-					<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
-						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Two reasons:</span>
-<span class="s2">								 1-There is already a SOURCE nickname assign to this block (</span><span class="si">%s</span><span class="s2">),</span>
-<span class="s2">								 	in this case is better to erase the table content on table t2wellsource, </span>
-<span class="s2">								 	be sure about the data on wellfeedzone table</span>
-<span class="s2">								 	and rerun this function</span>
-<span class="s2">								 2-Skip the message if you are just updating the flowrates&quot;&quot;&quot;</span><span class="o">%</span><span class="n">source_block</span><span class="p">)</span>
-
 				<span class="k">else</span><span class="p">:</span>
-					<span class="n">gener</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">                </span><span class="si">%4d</span><span class="s2">     MASSi</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">,</span><span class="n">LTAB_R</span><span class="p">)</span>
-					<span class="n">gener</span><span class="o">+=</span><span class="n">R</span>
-					<span class="k">try</span><span class="p">:</span>
-						<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">)</span>
-						<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-						<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-						<span class="n">r_check</span><span class="o">=</span><span class="kc">True</span>
-					<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
-						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Two reasons:</span>
-<span class="s2">								 1-There is already a SOURCE nickname assign to this block (</span><span class="si">%s</span><span class="s2">),</span>
-<span class="s2">								 	in this case is better to erase the table content on table t2wellsource, </span>
-<span class="s2">								 	be sure about the data on wellfeedzone table</span>
-<span class="s2">								 	and rerun this function</span>
-<span class="s2">								 2-Skip the message if you are just updating the flowrates&quot;&quot;&quot;</span><span class="o">%</span><span class="n">source_block</span><span class="p">)</span>
+					<span class="n">gener</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">source_block</span><span class="o">+</span><span class="n">source_corr</span><span class="p">,</span><span class="s1">&#39;&lt;10s&#39;</span><span class="p">)</span>
+					<span class="n">gener</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="s1">&#39;COUNT&#39;</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+					<span class="n">gener</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="s1">&#39;MASSi&#39;</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">gener</span><span class="o">+=</span><span class="n">R</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">)</span>
+					<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+					<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+					<span class="n">r_check</span><span class="o">=</span><span class="kc">True</span>
+				<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Two reasons:</span>
+<span class="s2">							 1-There is already a SOURCE nickname assign to this block (</span><span class="si">%s</span><span class="s2">),</span>
+<span class="s2">							 	in this case is better to erase the table content on table t2wellsource, </span>
+<span class="s2">							 	be sure about the data on wellfeedzone table</span>
+<span class="s2">							 	and rerun this function</span>
+<span class="s2">							 2-Skip the message if you are just updating the flowrates&quot;&quot;&quot;</span><span class="o">%</span><span class="n">source_block</span><span class="p">)</span>
 
 			<span class="n">p_check</span><span class="o">=</span><span class="kc">False</span>
 			<span class="k">if</span> <span class="n">LTAB_P</span><span class="o">&gt;</span><span class="n">condition</span><span class="p">:</span>
@@ -517,37 +627,25 @@
 					<span class="n">source_corr_num</span><span class="o">+=</span><span class="mi">1</span>
 					<span class="n">source_corr</span><span class="o">=</span><span class="s2">&quot;SRC</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">source_corr_num</span>
 
-				<span class="k">if</span>  <span class="n">forecast</span> <span class="p">:</span>
+				<span class="k">if</span> <span class="n">t2_ver</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">:</span>
 					<span class="n">gener</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">                </span><span class="si">%4d</span><span class="s2">     MASS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">,</span><span class="n">LTAB_P</span><span class="p">)</span>
-					<span class="n">gener</span><span class="o">+=</span><span class="n">P</span>
-					<span class="k">try</span><span class="p">:</span>
-						<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">)</span>
-						<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-						<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-						<span class="n">p_check</span><span class="o">=</span><span class="kc">True</span>
-					<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
-						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Two reasons:</span>
-<span class="s2">								 1-There is already a SOURCE nickname assign to this block (</span><span class="si">%s</span><span class="s2">),</span>
-<span class="s2">								 	in this case is better to erase the table content on table t2wellsource, </span>
-<span class="s2">								 	be sure about the data on wellfeedzone table</span>
-<span class="s2">								 	and rerun this function</span>
-<span class="s2">								 2-Skip the message if you are just updating the flowrates&quot;&quot;&quot;</span><span class="o">%</span><span class="n">source_block</span><span class="p">)</span>
-
 				<span class="k">else</span><span class="p">:</span>
-					<span class="n">gener</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">                </span><span class="si">%4d</span><span class="s2">     MASS</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">,</span><span class="n">LTAB_P</span><span class="p">)</span>
-					<span class="n">gener</span><span class="o">+=</span><span class="n">P</span>
-					<span class="k">try</span><span class="p">:</span>
-						<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">)</span>
-						<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-						<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-						<span class="n">p_check</span><span class="o">=</span><span class="kc">True</span>
-					<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
-						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Two reasons:</span>
-<span class="s2">								 1-There is already a SOURCE nickname assign to this block (</span><span class="si">%s</span><span class="s2">),</span>
-<span class="s2">								 	in this case is better to erase the table content on table t2wellsource, </span>
-<span class="s2">								 	be sure about the data on wellfeedzone table</span>
-<span class="s2">								 	and rerun this function</span>
-<span class="s2">								 2-Skip the message if you are just updating the flowrates&quot;&quot;&quot;</span><span class="o">%</span><span class="n">source_block</span><span class="p">)</span>
+					<span class="n">gener</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="n">source_block</span><span class="o">+</span><span class="n">source_corr</span><span class="p">,</span><span class="s1">&#39;&lt;10s&#39;</span><span class="p">)</span>
+					<span class="n">gener</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="s1">&#39;COUNT&#39;</span><span class="p">,</span><span class="s1">&#39;&gt;20s&#39;</span><span class="p">)</span>
+					<span class="n">gener</span><span class="o">+=</span><span class="nb">format</span><span class="p">(</span><span class="s1">&#39;MASS &#39;</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">gener</span><span class="o">+=</span><span class="n">P</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">source_block</span><span class="p">,</span><span class="n">source_corr</span><span class="p">)</span>
+					<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+					<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+					<span class="n">p_check</span><span class="o">=</span><span class="kc">True</span>
+				<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Two reasons:</span>
+<span class="s2">							 1-There is already a SOURCE nickname assign to this block (</span><span class="si">%s</span><span class="s2">),</span>
+<span class="s2">							 	in this case is better to erase the table content on table t2wellsource, </span>
+<span class="s2">							 	be sure about the data on wellfeedzone table</span>
+<span class="s2">							 	and rerun this function</span>
+<span class="s2">							 2-Skip the message if you are just updating the flowrates&quot;&quot;&quot;</span><span class="o">%</span><span class="n">source_block</span><span class="p">)</span>
 
 			<span class="c1">#Insert feedzones for new wells and wells with no flow during history, in case it is need it</span>
 			<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_check</span> <span class="ow">or</span> <span class="n">p_check</span><span class="p">):</span>

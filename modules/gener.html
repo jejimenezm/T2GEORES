@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="txt2sqlite.html">txt2sqlite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="writer.html">writer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formats.html">formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="report.html">report</a></li>
 </ul>
 
             
@@ -244,7 +245,7 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 
 <dl class="function">
 <dt id="gener.write_gener_from_sqlite">
-<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>forecast</em>, <em>input_dictionary</em>, <em>make_up=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>forecast</em>, <em>input_dictionary</em>, <em>t2_ver</em>, <em>make_up=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It is the main function on this modulo, it writes the GENER section from the mh input files</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -257,6 +258,7 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 ‘invariable’ writes the GENER section for every well as it is written on the input file</li>
 <li><strong>forecast</strong> (<em>bool</em>) – If true the data is written on the sqlite database</li>
 <li><strong>make_up</strong> (<em>bool</em>) – If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</li>
+<li><strong>t2_ver</strong> (<em>int</em>) – TOUGH2 version if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</li>
 </ul>
 </td>
 </tr>
@@ -274,7 +276,7 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will be +1 for the first well</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span><span class="n">t2_ver</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -349,6 +351,28 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 <p class="first admonition-title">Note</p>
 <p class="last">For every well a valur of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</p>
 </div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gener.write_t2_format_gener_dates">
+<code class="descclassname">gener.</code><code class="descname">write_t2_format_gener_dates</code><span class="sig-paren">(</span><em>var_array</em>, <em>time_array</em>, <em>var_type</em>, <em>var_enthalpy</em>, <em>type_flow</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_t2_format_gener_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generaates the block of time, flow and enthalpy for each flow on datetime format</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>var_array</strong> (<em>array</em>) – Contains the flow data</li>
+<li><strong>time_array</strong> (<em>array</em>) – Contains the time data on datetime format</li>
+<li><strong>var_type</strong> (<em>str</em>) – It indicates the type of well producer ‘R’ or injector ‘R’</li>
+<li><strong>var_enthalpy</strong> (<em>array</em>) – Contains the flowing enthalpy data</li>
+<li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
+‘invariable’ writes the GENER section for every well as it is written on the input file</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

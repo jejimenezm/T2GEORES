@@ -320,7 +320,7 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_file</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="empty_model"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.empty_model">[docs]</a><span class="k">def</span> <span class="nf">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">current_path</span><span class="p">):</span>
+<div class="viewcode-block" id="empty_model"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.empty_model">[docs]</a><span class="k">def</span> <span class="nf">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">,</span> <span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;../&#39;</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It erases all the file on the  T2GEORES structure except the input and scripts folders</span>
 
 <span class="sd">	Parameters</span>
@@ -350,7 +350,7 @@
 				<span class="k">except</span> <span class="ne">IsADirectoryError</span><span class="p">:</span>
 					<span class="k">continue</span></div>
 
-<div class="viewcode-block" id="create_structure"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.create_structure">[docs]</a><span class="k">def</span> <span class="nf">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">):</span>
+<div class="viewcode-block" id="create_structure"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.create_structure">[docs]</a><span class="k">def</span> <span class="nf">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It creates the necessary structure for T2GEORES to work</span>
 
 <span class="sd">	Parameters</span>
