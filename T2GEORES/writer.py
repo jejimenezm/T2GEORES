@@ -43,7 +43,7 @@ def converter(value,format_t2,def_value):
 
 	return output
 
-def def_value_selector(section,key,input_dictionary):
+def def_value_selector(section,key,input_dictionary,rocks=False):
 	"""Evaluate if the necessary parameter has been defined on the input file
 
 	Parameters
@@ -58,11 +58,19 @@ def def_value_selector(section,key,input_dictionary):
 	"""
 
 	try:
-		value=input_dictionary[section][key]
-		def_value=False
+		if not rocks:
+			value=input_dictionary[section][key]
+			def_value=False
+		else:
+			value=input_dictionary['ROCKS'][section][key]
+			def_value=False
 	except KeyError:
-		value=formats_t2[section][key][0]
-		def_value=True
+		if not rocks:
+			value=formats_t2[section][key][0]
+			def_value=True
+		else:
+			value=formats_t2['ROCKS'][key][0]
+			def_value=True
 	return value,def_value
 
 def FCG_file_checker(name):
@@ -697,6 +705,65 @@ def MOMOP_writer(input_dictionary):
 		if formats_t2['MOMOP'][key][2]==1:
 			value,def_value=def_value_selector('MOMOP',key,input_dictionary)
 			string+=converter(value,formats_t2['MOMOP'][key][1],def_value)
+	string+="\n"
+	return string
+
+def ROCKS_writer(input_dictionary):
+	"""Return the ROCKS section
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary with the defined parameter information
+
+	Returns
+	-------
+	str
+	  string : string containing ROCKS section
+
+	Examples
+	--------
+	Dictionary example::
+
+		input_data={'ROCKS':{
+				         'ROCK1':{
+						         'MAT':'ROCK1',
+						         'DROK':2.65E3,
+						         'POR':0.1,
+						         'CWET':2.1,
+						         'SPHT':850,
+						         'PER_X':1E-15,
+						         'PER_Y':1E-15,
+						         'PER_Z':1E-15,
+				                  },
+				        }
+				}
+
+	"""
+	string="ROCKS----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
+	rocks_levels=[1,2,3,4]
+	pass_valid=False
+	for rock in input_dictionary['ROCKS']:
+		for level in rocks_levels:
+			break_line=False
+			for key in formats_t2['ROCKS']:
+				if formats_t2['ROCKS'][key][2]==level:
+					if level==1:
+						pass_valid=True
+						break_line=True
+					if 'NAD' in input_dictionary['ROCKS'][rock].keys():
+						if input_dictionary['ROCKS'][rock]['NAD']>=1 and level==2:
+							pass_valid=True
+							break_line=True
+						elif input_dictionary['ROCKS'][rock]['NAD']>=2 and level in [3,4]:
+							pass_valid=True
+							break_line=True
+					if pass_valid:
+						value,def_value=def_value_selector(rock,key,input_dictionary,rocks=True)
+						string+=converter(value,formats_t2['ROCKS'][key][1],def_value)
+						pass_valid=False
+			if break_line:
+				string+='\n'
 	string+="\n"
 	return string
 
