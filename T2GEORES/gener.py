@@ -1,4 +1,3 @@
-#import t2resfun as t2r
 from model_conf import *
 import sqlite3
 import pandas as pd
@@ -47,7 +46,7 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 
 	Note
 	----
-	For every well a valur of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.
+	For every well a value of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.
 
 	"""
 	ref_date=input_dictionary['ref_date']
@@ -186,7 +185,6 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	else:
 		print("Time and variable array must have the same length")
 
-
 def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_flow):
 	"""It generaates the block of time, flow and enthalpy for each flow on datetime format
 
@@ -203,6 +201,28 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	type_flow :str
 	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
 	  'invariable' writes the GENER section for every well as it is written on the input file
+	
+	Returns
+	-------
+	str
+	  string_P: contains the defined format for the GENER section for a particular producer well.
+	str
+	  string_R : contains the defined format for the GENER section for a particular injector well.
+	int
+	  cnt_P : defines the number of flows records on every string_P for each producer well
+	int
+	  cnt_R : defines the number of flows records on every string_R for each injector well
+	  
+
+	Attention
+	---------
+	The legth of  var_array, time_array and var_enthalpy must be the same
+
+	Note
+	----
+	For every well a value of flow zero is set on time -infinity and before the first record. This function is used by the function write_gener_from_sqlite() as it does not produce any output file by itself.
+
+
 	"""
 	string_time_R=''
 	string_flow_R=''
@@ -303,26 +323,21 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	else:
 		print("Time and variable array must have the same length")
 
-
-def write_gener_from_sqlite(type_flow,forecast,input_dictionary,t2_ver,make_up=False):
+def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 	"""It is the main function on this modulo, it writes the GENER section from the mh input files
 
 	Parameters
 	----------
 	input_dictionary: dictionary
-	  Dictionary containing the path and name of database and the path of the input file and the reference date on datime format
+	  Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.
 	wells : array
 	  Arreglo con nombre de pozos a ser incluidos en la etapa de produccion
 	type_flow :str
 	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
 	  'invariable' writes the GENER section for every well as it is written on the input file
-	forecast : bool
-	   If true the data is written on the sqlite database
 	make_up  : bool
 	   If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD
-	t2_ver  : int
-		TOUGH2 version if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.
-
+		
 	Returns
 	-------
 	file
@@ -336,10 +351,10 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,t2_ver,make_up=F
 
 	Examples
 	--------
-	>>> write_gener_from_sqlite(input_dictionary,type_flow='constant',t2_ver=7,forecast=True)
+	>>> write_gener_from_sqlite(input_dictionary,type_flow='constant')
 	"""
 
-	types=['WELLS']
+	types='WELLS'
 	wells=[]
 	try:
 		for well in input_dictionary[types]:
@@ -349,6 +364,7 @@ def write_gener_from_sqlite(type_flow,forecast,input_dictionary,t2_ver,make_up=F
 
 
 	db_path=input_dictionary['db_path']
+	t2_ver=input_dictionary['t2_ver']
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()

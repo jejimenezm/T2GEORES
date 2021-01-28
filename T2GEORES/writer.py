@@ -677,7 +677,30 @@ def OUTPU_writer(input_dictionary):
 
 	return string
 
-def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,include_TIMES,include_OUTPU,input_dictionary):
+def MOMOP_writer(input_dictionary):
+	"""Return the MOMOP section
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  Dictionary with the defined MOMOP information
+
+	Returns
+	-------
+	str
+	  string : string containing MOMOP section
+
+	"""
+	string="MOMOP----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
+	string=''
+	for key in formats_t2['MOMOP']:
+		if formats_t2['MOMOP'][key][2]==1:
+			value,def_value=def_value_selector('MOMOP',key,input_dictionary)
+			string+=converter(value,formats_t2['MOMOP'][key][1],def_value)
+	string+="\n"
+	return string
+
+def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,include_TIMES,include_OUTPU,include_MOMOP,input_dictionary):
 	""""It creates the FOFT section base on the well feedzone position
 
 	Parameters
@@ -702,6 +725,8 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 	  If true includes the OUTPU section on the TOUGH2 file
 	include_TIMES: bool
 	  If true includes the TIMES section on the TOUGH2 file
+	include_MOMOP: bool
+	  If true includes the MOMOP section on the TOUGH2 file
 
 	Returns
 	-------
@@ -710,12 +735,13 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 
 	Examples
 	--------
-	>>> t2_input(input_dictionary,include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,include_OUTPU=True)
+	>>> t2_input(input_dictionary,include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,include_MOMOP=True,include_OUTPU=True)
 	"""
 
 	secctions=[TITLE_writer,PARAM_writer,ELEME_adder,CONNE_adder]
 
-	if_functions_dictionary={'RPCAP':[include_RPCAP,RPCAP_writer],
+	if_functions_dictionary={'MOMOP':[include_MOMOP,MOMOP_writer],
+							 'RPCAP':[include_RPCAP,RPCAP_writer],
 							 'MULTI':[include_MULTI,MULTI_writer],
 							 'FOFT':[include_FOFT,FOFT_writer],
 							 'TIMES':[include_TIMES,TIMES_writer],
