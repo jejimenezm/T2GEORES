@@ -387,6 +387,41 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="writer.ROCKS_writer">
+<code class="descclassname">writer.</code><code class="descname">ROCKS_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ROCKS_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.ROCKS_writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ROCKS section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined parameter information</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing ROCKS section</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Dictionary example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ROCKS&#39;</span><span class="p">:{</span>
+                         <span class="s1">&#39;ROCK1&#39;</span><span class="p">:{</span>
+                                         <span class="s1">&#39;MAT&#39;</span><span class="p">:</span><span class="s1">&#39;ROCK1&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;DROK&#39;</span><span class="p">:</span><span class="mf">2.65E3</span><span class="p">,</span>
+                                         <span class="s1">&#39;POR&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">,</span>
+                                         <span class="s1">&#39;CWET&#39;</span><span class="p">:</span><span class="mf">2.1</span><span class="p">,</span>
+                                         <span class="s1">&#39;SPHT&#39;</span><span class="p">:</span><span class="mi">850</span><span class="p">,</span>
+                                         <span class="s1">&#39;PER_X&#39;</span><span class="p">:</span><span class="mf">1E-15</span><span class="p">,</span>
+                                         <span class="s1">&#39;PER_Y&#39;</span><span class="p">:</span><span class="mf">1E-15</span><span class="p">,</span>
+                                         <span class="s1">&#39;PER_Z&#39;</span><span class="p">:</span><span class="mf">1E-15</span><span class="p">,</span>
+                                  <span class="p">},</span>
+                        <span class="p">}</span>
+                <span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="writer.RPCAP_writer">
 <code class="descclassname">writer.</code><code class="descname">RPCAP_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#RPCAP_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.RPCAP_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section RPCAP</p>
@@ -481,7 +516,7 @@
 
 <dl class="function">
 <dt id="writer.def_value_selector">
-<code class="descclassname">writer.</code><code class="descname">def_value_selector</code><span class="sig-paren">(</span><em>section</em>, <em>key</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#def_value_selector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.def_value_selector" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">writer.</code><code class="descname">def_value_selector</code><span class="sig-paren">(</span><em>section</em>, <em>key</em>, <em>input_dictionary</em>, <em>rocks=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#def_value_selector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.def_value_selector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate if the necessary parameter has been defined on the input file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
