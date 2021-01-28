@@ -155,8 +155,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for gener</h1><div class="highlight"><pre>
-<span></span><span class="c1">#import t2resfun as t2r</span>
-<span class="kn">from</span> <span class="nn">model_conf</span> <span class="kn">import</span> <span class="o">*</span>
+<span></span><span class="kn">from</span> <span class="nn">model_conf</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
@@ -204,7 +203,7 @@
 
 <span class="sd">	Note</span>
 <span class="sd">	----</span>
-<span class="sd">	For every well a valur of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</span>
+<span class="sd">	For every well a value of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">ref_date</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span>
@@ -343,7 +342,6 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time and variable array must have the same length&quot;</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="write_t2_format_gener_dates"><a class="viewcode-back" href="../modules/gener.html#gener.write_t2_format_gener_dates">[docs]</a><span class="k">def</span> <span class="nf">write_t2_format_gener_dates</span><span class="p">(</span><span class="n">var_array</span><span class="p">,</span><span class="n">time_array</span><span class="p">,</span><span class="n">var_type</span><span class="p">,</span><span class="n">var_enthalpy</span><span class="p">,</span><span class="n">type_flow</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It generaates the block of time, flow and enthalpy for each flow on datetime format</span>
 
@@ -360,6 +358,28 @@
 <span class="sd">	type_flow :str</span>
 <span class="sd">	  It defines the type of flow on the well. &#39;constant&#39; adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, &#39;shutdown&#39; closes the well after the last record, &#39;invariable&#39;</span>
 <span class="sd">	  &#39;invariable&#39; writes the GENER section for every well as it is written on the input file</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	str</span>
+<span class="sd">	  string_P: contains the defined format for the GENER section for a particular producer well.</span>
+<span class="sd">	str</span>
+<span class="sd">	  string_R : contains the defined format for the GENER section for a particular injector well.</span>
+<span class="sd">	int</span>
+<span class="sd">	  cnt_P : defines the number of flows records on every string_P for each producer well</span>
+<span class="sd">	int</span>
+<span class="sd">	  cnt_R : defines the number of flows records on every string_R for each injector well</span>
+<span class="sd">	  </span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The legth of  var_array, time_array and var_enthalpy must be the same</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	For every well a value of flow zero is set on time -infinity and before the first record. This function is used by the function write_gener_from_sqlite() as it does not produce any output file by itself.</span>
+
+
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">string_time_R</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
 	<span class="n">string_flow_R</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
@@ -460,26 +480,21 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time and variable array must have the same length&quot;</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="write_gener_from_sqlite"><a class="viewcode-back" href="../modules/gener.html#gener.write_gener_from_sqlite">[docs]</a><span class="k">def</span> <span class="nf">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">t2_ver</span><span class="p">,</span><span class="n">make_up</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="write_gener_from_sqlite"><a class="viewcode-back" href="../modules/gener.html#gener.write_gener_from_sqlite">[docs]</a><span class="k">def</span> <span class="nf">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">make_up</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It is the main function on this modulo, it writes the GENER section from the mh input files</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 <span class="sd">	input_dictionary: dictionary</span>
-<span class="sd">	  Dictionary containing the path and name of database and the path of the input file and the reference date on datime format</span>
+<span class="sd">	  Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</span>
 <span class="sd">	wells : array</span>
 <span class="sd">	  Arreglo con nombre de pozos a ser incluidos en la etapa de produccion</span>
 <span class="sd">	type_flow :str</span>
 <span class="sd">	  It defines the type of flow on the well. &#39;constant&#39; adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, &#39;shutdown&#39; closes the well after the last record, &#39;invariable&#39;</span>
 <span class="sd">	  &#39;invariable&#39; writes the GENER section for every well as it is written on the input file</span>
-<span class="sd">	forecast : bool</span>
-<span class="sd">	   If true the data is written on the sqlite database</span>
 <span class="sd">	make_up  : bool</span>
 <span class="sd">	   If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</span>
-<span class="sd">	t2_ver  : int</span>
-<span class="sd">		TOUGH2 version if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</span>
-
+<span class="sd">		</span>
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 <span class="sd">	file</span>
@@ -493,10 +508,10 @@
 
 <span class="sd">	Examples</span>
 <span class="sd">	--------</span>
-<span class="sd">	&gt;&gt;&gt; write_gener_from_sqlite(input_dictionary,type_flow=&#39;constant&#39;,t2_ver=7,forecast=True)</span>
+<span class="sd">	&gt;&gt;&gt; write_gener_from_sqlite(input_dictionary,type_flow=&#39;constant&#39;)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">]</span>
+	<span class="n">types</span><span class="o">=</span><span class="s1">&#39;WELLS&#39;</span>
 	<span class="n">wells</span><span class="o">=</span><span class="p">[]</span>
 	<span class="k">try</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="n">types</span><span class="p">]:</span>
@@ -506,6 +521,7 @@
 
 
 	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">t2_ver</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;t2_ver&#39;</span><span class="p">]</span>
 
 	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>

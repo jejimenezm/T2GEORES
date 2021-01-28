@@ -245,20 +245,18 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 
 <dl class="function">
 <dt id="gener.write_gener_from_sqlite">
-<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>forecast</em>, <em>input_dictionary</em>, <em>t2_ver</em>, <em>make_up=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>input_dictionary</em>, <em>make_up=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It is the main function on this modulo, it writes the GENER section from the mh input files</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file and the reference date on datime format</li>
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</li>
 <li><strong>wells</strong> (<em>array</em>) – Arreglo con nombre de pozos a ser incluidos en la etapa de produccion</li>
 <li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
 ‘invariable’ writes the GENER section for every well as it is written on the input file</li>
-<li><strong>forecast</strong> (<em>bool</em>) – If true the data is written on the sqlite database</li>
 <li><strong>make_up</strong> (<em>bool</em>) – If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</li>
-<li><strong>t2_ver</strong> (<em>int</em>) – TOUGH2 version if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</li>
 </ul>
 </td>
 </tr>
@@ -276,7 +274,7 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will be +1 for the first well</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span><span class="n">t2_ver</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -349,7 +347,7 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">For every well a valur of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</p>
+<p class="last">For every well a value of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</p>
 </div>
 </dd></dl>
 
@@ -361,7 +359,7 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>var_array</strong> (<em>array</em>) – Contains the flow data</li>
 <li><strong>time_array</strong> (<em>array</em>) – Contains the time data on datetime format</li>
 <li><strong>var_type</strong> (<em>str</em>) – It indicates the type of well producer ‘R’ or injector ‘R’</li>
@@ -371,8 +369,25 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 </ul>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>str</em> – string_P: contains the defined format for the GENER section for a particular producer well.</li>
+<li><em>str</em> – string_R : contains the defined format for the GENER section for a particular injector well.</li>
+<li><em>int</em> – cnt_P : defines the number of flows records on every string_P for each producer well</li>
+<li><em>int</em> – cnt_R : defines the number of flows records on every string_R for each injector well</li>
+</ul>
+</p>
+</td>
+</tr>
 </tbody>
 </table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The legth of  var_array, time_array and var_enthalpy must be the same</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For every well a value of flow zero is set on time -infinity and before the first record. This function is used by the function write_gener_from_sqlite() as it does not produce any output file by itself.</p>
+</div>
 </dd></dl>
 
 </div>

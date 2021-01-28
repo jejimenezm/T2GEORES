@@ -313,6 +313,24 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="writer.MOMOP_writer">
+<code class="descclassname">writer.</code><code class="descname">MOMOP_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#MOMOP_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.MOMOP_writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the MOMOP section</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined MOMOP information</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing MOMOP section</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="writer.MULTI_writer">
 <code class="descclassname">writer.</code><code class="descname">MULTI_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#MULTI_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.MULTI_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section MULTI</p>
@@ -552,7 +570,7 @@
 
 <dl class="function">
 <dt id="writer.t2_input">
-<code class="descclassname">writer.</code><code class="descname">t2_input</code><span class="sig-paren">(</span><em>include_FOFT</em>, <em>include_SOLVR</em>, <em>include_COFT</em>, <em>include_GOFT</em>, <em>include_RPCAP</em>, <em>include_MULTI</em>, <em>include_START</em>, <em>include_TIMES</em>, <em>include_OUTPU</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#t2_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.t2_input" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">writer.</code><code class="descname">t2_input</code><span class="sig-paren">(</span><em>include_FOFT</em>, <em>include_SOLVR</em>, <em>include_COFT</em>, <em>include_GOFT</em>, <em>include_RPCAP</em>, <em>include_MULTI</em>, <em>include_START</em>, <em>include_TIMES</em>, <em>include_OUTPU</em>, <em>include_MOMOP</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#t2_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.t2_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It creates the FOFT section base on the well feedzone position</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -569,6 +587,7 @@
 <li><strong>include_START</strong> (<em>bool</em>) – If true includes the START sentence is added on the top of PARAM section</li>
 <li><strong>include_OUTPU</strong> (<em>bool</em>) – If true includes the OUTPU section on the TOUGH2 file</li>
 <li><strong>include_TIMES</strong> (<em>bool</em>) – If true includes the TIMES section on the TOUGH2 file</li>
+<li><strong>include_MOMOP</strong> (<em>bool</em>) – If true includes the MOMOP section on the TOUGH2 file</li>
 </ul>
 </td>
 </tr>
@@ -581,7 +600,7 @@
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_input</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">include_FOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_COFT</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_GOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_MULTI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_START</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_OUTPU</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_input</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">include_FOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_COFT</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_GOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_MULTI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_START</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_MOMOP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_OUTPU</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
