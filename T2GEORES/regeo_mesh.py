@@ -1539,3 +1539,48 @@ def plot_3D_mesh():
 
 		grid = pv.UnstructuredGrid(cells_x, celltypes, np.array(points))
 		_ = grid.plot(show_edges=True)
+
+def CONNE_count(save_csv=False):
+	"""
+	Return a dataframe with the name of elements and the number of connection
+
+	Parameters
+	----------
+ 	save_csv: bool
+	  If true writes the output dataframe as csv, default False
+
+	Returns
+	-------
+	dataframe
+	  count_conne: blocks and number of connections
+	file:
+	   CONNE_count.csv: at ../mesh/
+	"""
+
+	conne_file='../mesh/CONNE.json'
+	if os.path.isfile(conne_file):
+		CONNE_df=pd.read_json(conne_file)
+		CONNE_df=CONNE_df.T
+		CONNE_df['BLOCKS']=CONNE_df.index
+		CONNE_df[['block1','block2']] =CONNE_df.BLOCKS.apply(lambda x: pd.Series([str(x)[0:5],str(x)[5:10]]))
+
+		count_conne_1=pd.DataFrame(CONNE_df['block1'].value_counts().reset_index())
+		count_conne_2=pd.DataFrame(CONNE_df['block2'].value_counts().reset_index())
+
+		count_conne=pd.concat([count_conne_1,count_conne_2])
+
+		count_conne=count_conne.groupby('index').sum()
+
+		count_conne['total']=count_conne['block1']+count_conne['block2']
+
+		del count_conne['block1']
+		del count_conne['block2']
+
+		count_conne=count_conne.sort_values(by=['total'],ascending=False)
+
+		if save_csv:
+			count_conne.to_csv('../mesh/CONNE.csv')
+
+		return count_conne
+	else:
+		sys.exit("The file %s or directory do not exist"%conne_file)
