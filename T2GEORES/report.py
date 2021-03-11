@@ -21,8 +21,10 @@ import writer as t2w
 from formats import formats_t2
 import geometry as geomtr
 from formats import plot_conf_color,plot_conf_marker
-
-#It is a must to change the way a json is loaded
+import vtk
+import  geometry as geometry
+import numpy as np
+from scipy.spatial import ConvexHull
 
 def plot_compare_one(well,savefig, no_real_data, data, TVD_elem, TVD_elem_top,axT,axP,PT_real_dictionary,layer_bottom,limit_layer,input_dictionary,label=None,def_colors=True):
 	"""It generates two plots, they compare real downhole temperature and pressure measurements with model output 
@@ -454,3 +456,174 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 	else:
 		sys.exit("There is no real data for the parameter selected: %s "%typePT)
 
+def to_paraview(input_dictionary,itime=None):
+	"""
+	It generates a vtu file to be read on Paraview for different time output including all the parameters from each block.
+
+	Parameters
+	----------
+ 	input_dictionary: dictionary
+	  Contains the information of the layers on the model
+	itime: float
+	  It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)
+
+	Returns
+	-------
+	file
+	  to_paraview.vtu: on ../mesh
+	"""
+
+	segmt_json_file='../mesh/segmt.json'
+
+	if os.path.isfile(segmt_json_file):
+		with open(segmt_json_file) as file:
+		  	blocks=json.load(file)
+	else:
+		sys.exit("The file %s or directory do not exist, run segmnt_to_json from regeo_mesh"%segmt_json_file)		
+
+	ugrid=vtk.vtkUnstructuredGrid()
+	block_name=vtk.vtkStringArray()
+	block_name.SetName('block')
+
+	rocktype=vtk.vtkStringArray()
+	rocktype.SetName('rocktype')
+
+	layers_dict=geometry.vertical_layers(input_dictionary)
+
+	layers_name={}
+
+	for j, layer in enumerate(layers_dict['name']):
+		layers_name[layer]=[layers_dict['top'][j],layers_dict['bottom'][j]]
+
+	points_vtk=vtk.vtkPoints()
+
+	cnt=0
+	for block in blocks:
+
+		faceId=vtk.vtkIdList()
+		block_name.InsertNextValue(block)
+		rocktype.InsertNextValue(blocks[block]['rocktype'])
+		points=[]
+		for i, point in enumerate(blocks[block]['points']):
+			if i%2==0:
+				point_x=point
+			elif i%2==1:
+				point_y=point
+
+			if i%2==1 and i!=0 and [point_x,point_y] not in points:
+				points.append([point_x,point_y])
+
+		points=np.array(points)
+		hull = ConvexHull(points)
+
+		dict_points={}
+		
+		cnt_int=0
+		for n in range(len(points[hull.vertices,0])):
+			dict_points[n]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][0]]
+			cnt_int+=1
+
+		for n in range(len(points[hull.vertices,0])):
+			dict_points[n+len(points)]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][1]]
+			cnt_int+=1
+
+		for key in dict_points:
+			points_vtk.InsertNextPoint(dict_points[key])
+
+		faceId.InsertNextId(len(points)+2)
+
+		faces=[[] for n in range(len(points)+2)]
+		faces[0]=[face+cnt for face in range(len(points))]
+		faces[1]=[face+len(points)+cnt for face in range(len(points))]
+		
+		for nx in range(len(points)):
+			if nx+1<len(points):
+				faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+1+len(points)+cnt,nx+1+cnt]
+			else:
+				faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+cnt+1,cnt]
+		
+		cnt+=cnt_int
+		
+		for face in faces:
+			faceId.InsertNextId(len(face))
+			[faceId.InsertNextId(i) for i in face]
+
+		ugrid.InsertNextCell(vtk.VTK_POLYHEDRON,faceId)
+		ugrid.GetCellData().AddArray(block_name)
+		ugrid.GetCellData().AddArray(rocktype)
+
+	ugrid.SetPoints(points_vtk)
+
+	series={"file-series-version":"1.0",
+			"files":[],
+			}
+
+	src_directory='../output/PT/json/evol'
+	src_files = os.listdir(src_directory)
+	files_dictionary={}
+	for file_name in src_files:
+		time=file_name.split("_")[2].split(".j")[0]
+		full_file_name = os.path.join(src_directory, file_name)
+		files_dictionary[time]=full_file_name
+
+	if itime==None:
+		if files_dictionary:
+			for t in files_dictionary.keys():
+				file_name=src_directory+'/t2_output_%s.json'%t
+				with open(file_name) as file:
+				  	data_time_n=json.load(file)
+
+				temperature=vtk.vtkFloatArray()
+				temperature.SetName('temperature')
+
+				pressure=vtk.vtkFloatArray()
+				pressure.SetName('pressure')
+
+				for block in blocks:
+					pressure.InsertNextValue(float(data_time_n[t][block]['P'])/1E5)
+					temperature.InsertNextValue(float(data_time_n[t][block]['T']))
+					ugrid.GetCellData().AddArray(pressure)
+					ugrid.GetCellData().AddArray(temperature)
+
+				writer=vtk.vtkXMLUnstructuredGridWriter()
+				writer.SetInputData(ugrid)
+				writer.SetFileName('../output/vtu/model_%s.vtu'%t)
+				series["files"].append({"name":"mesh_%s.vtu"%t,"time":float(t)})
+				writer.SetDataModeToAscii()
+				writer.Update()
+
+				writer.Write()
+
+			with open("../output/vtu/model_.vtu.series","w") as f:
+				json.dump(series,f)
+		else:
+			sys.exit("There are no json files generated, run t2_to_json from output")		
+	else:
+		if not files_dictionary:
+			file_name=src_directory+'/t2_output_%6.5E.json'%itime
+			with open(file_name) as file:
+			  	data_time_n=json.load(file)
+
+			temperature=vtk.vtkFloatArray()
+			temperature.SetName('temperature')
+
+			pressure=vtk.vtkFloatArray()
+			pressure.SetName('pressure')
+
+			for block in blocks:
+				pressure.InsertNextValue(float(data_time_n[t][block]['P'])/1E5)
+				temperature.InsertNextValue(float(data_time_n[t][block]['T']))
+				ugrid.GetCellData().AddArray(pressure)
+				ugrid.GetCellData().AddArray(temperature)
+
+			writer=vtk.vtkXMLUnstructuredGridWriter()
+			writer.SetInputData(ugrid)
+			writer.SetFileName('../output/vtu/model_%s.vtu'%t)
+			series["files"].append({"name":"mesh_%6.5E.vtu"%itime,"time":float(itime)})
+			writer.SetDataModeToAscii()
+			writer.Update()
+
+			writer.Write()
+
+			with open("../output/vtu/model_.vtu.series","w") as f:
+				json.dump(series,f)

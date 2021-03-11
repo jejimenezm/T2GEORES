@@ -983,7 +983,7 @@ class py2amesh:
 def mesh_creation_func(input_mesh_dictionary,input_dictionary):
 	"""Creates a grid
 
-	Most of the paramters are keywords from the input dictionary input_mesh_dictionary. Otherwise, the input dictionary is specified.
+	Most of the parameters are keywords from the input dictionary input_mesh_dictionary. Otherwise, the input dictionary is specified.
 
 	Parameters
 	----------
@@ -1244,7 +1244,7 @@ def ELEM_to_json():
 		sys.exit("The file %s or directory do not exist"%source_file)
 
 def CONNE_to_json():
-	"""It creates a json file from the CONNE file on mesh/to_steinar foler 
+	"""It creates a json file from the CONNE file on mesh/to_steinar folder 
 
 	Returns
 	-------
@@ -1455,91 +1455,6 @@ def plot_voronoi(input_mesh_dictionary, geners,layer='D',plot_center=False,mark_
 	else:
 		sys.exit("The file %s does not exist"%(segmt_json_file))
 
-def plot_3D_mesh():
-
-	segmt_file='../mesh/from_amesh/segmt'
-
-	if os.path.isfile(segmt_file):
-		with open('../mesh/ELEME.json') as file:
-	  		blocks_position=json.load(file)
-
-		elements_count = {blocks:{'count':[],'points':[]} for blocks in blocks_position.keys()}
-
-		layer_dictionary={}
-		layers_info=geometry.vertical_layers()
-		for i, name in enumerate(layers_info['name']):
-			layer_dictionary[name]=[layers_info['top'][i],layers_info['bottom'][i]]
-
-
-		with open(segmt_file,'r') as segmt_file:
-			for i, line in enumerate(segmt_file):
-				line_array=line.split()
-				len_array=len(line_array)
-				if len_array==6:
-					elem2=line_array[5][5:12]
-				elif len_array==7:
-					elem2=line_array[5][5:12]+line_array[6]
-
-				X1=float(line_array[0])
-				Y1=float(line_array[1])
-				
-				X2=float(line_array[2])
-				Y2=float(line_array[3])
-				direction=line_array[4]
-				elem1=line_array[5][0:5]
-				Z=layer_dictionary[elem1[0]][0]
-
-				if direction==1:
-					elements_count[elem1]['points'].append([X1,Y1,Z])
-					elements_count[elem1]['points'].append([X2,Y2,Z])
-					elements_count[elem1]['count'].append(i*2)
-					elements_count[elem2]['count'].append(i*2+1)
-				else:
-					elements_count[elem1]['points'].append([X2,Y2,Z])
-					elements_count[elem1]['points'].append([X1,Y1,Z])
-					if '*' in elem2:
-						elements_count[elem1]['count'].append(i*2+1)
-						elements_count[elem1]['count'].append(i*2)
-					else:
-						elements_count[elem2]['count'].append(i*2)
-						elements_count[elem1]['count'].append(i*2+1)
-
-		points=[]
-		cells=[[] for i in range(len(elements_count))]
-
-		cnt=0
-		for n, elem in enumerate(elements_count):
-			temp_points=list(set(map(tuple, elements_count[elem]['points'])))
-			for point in temp_points:
-				points.append(list(point))
-
-				cells[n].append(cnt)
-				cnt+=1
-
-				Z2=layer_dictionary[elem[0]][1]
-				point2=[point[0],point[1],Z2]
-				points.append(point2)
-
-				cells[n].append(cnt)
-				cnt+=1
-
-		celltypes = np.empty(len(elements_count), dtype=np.uint8)
-		celltypes[:]=vtk.VTK_HEXAHEDRON
-
-		"""
-		for i, eleme in enumerate(elements_count):
-			celltypes[i]=len(cells[i])*3/2
-		"""
-
-		cells_x = []
-		for i, cell in enumerate(cells):
-			cells_x.extend(cells[i])
-
-		cells_x=np.array(cells_x)
-
-		grid = pv.UnstructuredGrid(cells_x, celltypes, np.array(points))
-		_ = grid.plot(show_edges=True)
-
 def CONNE_count(save_csv=False):
 	"""
 	Return a dataframe with the name of elements and the number of connection
@@ -1584,3 +1499,106 @@ def CONNE_count(save_csv=False):
 		return count_conne
 	else:
 		sys.exit("The file %s or directory do not exist"%conne_file)
+
+def mesh_to_paraview(input_dictionary):
+	"""
+	It generates a vtu file to be read on Paraview including the rocktype and block name.
+
+	Parameters
+	----------
+ 	input_dictionary: dictionary
+	  Contains the information of the layers on the model.
+
+	Returns
+	-------
+	file
+	  model_mesh.vtu: on ../mesh
+	"""
+
+	segmt_json_file='../mesh/segmt.json'
+
+	if os.path.isfile(segmt_json_file):
+		with open(segmt_json_file) as file:
+		  	blocks=json.load(file)
+	else:
+		sys.exit("The file %s or directory do not exist, run segmnt_to_json from regeo_mesh"%segmt_json_file)		
+
+	ugrid=vtk.vtkUnstructuredGrid()
+	block_name=vtk.vtkStringArray()
+	block_name.SetName('block')
+
+	rocktype=vtk.vtkStringArray()
+	rocktype.SetName('rocktype')
+
+	layers_dict=geometry.vertical_layers(input_dictionary)
+
+	layers_name={}
+
+	for j, layer in enumerate(layers_dict['name']):
+		layers_name[layer]=[layers_dict['top'][j],layers_dict['bottom'][j]]
+
+	points_vtk=vtk.vtkPoints()
+
+	cnt=0
+	for block in blocks:
+
+		faceId=vtk.vtkIdList()
+		block_name.InsertNextValue(block)
+		rocktype.InsertNextValue(blocks[block]['rocktype'])
+		points=[]
+		for i, point in enumerate(blocks[block]['points']):
+			if i%2==0:
+				point_x=point
+			elif i%2==1:
+				point_y=point
+
+			if i%2==1 and i!=0 and [point_x,point_y] not in points:
+				points.append([point_x,point_y])
+
+		points=np.array(points)
+		hull = ConvexHull(points)
+
+		dict_points={}
+		
+		cnt_int=0
+		for n in range(len(points[hull.vertices,0])):
+			dict_points[n]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][0]]
+			cnt_int+=1
+
+		for n in range(len(points[hull.vertices,0])):
+			dict_points[n+len(points)]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][1]]
+			cnt_int+=1
+
+		for key in dict_points:
+			points_vtk.InsertNextPoint(dict_points[key])
+
+		faceId.InsertNextId(len(points)+2)
+
+		faces=[[] for n in range(len(points)+2)]
+		faces[0]=[face+cnt for face in range(len(points))]
+		faces[1]=[face+len(points)+cnt for face in range(len(points))]
+		
+		for nx in range(len(points)):
+			if nx+1<len(points):
+				faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+1+len(points)+cnt,nx+1+cnt]
+			else:
+				faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+cnt+1,cnt]
+		
+		cnt+=cnt_int
+		
+		for face in faces:
+			faceId.InsertNextId(len(face))
+			[faceId.InsertNextId(i) for i in face]
+
+		ugrid.InsertNextCell(vtk.VTK_POLYHEDRON,faceId)
+		ugrid.GetCellData().AddArray(block_name)
+		ugrid.GetCellData().AddArray(rocktype)
+
+	ugrid.SetPoints(points_vtk)
+
+	writer=vtk.vtkXMLUnstructuredGridWriter()
+	writer.SetInputData(ugrid)
+	writer.SetFileName('../mesh/model_mesh.vtu')
+	writer.SetDataModeToAscii()
+	writer.Update()
+	writer.Write()

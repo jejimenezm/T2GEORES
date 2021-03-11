@@ -3,7 +3,6 @@ import shutil
 import os
 import csv
 import pandas as pd
-import os
 import sys
 import sqlite3
 import subprocess
@@ -145,7 +144,7 @@ def from_sav_to_json(sav_version='sav1'):
 		t2_sav_file.close()
 
 	eleme_pd=pd.DataFrame.from_dict(eleme_dict,orient='index', columns=['X', 'Y','Z','P','T'])
-	eleme_pd.to_json("../output/PT/json/PT_json_from_sav.txt",orient="index",indent=2)
+	eleme_pd.to_json("../output/PT/json/PT_json_from_sav.json",orient="index",indent=2)
 
 def PTjson_to_sqlite(input_dictionary,source='t2',):
 	"""It stores the defined json file into the database on the table t2PTout
@@ -576,3 +575,92 @@ def extract_csv_from_t2out(json_output=False):
 			file.write(string[0:-2])
 			file.write('\n')
 	file.close()
+
+def t2_to_json(itime=None,save_full=False):
+	"""It creates a severals or a single json file from the output file from the TOUGH2 run
+
+	Parameters
+	----------
+ 	itime: float
+	  It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)
+	save_full: bool
+	  If True it creates a single output json file
+
+	Returns
+	-------
+	files
+	  t2_ouput_{time}.json: on ../output/PT/json/evol/
+	file
+	  t2_output:  on ../output/PT/json/
+
+	Attention
+	---------
+	When t2_output is saved, the large could be too large for the system to handle it
+
+	Examples
+	--------
+	>>> t2_to_json()
+	"""
+
+	block__json_file='../mesh/ELEME.json'
+
+	if os.path.isfile(block__json_file):
+		with open('../mesh/ELEME.json') as file:
+		  	blocks=json.load(file)
+	else:
+		sys.exit("The file %s or directory do not exist, run ELEM_to_json from regeo_mesh"%output_t2_file)		  	
+
+
+	parameters={0:"P",1:"T",2:"SG",3:"SW",4:"X(WAT1)",5:"X(WAT2)",6:"PCAP",7:"DG",8:"DW"}
+
+	#Creates a json file for every output time on the TOUGH2 output file
+	cnt=0
+	output_t2_file="../model/t2/t2.out"
+	if os.path.isfile(output_t2_file):
+		t2_file=open(output_t2_file, "r")
+		for t2_line in t2_file:
+			if "OUTPUT DATA AFTER" in t2_line:
+				if cnt!=0:
+					if itime==None or (itime!=None and float(time)==float(itime)):
+						t2_pd=pd.DataFrame.from_dict(data_dictionary,orient='index')
+						t2_pd.to_json('../output/PT/json/evol/t2_output_%s.json'%time,orient="index",indent=2)
+						if itime!=None and itime==float(itime):
+							break
+				cnt+=1
+				time=t2_line.rstrip().split(" ")[-2]
+				data_dictionary={}
+				data_dictionary[time]={}
+			if len(t2_line.split())==11 and t2_line.split()[0] in blocks.keys():
+				t2_array=t2_line.rstrip().split(" ")
+				data_list= list(filter(None, t2_array))
+				data_dictionary[time][data_list[0]]={}
+				for i in parameters:
+					data_dictionary[time][data_list[0]][parameters[i]]=float(data_list[i+2])
+		t2_file.close()
+	else:
+		sys.exit("The file %s or directory do not exist"%output_t2_file)
+
+	if save_full:
+		#It generates a dictionary with time as key and json file output as value
+		src='../output/PT/json/evol/'
+		src_files = os.listdir(src)
+		files_dictionary={}
+		for file_name in src_files:
+			time=file_name.split("_")[2].split(".j")[0]
+			full_file_name = os.path.join(src, file_name)
+			files_dictionary[time]=full_file_name
+	
+		#It generates a single json output file, for a large model it can be to large for the system memory
+		t2_json='../output/PT/json/t2_output.json'
+		t2_output_file=open(t2_json,'w')
+
+		t2_output_file.write("{\n")
+		for time in sorted(files_dictionary):
+			file=open(files_dictionary[time],'r')
+			lines=file.readlines()[1:-2]
+			for line in lines:
+				t2_output_file.write(line)
+			t2_output_file.write(",\n")		
+		t2_output_file.write("}")
+		t2_output_file.close()
+

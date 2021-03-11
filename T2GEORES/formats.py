@@ -276,13 +276,15 @@ structure={'calib':{'drawdown_cooling':{'images':None},
 					  'mh':{'images':None,
 					        'txt':{'prev':None}
 					        },
+					  'vtu':None,
 			          'PT':{'csv':{'prev':None},
 			          		'evol':{'prev':None},
 			          		'images':{'evol':None,
 			          				  'layer':None,
 			          				  'logging':None,
 			          				  'real_layer':None},
-			          		'json':{'prev':None},
+			          		'json':{'prev':None,
+			          				'evol':None},
 			          		'txt':{'prev':None}
 			          		}
 			        },
