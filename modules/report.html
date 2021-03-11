@@ -270,6 +270,30 @@
 </div>
 </dd></dl>
 
+<dl class="function">
+<dt id="report.to_paraview">
+<code class="descclassname">report.</code><code class="descname">to_paraview</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>itime=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#to_paraview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.to_paraview" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a vtu file to be read on Paraview for different time output including all the parameters from each block.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the information of the layers on the model</li>
+<li><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">to_paraview.vtu: on ../mesh</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
