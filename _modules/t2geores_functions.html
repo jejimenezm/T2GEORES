@@ -155,10 +155,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for t2geores_functions</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">geometry</span> <span class="k">as</span> <span class="n">geomtr</span>
+<span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">formats</span> <span class="k">as</span> <span class="n">formats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
-<span class="kn">import</span> <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geomtr</span>
-<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span><span class="p">,</span><span class="n">structure</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
@@ -265,7 +265,7 @@
 		<span class="n">depth</span><span class="o">=</span><span class="n">z_ref</span><span class="o">-</span><span class="n">TVD</span>
 		<span class="n">Ti</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;GRADTZ&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">depth</span><span class="o">+</span><span class="n">To</span>
 		<span class="n">rho</span><span class="o">=</span><span class="n">IAPWS97</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="p">(</span><span class="n">Ti</span><span class="o">+</span><span class="mf">273.15</span><span class="p">),</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">rho</span>
-		<span class="n">P_colum</span><span class="o">=</span><span class="n">rho</span><span class="o">*</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;DELTAZ&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;GF&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">P_colum</span><span class="o">=</span><span class="n">rho</span><span class="o">*</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;DELTAZ&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;GF&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">Pi</span><span class="o">+=</span><span class="n">P_colum</span><span class="o">/</span><span class="mf">1E5</span>
 		<span class="n">T</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ti</span><span class="p">)</span>
 		<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Pi</span><span class="p">)</span>
@@ -320,7 +320,7 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">input_file</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="empty_model"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.empty_model">[docs]</a><span class="k">def</span> <span class="nf">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">,</span> <span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;../&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="empty_model"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.empty_model">[docs]</a><span class="k">def</span> <span class="nf">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;../&#39;</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It erases all the file on the  T2GEORES structure except the input and scripts folders</span>
 
 <span class="sd">	Parameters</span>
@@ -339,9 +339,9 @@
 <span class="sd">	--------</span>
 <span class="sd">	&gt;&gt;&gt; empty_model(current_path=&#39;../&#39;)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">structure</span><span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
-		<span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">:</span>
-			<span class="n">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">direc</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span> <span class="n">direc</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">:</span>
+			<span class="n">empty_model</span><span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">[</span><span class="n">direc</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span> <span class="n">direc</span><span class="p">))</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">current_path</span><span class="p">):</span>
 			<span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">current_path</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span><span class="s1">&#39;scripts&#39;</span><span class="p">]):</span>
@@ -350,7 +350,7 @@
 				<span class="k">except</span> <span class="ne">IsADirectoryError</span><span class="p">:</span>
 					<span class="k">continue</span></div>
 
-<div class="viewcode-block" id="create_structure"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.create_structure">[docs]</a><span class="k">def</span> <span class="nf">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">structure</span><span class="o">=</span><span class="n">structure</span><span class="p">):</span>
+<div class="viewcode-block" id="create_structure"><a class="viewcode-back" href="../modules/t2geores_functions.html#t2geores_functions.create_structure">[docs]</a><span class="k">def</span> <span class="nf">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">structure</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It creates the necessary structure for T2GEORES to work</span>
 
 <span class="sd">	Parameters</span>
@@ -368,9 +368,9 @@
 <span class="sd">	--------</span>
 <span class="sd">	&gt;&gt;&gt; create_structure(current_path=&#39;.&#39;)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">structure</span><span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
-		<span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">:</span>
-			<span class="n">empty_model</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">direc</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span> <span class="n">direc</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="o">!=</span><span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">:</span>
+			<span class="n">empty_model</span><span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">structure</span><span class="p">[</span><span class="n">direc</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_path</span><span class="p">,</span> <span class="n">direc</span><span class="p">))</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span></div>
 </pre></div>

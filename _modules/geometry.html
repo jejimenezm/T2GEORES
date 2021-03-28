@@ -155,7 +155,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for geometry</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span>
+<span></span><span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">formats</span> <span class="k">as</span> <span class="n">formats</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
@@ -757,7 +757,7 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">P</span><span class="o">=</span><span class="p">[]</span>
-	<span class="n">g</span><span class="o">=</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
+	<span class="n">g</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;PARAMETERS&#39;</span><span class="p">][</span><span class="s1">&#39;GF&#39;</span><span class="p">]</span>
 	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">TVD_array</span><span class="p">)):</span>
 		<span class="k">if</span> <span class="n">TVD_array</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">water_level_TVD</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>

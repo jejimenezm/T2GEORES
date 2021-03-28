@@ -155,7 +155,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for report</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">formats</span> <span class="k">as</span> <span class="n">formats</span>
+<span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">geometry</span> <span class="k">as</span> <span class="n">geometry</span>
+<span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">writer</span> <span class="k">as</span> <span class="n">t2w</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
@@ -173,13 +176,7 @@
 <span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
-<span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
-<span class="kn">import</span> <span class="nn">writer</span> <span class="k">as</span> <span class="nn">t2w</span>
-<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">formats_t2</span>
-<span class="kn">import</span> <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geomtr</span>
-<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">plot_conf_color</span><span class="p">,</span><span class="n">plot_conf_marker</span>
 <span class="kn">import</span> <span class="nn">vtk</span>
-<span class="kn">import</span>  <span class="nn">geometry</span> <span class="k">as</span> <span class="nn">geometry</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span>
 
@@ -243,9 +240,9 @@
 
 		<span class="c1">#Plotting real data</span>
 
-		<span class="n">ln1T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;var_T&#39;</span><span class="p">],</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;z_T&#39;</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+		<span class="n">ln1T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;var_T&#39;</span><span class="p">],</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;z_T&#39;</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
 
-		<span class="n">ln1P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;var_P&#39;</span><span class="p">],</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;z_P&#39;</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+		<span class="n">ln1P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;var_P&#39;</span><span class="p">],</span><span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;z_P&#39;</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
 
 		<span class="n">lnsT</span> <span class="o">=</span> <span class="n">ln1T</span>
 
@@ -253,13 +250,13 @@
 
 	<span class="c1">#Plotting the calculated data</span>
 
-	<span class="n">ln2T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
+	<span class="n">ln2T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">],</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
 
-	<span class="n">ln2P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
+	<span class="n">ln2P</span><span class="o">=</span><span class="n">axP</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">TVD_elem</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
 
 	<span class="k">if</span> <span class="n">def_colors</span><span class="p">:</span>
-		<span class="n">color_real_T</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-		<span class="n">color_real_P</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">color_real_T</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">color_real_P</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 		<span class="n">ln1T</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_real_T</span><span class="p">)</span>
 		<span class="n">ln2T</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color_real_T</span><span class="p">)</span>
@@ -395,9 +392,9 @@
 		<span class="c1">#Plotting real data</span>
 		<span class="n">data_PT_real</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39;;&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
 
-		<span class="n">x_T</span><span class="p">,</span><span class="n">y_T</span><span class="p">,</span><span class="n">z_T</span><span class="p">,</span><span class="n">var_T</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+		<span class="n">x_T</span><span class="p">,</span><span class="n">y_T</span><span class="p">,</span><span class="n">z_T</span><span class="p">,</span><span class="n">var_T</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
 
-		<span class="n">x_P</span><span class="p">,</span><span class="n">y_P</span><span class="p">,</span><span class="n">z_P</span><span class="p">,</span><span class="n">var_P</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+		<span class="n">x_P</span><span class="p">,</span><span class="n">y_P</span><span class="p">,</span><span class="n">z_P</span><span class="p">,</span><span class="n">var_P</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
 
 		<span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;x_T&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">x_T</span>
 		<span class="n">PT_real_dictionary</span><span class="p">[</span><span class="s1">&#39;y_T&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">y_T</span>
@@ -433,7 +430,7 @@
 
 		<span class="c1">#Retrieving the layers information from model_conf</span>
 
-		<span class="n">layers_info</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+		<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 
 		<span class="n">TVD_elem</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">]</span>
 
@@ -516,7 +513,7 @@
 
 	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
-	<span class="n">layers_info</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">()</span>
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">()</span>
 
 	<span class="n">layer_bottom</span><span class="o">=</span><span class="p">{</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]:</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))}</span>
 
@@ -545,13 +542,13 @@
 
 			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_PT_real</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
 
-				<span class="n">x_T</span><span class="p">,</span><span class="n">y_T</span><span class="p">,</span><span class="n">z_T</span><span class="p">,</span><span class="n">var_T</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="n">data_to_extract</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+				<span class="n">x_T</span><span class="p">,</span><span class="n">y_T</span><span class="p">,</span><span class="n">z_T</span><span class="p">,</span><span class="n">var_T</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="n">data_to_extract</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">data_PT_real</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
 
 				<span class="c1">#Define plot</span>
 
 				<span class="n">axT</span><span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 				
-				<span class="n">ln1T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">var_T</span><span class="p">,</span><span class="n">z_T</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">typePT</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+				<span class="n">ln1T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">var_T</span><span class="p">,</span><span class="n">z_T</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">typePT</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
 
 				<span class="c1">#Model</span>
 
@@ -567,7 +564,7 @@
 
 					<span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;correlative&#39;</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-					<span class="n">ln2T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">typePT</span><span class="p">])</span><span class="o">/</span><span class="n">divisor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">TVD_elem</span><span class="p">),</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">typePT</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated&#39;</span><span class="p">)</span>
+					<span class="n">ln2T</span><span class="o">=</span><span class="n">axT</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">typePT</span><span class="p">])</span><span class="o">/</span><span class="n">divisor</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">TVD_elem</span><span class="p">),</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">typePT</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated&#39;</span><span class="p">)</span>
 
 					<span class="n">axT</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">layer_bottom</span><span class="p">[</span><span class="n">limit_layer</span><span class="p">],</span><span class="n">z_ref</span><span class="p">])</span>
 					
@@ -784,6 +781,474 @@
 
 			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../output/vtu/model_.vtu.series&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 				<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">series</span><span class="p">,</span><span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="vertical_cross_section"><a class="viewcode-back" href="../modules/report.html#report.vertical_cross_section">[docs]</a><span class="k">def</span> <span class="nf">vertical_cross_section</span><span class="p">(</span><span class="n">method</span><span class="p">,</span><span class="n">ngridx</span><span class="p">,</span><span class="n">ngridy</span><span class="p">,</span><span class="n">variable_to_plot</span><span class="p">,</span><span class="n">source</span><span class="p">,</span><span class="n">show_wells_3D</span><span class="p">,</span><span class="n">print_point</span><span class="p">,</span><span class="n">savefig</span><span class="p">,</span><span class="n">plots_conf</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It Generates a vertical cross section for a specified parameter on a defined path.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	   </span>
+<span class="sd">	ngridx : int</span>
+<span class="sd">	  Number of element on the horizontal direction</span>
+<span class="sd">	ngridy : int</span>
+<span class="sd">	  Number of element on the vertical direction</span>
+<span class="sd">	show_wells_3D : bool</span>
+<span class="sd">	  If true the wells are shown on 3D</span>
+<span class="sd">	print_point : bool</span>
+<span class="sd">	  If true prints the points where the interpolation has taken place.</span>
+<span class="sd">	variable_to_plot : str</span>
+<span class="sd">	  Variable to plot: &quot;P&quot;,&quot;T&quot;,&quot;SG&quot;,&quot;SW&quot;,&quot;X1&quot;,&quot;X2&quot;,&quot;PCAP,&quot;&quot;DG&quot; y &quot;DW&quot; for &#39;t2&#39; source; &quot;P&quot; and &quot;T&quot; for &#39;sav&#39; source</span>
+<span class="sd">	source: str</span>
+<span class="sd">	  &#39;t2&#39; or &#39;sav&#39;</span>
+<span class="sd">	savefig : bool</span>
+<span class="sd">	  If true the plot is saved</span>
+<span class="sd">	plots_conf: dictionary</span>
+<span class="sd">	  With key words &#39;cross_section&#39; defines the points of a lines for the vertical section. &#39;variables_level&#39; defines the variable values to plot</span>
+<span class="sd">	input_dictionary: dictioanary</span>
+<span class="sd">	  Contains the &#39;LAYERS&#39; keyword</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	image</span>
+<span class="sd">		vertical_section_{varible_to_plot}.png: on &#39;../output/PT/images/</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The point should not be defined on a well coordinate.</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plots_conf={&#39;cross_section&#39;:{&#39;x&#39;:[5000,5000,7500],&#39;y&#39;:[3000,7250,7250]},&#39;variable_levels&#39;:[25,50,75,100,125,150,170,180,200,220,230,250,260]}</span>
+<span class="sd">	&gt;&gt;&gt; input_dictionary={&#39;LAYERS&#39;:{1:[&#39;A&#39;,100],2:[&#39;B&#39;, 100],3:[&#39;C&#39;, 125]}}</span>
+<span class="sd">	&gt;&gt;&gt; vertical_cross_section(ngridx=100,ngridy=100,variable_to_plot=&quot;T&quot;,source=&quot;t2&quot;,show_wells_3D=True)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">x_points</span><span class="o">=</span><span class="n">plots_conf</span><span class="p">[</span><span class="s1">&#39;cross_section&#39;</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+	<span class="n">y_points</span><span class="o">=</span><span class="n">plots_conf</span><span class="p">[</span><span class="s1">&#39;cross_section&#39;</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+	<span class="n">variable_levels</span><span class="o">=</span><span class="n">plots_conf</span><span class="p">[</span><span class="s1">&#39;variable_levels&#39;</span><span class="p">]</span>
+
+	<span class="n">variables_to_plot_t2</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;P&quot;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+						   <span class="s2">&quot;T&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span>
+						   <span class="s2">&quot;SG&quot;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span>
+						   <span class="s2">&quot;SW&quot;</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span>
+						   <span class="s2">&quot;X1&quot;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span>
+						   <span class="s2">&quot;X2&quot;</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span>
+						   <span class="s2">&quot;PCAP&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+						   <span class="s2">&quot;DG&quot;</span><span class="p">:</span><span class="mi">11</span><span class="p">,</span>
+						   <span class="s2">&quot;DW&quot;</span><span class="p">:</span><span class="mi">12</span><span class="p">}</span>
+
+	<span class="n">variables_to_plot_sav</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;P&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+	                       <span class="s2">&quot;T&quot;</span><span class="p">:</span><span class="mi">4</span><span class="p">}</span>
+
+	<span class="k">if</span> <span class="n">source</span><span class="o">==</span><span class="s2">&quot;sav&quot;</span><span class="p">:</span>
+		<span class="n">index</span><span class="o">=</span><span class="n">variables_to_plot_sav</span><span class="p">[</span><span class="n">variable_to_plot</span><span class="p">]</span>
+		<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../output/PT/json/PT_json_from_sav.txt&quot;</span>
+	<span class="k">elif</span> <span class="n">source</span><span class="o">==</span><span class="s2">&quot;t2&quot;</span><span class="p">:</span>
+		<span class="n">index</span><span class="o">=</span><span class="n">variables_to_plot_t2</span><span class="p">[</span><span class="n">variable_to_plot</span><span class="p">]</span>
+		<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../output/PT/json/PT_json.txt&quot;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+	  		<span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+	  	
+
+	<span class="n">variable_min</span><span class="o">=</span><span class="mf">100E8</span>
+	<span class="n">variable_max</span><span class="o">=</span><span class="mi">0</span>
+
+	<span class="c1">#Creates an irregular grid with the form [[x,y,z],[x1,y1,z1]]</span>
+	<span class="n">irregular_grid</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+	<span class="n">variable</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+	<span class="k">for</span> <span class="n">elementx</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">variable_max</span><span class="o">&lt;</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="n">variable_to_plot</span><span class="p">]:</span>
+			<span class="n">variable_max</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="n">variable_to_plot</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">variable_min</span><span class="o">&gt;</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="n">variable_to_plot</span><span class="p">]:</span>
+			<span class="n">variable_min</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="n">variable_to_plot</span><span class="p">]</span>
+
+		<span class="n">irregular_grid</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">irregular_grid</span><span class="p">,[[</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="s1">&#39;X&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="s1">&#39;Z&#39;</span><span class="p">]]],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+		<span class="n">variable</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="n">elementx</span><span class="p">][</span><span class="n">variable_to_plot</span><span class="p">])</span>
+
+
+	<span class="n">irregular_grid</span><span class="o">=</span><span class="n">irregular_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+	<span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">[</span><span class="mi">0</span><span class="p">:]</span>
+
+
+	<span class="c1">#Creates the points a long the lines</span>
+	<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+	<span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+	
+	<span class="k">for</span> <span class="n">xy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_points</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">xy</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_points</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">xt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_points</span><span class="p">[</span><span class="n">xy</span><span class="p">],</span><span class="n">x_points</span><span class="p">[</span><span class="n">xy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">x_points</span><span class="p">[</span><span class="n">xy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x_points</span><span class="p">[</span><span class="n">xy</span><span class="p">])</span><span class="o">/</span><span class="n">ngridx</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="n">ngridx</span><span class="p">)</span>
+			<span class="n">yt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_points</span><span class="p">[</span><span class="n">xy</span><span class="p">],</span><span class="n">y_points</span><span class="p">[</span><span class="n">xy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">y_points</span><span class="p">[</span><span class="n">xy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">y_points</span><span class="p">[</span><span class="n">xy</span><span class="p">])</span><span class="o">/</span><span class="n">ngridy</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="n">ngridy</span><span class="p">)</span>
+			<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">xt</span><span class="p">)</span>
+			<span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">yt</span><span class="p">)</span>
+
+	<span class="c1">#Calculastes the distance of every point along the projection</span>
+
+	<span class="n">projection_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+	<span class="k">for</span> <span class="n">npr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="n">npr</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="k">break</span>
+		<span class="k">if</span> <span class="n">npr</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">delta_x_pr</span><span class="o">=</span><span class="p">(</span><span class="n">x_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+			<span class="n">delta_y_pr</span><span class="o">=</span><span class="p">(</span><span class="n">y_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+			<span class="n">prj_prox</span><span class="o">=</span><span class="p">(</span><span class="n">delta_y_pr</span><span class="o">+</span><span class="n">delta_x_pr</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">delta_x_pr</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">npr</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="n">npr</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+			<span class="n">delta_y_pr</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">npr</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="n">npr</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+			<span class="n">prj_prox</span><span class="o">=</span><span class="p">(</span><span class="n">delta_y_pr</span><span class="o">+</span><span class="n">delta_x_pr</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+		<span class="n">projection_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projection_req</span><span class="p">,</span><span class="n">prj_prox</span><span class="o">+</span><span class="n">projection_req</span><span class="p">[</span><span class="n">npr</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">zmid</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">]</span>
+
+	<span class="n">ztop</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span>
+
+	<span class="n">zbottom</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span>
+
+	<span class="n">zlabels</span><span class="o">=</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+	<span class="c1">#Creates the regular  mesh in 3D along all the layers</span>
+
+	<span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">ngridx</span><span class="p">)</span>
+	<span class="n">yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">ngridy</span><span class="p">)</span>
+	<span class="n">zi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">zmid</span><span class="p">)</span>
+
+	<span class="n">proj_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+	<span class="n">z_req_proj</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+	<span class="k">for</span> <span class="n">nprj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">projection_req</span><span class="p">)):</span>
+		<span class="k">for</span> <span class="n">nz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zi</span><span class="p">)):</span>
+			<span class="n">proj_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proj_req</span><span class="p">,</span><span class="n">projection_req</span><span class="p">[</span><span class="n">nprj</span><span class="p">])</span>
+			<span class="n">z_req_proj</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_req_proj</span><span class="p">,</span><span class="n">zi</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+
+	<span class="n">request_points</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+	<span class="n">x_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+	<span class="n">y_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+	<span class="n">z_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+
+	<span class="k">for</span> <span class="n">nx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+		<span class="k">for</span> <span class="n">nz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">zi</span><span class="p">)):</span>
+			<span class="n">request_points</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">request_points</span><span class="p">,[[</span><span class="n">x</span><span class="p">[</span><span class="n">nx</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">nx</span><span class="p">],</span><span class="n">zi</span><span class="p">[</span><span class="n">nz</span><span class="p">]]],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+			<span class="n">x_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_req</span><span class="p">,</span><span class="n">x</span><span class="p">[</span><span class="n">nx</span><span class="p">])</span>
+			<span class="n">y_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_req</span><span class="p">,</span><span class="n">y</span><span class="p">[</span><span class="n">nx</span><span class="p">])</span>
+			<span class="n">z_req</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_req</span><span class="p">,</span><span class="n">zi</span><span class="p">[</span><span class="n">nz</span><span class="p">])</span>
+
+	<span class="n">request_points</span><span class="o">=</span><span class="n">request_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+	<span class="n">requested_values</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span><span class="n">irregular_grid</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">request_points</span><span class="p">)</span>
+
+	<span class="c1">#Creates regular mesh on projection</span>
+
+	<span class="n">xi_pr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">proj_req</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">proj_req</span><span class="p">),</span> <span class="mi">1000</span><span class="p">)</span>
+	<span class="n">yi_pr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">z_req_proj</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">z_req_proj</span><span class="p">),</span> <span class="mi">1000</span><span class="p">)</span>
+	<span class="n">zi_pr</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">proj_req</span><span class="p">,</span> <span class="n">z_req_proj</span><span class="p">),</span> <span class="n">requested_values</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">zmid</span><span class="p">)],</span> <span class="p">(</span><span class="n">xi_pr</span><span class="p">[</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">yi_pr</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]))</span>
+
+	<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+	<span class="c1">#Plot projection</span>
+	
+	<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.05</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mf">1.05</span><span class="p">,</span> <span class="s2">&quot;A&#39;&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;distance [m]&#39;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;masl&#39;</span><span class="p">)</span>
+
+	<span class="n">contourax</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">xi_pr</span><span class="p">,</span><span class="n">yi_pr</span><span class="p">,</span><span class="n">zi_pr</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">colors</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">variable_levels</span><span class="p">)</span>
+	<span class="n">cntr</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xi_pr</span><span class="p">,</span><span class="n">yi_pr</span><span class="p">,</span><span class="n">zi_pr</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;jet&quot;</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">variable_levels</span><span class="p">)</span>
+	
+	<span class="k">if</span> <span class="n">print_point</span><span class="p">:</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">proj_req</span><span class="p">,</span><span class="n">z_req_proj</span><span class="p">,</span><span class="s1">&#39;ok&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+	
+	<span class="n">ax</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">contourax</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%10.0f</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">colors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+
+	<span class="n">cbar</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cntr</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+	<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Temperature [$^\circ$C]&#39;</span><span class="p">)</span> <span class="c1">#Fix it</span>
+	<span class="c1">#Scatter 3D</span>
+
+	<span class="n">ax3D</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+
+	<span class="n">colorbar_source</span><span class="o">=</span><span class="n">ax3D</span><span class="o">.</span><span class="n">scatter3D</span><span class="p">(</span><span class="n">x_req</span><span class="p">,</span><span class="n">y_req</span><span class="p">,</span><span class="n">z_req</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">requested_values</span><span class="p">)</span>
+
+	<span class="n">ax3D</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;East [m]&#39;</span><span class="p">)</span>
+	<span class="n">ax3D</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;North [m]&#39;</span><span class="p">)</span>
+	<span class="n">ax3D</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;m.a.s.l.&#39;</span><span class="p">)</span>
+	<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">colorbar_source</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3D</span><span class="p">)</span>
+	
+
+	<span class="c1">#Projects well on slice</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">]):</span>
+		<span class="n">data_position</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT east,north,elevation FROM wells WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39;;&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT MeasuredDepth FROM survey WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39; ORDER BY MeasuredDepth;&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+		<span class="n">x_real</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">y_real</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">z_real</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">well_proj</span><span class="o">=</span><span class="p">[]</span>
+
+		<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])):</span>
+			<span class="n">xf</span><span class="p">,</span><span class="n">yf</span><span class="p">,</span><span class="n">zf</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">])</span>
+			<span class="n">x_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xf</span><span class="p">))</span>
+			<span class="n">y_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">yf</span><span class="p">))</span>
+			<span class="n">z_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">zf</span><span class="p">))</span>
+		
+		<span class="k">for</span> <span class="n">ny</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_points</span><span class="p">)):</span>
+			<span class="k">if</span> <span class="n">data_position</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="n">y_points</span><span class="p">[</span><span class="n">ny</span><span class="p">]:</span>
+				<span class="n">position</span><span class="o">=</span><span class="n">ny</span>
+				<span class="n">bx</span><span class="o">=</span><span class="n">x_points</span><span class="p">[</span><span class="n">position</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">x_points</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+				<span class="n">by</span><span class="o">=</span><span class="n">y_points</span><span class="p">[</span><span class="n">position</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">y_points</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+				<span class="n">br</span><span class="o">=</span><span class="p">(</span><span class="n">bx</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">by</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+		
+	
+		<span class="k">for</span> <span class="n">n_proj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_real</span><span class="p">)):</span>
+			<span class="n">delta_x</span><span class="o">=</span><span class="n">x_real</span><span class="p">[</span><span class="n">n_proj</span><span class="p">]</span><span class="o">-</span><span class="n">x_points</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+			<span class="n">delta_y</span><span class="o">=</span><span class="n">y_real</span><span class="p">[</span><span class="n">n_proj</span><span class="p">]</span><span class="o">-</span><span class="n">y_points</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+			<span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="n">delta_y</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">delta_x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+			<span class="n">proj_w</span><span class="o">=</span><span class="p">((</span><span class="n">bx</span><span class="o">*</span><span class="n">delta_x</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">by</span><span class="o">*</span><span class="n">delta_y</span><span class="p">))</span><span class="o">/</span><span class="n">br</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">n_proj</span><span class="p">)</span>
+			<span class="n">well_proj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proj_w</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">n_proj</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+				<span class="n">d</span><span class="o">=</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">proj_w</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+		<span class="k">if</span> <span class="n">d</span><span class="o">&lt;</span><span class="mi">200</span><span class="p">:</span>
+			<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">well_proj</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">z_real</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="n">well_proj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">200</span><span class="p">,</span> <span class="n">z_real</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+            <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span>
+                            <span class="n">connectionstyle</span><span class="o">=</span><span class="s2">&quot;arc3&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+			<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">well_proj</span><span class="p">,</span><span class="n">z_real</span><span class="p">,</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+		
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+	<span class="c1">#Plot wells on 3D</span>
+
+	<span class="k">if</span> <span class="n">show_wells_3D</span><span class="p">:</span>
+		<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+		<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">]):</span>
+			<span class="n">data_position</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT east,north,elevation FROM wells WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39;;&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT MeasuredDepth FROM survey WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39; ORDER BY MeasuredDepth;&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+			
+			<span class="n">ax3D</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">data_position</span><span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">data_position</span><span class="p">[</span><span class="s1">&#39;north&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">data_position</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> \
+				      <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+			<span class="n">x_real</span><span class="o">=</span><span class="p">[]</span>
+			<span class="n">y_real</span><span class="o">=</span><span class="p">[]</span>
+			<span class="n">z_real</span><span class="o">=</span><span class="p">[]</span>
+
+			<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])):</span>
+				<span class="n">xf</span><span class="p">,</span><span class="n">yf</span><span class="p">,</span><span class="n">zf</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">])</span>
+				<span class="n">x_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xf</span><span class="p">))</span>
+				<span class="n">y_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">yf</span><span class="p">))</span>
+				<span class="n">z_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">zf</span><span class="p">))</span>
+		
+			<span class="n">ax3D</span><span class="o">.</span><span class="n">plot3D</span><span class="p">(</span><span class="n">x_real</span><span class="p">,</span> <span class="n">y_real</span><span class="p">,</span> <span class="n">z_real</span><span class="p">,</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+		<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">savefig</span><span class="p">:</span>
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/PT/images/vertical_section_</span><span class="si">%s</span><span class="s1">.png&#39;</span><span class="o">%</span><span class="n">variable_to_plot</span><span class="p">)</span> 
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plot_evol_well_data"><a class="viewcode-back" href="../modules/report.html#report.plot_evol_well_data">[docs]</a><span class="k">def</span> <span class="nf">plot_evol_well_data</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">layer</span><span class="p">,</span><span class="n">parameter</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary </span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Well name</span>
+<span class="sd">	layer : str</span>
+<span class="sd">	  Layer (level) at which the data will be extracted</span>
+<span class="sd">	parameter : str</span>
+<span class="sd">	  Variable to plot: &quot;P&quot;,&quot;T&quot;,&quot;SG&quot;,&quot;SW&quot;,&quot;X1&quot;,&quot;X2&quot;,&quot;PCAP,&quot;&quot;DG&quot; y &quot;DW&quot;</span>
+<span class="sd">	input_dictionary: dict</span>
+<span class="sd">	  Dictionary with the keywords &#39;ref_date&#39; (datetime type value) and &#39;db_path&#39; (database path)</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dictionary</span>
+<span class="sd">		calculated: output data from model</span>
+<span class="sd">	pandas.dataframe</span>
+<span class="sd">		data_real: Real data (if exist)</span>
+<span class="sd">	float</span>
+<span class="sd">		depth: masl</span>
+<span class="sd">	string</span>
+<span class="sd">		header: Parameter keyword</span>
+<span class="sd">	string</span>
+<span class="sd">		parameter_label: parameter label</span>
+<span class="sd">	string</span>
+<span class="sd">		parameter_unit: Parameter unit</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	it generates the input data for the function plot_evol_well_lines</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">parameter</span>  <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">,</span><span class="s2">&quot;T&quot;</span><span class="p">,</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span><span class="s2">&quot;X(WAT1)&quot;</span><span class="p">,</span><span class="s2">&quot;X(WAT2)&quot;</span><span class="p">,</span><span class="s2">&quot;PCAP&quot;</span><span class="p">,</span><span class="s2">&quot;DG&quot;</span><span class="p">,</span><span class="s2">&quot;DW&quot;</span><span class="p">]:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cant be printed, the parameter is  not register&quot;</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;P&quot;</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;Pressure&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span>
+		<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/drawdown/</span><span class="si">%s</span><span class="s2">_DD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+		<span class="n">header</span><span class="o">=</span><span class="s1">&#39;pressure&#39;</span>
+	<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;T&quot;</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;Temperature&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;C&quot;</span>
+		<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/cooling/</span><span class="si">%s</span><span class="s2">_C.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+		<span class="n">header</span><span class="o">=</span><span class="s1">&#39;temperature&#39;</span>
+
+	<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;SW&quot;</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;1-Quality&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;SG&quot;</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;Quality&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+	<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;DG&quot;</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;Density&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;kg/m3&quot;</span>
+	<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;DW&quot;</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;Density&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;kg/m3&quot;</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">parameter_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+		<span class="n">parameter_unit</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+	<span class="n">color_real</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">color_calc</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+	<span class="c1">#Read file, calculated</span>
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../output/PT/evol/</span><span class="si">%s</span><span class="s2">_PT_</span><span class="si">%s</span><span class="s2">_evol.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">layer</span><span class="p">)</span>
+	<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+	<span class="n">times</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span>
+
+	<span class="n">values</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span>
+
+	<span class="n">dates</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">values_to_plot</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+		<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])))</span>
+				<span class="k">if</span> <span class="n">parameter</span><span class="o">!=</span><span class="s2">&quot;P&quot;</span><span class="p">:</span>
+					<span class="n">values_to_plot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">values_to_plot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">)</span>
+					
+			<span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">],</span><span class="s2">&quot;plus&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">]),</span><span class="s2">&quot;wont be plot&quot;</span><span class="p">)</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">depth</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT middle FROM layers WHERE correlative=&#39;</span><span class="si">%s</span><span class="s2">&#39;;&quot;</span><span class="o">%</span><span class="n">layer</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+	<span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+
+	<span class="c1">#Read file, real</span>
+	
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">check_res</span><span class="o">=</span><span class="kc">False</span>
+		<span class="k">if</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;P&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">well</span><span class="o">!=</span><span class="s1">&#39;AH-25&#39;</span> <span class="ow">or</span> <span class="n">layer</span><span class="o">!=</span><span class="s1">&#39;E&#39;</span><span class="p">:</span>
+				<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/drawdown/</span><span class="si">%s</span><span class="s2">_DD.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+			<span class="k">elif</span> <span class="n">well</span><span class="o">==</span><span class="s1">&#39;AH-25&#39;</span> <span class="ow">and</span> <span class="n">layer</span><span class="o">==</span><span class="s1">&#39;E&#39;</span><span class="p">:</span>
+				<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/drawdown/p_res.csv&quot;</span>
+				<span class="n">check_res</span><span class="o">=</span><span class="kc">True</span>
+		<span class="k">elif</span> <span class="n">parameter</span><span class="o">==</span><span class="s2">&quot;T&quot;</span><span class="p">:</span>	
+			<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/cooling/</span><span class="si">%s</span><span class="s2">_C.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+
+		<span class="n">data_real</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+		
+	<span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+		<span class="n">data_real</span><span class="o">=</span><span class="kc">None</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No real data exist&quot;</span><span class="p">)</span>
+		<span class="k">pass</span>
+
+
+	<span class="n">calculated</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dates&#39;</span><span class="p">:</span><span class="n">dates</span><span class="p">,</span><span class="s1">&#39;values&#39;</span><span class="p">:</span><span class="n">values_to_plot</span><span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">calculated</span><span class="p">,</span><span class="n">data_real</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span><span class="n">header</span><span class="p">,</span><span class="n">parameter_label</span><span class="p">,</span><span class="n">parameter_unit</span></div>
+
+<div class="viewcode-block" id="plot_evol_well_lines"><a class="viewcode-back" href="../modules/report.html#report.plot_evol_well_lines">[docs]</a><span class="k">def</span> <span class="nf">plot_evol_well_lines</span><span class="p">(</span><span class="n">calculated</span><span class="p">,</span><span class="n">real_data</span><span class="p">,</span><span class="n">parameter</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span><span class="n">header</span><span class="p">,</span><span class="n">well</span><span class="p">,</span><span class="n">layer</span><span class="p">,</span><span class="n">parameter_unit</span><span class="p">,</span><span class="n">parameter_label</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">years</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">color_def</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary </span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	 </span>
+<span class="sd">	calculated: dict</span>
+<span class="sd">		Output data from model</span>
+<span class="sd">	pandas.dataframe</span>
+<span class="sd">		data_real: Real data (if exist)</span>
+<span class="sd">	float</span>
+<span class="sd">		depth: masl</span>
+<span class="sd">	header: str</span>
+<span class="sd">		Parameter keyword</span>
+<span class="sd">	parameter_label: str</span>
+<span class="sd">		parameter label</span>
+<span class="sd">	parameter_unit: str</span>
+<span class="sd">		parameter_unit: Parameter unit</span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Well name</span>
+<span class="sd">	layer : str</span>
+<span class="sd">	  Layer (level) at which the data will be extracted</span>
+<span class="sd">	parameter : str</span>
+<span class="sd">	  Variable to plot: &quot;P&quot;,&quot;T&quot;,&quot;SG&quot;,&quot;SW&quot;,&quot;X1&quot;,&quot;X2&quot;,&quot;PCAP,&quot;&quot;DG&quot; y &quot;DW&quot;</span>
+<span class="sd">	input_dictionary: dict</span>
+<span class="sd">	  Dictionary with the keywords &#39;ref_date&#39; (datetime type value) and &#39;db_path&#39; (database path)</span>
+<span class="sd">	years: float</span>
+<span class="sd">	  Number of years after the ref_date to be plotted on the chart</span>
+<span class="sd">	color_def: bool</span>
+<span class="sd">	  If true default colors are use from the formats module</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	matplotlib_axis</span>
+<span class="sd">		ax: contains real and simulated for the selected paramter along the time</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">		It is use in combination with the function plot_evol_well_data</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dates_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">datesX</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datesX</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+	
+	<span class="n">line</span><span class="p">,</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">calculated</span><span class="p">[</span><span class="s1">&#39;dates&#39;</span><span class="p">],</span><span class="n">calculated</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">label</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">color_def</span><span class="p">:</span>
+		<span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">line</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">real_data</span><span class="o">!=</span><span class="kc">None</span><span class="p">:</span>
+		<span class="n">dates_real</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dates_func</span><span class="p">,</span><span class="n">real_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">real_data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates_real</span><span class="p">,</span><span class="n">real_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">real_data</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">depth</span><span class="p">][</span><span class="n">header</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="n">parameter</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Well: </span><span class="si">%s</span><span class="s2"> at </span><span class="si">%s</span><span class="s2"> masl (layer </span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span><span class="n">layer</span><span class="p">)</span> <span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> [</span><span class="si">%s</span><span class="s1">]&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">parameter_label</span><span class="p">,</span><span class="n">parameter_unit</span><span class="p">),</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+	<span class="n">xlims</span><span class="o">=</span><span class="p">[</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">],</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">years</span><span class="o">*</span><span class="mf">365.25</span><span class="p">)]</span>
+	
+	<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+	<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+	<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlims</span><span class="p">)</span>
+	
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+	<span class="c1">#Grid style</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
