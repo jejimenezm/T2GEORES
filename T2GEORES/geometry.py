@@ -1,4 +1,4 @@
-from formats import formats_t2
+from T2GEORES import formats as formats
 import numpy as np
 import csv
 from scipy import interpolate
@@ -600,7 +600,7 @@ def P_from_T_TVD(T_array,TVD_array,water_level_TVD,Pmin):
 	"""
 
 	P=[]
-	g=formats_t2['PARAMETERS']['GF']
+	g=formats.formats_t2['PARAMETERS']['GF']
 	for n in range(len(TVD_array)):
 		if TVD_array[n]<=water_level_TVD:
 			if n==0:

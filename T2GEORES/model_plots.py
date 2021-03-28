@@ -1,6 +1,6 @@
-import  geometry as geometry
-from model_conf import input_data
-from formats import plot_conf_color,plot_conf_marker,formats_t2
+from T2GEORES import geometry as geometry
+from T2GEORES import formats as formats
+from T2GEORES import t2geores_functions as t2funcs
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,7 +9,7 @@ import matplotlib.dates as mdates
 import sys
 import matplotlib.gridspec as gridspec
 from iapws import IAPWS97
-import t2geores_functions as t2funcs
+
 
 
 def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
@@ -192,7 +192,7 @@ def plot_one_drawdown_from_txt(well,depth):
 		#Plotting
 
 		fig, ax = plt.subplots(figsize=(10,4))
-		ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=plot_conf_color['P'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown')
+		ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown')
 		ax.set_title("Drawdown at well: %s at %s masl"%(well,depth) ,fontsize=fontsize_layout)
 		ax.set_xlabel("Time",fontsize = fontsize_layout)
 		ax.set_ylabel('Pressure [bar]',fontsize = fontsize_layout)
@@ -261,7 +261,7 @@ def plot_one_cooling_from_txt(well,depth):
 
 	if len(data.loc[data['TVD']==depth]['datetime'])>1:
 		fig, ax = plt.subplots(figsize=(10,4))
-		ax.plot(dates,data.loc[data['TVD']==depth]['temperature'].values,linestyle='None',color=plot_conf_color['T'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=3,label='cooling')
+		ax.plot(dates,data.loc[data['TVD']==depth]['temperature'].values,linestyle='None',color=formats.plot_conf_color['T'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='cooling')
 		ax.set_title("Well: %s at %s masl"%(well,depth) ,fontsize=fontsize_layout)
 		ax.set_xlabel("Time",fontsize = fontsize_layout)
 		ax.set_ylabel('Temperature [$^\circ$C]',fontsize = fontsize_layout)
@@ -331,13 +331,13 @@ def plot_one_cooling_and_drawdown_from_txt(well,depth):
 		ax2 = ax.twinx()
 
 		#Plotting drawdown
-		ax.plot(dates_d,data_d.loc[data_d['TVD']==depth]['pressure'].values,linestyle='None',color=plot_conf_color['P'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown',alpha=0.75)
+		ax.plot(dates_d,data_d.loc[data_d['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown',alpha=0.75)
 		ax.set_title("Well: %s at %s masl"%(well,depth) ,fontsize=8)
 		ax.set_xlabel("Time",fontsize = 8)
 		ax.set_ylabel('Pressure [bar]',fontsize = 8)
 
 		#Plotting cooling
-		ax2.plot(dates_c,data_c.loc[data_c['TVD']==depth]['temperature'].values,linestyle='None',color=plot_conf_color['T'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=3,label='cooling',alpha=0.75)
+		ax2.plot(dates_c,data_c.loc[data_c['TVD']==depth]['temperature'].values,linestyle='None',color=formats.plot_conf_color['T'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='cooling',alpha=0.75)
 		ax2.set_ylabel('Temperature [$^\circ$C]',fontsize = 8)
 
 
@@ -406,10 +406,10 @@ def plot_one_mh_from_txt(well):
 	#Flow plot
 	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
 	ax=plt.subplot(gs[0,0])
-	ln1=ax.plot(dates,data['steam'],linestyle='-',color=plot_conf_color['ms'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
+	ln1=ax.plot(dates,data['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
 
 	ax1b = ax.twinx()
-	ln2=ax1b.plot(dates,data['liquid'],linestyle='-',color=plot_conf_color['ml'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
+	ln2=ax1b.plot(dates,data['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
 	ax.set_ylabel('Flow s[kg/s]',fontsize = fontsize_ylabel)
 	ax1b.set_ylabel('Flow l[kg/s]',fontsize = fontsize_ylabel)
 	
@@ -420,14 +420,14 @@ def plot_one_mh_from_txt(well):
 
 	#Enthalpy plot
 	ax2=plt.subplot(gs[1,0])
-	ax2.plot(dates,data['enthalpy'],linestyle='-',color=plot_conf_color['h'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.75)
+	ax2.plot(dates,data['enthalpy'],linestyle='-',color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.75)
 	ax2.legend(loc="upper right")
 	ax2.set_ylabel('Enthalpy [kJ/kg]',fontsize = fontsize_ylabel)
 
 
 	#WHPressure plot
 	ax3=plt.subplot(gs[2,0])
-	ax3.plot(dates,data['WHPabs'],linestyle='-',color=plot_conf_color['P'][0],marker=plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
+	ax3.plot(dates,data['WHPabs'],linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
 	ax3.legend(loc="upper right")
 	ax3.set_ylabel('Pressure [bara]',fontsize = fontsize_ylabel)
 
@@ -559,9 +559,9 @@ def plot_init_conditions(input_dictionary):
 
 	axP=fig.add_subplot(122)
 
-	ln1T=axT.plot(T,depths,linestyle='-',color=plot_conf_color['T'][0],marker=plot_conf_marker['current'][0],linewidth=0.5,ms=1)
+	ln1T=axT.plot(T,depths,linestyle='-',color=formats.plot_conf_color['T'][0],marker=formats.plot_conf_marker['current'][0],linewidth=0.5,ms=1)
 
-	ln1P=axP.plot(P,depths,linestyle='-',color=plot_conf_color['P'][0],marker=plot_conf_marker['current'][0],linewidth=0.5,ms=1)
+	ln1P=axP.plot(P,depths,linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['current'][0],linewidth=0.5,ms=1)
 
 	#Plot configuration
 

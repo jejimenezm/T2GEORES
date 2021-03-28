@@ -1,8 +1,8 @@
+from T2GEORES import writer as writer
+from T2GEORES import gener as t2g
 import os
 import subprocess
 import shutil
-import writer as t2w
-import gener as t2g
 
 def incon_replace(incon_file,blocks,incon_file_len):
 	"""It rewrite the incon file without the porosity, depending if it comes from .sav file or INCON generated with T2GEORES
@@ -96,7 +96,7 @@ def incon_to_t2(input_dictionary):
 	incon_state=input_dictionary['incon_state']
 
 	if incon_state=='current':
-		input_incon="../model/t2/t2.sav1"
+		input_incon="../model/t2/t2.sav"
 		blocks='even'
 		incon_file_len=len(open(input_incon).readlines())
 	elif incon_state=='init':
@@ -173,12 +173,17 @@ def update_gen(input_dictionary):
 	sources_file='../model/t2/sources/GENER_SOURCES'
 	well_sources_file='../model/t2/sources/GENER_PROD'
 	makeup_well_sources_file='../model/t2/sources/GENER_MAKEUP'
+	t2_ver=float(input_dictionary['VERSION'][0:3])
 
 	if os.path.isfile(input_fi_file):
 		if os.path.isfile(sources_file):
 			if 'GENER' not in open(input_fi_file).read():
 				t2_file=open(input_fi_file, "a")
-				t2_file.write('\nGENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n')
+				if t2_ver<7:
+					t2_file.write('\nGENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n')
+				else:
+					t2_file.write('\nGENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n')
+
 				
 				gener_source_file=open(sources_file, "r")
 				for sources in gener_source_file:
@@ -212,7 +217,17 @@ def update_gen(input_dictionary):
 					if 'GENER' not in t2_line:
 						t2_string+=t2_line
 					else:
-						t2_string+='GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
+
+						if t2_ver<7:
+							t2_string+='GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
+						else:
+							t2_string+='GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
+
+							t2_string+="AA110DUM00                   3     MASS                      10.e5\n"
+							t2_string+="           -infinity       0.0\n"
+							t2_string+="%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00"),'>20s'))
+							t2_string+="            infinity       0.0\n"
+
 						gener_source_file=open(sources_file, "r")
 						for sources in gener_source_file:
 							t2_string+=sources
@@ -377,13 +392,17 @@ def run(input_dictionary):
 	"""
 
 	EOS=input_dictionary['EOS']
+	version=input_dictionary['VERSION']
 	current=os.path.abspath(os.getcwd())
 	t2_input_file='%s/model/t2/t2'%current.replace('/scripts','')
 	it2_input_file='%s/model/t2/fit2'%current.replace('/scripts','')
 	shutil.copyfile(t2_input_file, current+'/t2')
 	shutil.copyfile(it2_input_file, current+'/fit2')
 
-	subprocess.run(["itough2", 'fit2','t2',str(EOS)])
+	if not input_dictionary['IT2_alias']:
+		subprocess.run(["itough2",'-v',version,'fit2','t2',str(EOS)])
+	else:
+		subprocess.run([input_dictionary['IT2_alias'],'fit2','t2',str(EOS)])
 
 	target_dir = current.replace('/scripts','/model/t2')
 	file_names = os.listdir(current)

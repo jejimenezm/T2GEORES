@@ -1,3 +1,4 @@
+from T2GEORES import geometry as geometry
 import numpy as np
 import re as re
 import subprocess
@@ -14,11 +15,9 @@ import math
 import sys
 from scipy.spatial import ConvexHull
 import pandas as pd
-from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
-                               AutoMinorLocator)
+from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 import pyvista as pv
 import vtk
-import  geometry as geometry
 
 class py2amesh:
 	"""It creates a mesh based on well positions and irregular blocks

@@ -1,12 +1,11 @@
-from model_conf import *
+from T2GEORES import writer as t2w
+from T2GEORES import formats as formats
+from T2GEORES import geometry as geomtr
+from T2GEORES import txt2sqlite as txt2sql
 import sqlite3
 import pandas as pd
 from datetime import datetime, timedelta
 import os
-import writer as t2w
-from formats import formats_t2
-import geometry as geomtr
-import txt2sqlite as txt2sql
 import matplotlib.pyplot as plt
 
 def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,input_dictionary):
@@ -224,11 +223,8 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 
 	"""
-	string_time_R=''
-	string_flow_R=''
-	string_enthalpy_R=''
-	string_time_P=''
-	string_flow_P=''
+	string_P=''
+	string_R=''
 
 	t_min='-infinity'
 	t_max='infinity'
@@ -245,17 +241,17 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	elif type_flow=="constant" or type_flow=="shutdown":
 
 		string_P+=format(t_min,'>20s')
-		string_P+=format(flow_min,'>10s')+'\n'
+		string_P+=format(flow_min,'>10.3E')+'\n'
 
-		string_P+=format(time_array[0].strftime("%Y-%M-%d_00:00:00"),'<20s')
-		string_P+=format(time_zero,'>10s')+'\n'
+		string_P+=format((time_array[0]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		string_P+=format(flow_min,'>10.3E')+'\n'
 
 		string_R+=format(t_min,'>20s')
-		string_R+=format(flow_min,'>10s')
+		string_R+=format(flow_min,'>10.3E')
 		string_R+=format(enthalpy_min,'>10.3E')+'\n'
 
-		string_R+=format(t_min,'>20s')
-		string_R+=format(time_array[0].strftime("%Y-%M-%d_00:00:00"),'<20s')
+		string_R+=format((time_array[0]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		string_R+=format(flow_min,'>10.3E')
 		string_R+=format(enthalpy_min,'>10.3E')+'\n'
 
 		cnt_P=2
@@ -264,14 +260,14 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	if len(var_array)==len(time_array):
 		for n in range(len(var_type)):
 			if var_type[n]=='P':
-				string_P+=format(time_array[n].strftime("%Y-%M-%d_00:00:00"),'<20s')
-				string_P+=format(-var_array[n],'>10.6E')+'\n'
+				string_P+=format(time_array[n].strftime("%Y-%m-%d_00:00:00"),'>20s')
+				string_P+=format(-var_array[n],'>10.3E')+'\n'
 				last_flow=var_array[n]
 				cnt_P+=1
 			elif var_type[n]=='R':
-				string_P+=format(time_array[n].strftime("%Y-%M-%d_00:00:00"),'<20s')
-				string_P+=format(var_array[n],'>10.6E')
-				string_P+=format(var_enthalpy[n],'>10.6E')+'\n'
+				string_R+=format(time_array[n].strftime("%Y-%m-%d_00:00:00"),'>20s')
+				string_R+=format(var_array[n],'>10.3E')
+				string_R+=format(var_enthalpy[n],'>10.3E')+'\n'
 				last_flow=var_array[n]
 				last_enthalpy=var_enthalpy[n]
 				cnt_R+=1
@@ -284,32 +280,32 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 				string_P+='\n'
 				cnt_R+=1
 				string_R+=format(t_max,'>20s')
-				string_R+=format(last_flow,'>10.6E')
-				string_R+=format(last_enthalpy,'>10.6E')+'\n'
+				string_R+=format(last_flow,'>10.3E')
+				string_R+=format(last_enthalpy,'>10.3E')+'\n'
 			if cnt_P>3:
 				string_P+=format(t_max,'>20s')
-				string_P+=format(-last_flow,'>10.6E')+'\n'
+				string_P+=format(-last_flow,'>10.3E')+'\n'
 				cnt_P+=1
 		elif type_flow=="shutdown":
 
 			if cnt_R>3:
 				cnt_R+=2
 
-				string_R+=format((time_array[n]+extra_time).strftime("%Y-%M-%d_00:00:00"),'<20s')
+				string_R+=format((time_array[n]+extra_time).strftime("%Y-%m-%d_00:00:00"),'>20s')
 				string_R+=format(last_flow,'>10.6E')
-				string_R+=format(last_enthalpy,'>10.6E')+'\n'
+				string_R+=format(last_enthalpy,'>10.3E')+'\n'
 
 				string_R+=format(t_max,'>20s')
-				string_R+=format(flow_min,'>10.6E')
-				string_R+=format(last_enthalpy,'>10.6E')+'\n'
+				string_R+=format(flow_min,'>10.3E')
+				string_R+=format(last_enthalpy,'>10.3E')+'\n'
 
 			if cnt_P>3:
 				cnt_P+=2
-				string_P+=format((time_array[n]+extra_time).strftime("%Y-%M-%d_00:00:00"),'<20s')
-				string_P+=format(-last_flow,'>10.6E')+'\n'
+				string_P+=format((time_array[n]+extra_time).strftime("%Y-%m-%d_00:00:00"),'>20s')
+				string_P+=format(-last_flow,'>10.3E')+'\n'
 
 				string_P+=format(t_max,'>20s')
-				string_P+=format(-flow_min,'>10.6E')+'\n'
+				string_P+=format(-flow_min,'>10.3E')+'\n'
 
 		if cnt_R==2 or cnt_R==3:
 			string_R=''
@@ -317,8 +313,8 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 		if cnt_P==2 or cnt_P==3:
 			string_P=''
 
-		string_P+='\n'
-		string_R+='\n'
+		#string_P+='\n'
+		#string_R+='\n'
 		return string_P, string_R, cnt_P, cnt_R
 	else:
 		print("Time and variable array must have the same length")
@@ -364,7 +360,7 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 
 
 	db_path=input_dictionary['db_path']
-	t2_ver=input_dictionary['t2_ver']
+	t2_ver=float(input_dictionary['VERSION'][0:3])
 
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
@@ -460,12 +456,7 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 			r_check=False
 			
 			if LTAB_R>condition:
-				if t2_ver<7:
-					gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr,LTAB_R)
-				else:
-					gener+=format(source_block+source_corr,'<10s')
-					gener+=format('COUNT','>20s')
-					gener+=format('MASSi','>10s')+'\n'
+				gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr,LTAB_R)
 				gener+=R
 				try:
 					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
@@ -486,12 +477,8 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 					source_corr_num+=1
 					source_corr="SRC%s"%source_corr_num
 
-				if t2_ver<7:
-					gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P)
-				else:
-					gener+=format(source_block+source_corr,'<10s')
-					gener+=format('COUNT','>20s')
-					gener+=format('MASS ','>10s')+'\n'
+				
+				gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P)
 				gener+=P
 				try:
 					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
@@ -555,7 +542,7 @@ def def_gener_selector(block,key,geners):
 		value=geners[block][key]
 		def_value=False
 	except KeyError:
-		value=formats_t2['GENER'][key][0]
+		value=formats.formats_t2['GENER'][key][0]
 		def_value=True
 	return value,def_value
 
@@ -591,19 +578,19 @@ def write_geners_to_txt_and_sqlite(input_dictionary,geners):
 	list_geners=[]
 
 	string=""
-	for gener in geners:
-		string+=t2w.converter(gener,formats_t2['GENER']['BLOCK'][1],def_value=False)
-		list_geners.append(geners[gener]['SL']+str(geners[gener]['NS']))
-		for index, key in enumerate(formats_t2['GENER']):
+	for gener_i in geners:
+		string+=t2w.converter(gener_i,formats.formats_t2['GENER']['BLOCK'][1],def_value=False)
+		list_geners.append(geners[gener_i]['SL']+str(geners[gener_i]['NS']))
+		for index, key in enumerate(formats.formats_t2['GENER']):
 			if index!=0:
-				value,def_value=def_gener_selector(gener,key,geners)
-				string+=t2w.converter(value,formats_t2['GENER'][key][1],def_value)
+				value,def_value=def_gener_selector(gener_i,key,geners)
+				string+=t2w.converter(value,formats.formats_t2['GENER'][key][1],def_value)
 		try:
-			q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(geners[gener]['TYPE'],gener,geners[gener]['SL']+str(geners[gener]['NS']))
+			q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(geners[gener_i]['TYPE'],gener_i,geners[gener_i]['SL']+str(geners[gener_i]['NS']))
 			c.execute(q)
 			conn.commit()
 		except sqlite3.IntegrityError:
-			print("The blockcorr %s is already used by another source"%(gener))
+			print("The blockcorr %s is already used by another source"%(gener_i))
 		string+="\n"
 
 

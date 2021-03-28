@@ -1,7 +1,7 @@
+from T2GEORES import geometry as geomtr
+from T2GEORES import formats as formats
 import numpy as np
 from iapws import IAPWS97
-import geometry as geomtr
-from formats import formats_t2,structure
 import pandas as pd
 import os
 from scipy import interpolate
@@ -108,7 +108,7 @@ def initial_conditions(input_dictionary):
 		depth=z_ref-TVD
 		Ti=input_dictionary['INCONS_PARAM']['GRADTZ']*depth+To
 		rho=IAPWS97(T=(Ti+273.15),x=0).rho
-		P_colum=rho*input_dictionary['INCONS_PARAM']['DELTAZ']*formats_t2['PARAMETERS']['GF'][0]
+		P_colum=rho*input_dictionary['INCONS_PARAM']['DELTAZ']*formats.formats_t2['PARAMETERS']['GF'][0]
 		Pi+=P_colum/1E5
 		T.append(Ti)
 		P.append(Pi)
@@ -163,7 +163,7 @@ def incons(input_dictionary):
 	else:
 		sys.exit("The file %s or directory do not exist"%input_file)
 
-def empty_model(structure=structure, current_path='../'):
+def empty_model(structure=formats.structure, current_path='../'):
 	"""It erases all the file on the  T2GEORES structure except the input and scripts folders
 
 	Parameters
@@ -182,9 +182,9 @@ def empty_model(structure=structure, current_path='../'):
 	--------
 	>>> empty_model(current_path='../')
 	"""
-	if structure!=None and len(structure):
-		for direc in structure:
-			empty_model(structure[direc], os.path.join(current_path, direc))
+	if formats.structure!=None and len(formats.structure):
+		for direc in formats.structure:
+			empty_model(formats.structure[direc], os.path.join(current_path, direc))
 	else:
 		for file in os.listdir(current_path):
 			if not any(x in current_path for x in ['input','scripts']):
@@ -193,7 +193,7 @@ def empty_model(structure=structure, current_path='../'):
 				except IsADirectoryError:
 					continue
 
-def create_structure(current_path='.',structure=structure):
+def create_structure(current_path='.',structure=formats.structure):
 	"""It creates the necessary structure for T2GEORES to work
 
 	Parameters
@@ -211,8 +211,8 @@ def create_structure(current_path='.',structure=structure):
 	--------
 	>>> create_structure(current_path='.')
 	"""
-	if structure!=None and len(structure):
-		for direc in structure:
-			empty_model(structure[direc], os.path.join(current_path, direc))
+	if formats.structure!=None and len(formats.structure):
+		for direc in formats.structure:
+			empty_model(formats.structure[direc], os.path.join(current_path, direc))
 	else:
 		os.makedirs(current_path)

@@ -1,4 +1,4 @@
-import geometry as geomtr
+from T2GEORES import geometry as geomtr
 import sqlite3
 import pandas as pd
 from datetime import datetime

@@ -1,4 +1,4 @@
-from formats import formats_t2
+from T2GEORES import formats as formats
 import numpy as np
 from datetime import datetime
 import sys
@@ -66,10 +66,10 @@ def def_value_selector(section,key,input_dictionary,rocks=False):
 			def_value=False
 	except KeyError:
 		if not rocks:
-			value=formats_t2[section][key][0]
+			value=formats.formats_t2[section][key][0]
 			def_value=True
 		else:
-			value=formats_t2['ROCKS'][key][0]
+			value=formats.formats_t2['ROCKS'][key][0]
 			def_value=True
 	return value,def_value
 
@@ -149,11 +149,11 @@ def PARAM_writer(input_dictionary):
 	string="PARAM----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	params_levels=[1,2,3,4]
 	for level in params_levels:
-		for key in formats_t2['PARAMETERS']:
-			if formats_t2['PARAMETERS'][key][2]==level:
+		for key in formats.formats_t2['PARAMETERS']:
+			if formats.formats_t2['PARAMETERS'][key][2]==level:
 				if key=='RE1' and 'DELTEN' in input_dictionary['PARAMETERS'] and input_dictionary['PARAMETERS']['DELTEN']<0 :
 					for index, time_step in enumerate(input_dictionary['PARAMETERS']['DELTEN_LIST']):
-						string+=converter(time_step,formats_t2['DELTEN_LIST_FORMAT'][1],False)
+						string+=converter(time_step,formats.formats_t2['DELTEN_LIST_FORMAT'][1],False)
 						if (index+1)%8==0:
 							string+='\n'
 					string+='\n'
@@ -161,10 +161,10 @@ def PARAM_writer(input_dictionary):
 				value,def_value=def_value_selector('PARAMETERS',key,input_dictionary)
 
 				if not isinstance(value,list):
-					string+=converter(value,formats_t2['PARAMETERS'][key][1],def_value)
+					string+=converter(value,formats.formats_t2['PARAMETERS'][key][1],def_value)
 				else:
 					for cnt, var in enumerate(value):
-						string+=converter(var,formats_t2['PARAMETERS'][key][cnt][2],def_value)
+						string+=converter(var,formats.formats_t2['PARAMETERS'][key][cnt][2],def_value)
 		string+='\n'
 	string+="\n"
 	return string
@@ -192,16 +192,16 @@ def TIMES_writer(input_dictionary):
 		input_dictionary['TIMES']['ITE']=len_times
 		if len_times>100:
 			sys.exit("ITI cannot be higher than 100, reduce the number of times")
-	for key in formats_t2['TIMES']:
+	for key in formats.formats_t2['TIMES']:
 
 		value,def_value=def_value_selector('TIMES',key,input_dictionary)
 
 		if not isinstance(value,np.ndarray):
-			string+=converter(value,formats_t2['TIMES'][key][1],def_value)
+			string+=converter(value,formats.formats_t2['TIMES'][key][1],def_value)
 		else:
 			string+='\n'
 			for index, var in enumerate(value):
-				string+=converter(diff_seconds(input_dictionary['ref_date'],var),formats_t2['TIMES']['TIMES_N'][1],False)
+				string+=converter(diff_seconds(input_dictionary['ref_date'],var),formats.formats_t2['TIMES']['TIMES_N'][1],False)
 				if (index+1)%8==0:
 					string+='\n'
 	string+="\n\n"
@@ -376,13 +376,13 @@ def SOLVR_writer(input_dictionary):
 	string="SOLVR----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	
 	cnt=0
-	for key in formats_t2['SOLVR']:
+	for key in formats.formats_t2['SOLVR']:
 		value,def_value=def_value_selector('SOLVR',key,input_dictionary)
 		if def_value: cnt+=1 
-		string+=converter(value,formats_t2['SOLVR'][key][1],def_value)
+		string+=converter(value,formats.formats_t2['SOLVR'][key][1],def_value)
 	string+="\n\n"
 
-	if cnt==len(formats_t2['SOLVR']):
+	if cnt==len(formats.formats_t2['SOLVR']):
 		string=""
 	return string
 
@@ -447,10 +447,10 @@ def RPCAP_writer(input_dictionary):
 	string="RPCAP----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	params_levels=[1,2]
 	for level in params_levels:
-		for key in formats_t2['RPCAP']:
-			if formats_t2['RPCAP'][key][2]==level:
+		for key in formats.formats_t2['RPCAP']:
+			if formats.formats_t2['RPCAP'][key][2]==level:
 				value,def_value=def_value_selector('RPCAP',key,input_dictionary)
-				string+=converter(value,formats_t2['RPCAP'][key][1],def_value)
+				string+=converter(value,formats.formats_t2['RPCAP'][key][1],def_value)
 		string+='\n'
 	string+="\n"
 	return string
@@ -471,13 +471,13 @@ def MULTI_writer(input_dictionary):
 	"""
 	string="MULTI----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	cnt=0
-	for key in formats_t2['MULTI']:
+	for key in formats.formats_t2['MULTI']:
 		value,def_value=def_value_selector('MULTI',key,input_dictionary)
 		if def_value: cnt+=1 
-		string+=converter(value,formats_t2['MULTI'][key][1],def_value)
+		string+=converter(value,formats.formats_t2['MULTI'][key][1],def_value)
 	string+="\n\n"
 
-	if cnt==len(formats_t2['MULTI']):
+	if cnt==len(formats.formats_t2['MULTI']):
 		string=""
 	return string
 
@@ -498,7 +498,7 @@ def TITLE_writer(input_dictionary):
 	try:
 		value=input_dictionary['TITLE']
 	except KeyError:
-		value=formats_t2['TITLE'][0]
+		value=formats.formats_t2['TITLE'][0]
 	return  value[0:80].ljust(80) +'\n'
 
 def CONNE_from_steinar_to_t2():
@@ -661,21 +661,21 @@ def OUTPU_writer(input_dictionary):
 				n_variables=0
 				string_temp=''
 			else:
-				string_temp+=format(key,formats_t2['OUTPU']['FORMAT'][0])
+				string_temp+=format(key,formats.formats_t2['OUTPU']['FORMAT'][0])
 				n_variables+=1
 				for i,parameter in enumerate(input_dictionary['OUTPU'][outpu][key]):
 					try:
-						if type(parameter)==formats_t2['OUTPU'][outpu][key][i]:
+						if type(parameter)==formats.formats_t2['OUTPU'][outpu][key][i]:
 							if parameter!=None:
-								string_temp+=format(str(parameter),formats_t2['OUTPU']['FORMAT'][1])
+								string_temp+=format(str(parameter),formats.formats_t2['OUTPU']['FORMAT'][1])
 						else:
 							sys.exit("OUTPU %s %s %s not correctly formatted"%(outpu,key,parameter))
 					except KeyError:
 						sys.exit("Key %s does not exist for OUTPU"%key)
 
-				if not all(ft2==type(None) for ft2 in formats_t2['OUTPU'][outpu][key]):
+				if not all(ft2==type(None) for ft2 in formats.formats_t2['OUTPU'][outpu][key]):
 					cnt=0
-					for value in formats_t2['OUTPU'][outpu][key]:
+					for value in formats.formats_t2['OUTPU'][outpu][key]:
 						if value!=type(None):
 							cnt+=1
 					if i!=(cnt-1):
@@ -701,10 +701,10 @@ def MOMOP_writer(input_dictionary):
 	"""
 	string="MOMOP----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	string=''
-	for key in formats_t2['MOMOP']:
-		if formats_t2['MOMOP'][key][2]==1:
+	for key in formats.formats_t2['MOMOP']:
+		if formats.formats_t2['MOMOP'][key][2]==1:
 			value,def_value=def_value_selector('MOMOP',key,input_dictionary)
-			string+=converter(value,formats_t2['MOMOP'][key][1],def_value)
+			string+=converter(value,formats.formats_t2['MOMOP'][key][1],def_value)
 	string+="\n"
 	return string
 
@@ -746,8 +746,8 @@ def ROCKS_writer(input_dictionary):
 	for rock in input_dictionary['ROCKS']:
 		for level in rocks_levels:
 			break_line=False
-			for key in formats_t2['ROCKS']:
-				if formats_t2['ROCKS'][key][2]==level:
+			for key in formats.formats_t2['ROCKS']:
+				if formats.formats_t2['ROCKS'][key][2]==level:
 					if level==1:
 						pass_valid=True
 						break_line=True
@@ -760,7 +760,7 @@ def ROCKS_writer(input_dictionary):
 							break_line=True
 					if pass_valid:
 						value,def_value=def_value_selector(rock,key,input_dictionary,rocks=True)
-						string+=converter(value,formats_t2['ROCKS'][key][1],def_value)
+						string+=converter(value,formats.formats_t2['ROCKS'][key][1],def_value)
 						pass_valid=False
 			if break_line:
 				string+='\n'
@@ -805,7 +805,7 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 	>>> t2_input(input_dictionary,include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,include_MOMOP=True,include_OUTPU=True)
 	"""
 
-	secctions=[TITLE_writer,PARAM_writer,ELEME_adder,CONNE_adder]
+	secctions=[TITLE_writer,ROCKS_writer,PARAM_writer,ELEME_adder,CONNE_adder]
 
 	if_functions_dictionary={'MOMOP':[include_MOMOP,MOMOP_writer],
 							 'RPCAP':[include_RPCAP,RPCAP_writer],

@@ -1,9 +1,8 @@
+from T2GEORES import geometry as geomtr
 import sqlite3
 import os
 import pandas as pd
 import json
-import geometry as geomtr
-
 
 def checktable(table_name,c):
 	"""It verifies the existance of a table on the sqlite database
