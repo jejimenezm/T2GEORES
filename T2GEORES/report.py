@@ -625,46 +625,44 @@ def to_paraview(input_dictionary,itime=None):
 			with open("../output/vtu/model_.vtu.series","w") as f:
 				json.dump(series,f)
 
-
 def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wells_3D,print_point,savefig,plots_conf,input_dictionary):
-	"""Genera un corte vertical en la trayectoria de una linea de una propiedad especificada
+	"""It Generates a vertical cross section for a specified parameter on a defined path.
 
 	Parameters
-	----------	  
-	method : str
-	  Tipo de metodo para interpolacion
+	----------	   
 	ngridx : int
-	  Numero de elementos en grid regular en direccion del corte
+	  Number of element on the horizontal direction
 	ngridy : int
-	  Numero de elementos en grid regular en direccion vertical
+	  Number of element on the vertical direction
 	show_wells_3D : bool
-	  Muestra la geometria del pozo en 3D
+	  If true the wells are shown on 3D
 	print_point : bool
-	  Imprime los puntos donde se ha extraido informacion ya sea interpolada o no
+	  If true prints the points where the interpolation has taken place.
 	variable_to_plot : str
-	  Varibale a graficar: "P","T","SG","SW","X1","X2","PCAP,""DG" y "DW" para fuente t2 y "P" y "T" para sav
+	  Variable to plot: "P","T","SG","SW","X1","X2","PCAP,""DG" y "DW" for 't2' source; "P" and "T" for 'sav' source
+	source: str
+	  't2' or 'sav'
 	savefig : bool
-	  Al ser cierto guarda la grafica generada
-
-	Other Parameters
-	----------------
-	array
-		x_points : coordenada x de linea
-	array
-		y_points : coordenada y de linea
+	  If true the plot is saved
+	plots_conf: dictionary
+	  With key words 'cross_section' defines the points of a lines for the vertical section. 'variables_level' defines the variable values to plot
+	input_dictionary: dictioanary
+	  Contains the 'LAYERS' keyword
 
 	Returns
 	-------
 	image
-		vertical_section_{varible_to_plot}.png: archivo con direccion '../output/PT/images/
+		vertical_section_{varible_to_plot}.png: on '../output/PT/images/
 
 	Note
 	----
-	La proyeccion de los pozos funciona correctamente cuando el pozo no se encuentre entre los vertices de la linea definida para el corte
+	The point should not be defined on a well coordinate.
 
 	Examples
 	--------
-	>>> vertical_cross_section(method='cubic',ngridx=100,ngridy=100,variable_to_plot="T",source="t2",show_wells_3D=True)
+	>>> plots_conf={'cross_section':{'x':[5000,5000,7500],'y':[3000,7250,7250]},'variable_levels':[25,50,75,100,125,150,170,180,200,220,230,250,260]}
+	>>> input_dictionary={'LAYERS':{1:['A',100],2:['B', 100],3:['C', 125]}}
+	>>> vertical_cross_section(ngridx=100,ngridy=100,variable_to_plot="T",source="t2",show_wells_3D=True)
 	"""
 	x_points=plots_conf['cross_section']['x']
 	y_points=plots_conf['cross_section']['y']
@@ -904,35 +902,37 @@ def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wel
 	plt.show()
 
 def plot_evol_well_data(well,layer,parameter,input_dictionary):
-	"""Genera una linea de evolucion de un parametro en particular a lo largo del tiempo a partir de un tiempo de referencia y los compara con su valor real
+	"""It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary 
 
 	Parameters
 	----------	  
 	well : str
-	  Nombre de pozo
+	  Well name
 	layer : str
-	  Nombre de capa de parametro selecionado
-	ngridy : int
-	  Numero de elementos en grid regular en direccion vertical
-	save : bool
-	  Almacaena la grafica generada
-	show : bool
-	  Muestra la grafica
+	  Layer (level) at which the data will be extracted
 	parameter : str
-	  Varibale a graficar: "P","T","SG","SW","X1","X2","PCAP,""DG" y "DW"
+	  Variable to plot: "P","T","SG","SW","X1","X2","PCAP,""DG" y "DW"
+	input_dictionary: dict
+	  Dictionary with the keywords 'ref_date' (datetime type value) and 'db_path' (database path)
 
 	Returns
 	-------
-	image
-		{pozo}_{capa}_{parametro}_evol.png: archivo con direccion '../output/PT/images/evol/%s_%s_%s_evol.png'
+	dictionary
+		calculated: output data from model
+	pandas.dataframe
+		data_real: Real data (if exist)
+	float
+		depth: masl
+	string
+		header: Parameter keyword
+	string
+		parameter_label: parameter label
+	string
+		parameter_unit: Parameter unit
 
 	Note
 	----
-	Toma los datos de los archivo de entrada en ../input/drawdown e ../input/cooling, cualquier otro parametro solo ser graficado, sin comparacion alguna.
-
-	Examples
-	--------
-	>>> vplot_PT_evol_block_in_wells('CHI-6A',layer='E',parameter='T',save=True,show=True)
+	it generates the input data for the function plot_evol_well_lines
 	"""
 	if parameter  not in ["P","T","SG","SW","X(WAT1)","X(WAT2)","PCAP","DG","DW"]:
 		print("Cant be printed, the parameter is  not register")
@@ -1018,56 +1018,47 @@ def plot_evol_well_data(well,layer,parameter,input_dictionary):
 
 	calculated={'dates':dates,'values':values_to_plot}
 
-	"""
-	fig, ax = plt.subplots(figsize=(10,4))
-	ax.plot(dates,values_to_plot,'-o',color=color_real,linewidth=1,ms=3,label='Calculated %s'%parameter_label)
-	try:
-		if not check_res:
-			ax.plot(dates_real,data_real.loc[data_real['TVD']==depth][header].values,'-o',color=color_calc,linewidth=1,ms=3,label='Real %s'%parameter_label)
-		if check_res:
-			ax.plot(dates_real,data_real['Pres'].values,'-o',color=color_calc,linewidth=1,ms=3,label='Real %s'%parameter_label)
-	except UnboundLocalError:
-		pass
-	ax.set_title("Well: %s at %s masl (layer %s)"%(well,depth,layer) ,fontsize=8)
-	ax.set_xlabel("Time",fontsize = 8)
-	ax.set_ylabel('%s [%s]'%(parameter_label,parameter_unit),fontsize = 8)
-
-	ax.legend(loc="upper right")
-
-	#Plotting formating
-	#xlims=[min(dates)-datetime.timedelta(days=365),max(dates)+datetime.timedelta(days=365)]
-	xlims=[ref_date-datetime.timedelta(days=365),ref_date+datetime.timedelta(days=60*365.25)]
-	
-	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
-
-	years = mdates.YearLocator()
-	years_fmt = mdates.DateFormatter('%Y')
-
-	ax.set_xlim(xlims)
-	
-	#Use Y lims
-	#ylims=[val_min,val_max]
-	#ax.set_ylim(ylims)
-
-	ax.xaxis.set_major_formatter(years_fmt)
-
-	#ax.xaxis.set_major_locator(years)
-	#fig.autofmt_xdate()
-
-	#Grid style
-	ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
-	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
-	ax.grid(True)
-
-	if save:
-		fig.savefig('../output/PT/images/evol/%s_%s_%s_evol.png'%(well,layer,parameter)) 
-	if show:
-		plt.show()
-	"""
 	return calculated,data_real,depth,header,parameter_label,parameter_unit
 
 def plot_evol_well_lines(calculated,real_data,parameter,depth,header,well,layer,parameter_unit,parameter_label,label,ax,input_dictionary,years=15,color_def=False):
+	"""It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary 
 
+	Parameters
+	----------	 
+	calculated: dict
+		Output data from model
+	pandas.dataframe
+		data_real: Real data (if exist)
+	float
+		depth: masl
+	header: str
+		Parameter keyword
+	parameter_label: str
+		parameter label
+	parameter_unit: str
+		parameter_unit: Parameter unit
+	well : str
+	  Well name
+	layer : str
+	  Layer (level) at which the data will be extracted
+	parameter : str
+	  Variable to plot: "P","T","SG","SW","X1","X2","PCAP,""DG" y "DW"
+	input_dictionary: dict
+	  Dictionary with the keywords 'ref_date' (datetime type value) and 'db_path' (database path)
+	years: float
+	  Number of years after the ref_date to be plotted on the chart
+	color_def: bool
+	  If true default colors are use from the formats module
+
+	Returns
+	-------
+	matplotlib_axis
+		ax: contains real and simulated for the selected paramter along the time
+
+	Note
+	----
+		It is use in combination with the function plot_evol_well_data
+	"""
 	dates_func=lambda datesX: datetime.datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
 	
 	line,=ax.plot(calculated['dates'],calculated['values'],'-o',linewidth=1,ms=2,label='Calculated %s'%label)
