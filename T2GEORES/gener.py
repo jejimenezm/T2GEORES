@@ -320,7 +320,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 		print("Time and variable array must have the same length")
 
 def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
-	"""It is the main function on this modulo, it writes the GENER section from the mh input files
+	"""It is the main function on this module, it writes the GENER section from the mh input files
 
 	Parameters
 	----------
@@ -591,8 +591,7 @@ def write_geners_to_txt_and_sqlite(input_dictionary,geners):
 			conn.commit()
 		except sqlite3.IntegrityError:
 			print("The blockcorr %s is already used by another source"%(gener_i))
-		string+="\n"
-
+		string+='\n'
 
 	file=open('../model/t2/sources/GENER_SOURCES','w')
 	file.write(string)
@@ -600,7 +599,7 @@ def write_geners_to_txt_and_sqlite(input_dictionary,geners):
 
 	#As the sources defined on geners are the only allowed any other source not included  dictionary will be erased
 	list_geners_string=''.join(["'%s',"%str(i) for i in list_geners])
-	query="DELETE FROM t2wellsource WHERE source_nickname NOT IN (%s) AND  source_nickname LIKE'GEN*' "%(list_geners_string[0:-1])
+	query="DELETE FROM t2wellsource WHERE source_nickname NOT IN (%s) AND source_nickname LIKE'GEN*' "%(list_geners_string[0:-1])
 	c.execute(query)
 	conn.commit()
 
@@ -648,9 +647,10 @@ def create_well_flow(flow_times,input_dictionary,include_gener=True):
       type_well=flow_times[name][5]
       string="%s,%s,%s,%s,%s,%s\n"%(type_well,date,steam,brine,enthlapy,pressure)
       file.write(string)
+    file.close()
   if include_gener:
-  	txt2sql.replace_mh(low_times.keys(),db_path=input_dictionary['db_path'],source_txt=input_dictionary['../input/'])
-  	write_gener_from_sqlite(type_flow='constant',forecast=True,wells=flow_times.keys(),make_up=True,input_dictionary=input_dictionary)
+  	txt2sql.replace_mh(flow_times.keys(),input_dictionary=input_dictionary)
+  	write_gener_from_sqlite(type_flow='constant',make_up=True,input_dictionary=input_dictionary)
 
 def plot_makeup_wells(flow_times):
 	"""It plots a defined scenario of production including injector wells

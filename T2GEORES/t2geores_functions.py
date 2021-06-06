@@ -193,7 +193,7 @@ def empty_model(structure=formats.structure, current_path='../'):
 				except IsADirectoryError:
 					continue
 
-def create_structure(current_path='.',structure=formats.structure):
+def create_structure(structure,current_path):
 	"""It creates the necessary structure for T2GEORES to work
 
 	Parameters
@@ -211,8 +211,8 @@ def create_structure(current_path='.',structure=formats.structure):
 	--------
 	>>> create_structure(current_path='.')
 	"""
-	if formats.structure!=None and len(formats.structure):
-		for direc in formats.structure:
-			empty_model(formats.structure[direc], os.path.join(current_path, direc))
+	if structure!=None and len(structure):
+		for direc in structure:
+			create_structure(structure[direc], os.path.join(current_path, direc))
 	else:
 		os.makedirs(current_path)

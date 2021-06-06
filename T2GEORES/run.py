@@ -178,37 +178,52 @@ def update_gen(input_dictionary):
 	if os.path.isfile(input_fi_file):
 		if os.path.isfile(sources_file):
 			if 'GENER' not in open(input_fi_file).read():
-				t2_file=open(input_fi_file, "a")
+
+				t2_string=""
+				t2_file=open(input_fi_file, "r")
+				for t2_line in t2_file:
+					if 'ENDCY' not in t2_line:
+						t2_string+=t2_line
+					else:
+						pass
+
 				if t2_ver<7:
-					t2_file.write('\nGENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n')
+					t2_string+='GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
 				else:
-					t2_file.write('\nGENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n')
+					t2_string+='GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
 
 				
 				gener_source_file=open(sources_file, "r")
 				for sources in gener_source_file:
-					t2_file.write(sources)
-
+					t2_string+=sources
+				gener_source_file.close()
+			
 				if type_run=='production':
 					if os.path.isfile(well_sources_file):
 						well_source_file=open(well_sources_file, "r")
 						for sources in well_source_file:
-							t2_file.write(sources)
+							t2_string+=sources
 						well_source_file.close()
+
 					else:
 						print("The file %s or directory do not exist"%well_sources_file)
 
 					if os.path.isfile(makeup_well_sources_file):
 						well_makeup_source_file=open(makeup_well_sources_file, "r")
 						for sources in well_makeup_source_file:
-							t2_file.write(sources)
+							t2_string+=sources
 						well_makeup_source_file.close()
 					else:
 						print("The file %s or directory do not exist"%well_sources_file)
 
-				t2_file.write('ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n')
+				t2_string+='\n'
+				t2_string+='ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
 				t2_file.close()
-				gener_source_file.close()
+				
+
+				t2_file_out=open(input_fi_file, "w")
+				t2_file_out.write(t2_string)
+				t2_file_out.close()	
 
 			else:
 				t2_string=""
@@ -240,7 +255,7 @@ def update_gen(input_dictionary):
 								well_source_file.close()
 							else:
 								print("The file %s or directory do not exist"%well_sources_file)
-						t2_string+='\n'
+
 						if os.path.isfile(makeup_well_sources_file):
 							well_makeup_source_file=open(makeup_well_sources_file, "r")
 							for sources in well_makeup_source_file:
