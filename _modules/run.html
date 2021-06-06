@@ -335,37 +335,52 @@
 	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">):</span>
 		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sources_file</span><span class="p">):</span>
 			<span class="k">if</span> <span class="s1">&#39;GENER&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
-				<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+
+				<span class="n">t2_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+				<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+				<span class="k">for</span> <span class="n">t2_line</span> <span class="ow">in</span> <span class="n">t2_file</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;ENDCY&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+						<span class="n">t2_string</span><span class="o">+=</span><span class="n">t2_line</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="k">pass</span>
+
 				<span class="k">if</span> <span class="n">t2_ver</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">:</span>
-					<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+					<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span>
 				<span class="k">else</span><span class="p">:</span>
-					<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+					<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span>
 
 				
 				<span class="n">gener_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 				<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">gener_source_file</span><span class="p">:</span>
-					<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
-
+					<span class="n">t2_string</span><span class="o">+=</span><span class="n">sources</span>
+				<span class="n">gener_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+			
 				<span class="k">if</span> <span class="n">type_run</span><span class="o">==</span><span class="s1">&#39;production&#39;</span><span class="p">:</span>
 					<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">well_sources_file</span><span class="p">):</span>
 						<span class="n">well_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 						<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_source_file</span><span class="p">:</span>
-							<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+							<span class="n">t2_string</span><span class="o">+=</span><span class="n">sources</span>
 						<span class="n">well_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
 					<span class="k">else</span><span class="p">:</span>
 						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
 
 					<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">):</span>
 						<span class="n">well_makeup_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 						<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_makeup_source_file</span><span class="p">:</span>
-							<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+							<span class="n">t2_string</span><span class="o">+=</span><span class="n">sources</span>
 						<span class="n">well_makeup_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 					<span class="k">else</span><span class="p">:</span>
 						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
 
-				<span class="n">t2_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+				<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+				<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8</span><span class="se">\n</span><span class="s1">&#39;</span>
 				<span class="n">t2_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-				<span class="n">gener_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+				
+
+				<span class="n">t2_file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">input_fi_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+				<span class="n">t2_file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">t2_string</span><span class="p">)</span>
+				<span class="n">t2_file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>	
 
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">t2_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
@@ -397,7 +412,7 @@
 								<span class="n">well_source_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 							<span class="k">else</span><span class="p">:</span>
 								<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">well_sources_file</span><span class="p">)</span>
-						<span class="n">t2_string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
 						<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">):</span>
 							<span class="n">well_makeup_source_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">makeup_well_sources_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 							<span class="k">for</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">well_makeup_source_file</span><span class="p">:</span>

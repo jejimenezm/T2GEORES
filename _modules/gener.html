@@ -477,7 +477,7 @@
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time and variable array must have the same length&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="write_gener_from_sqlite"><a class="viewcode-back" href="../modules/gener.html#gener.write_gener_from_sqlite">[docs]</a><span class="k">def</span> <span class="nf">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">make_up</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;It is the main function on this modulo, it writes the GENER section from the mh input files</span>
+	<span class="sd">&quot;&quot;&quot;It is the main function on this module, it writes the GENER section from the mh input files</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
@@ -748,8 +748,7 @@
 			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 		<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The blockcorr </span><span class="si">%s</span><span class="s2"> is already used by another source&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">gener_i</span><span class="p">))</span>
-		<span class="n">string</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-
+		<span class="n">string</span><span class="o">+=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
 	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../model/t2/sources/GENER_SOURCES&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
 	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
@@ -757,7 +756,7 @@
 
 	<span class="c1">#As the sources defined on geners are the only allowed any other source not included  dictionary will be erased</span>
 	<span class="n">list_geners_string</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;,&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_geners</span><span class="p">])</span>
-	<span class="n">query</span><span class="o">=</span><span class="s2">&quot;DELETE FROM t2wellsource WHERE source_nickname NOT IN (</span><span class="si">%s</span><span class="s2">) AND  source_nickname LIKE&#39;GEN*&#39; &quot;</span><span class="o">%</span><span class="p">(</span><span class="n">list_geners_string</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+	<span class="n">query</span><span class="o">=</span><span class="s2">&quot;DELETE FROM t2wellsource WHERE source_nickname NOT IN (</span><span class="si">%s</span><span class="s2">) AND source_nickname LIKE&#39;GEN*&#39; &quot;</span><span class="o">%</span><span class="p">(</span><span class="n">list_geners_string</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 	<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 	<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -805,9 +804,10 @@
       <span class="n">type_well</span><span class="o">=</span><span class="n">flow_times</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>
       <span class="n">string</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">type_well</span><span class="p">,</span><span class="n">date</span><span class="p">,</span><span class="n">steam</span><span class="p">,</span><span class="n">brine</span><span class="p">,</span><span class="n">enthlapy</span><span class="p">,</span><span class="n">pressure</span><span class="p">)</span>
       <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
   <span class="k">if</span> <span class="n">include_gener</span><span class="p">:</span>
-  	<span class="n">txt2sql</span><span class="o">.</span><span class="n">replace_mh</span><span class="p">(</span><span class="n">low_times</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">],</span><span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;../input/&#39;</span><span class="p">])</span>
-  	<span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">wells</span><span class="o">=</span><span class="n">flow_times</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="n">make_up</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">input_dictionary</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">)</span></div>
+  	<span class="n">txt2sql</span><span class="o">.</span><span class="n">replace_mh</span><span class="p">(</span><span class="n">flow_times</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="n">input_dictionary</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">)</span>
+  	<span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span><span class="n">make_up</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">input_dictionary</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="plot_makeup_wells"><a class="viewcode-back" href="../modules/gener.html#gener.plot_makeup_wells">[docs]</a><span class="k">def</span> <span class="nf">plot_makeup_wells</span><span class="p">(</span><span class="n">flow_times</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It plots a defined scenario of production including injector wells</span>
