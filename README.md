@@ -45,4 +45,4 @@ Recent changes are listed.
 ### 2021-06-06
 - Fix GENER block update during production state
 
-[0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.1.7/T2GEORES-0.1.7.tar.gz
+[0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/tag/T2GEORES-0.1.7
