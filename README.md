@@ -18,3 +18,29 @@ T2GEORES/
 The library requires the use of a AMESH copy on the path, others pre/post TOUGH2 processors can be found on [here]('https://tough.lbl.gov/licensing-download/free-software-download/'). 
 
 A detail documentation for the  library can be found on [Github pages](https://jejimenezm.github.io/T2GEORES/index.html)
+
+#Change log
+
+Recent changes are listed.
+
+## [0.1.7]
+### 2021-01-16
+- Include OUTPU section
+
+### 2021-01-20
+- Include GENER D capability
+
+### 2021-01-28
+- Include MOMOP section
+
+### 2021-02-15
+- Define ROCK section on dictionary basis
+
+### 2021-03-04
+- Export mesh and rock distribution to ParaView
+
+### 2021-03-10
+- Export results to ParaView
+
+### 2021-06-06
+- Fix GENER block update during production state
