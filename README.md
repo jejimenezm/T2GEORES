@@ -19,7 +19,7 @@ The library requires the use of a AMESH copy on the path, others pre/post TOUGH2
 
 A detail documentation for the  library can be found on [Github pages](https://jejimenezm.github.io/T2GEORES/index.html)
 
-#Change log
+# Change log
 
 Recent changes are listed.
 
@@ -44,3 +44,5 @@ Recent changes are listed.
 
 ### 2021-06-06
 - Fix GENER block update during production state
+
+[0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.1.7/T2GEORES-0.1.7.tar.gz
