@@ -62,6 +62,12 @@ def observations_to_it2_PT(input_dictionary):
 	string_T="""	>>TEMPERATURE"""
 	string_P="""	>>PRESSURE"""
 
+	T0=input_dictionary['INCONS_PARAM']['To']
+	cut_off_T=input_dictionary['INCONS_PARAM']['CUT_OFF_T_TOP']
+
+	P0=input_dictionary['INCONS_PARAM']['Po']
+	cut_off_P=input_dictionary['INCONS_PARAM']['CUT_OFF_P_TOP']
+
 	#This blocks creates a linear interpolation on every layer depth with the formation temperature and pressure
 	for name in sorted(wells):
 
@@ -90,11 +96,18 @@ def observations_to_it2_PT(input_dictionary):
 			P_md= [np.nan if x == 0 else x for x in P_md]
 			
 			if not np.isnan(np.mean(T_md)):
-				x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(name,T_md,md,100)
+				x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(name,T_md,md)
 				func_T=interpolate.interp1d(z_V,var_V)
 
 			try:
 				if func_T(middle_tvd[tvdn])>0:
+					Ti=func_T(middle_tvd[tvdn])
+					if corr_layer[tvdn]=='A':
+						if Ti>cut_off_T:
+							Ti=cut_off_T
+						elif Ti<T0:
+							Ti=T0
+
 					string_T+="""
 			>>> ELEMENT : %s
 				>>>> ANNOTATION : %s-T-%s
@@ -102,25 +115,33 @@ def observations_to_it2_PT(input_dictionary):
 				>>>> WINDOW     : 0.0 60.0 [SECONDS]
 				>>>> DATA
 						 0 %s
-				<<<<\n"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,T_DEV,func_T(middle_tvd[tvdn]))
+				<<<<\n"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,T_DEV,Ti)
 			except ValueError:
 				pass
 
+
 			if not np.isnan(np.mean(P_md)) and np.mean(P_md)>0:
-				x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(name,P_md,md,100)
+				x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(name,P_md,md)
 				func_P=interpolate.interp1d(z_V,var_V)
 
 				try:
-					if func_P(middle_tvd[tvdn])>1.0:
+					if func_P(middle_tvd[tvdn])>0.0:
+						Pi=func_P(middle_tvd[tvdn])
+						if corr_layer[tvdn]=='A':
+							if Pi>cut_off_P:
+								Pi=cut_off_P+0.92
+							elif Pi<P0:
+								Pi=P0+0.92
+
 						string_P+="""
 			>>> ELEMENT : %s
 				>>>> ANNOTATION : %s-P-%s
 				>>>> FACTOR     : 1.0E5 [bar] - [Pa]
-				>>>> DEVIATION  : %s
 				>>>> WINDOW     : 0.0 60.0 [SECONDS]
+				>>>> DEVIATION  : %s
 				>>>> DATA
 					    0 %s
-				<<<<\n"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,P_DEV,func_P(middle_tvd[tvdn]))
+				<<<<\n"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,P_DEV,Pi)
 				except ValueError:
 					pass
 

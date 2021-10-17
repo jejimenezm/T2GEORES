@@ -68,6 +68,12 @@ def db_creation(input_dictionary):
 		              [east] REAL,
 		              [north] REAL,
 		              [elevation] REAL,
+		              [lnr_init] REAL,
+		              [lnr_end] REAL,
+		              [lnr_D] TEXT,
+		              [ptube_init] REAL,
+		              [ptube_end] REAL,
+		              [ptube_D] TEXT,
 		              [drilldate] datetime)''')
 
 		#Create table - survey
@@ -118,7 +124,7 @@ def db_creation(input_dictionary):
 			c.execute('''CREATE TABLE  wellfeedzone
 						 ([well] TEXT,
 						 [MeasuredDepth] REAL,
-						 [porcentage] REAL)''')
+						 [contribution] REAL)''')
 
 		#Create table - TOUGH2 well block(correlative)
 		if checktable('t2wellblock',c)==0:
@@ -140,6 +146,55 @@ def db_creation(input_dictionary):
 						 [top] REAL,
 						 [middle] REAL,
 						 [bottom] REAL)''')
+			
+		#Create table - stores ELEME section of mesh
+		if checktable('ELEME',c)==0:
+			c.execute('''CREATE TABLE  ELEME
+						 ([model_version] REAL,
+						 [model_output_timestamp] timestamp,
+						 [ELEME] TEXT,
+						 [NSEQ] REAL,
+						 [NADD] REAL,
+						 [MA1] REAL,
+						 [MA2] REAL,
+						 [VOLX] REAL,
+						 [AHTX] REAL,
+						 [PMX] REAL,
+						 [X] REAL,
+						 [Y] REAL,
+						 [Z] REAL,
+						 [LAYER_N] REAL,
+						 [h] REAL)''')
+
+		#Create table - stores CONNE section of mesh
+		if checktable('CONNE',c)==0:
+			c.execute('''CREATE TABLE  CONNE
+						 ([model_version] REAL,
+						 [model_output_timestamp] timestamp,
+						 [ELEME1] TEXT,
+						 [ELEME2] TEXT,
+						 [NSEQ] REAL,
+						 [NAD1] REAL,
+						 [NAD2] REAL,
+						 [ISOT] REAL,
+						 [D1] REAL,
+						 [D2] REAL,
+						 [AREAX] REAL,
+						 [BETAX] REAL,
+						 [SIGX] REAL)''')
+
+		#Create table - stores segment
+		if checktable('segment',c)==0:
+			c.execute('''CREATE TABLE  segment
+						 ([model_version] REAL,
+						 [model_output_timestamp] timestamp,
+						 [x1] REAL,
+						 [y1] REAL,
+						 [x2] REAL,
+						 [y2] REAL,
+						 [redundant] REAL,
+						 [ELEME1] TEXT,
+						 [ELEME2] TEXT)''')
 
 		#Create table - PT out
 		if checktable('t2PTout',c)==0:
@@ -158,6 +213,60 @@ def db_creation(input_dictionary):
 						 [PCAP] REAL,
 						 [DG] REAL,
 						 [DW] REAL)''')
+
+		#Create table - stores flows TOUGH2 output section
+		if checktable('t2FLOWSout',c)==0:
+			c.execute('''CREATE TABLE  t2FLOWSout
+						 ([model_version] REAL,
+						 [model_output_timestamp] timestamp,
+						 [ELEME1] TEXT,
+						 [ELEME2] TEXT,
+						 [INDEX] INT,
+						 [FHEAT] REAL,
+						 [FLOH] REAL,
+						 [FLOF] REAL,
+						 [FLOG] REAL,
+						 [FLOAQ] REAL,
+						 [FLOWTR2] REAL,
+						 [VELG] REAL,
+						 [VELAQ] REAL,
+						 [TURB_COEFF] REAL,
+						 [model_time] REAL)''')
+
+		#Create table - stores flows directions from every block
+		if checktable('t2FLOWVectors',c)==0:
+			c.execute('''CREATE TABLE  t2FLOWVectors
+						 ([model_version] REAL,
+						 [model_output_timestamp] timestamp,
+						 [ELEME] TEXT,
+						 [FHEAT_x] REAL,
+						 [FHEAT_y] REAL,
+						 [FHEAT_z] REAL,
+						 [FLOH_x] REAL,
+						 [FLOH_y] REAL,
+						 [FLOH_z] REAL,
+						 [FLOF_x] REAL,
+						 [FLOF_y] REAL,
+						 [FLOF_z] REAL,
+						 [FLOG_x] REAL,
+						 [FLOG_y] REAL,
+						 [FLOG_z] REAL,
+						 [FLOAQ_x] REAL,
+						 [FLOAQ_y] REAL,
+						 [FLOAQ_z] REAL,
+						 [FLOWTR2_x] REAL,
+						 [FLOWTR2_y] REAL,
+						 [FLOWTR2_z] REAL,
+						 [VELG_x] REAL,
+						 [VELG_y] REAL,
+						 [VELG_z] REAL,
+						 [VELAQ_x] REAL,
+						 [VELAQ_y] REAL,
+						 [VELAQ_z] REAL,
+						 [TURB_COEFF_x] REAL,
+						 [TURB_COEFF_y] REAL,
+						 [TURB_COEFF_z] REAL,
+						 [model_time] REAL)''')
 
 		conn.commit()
 		conn.close()
@@ -222,8 +331,8 @@ def insert_feedzone_to_sqlite(input_dictionary):
 	feedzones=pd.read_csv(source_txt+'well_feedzone.csv',delimiter=',')
 
 	for index,row in feedzones.iterrows():
-		q="INSERT INTO wellfeedzone(well,MeasuredDepth,porcentage) VALUES ('%s',%s,%s)"%\
-		(row['well'],row['MeasuredDepth'],row['porcentage'])
+		q="INSERT INTO wellfeedzone(well,MeasuredDepth,contribution) VALUES ('%s',%s,%s)"%\
+		(row['well'],row['MD'],row['contribution'])
 		c.execute(q)
 		conn.commit()
 	conn.close()
@@ -430,6 +539,7 @@ def replace_mh(wells_to_replace,input_dictionary):
 			c.execute(q)
 			conn.commit()
 			if os.path.isfile(source_txt+'mh/'+f):
+				print(source_txt+'mh/'+f)
 				mh=pd.read_csv(source_txt+'mh/'+f)
 				for index, row in mh.iterrows():
 					q="INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES ('%s','%s','%s',%s,%s,%s,%s)"%\
@@ -601,9 +711,9 @@ def insert_wellblock_to_sqlite(input_dictionary):
 
 	db_path=input_dictionary['db_path']
 
-	if os.path.isfile('../mesh/wells_correlative.txt'):
+	if os.path.isfile('../mesh/well_dict.txt'):
 
-		with open('../mesh/wells_correlative.txt',encoding='utf8') as json_file:
+		with open('../mesh/well_dict.txt',encoding='utf8') as json_file:
 		    wells_correlative=json.load(json_file)
 
 		conn=sqlite3.connect(db_path)

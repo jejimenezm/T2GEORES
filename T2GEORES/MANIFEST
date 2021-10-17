@@ -7,14 +7,12 @@ T2GEORES/formats.py
 T2GEORES/gener.py
 T2GEORES/geometry.py
 T2GEORES/it2Obs.py
-T2GEORES/lloyd_relaxation.py
 T2GEORES/model_conf.py
 T2GEORES/model_plots.py
 T2GEORES/output.py
 T2GEORES/regeo_mesh.py
 T2GEORES/report.py
 T2GEORES/run.py
-T2GEORES/setup.py
 T2GEORES/t2geores_functions.py
 T2GEORES/txt2sqlite.py
 T2GEORES/writer.py

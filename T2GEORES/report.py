@@ -22,6 +22,7 @@ from scipy import interpolate
 import vtk
 import numpy as np
 from scipy.spatial import ConvexHull
+from scipy import stats
 
 def plot_compare_one(well,savefig, no_real_data, data, TVD_elem, TVD_elem_top,axT,axP,PT_real_dictionary,layer_bottom,limit_layer,input_dictionary,label=None,def_colors=True):
 	"""It generates two plots, they compare real downhole temperature and pressure measurements with model output 
@@ -288,7 +289,7 @@ def plot_compare_one_data(well,input_dictionary,inpath="../output/PT/txt"):
 	else:
 		sys.exit("The file %s or directory do not exist"%in_file)
 
-def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
+def image_save_all_plots(typePT,input_dictionary,width=3,height=6):
 	"""It plots all the wells defined on input_dictionay and compare real data with model output
 	
 	Parameters
@@ -329,8 +330,9 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 			pass
 
 	db_path=input_dictionary['db_path']
+	z_ref=input_dictionary['z_ref']
 
-	limit_layer='M'
+	limit_layer='U'
 
 	fontsizex=4
 
@@ -346,9 +348,9 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 
 	#gs = gridspec.GridSpec(nrows=len(heights), ncols=len(widths), width_ratios=widths, height_ratios=heights,hspace=0.8, wspace=0.7)
 
-	gs = gridspec.GridSpec(nrows=rows, ncols=4,width_ratios=widths, height_ratios=heights,hspace=0.5, wspace=0.25)
+	gs = gridspec.GridSpec(nrows=rows, ncols=width,width_ratios=widths, height_ratios=heights,hspace=0.5, wspace=1)
 
-	fig= plt.figure(figsize=(8.5,rows*3), dpi=100)
+	fig= plt.figure(figsize=(8.5,rows*4), dpi=100,constrained_layout=True)
 
 	fig.suptitle("%s Calculated vs  %s Measured"%(typePT,typePT), fontsize=10)
 
@@ -356,9 +358,13 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 
 	c=conn.cursor()
 
-	layers_info=geometry.vertical_layers()
+	layers_info=geometry.vertical_layers(input_dictionary)
 
 	layer_bottom={layers_info['name'][n]:layers_info['bottom'][n] for n in range(len(layers_info['name']))}
+
+	layer_middle={layers_info['name'][n]:layers_info['middle'][n] for n in range(len(layers_info['name']))}
+
+	layer_top={layers_info['name'][n]:layers_info['top'][n] for n in range(len(layers_info['name']))}
 
 	TVD_elem=layers_info['middle']
 
@@ -374,18 +380,19 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 			divisor=1E5
 		elif typePT=='T':
 			data_to_extract='Temperature'
-			data_lims=[50,260]
+			data_lims=[30,300]
 			divisor=1
 			label_name='Temperature [$^\circ$C]'
 
 		for i, name in enumerate(wells):
 
 			#Real data
-			data_PT_real=pd.read_sql_query("SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well='%s';"%name,conn)
+			data_PT_real=pd.read_sql_query("SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well='%s' ORDER BY MeasuredDepth DESC;"%name,conn)
+			data_PT_real.replace(0, np.nan, inplace=True)
 
 			if len(data_PT_real)>0:
 
-				x_T,y_T,z_T,var_T=geometry.MD_to_TVD_one_var_array(name,data_PT_real[data_to_extract].values,data_PT_real['MeasuredDepth'].values,100)
+				x_T,y_T,z_T,var_T=geometry.MD_to_TVD_one_var_array(name,data_PT_real[data_to_extract].values,data_PT_real['MeasuredDepth'].values)
 
 				#Define plot
 
@@ -407,7 +414,16 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 
 					data.sort_values(by='correlative' , inplace=True)
 
-					ln2T=axT.plot(np.array(data[typePT])/divisor,np.array(TVD_elem),linestyle='None',color=formats.plot_conf_color[typePT][0],marker=formats.plot_conf_marker['current'][0],ms=1,label='Calculated')
+					#ln2T=axT.plot(np.array(data[typePT])/divisor,np.array(TVD_elem)
+					zs=[]
+					for bz in data['ELEM']:
+						zs.append(layer_middle[bz[0]])
+
+					zp=[]
+					for bz in data['ELEM']:
+						zp.append(layer_top[bz[0]])
+
+					ln2T=axT.plot(np.array(data[typePT])/divisor,zs,linestyle='None',color=formats.plot_conf_color[typePT][0],marker=formats.plot_conf_marker['current'][0],ms=1,label='Calculated')
 
 					axT.set_ylim([layer_bottom[limit_layer],z_ref])
 					
@@ -415,9 +431,9 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 
 					ax2T = axT.twinx()
 
-					ax2T.set_yticks(TVD_elem_top,minor=True)
+					ax2T.set_yticks(zp,minor=True)
 
-					ax2T.set_yticks(TVD_elem,minor=False)
+					ax2T.set_yticks(zs,minor=False)
 					
 					ax2T.tick_params(axis='y',which='major',length=0)
 
@@ -443,13 +459,20 @@ def image_save_all_plots(typePT,input_dictionary,width=4,height=4.5):
 
 					axT.set_ylabel('m.a.s.l.',fontsize = fontsizex)
 
+					axT.yaxis.set_label_coords(-0.2,0.5)
+
 					axT.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
 
 					plt.draw()
+				else:
+					print("File does not exist")
+
+			else:
+				print("No data for %s"%name)
 
 		plt.subplots_adjust(top=0.9)
 
-		fig.savefig("../report/images/PT/%s_all.png"%typePT) 
+		fig.savefig("../output/PT/images/%s_all.png"%typePT) 
 	else:
 		sys.exit("There is no real data for the parameter selected: %s "%typePT)
 
@@ -1092,3 +1115,539 @@ def plot_evol_well_lines(calculated,real_data,parameter,depth,header,well,layer,
 	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
 	ax.grid(True)
 
+
+def cross_section_real_data(wells,ngrid,masl,PT,save_img,model_version):
+	"""It Generates a vertical cross section for a specified parameter on a defined path.
+
+	Parameters
+	----------	   
+	ngrid : int
+	  Number of element on the horizontal/vertical direction
+	wells : dict
+	  Wells names
+	masl : float
+	  Desire depth for cross section
+	PT   : string
+	  'T' or 'P'
+	save_img : bool
+	  Selects weather the plot is save as image or not
+
+	Returns
+	-------
+	image
+		vertical_section_{varible_to_plot}.png: on '../output/PT/images/
+
+	Note
+	----
+	The data comes from the text file. The function is meant to be use at the early stages of the model to check natural state
+
+	"""
+
+	if PT=='T':
+		var_label='Temperature [$^\circ$C]'
+		levels=[v for v in range(50,350,25)]
+	elif PT=='P':
+		var_label='Pressure [bar]'
+		levels=[v for v in range(0,150,15)]
+	else:
+		sys.exit("Not listed variable")
+
+	ngridx=ngrid
+	ngridy=ngrid
+
+	#Setting up the canvas
+	fig= plt.figure(figsize=(12, 12), dpi=300)
+	ax=fig.add_subplot(111)
+	ax.set_aspect('equal')
+	fig.suptitle("%s m.a.s.l."%masl, fontsize=4)
+	plt.text(0.05,0.95,'model_version:'+model_version, transform=fig.transFigure, size=12)
+
+
+	#Extracting the data
+	src='../input/PT'
+	src_files = os.listdir(src)
+	var=[]
+	x=[]
+	y=[]
+	platorm={}
+	toremove=['A','B','C','D','ST']
+	for well in wells:
+		file_name=well+'_MDPT.dat'
+		full_file_name=src+'/'+file_name
+
+		if os.path.isfile(full_file_name):
+			well=file_name.split('_')[0]
+			data=pd.read_csv(full_file_name,sep=',')
+			funcT=interpolate.interp1d(data['MD'],data[PT])
+
+			try:
+				if not math.isnan(funcT(geometry.TVD_to_MD(well,masl))):
+					var.append(funcT(geometry.TVD_to_MD(well,masl)))
+					x.append(geometry.MD_to_TVD(well,geometry.TVD_to_MD(well,masl))[0])
+					y.append(geometry.MD_to_TVD(well,geometry.TVD_to_MD(well,masl))[1])
+
+					#Getting the plataform's name
+					well_i=well
+					for i in toremove:
+						well_i=well_i.replace(i,'')
+					
+					#Plotting plataform name
+					if well_i not in platorm.keys():
+						platorm[well_i]=well_i
+						ax.text(x[-1],y[-1],well_i,color='black',alpha=0.75,fontsize=3)
+			except ValueError:
+				pass
+
+
+	#Resampling
+	xi = np.linspace(min(x), max(x), ngridx)
+	yi = np.linspace(min(y), max(y), ngridy)
+	
+	triangles=mtri.Triangulation(x,y)
+	interpolator=mtri.LinearTriInterpolator(triangles,var)
+	X,Y=np.meshgrid(xi,yi)
+	zi=interpolator(X,Y)
+
+	ax.plot(X, Y, 'k-', lw=0.1, alpha=0.1)
+	ax.plot(X.T, Y.T, 'k-', lw=0.1, alpha=0.1)
+
+	#Plotting the colormarp
+	c=ax.contourf(xi,yi,zi,cmap="jet",levels=levels)
+	cbar=fig.colorbar(c,ax=ax)
+
+	#Plotting triangles
+	ax.triplot(triangles,color='0.7',lw=0.25,alpha=0.5)
+
+	#Setting up the colorbar
+	cbar.set_label(var_label,fontsize=4)
+	cbar.ax.tick_params(labelsize=4)
+
+	#Setting up the axis
+	ax.tick_params(axis='both', which='major', labelsize=4,pad=1)
+	ax.set_xlabel('East [m]',fontsize = 4)
+	ax.set_ylabel('North [m]',fontsize = 4)
+
+	step=500
+	ax.set_xlim([min(x)-step,max(x)+step])
+	ax.set_ylim([min(y)-step,max(y)+step])
+
+	plt.show()
+
+	if save_img:
+		fig.savefig("../input/PT/selection_PT/%s_%s_masl.png"%(PT,masl)) 
+
+
+
+#Not documented
+
+def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt",previnpath="../output/PT/txt/prev",show=False):
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	fontsizex=10
+
+	fontsize_layer=8
+
+	#Define plot
+
+	fig= plt.figure(figsize=(10, 12), dpi=300)
+
+	axT=fig.add_subplot(121)
+	axT_COF = axT.twiny()
+
+	axP=fig.add_subplot(122)
+	axP_COF = axP.twiny()
+
+
+	COF_locations = [0, 0.2, 0.4, 0.6, 0.8, 1]
+
+	# Move twinned axis ticks and label from top to bottom
+	axT_COF.xaxis.set_ticks_position("top")
+	axT_COF.xaxis.set_label_position("top")
+
+	# Offset the twin axis below the host
+	axT_COF.spines["top"].set_position(("axes", 1.03))
+
+	# Turn on the frame for the twin axis, but then hide all 
+	# but the bottom spine
+	axT_COF.set_frame_on(True)
+	axT_COF.patch.set_visible(False)
+
+	for sp in axT_COF.spines.values():
+	    sp.set_visible(False)
+	axT_COF.spines["top"].set_visible(True)
+
+	axT_COF.set_xticks(COF_locations)
+	axT_COF.set_xlabel("COF")
+	axT_COF.set_xlim([0,1])
+
+
+	# Move twinned axis ticks and label from top to bottom
+	axP_COF.xaxis.set_ticks_position("top")
+	axP_COF.xaxis.set_label_position("top")
+
+	# Offset the twin axis below the host
+	axP_COF.spines["top"].set_position(("axes", 1.03))
+
+	# Turn on the frame for the twin axis, but then hide all 
+	# but the bottom spine
+	axP_COF.set_frame_on(True)
+	axP_COF.patch.set_visible(False)
+
+	for sp in axP_COF.spines.values():
+	    sp.set_visible(False)
+	axP_COF.spines["top"].set_visible(True)
+
+	axP_COF.set_xticks(COF_locations)
+	axP_COF.set_xlabel("COF")
+
+	axP_COF.set_xlim([0,1])
+
+	#Real data
+	data_PT_real=pd.read_sql_query("SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well='%s' ORDER BY MeasuredDepth DESC;"%name,conn)
+
+
+	col_name=['rocktype','data','R','G','B']
+	rocks_colors=pd.read_csv("../mesh/to_steinar/rocks",delim_whitespace=True,names=col_name)
+	rocks_colors.set_index('rocktype', inplace=True)
+
+	x_T,y_T,z_T,var_T=geometry.MD_to_TVD_one_var_array(name,data_PT_real['Temperature'].values,data_PT_real['MeasuredDepth'].values)
+
+	ln1T=axT.plot(var_T,z_T,'-r',linewidth=1,label='Measured')
+
+	x_P,y_P,z_P,var_P=geometry.MD_to_TVD_one_var_array(name,data_PT_real['Pressure'].values,data_PT_real['MeasuredDepth'].values)
+
+	ln1P=axP.plot(var_P,z_P,'-b',linewidth=1,label='Measured')
+
+
+	COF_PT_file = "../output/PT/json/COF_PT.json"
+	if os.path.isfile(COF_PT_file):
+		COF_PT = pd.read_json(COF_PT_file)
+	else:
+		print("No file on %s"%COF_PT_file)
+
+	COF_PT_prev_file = "../output/PT/json/prev/COF_PT.json"
+	if os.path.isfile(COF_PT_prev_file):
+		COF_PT_prev = pd.read_json(COF_PT_prev_file)
+	else:
+		print("No file on %s"%COF_PT_prev_file)
+
+	
+	layers_block={layers['name'][n]:layers['middle'][n] for n in range(len(layers['name']))}
+
+
+	#Model
+
+	in_file="%s/%s_PT.dat"%(inpath,name)
+
+	prev_in_file="%s/%s_PT.dat"%(previnpath,name)
+
+	if os.path.isfile(in_file):
+
+		data=pd.read_csv(in_file)
+
+		blk_num=data['ELEM'].values
+
+		TVD_elem=[0 for n in range(len(blk_num))]
+		TVD_elem_top=[0 for n in range(len(blk_num))]
+		TVD_elem_bottom=[0 for n in range(len(blk_num))]
+
+		for n in range(len(blk_num)):
+			TVD_elem[n]=float(pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['middle'])
+			TVD_elem_top[n]=float(pd.read_sql_query("SELECT top FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['top'])
+			TVD_elem_bottom[n]=float(pd.read_sql_query("SELECT bottom FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['bottom'])
+
+		if os.path.isfile(COF_PT_file):
+			#COF plot
+			T_COF=COF_PT[COF_PT['DATASET'].str.endswith("T-%s"%name)]
+			P_COF=COF_PT[COF_PT['DATASET'].str.endswith("P-%s"%name)]
+
+			T_COF['ELEME']=None
+			T_COF['masl']=None
+			for index, row in T_COF.iterrows():
+				T_COF.loc[T_COF['DATASET']==row['DATASET'],'ELEME'] = row['DATASET'][0:5]
+				T_COF.loc[T_COF['DATASET']==row['DATASET'],'masl'] = layers_block[row['DATASET'][0]]
+
+			P_COF['ELEME']=None
+			P_COF['masl']=None
+			for index, row in P_COF.iterrows():
+				P_COF.loc[P_COF['DATASET']==row['DATASET'],'ELEME'] = row['DATASET'][0:5]
+				P_COF.loc[P_COF['DATASET']==row['DATASET'],'masl'] = layers_block[row['DATASET'][0]]
+
+			lnCOFT = axT_COF.plot(T_COF['COF'],T_COF['masl'],'--+k',lw=0.2,ms=2,label = 'Current calculation')
+
+			lnCOFP = axP_COF.plot(P_COF['COF'],P_COF['masl'],'--+',lw=0.2,ms=2, color = 'grey',label = 'Current calculation')
+
+
+		#Rock types
+		ys=TVD_elem_top[0:-1]
+		ys.append(TVD_elem_top[0])
+		ys.append(TVD_elem_top[-1])
+		ys.append(TVD_elem_bottom[-1])
+		xs=[290,310]
+
+		for iy,ysi in enumerate(ys):
+			if iy+2<len(ys):
+				colori=rocks_colors.loc[ELEME[blk_num[iy]]['MA1']]
+				if blk_num[iy][0]!='U' and blk_num[iy][0]!='T':
+					axT.fill_between(xs,ysi,ys[iy+1],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
+				elif blk_num[iy][0]=='T':
+					axT.fill_between(xs,ysi,ys[iy+3],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
+				else:
+					axT.fill_between(xs,ys[iy+1],ys[iy+2],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
+
+
+		ln2T=axT.plot(data['T'],TVD_elem,'+r',linewidth=1,label='Current calculation')
+
+		ln2P=axP.plot(data['P']/1E5,TVD_elem,'+b',linewidth=1,label='Current calculation')
+
+		axT.set_ylim([TVD_elem_bottom[-1],max(max(z_T),max(TVD_elem_top))])
+		axT.set_xlim([20,305])
+		axP.set_ylim([TVD_elem_bottom[-1],max(max(z_T),max(TVD_elem_top))])
+		axP.set_xlim([0,305])
+
+		ax2P = axP.twinx()
+
+		layer_corr=[data['ELEM'].values[n][0] for n in range(len(blk_num))]
+
+		ax2P.set_yticks(TVD_elem_top,minor=True)
+
+		ax2P.set_yticks(TVD_elem,minor=False)
+
+		ax2P.tick_params(axis='y',which='major',length=0)
+
+		ax2P.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
+
+		ax2P.set_yticklabels(layer_corr,fontsize=fontsize_layer)
+
+		ax2P.set_ylim(axP.get_ylim())
+
+
+		ax2T = axT.twinx()
+
+		ax2T.set_yticks(TVD_elem_top,minor=True)
+
+		ax2T.set_yticks(TVD_elem,minor=False)
+		
+		ax2T.tick_params(axis='y',which='major',length=0)
+
+		ax2T.set_yticklabels(layer_corr,fontsize=fontsize_layer)
+
+		ax2T.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
+
+		ax2T.set_ylim(axT.get_ylim())
+
+	if os.path.isfile(prev_in_file):
+
+		data=pd.read_csv(prev_in_file)
+
+		blk_num=data['ELEM'].values
+
+		TVD_elem=[0 for n in range(len(blk_num))]
+		TVD_elem_top=[0 for n in range(len(blk_num))]
+
+		for n in range(len(blk_num)):
+			TVD_elem[n]=float(pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['middle'])
+			TVD_elem_top[n]=float(pd.read_sql_query("SELECT top FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['top'])
+
+		ln3T=axT.plot(data['T'],TVD_elem,'.',linewidth=1,label='Previously calculated', color="orangered")
+
+		ln3P=axP.plot(data['P']/1E5,TVD_elem,'.',linewidth=1,label='Previously calculated', color="indigo")
+
+
+		if os.path.isfile(COF_PT_prev_file):
+			#COF plot
+			T_COF_prev=COF_PT_prev[COF_PT_prev['DATASET'].str.endswith("T-%s"%name)]
+			P_COF_prev=COF_PT_prev[COF_PT_prev['DATASET'].str.endswith("P-%s"%name)]
+
+			T_COF_prev['ELEME']=None
+			T_COF_prev['masl']=None
+			for index, row in T_COF_prev.iterrows():
+				T_COF_prev.loc[T_COF_prev['DATASET']==row['DATASET'],'ELEME'] = row['DATASET'][0:5]
+				T_COF_prev.loc[T_COF_prev['DATASET']==row['DATASET'],'masl'] = layers_block[row['DATASET'][0]]
+
+			P_COF_prev['ELEME']=None
+			P_COF_prev['masl']=None
+			for index, row in P_COF_prev.iterrows():
+				P_COF_prev.loc[P_COF_prev['DATASET']==row['DATASET'],'ELEME'] = row['DATASET'][0:5]
+				P_COF_prev.loc[P_COF_prev['DATASET']==row['DATASET'],'masl'] = layers_block[row['DATASET'][0]]
+
+
+			lnCOFT_prev=axT_COF.plot(T_COF_prev['COF'],T_COF_prev['masl'],'-+',lw=0.2,ms=2,color = 'teal', label = 'Previously calculated')
+
+			lnCOFP_prev=axP_COF.plot(P_COF_prev['COF'],P_COF_prev['masl'],'-+',lw=0.2,ms=2, color = 'teal',label = 'Previously calculated')
+
+
+		lnsT = ln1T+ln2T+ln3T+lnCOFT
+
+		if os.path.isfile(COF_PT_prev_file):
+			lnsT+=lnCOFT_prev
+
+		labsT = [l.get_label() for l in lnsT]
+
+		axT.legend(lnsT, labsT, loc='lower left', fontsize=fontsizex)
+
+		axT.set_xlabel('Temperature [C]',fontsize=fontsizex)
+
+		axT.xaxis.set_label_coords(0.5,1.1)
+
+		axT.xaxis.tick_top()
+
+		axT.set_ylabel('m.a.s.l.',fontsize = fontsizex)
+
+		axT.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
+		
+		lnsP = ln1P+ln2P+ln3P+lnCOFP
+
+		if os.path.isfile(COF_PT_prev_file):
+			lnsP+=lnCOFP_prev
+
+		labsP = [l.get_label() for l in lnsP]
+
+		axP.legend(lnsP, labsP, loc='lower left', fontsize=fontsizex)
+		
+		axP.set_xlabel('Pressure [bar]',fontsize=fontsizex)
+
+		axP.xaxis.set_label_coords(0.5,1.1)
+
+		axP.xaxis.tick_top()
+
+		axP.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
+
+		fig.suptitle("%s"%name, fontsize=fontsizex)
+	
+	if  os.path.isfile(prev_in_file) and  os.path.isfile(in_file):
+		fig.savefig('../calib/PT/images/PT_%s.png'%name) 
+
+	if show:
+		plt.show()
+
+	return fig
+
+def compare_runs_PT(input_dictionary,comment=''):
+
+	db_path=input_dictionary['db_path']
+	model_version=input_dictionary['model_version']
+	wells=[]
+
+	for key in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
+
+	pdf_pages=PdfPages('../calib/PT/run_'+str(datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S'))+'.pdf')
+
+	layers=geometry.vertical_layers(input_dictionary)
+
+	eleme_json_file='../mesh/ELEME.json'
+	if os.path.isfile(eleme_json_file):
+		with open(eleme_json_file) as file:
+		  	ELEME=json.load(file)
+	else:
+		sys.exit("The file %s does not exist"%(eleme_json_file))
+
+
+
+	for name in sorted(wells):
+		fig = plot_compare_PT_curr_prev(db_path,name,ELEME,layers,"../output/PT/txt","../output/PT/txt/prev",show=False)
+		pdf_pages.savefig(fig)
+
+
+	#Scatter plot
+
+	fig= plt.figure(figsize=(24, 12), dpi=300)
+	axT=fig.add_subplot(121)
+	axP=fig.add_subplot(122)
+
+	layers_block={layers['name'][n]:layers['middle'][n] for n in range(len(layers['name']))}
+
+	OBJ_PT_file = "../output/PT/json/it2_PT.json"
+	if os.path.isfile(OBJ_PT_file):
+		OBJ_PT = pd.read_json(OBJ_PT_file)
+	else:
+		print("No file on %s"%OBJ_PT_file)
+
+	data_T=[]
+	data_P=[]
+
+	for name in sorted(wells):
+		in_file="%s/%s_PT.dat"%("../output/PT/txt",name)
+		data=pd.read_csv(in_file)
+
+		for index,row in data.iterrows():	
+			T_COF = OBJ_PT.loc[OBJ_PT['OBSERVATION']=="%s-T-%s"%(row['ELEM'],name),'MEASURED']
+			P_COF = OBJ_PT.loc[OBJ_PT['OBSERVATION']=="%s-P-%s"%(row['ELEM'],name),'MEASURED']
+			if len(P_COF)>0 and len(T_COF)>0:
+				data_T.append([row['T'],T_COF.values[0]])
+				data_P.append([row['P']/1E5,P_COF.values[0]/1E5])
+
+	data_T=np.array(data_T)
+	resT = stats.linregress(data_T[:,0],data_T[:,1])
+	
+	data_P=np.array(data_P)
+	resP = stats.linregress(data_P[:,0],data_P[:,1])
+
+	axT.plot(data_T[:,0],data_T[:,1],'or',linestyle='None')
+	T_s=np.linspace(min(data_T[:,0]),max(data_T[:,0]),10)
+	axT.plot(T_s,resT.slope*T_s+resT.intercept,'--k',label='%.2f*P+%.2f'%(resT.slope,resT.intercept))
+	axT.set_xlim([50,320])
+	axT.set_ylim([50,320])
+	axT.set_ylabel('Calculated Temperature [C]')
+	axT.set_xlabel('Measured Temperature [C]')
+	axT.legend()
+
+	axP.plot(data_P[:,0],data_P[:,1],'ob',linestyle='None')
+	P_s=np.linspace(min(data_P[:,0]),max(data_P[:,0]),10)
+	axP.plot(P_s,resP.slope*P_s+resP.intercept,'--k',label='%.2f*P+%.2f'%(resP.slope,resP.intercept))
+	axP.set_xlim([0,250])
+	axP.set_ylim([0,250])
+	axP.set_ylabel('Calculated Pressure [bar]')
+	axP.set_xlabel('Measured Pressure [bar]')
+	axP.legend()
+
+	pdf_pages.savefig()
+	plt.close()
+
+	#Objective function
+
+	OBJ_file = "../output/PT/json/OBJ.json"
+	if os.path.isfile(OBJ_file):
+		OBJ = pd.read_json(OBJ_file)
+
+		fig = plt.figure(figsize=(12,8))
+		fig.clf()
+
+		ax=fig.add_subplot(111)
+
+		ax.plot(OBJ["TIME"],OBJ['OBJ'],'ok',ms=2,linestyle="None")
+
+		ax.set_ylabel('Val')
+		ax.set_xlabel('Time')
+
+		pdf_pages.savefig()
+		plt.close()
+
+	else:
+		print("No file on %s"%OBJ_file)
+
+
+	if comment!='':
+		firstPage = plt.figure(figsize=(10,12))
+		firstPage.clf()
+		firstPage.text(0.5,0.5,comment+'\n'+'model version: '+str(model_version), transform=firstPage.transFigure, size=10, ha="center")
+		pdf_pages.savefig()
+		plt.close()
+
+	d = pdf_pages.infodict()
+	d['Title'] = 'Calibration Model Plots'
+	d['Author'] = 'EJ'
+	d['Subject'] = 'BGF'
+	d['Keywords'] = 'Model, TOUGH2, iTOUGH2, HÍ'
+	d['CreationDate'] = datetime.datetime.today()
+	d['ModDate'] = datetime.datetime.today()
+
+	# Write the PDF document to the disk
+	pdf_pages.close()

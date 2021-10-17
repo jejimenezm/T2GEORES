@@ -7,6 +7,7 @@ import sys
 import shapefile
 import json
 from iapws import IAPWS97
+import sqlite3
 
 def vertical_layers(input_dictionary):
 	"""It returns the layers information on a dictionary
@@ -123,7 +124,7 @@ def MD_to_TVD(well,depth):
 		z_out=np.nan
 	return x_out,y_out,z_out
 
-def MD_to_TVD_one_var_array(well,var_array,MD_array,num_points):
+def MD_to_TVD_one_var_array(well,var_array,MD_array):
 	"""It returns the position X, Y and Z for every point on a log along Pressure or Temperature.
 
 	Parameters
@@ -134,8 +135,6 @@ def MD_to_TVD_one_var_array(well,var_array,MD_array,num_points):
 	  It contains the log of pressure or temperature
 	MD_array :array
 	  It contains the measure depth values corresponding with every point on var_array
-	num_points	:int
-	  Number of points for the output array
 
 	Returns
 	-------
@@ -204,14 +203,14 @@ def MD_to_TVD_one_var_array(well,var_array,MD_array,num_points):
 	z_V=[]
 	var_V=[]
 
-	MD_array_reconvert=np.linspace(min(MD_array),max(MD_array),num_points)
+	#MD_array_reconvert=np.linspace(min(MD_array),max(MD_array),num_points)
 
-	for i in MD_array_reconvert:
+	for value in MD_array:
 		try:
-			x_V.append(funxmd(i))
-			y_V.append(funymd(i))
-			z_V.append(funzmd(i))
-			var_V.append(funcV(i))
+			x_V.append(funxmd(value))
+			y_V.append(funymd(value))
+			z_V.append(funzmd(value))
+			var_V.append(funcV(value))
 		except ValueError:
 			pass
 
@@ -352,6 +351,33 @@ def TVD_to_MD_array(well,TVD_array):
 			MD.append(np.nan)
 	return MD
 
+def remap(data):
+	"""It returns an array with the number of values as the reference pressure array 
+
+	Parameters
+	----------
+	data : dict
+	  Contains 'MD_P','P' and 'MD_T' at least. The depths values for P are found base on the depths of MD_T
+
+	Returns
+	-------
+	dict
+	  data : with 'remap_P' cointaning the values of P for the depths listed at MD_T
+	"""
+
+	map_function=interpolate.interp1d(data['MD_P'],data['P'])
+
+	p=[]
+	for MD in data['MD_T']:
+		try:
+			p.append(map_function(MD))
+		except ValueError:
+			p.append(np.nan)
+
+	data['remap_P']=p
+
+	return data
+
 def line_intersect(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2):
 	"""Finds the intersection point between two lines
 
@@ -460,6 +486,73 @@ def write_feedzone_position(input_dictionary):
 		x,y,z=MD_to_TVD(row['well'],row['MeasuredDepth'])
 		string="%s,%s,%s,%s,%s,%s\n"%(row['well'],row['MeasuredDepth'],x,y,z,row['type'])
 		file.write(string)
+	file.close()
+
+def write_feedzone_position_from_dict(wells):
+	""" It generates a file on csv format containing the well feedzone position and coordinates from a python dictionary with well information
+
+	Parameters
+	----------	  
+	wells : dictionary
+	  Contains the wells names, feedzone and contribution
+
+	Returns
+	-------
+	file
+	  well_feedzone_xyz: on ../input
+
+	Note
+	----
+	regeo_mesh uses this file as an input
+
+	Examples
+	--------
+	>>> wells={'TR-1':{type_w':'OBS','feedzones':{'A':{'MD':600,'contribution':1}}}},
+	>>> write_feedzone_position_from_dict(wells)
+	"""
+
+	file=open('../input/'+'well_feedzone_xyz.csv','w')
+
+	string="well,MD,x,y,z,type\n"
+	file.write(string)
+	for well in wells:
+		for i in wells[well]['feedzones']:
+			x,y,z=MD_to_TVD(well,wells[well]['feedzones'][i]['MD'])
+			string="%s,%s,%s,%s,%s,%s\n"%(well,wells[well]['feedzones'][i]['MD'],x,y,z,wells[well]['type_w'])
+			file.write(string)
+	file.close()
+
+def write_feedzone_from_dict(wells):
+	""" It generates a file on csv format containing the well feedzone position and coordinates from a python dictionary with well information
+
+	Parameters
+	----------	  
+	wells : dictionary
+	  Contains the wells names, feedzone and contribution
+
+	Returns
+	-------
+	file
+	  well_feedzone: on ../input
+
+	Note
+	----
+	regeo_mesh uses this file as an input
+
+	Examples
+	--------
+	>>> wells={'TR-1':{type_w':'OBS','feedzones':{'A':{'MD':600,'contribution':1}}}},
+	>>> write_feedzone_position_from_dict(wells)
+	"""
+
+	file=open('../input/'+'well_feedzone.csv','w')
+	string="well,MD,contribution,type\n"
+	file.write(string)
+	for well in wells:
+		for i in wells[well]['feedzones']:
+			x,y,z=MD_to_TVD(well,wells[well]['feedzones'][i]['MD'])
+			string="%s,%s,%s,%s\n"%(well,wells[well]['feedzones'][i]['MD'],wells[well]['feedzones'][i]['contribution'],wells[well]['type_w'])
+			file.write(string)
 	file.close()
 
 def PT_natural_to_GIS(input_dictionary):
@@ -614,3 +707,82 @@ def P_from_T_TVD(T_array,TVD_array,water_level_TVD,Pmin):
 		else:
 			P.append(Pmin)
 	return P
+
+def survey_to_GIS(input_dictionary):
+	"""It writes a shapefile (line type) from the wells surveys
+
+	Parameters
+	----------	  
+	input_dictionary : dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path'.
+
+	Returns
+	-------
+	file
+	  well_survey: on the path ../mesh/GIS
+
+	Examples
+	--------
+	>>> survey_to_GIS(input_dictionary)
+	"""
+
+	db_path=input_dictionary['db_path']
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	wells_data=pd.read_sql_query("SELECT * FROM survey ORDER BY well DESC;",conn)
+	wells=wells_data.well.unique()
+
+	if len(wells)!=0:
+		w=shapefile.Writer('../mesh/GIS/well_survey')
+		w.field('WELL', 'C', size=10)
+		for well in wells:
+			data = wells_data.loc[wells_data['well'] == well]
+			points=np.asarray(MD_to_TVD(well,data['MeasuredDepth']))
+			points=np.transpose(points)
+			w.linez([points.tolist()])
+			w.record(well)
+		w.close()
+	else:
+		sys.exit("There is no well survey store on the database")
+
+def feedzone_to_GIS(input_dictionary):
+	"""It writes a shapefile (point type) from the wells feedzones position
+
+	Parameters
+	----------	  
+	input_dictionary : dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path'.
+
+	Returns
+	-------
+	file
+	  well_survey: on the path ../mesh/GIS
+
+	Examples
+	--------
+	>>> feedzone_to_GIS(input_dictionary)
+	"""
+
+
+	db_path=input_dictionary['db_path']
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	wells_data=pd.read_sql_query("SELECT * FROM wellfeedzone ORDER BY well DESC;",conn)
+	wells=wells_data.well.unique()
+
+	wells_info=pd.read_sql_query("SELECT * FROM wells ORDER BY well DESC;",conn)
+
+
+	if len(wells)!=0:
+		w=shapefile.Writer('../mesh/GIS/well_feedzone')
+		w.field('WELL', 'C', size=10)
+		w.field('TYPE', 'C', size=10)
+		w.field('CONTRIBUTION', 'F', decimal=2)
+		for i, row in wells_data.iterrows():
+			x,y,z=MD_to_TVD(row['well'],row['MeasuredDepth'])
+			w.pointz(x,y,z)
+			w.record(row['well'],wells_info.loc[wells_info['well']==row['well'],'type'].values[0],row['contribution'])
+		w.close()
+	else:
+		sys.exit("There is no well survey store on the database")

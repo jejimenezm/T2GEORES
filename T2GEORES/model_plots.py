@@ -9,7 +9,7 @@ import matplotlib.dates as mdates
 import sys
 import matplotlib.gridspec as gridspec
 from iapws import IAPWS97
-
+import os
 
 
 def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
@@ -445,17 +445,17 @@ def plot_one_mh_from_txt(well):
 
 	plt.show()
 
-def check_layers_and_feedzones(input_dictionary, show_fig,sav_fig,source_txt = '../input/'):
-	"""Regresa informacion relacionada a las capas
+def check_layers_and_feedzones(input_dictionary, show_fig,sav_fig):
+	"""It return a plot with the well TVD and the stratigrafy units
 
 	Parameters
 	----------
 	show_fig: bool
-	  If True shows the figure
+		If True shows the figure
 	sav_fig: bool
-	  If True saves the figure on ../output/
+		If True saves the figure on ../output/
 	input_dictionary : dictionary
-	  Contains the infomation of the layer under the keyword 'LAYER' and 'z_ref'. It also needs to specify the input files path under the keyword 'source_txt'
+		Contains the layers information under the keyword 'LAYER' and 'z_ref'. It also needs to specify the input files path under the keyword 'source_txt'
 
 	Returns
 	-------
@@ -468,43 +468,76 @@ def check_layers_and_feedzones(input_dictionary, show_fig,sav_fig,source_txt = '
 
 	"""
 
+	color_dict={'UI':'indianred',
+				'UII':'orange',
+				'UIII':'lightgreen',
+				'UIV':'violet'}
+
+	type_dict={'OBS':'m',
+				'REIN':'b',
+				'AMBREI':'c',
+				'PROD':'r',
+				'ABANDON':'grey',
+				'WAITING':'k'}
+
 	font_title_size=12
 	fontsizey_layers=8
 	fontsize_label=8
 
-	layers_info=geometry.vertical_layers(input_dictionary)
+	layers_info =  geometry.vertical_layers(input_dictionary)
+	z0_level = input_dictionary['z_ref']
+	source_txt = input_dictionary['source_txt']
+
 
 	#Plot setting 
-	fig=plt.figure(figsize=(20, 10), dpi=100)
-	ax=fig.add_subplot(111)
+	fig = plt.figure(figsize=(20, 10), dpi=100)
+	ax = fig.add_subplot(111)
 
-	feedzones=pd.read_csv(source_txt+'well_feedzone_xyz.csv',delimiter=",")
+	feedzones = pd.read_csv(source_txt+'well_feedzone_xyz.csv',delimiter=",")
+	elevations = pd.read_csv(source_txt+'ubication.csv',delimiter=",")
+	units = pd.read_csv(source_txt+'lithology_units.csv',delimiter=";")
 
-	index2plot=[]
-	wells_ticks=[]
-	z_wells=[]
+	index2plot = []
+	wells_ticks = []
+	z_wells = []
 	for index,row in feedzones.iterrows():
 		index2plot.append(index*4)
 		wells_ticks.append(row['well'])
 		z_wells.append(row['z'])
-		ax.plot(5*[index*4],np.linspace(z0_level,row['z'],5),'-k',lw=1,alpha=0.5)
-		#ax.text(index*4,row['z'],row['well'],fontsize=6)
-	
-	#Set feedzones position 
 
-	ax.plot(index2plot,z_wells,'ok',ms=2)
+		#Adding tubes representation
+		try:
+			tubes_data=pd.read_csv('../input/tubes/%s_tubes.dat'%row['well'])
+			ax.plot(2*[index*4],[elevations.loc[elevations.well==row['well']]['masl'],geometry.MD_to_TVD(row['well'],tubes_data['tr_lisa_fin'])[2]],'-k',lw=0.75)
+			ax.plot(2*[index*4],[geometry.MD_to_TVD(row['well'],tubes_data['tranurada_inicio'])[2],geometry.MD_to_TVD(row['well'],tubes_data['tranurada_final'])[2]] ,':k',lw=0.75)
+			ax.plot(index*4,row['z'],'+',ms=3,color=type_dict[row['type']],label=row['type'])
+
+			for kx, rowk in units.loc[units.WELL==row['well']].iterrows():
+				ax.plot(2*[(index+0.1)*4],[geometry.MD_to_TVD(row['well'],rowk.FROM)[2],geometry.MD_to_TVD(row['well'],rowk.TO)[2]],'-',lw=2,color=color_dict[rowk.UNIDADES],label=rowk.UNIDADES)
+
+		except np.core._exceptions.UFuncTypeError:
+			pass
+
+
+	handles, labels = plt.gca().get_legend_handles_labels()
+	by_label = dict(zip(labels, handles))
+	ax.legend(by_label.values(), by_label.keys())
+
+	
+	
 
 	ax.set_xticks(index2plot)
 	ax.set_xticklabels(wells_ticks,rotation=90)
 
-	y_layer_plot=layers_info['top']
-	x_layer_plot=[index]*len(layers_info['top'])
+	y_layer_plot = layers_info['top']
+	x_layer_plot = [index]*len(layers_info['top'])
 
 	ax.xaxis.tick_top()
 	ax.tick_params(axis='x',which='both',labelsize=6)
 	
-	Depth_lims=[min(layers_info['bottom']),max(layers_info['top'])]
+	Depth_lims = [min(layers_info['bottom']),max(layers_info['top'])]
 
+	#Setting vertical axis
 	ax.set_ylim(Depth_lims)
 	ax.set_ylabel('m.a.s.l.',fontsize = fontsizey_layers)
 	ax.set_yticks(layers_info['top'], minor=False)
@@ -533,7 +566,7 @@ def check_layers_and_feedzones(input_dictionary, show_fig,sav_fig,source_txt = '
 	if sav_fig:
 		fig.savefig("../output/vertical_distribution_wells.png", format='png',dpi=300) 
 
-def plot_init_conditions(input_dictionary):
+def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=False):
 	"""Creates a plot for the initial pressure and temperature values
 
 	Parameters
@@ -551,26 +584,88 @@ def plot_init_conditions(input_dictionary):
 	>>> plot_init_conditions(input_dictionary)
 	"""
 
-	T, P, depths =t2funcs.initial_conditions(input_dictionary)
-
-	fig= plt.figure(figsize=(8, 8), dpi=300)
-
-	axT=fig.add_subplot(121)
-
-	axP=fig.add_subplot(122)
-
-	ln1T=axT.plot(T,depths,linestyle='-',color=formats.plot_conf_color['T'][0],marker=formats.plot_conf_marker['current'][0],linewidth=0.5,ms=1)
-
-	ln1P=axP.plot(P,depths,linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['current'][0],linewidth=0.5,ms=1)
+	from scipy.stats import linregress
 
 	#Plot configuration
+	fontsizex = 4
+	fontsize_axis = 4
+	fontsize_tick = 3
+	fontsize_legend = 2
+	
+	#T and P limits
 
-	fontsizex=8
-	fontsize_axis=4
-	fontsize_tick=3
-	fontsize_legend=2
+	max_T=325
+	max_P=400
+	max_depth=-3500
+	min_depth=1500
 
-	fig.suptitle('Initial conditions', fontsize=fontsizex)
+
+	T, P, depths = t2funcs.initial_conditions(input_dictionary,m,b,use_boiling,use_equation)
+
+	fig = plt.figure(figsize=(8, 8), dpi=300)
+	axT = fig.add_subplot(121)
+	axP = fig.add_subplot(122)
+
+	wells=[]
+
+	for key in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
+
+	cm = plt.get_cmap('brg')
+	N=len(wells)
+	cnt=0
+
+	string_file="name,intercept,slope,r\n"
+
+	src='../input/PT'
+	src_files = os.listdir(src)
+	slopes=[]
+	intercepts=[]
+	for well in wells:
+		file_name = well+'_MDPT.dat'
+		full_file_name=src+'/'+file_name
+		if os.path.isfile(full_file_name):
+			cnt+=1	
+			well=file_name.split('_')[0]
+			data=pd.read_csv(full_file_name,sep=',')
+			data['TVD']=data.apply(lambda x: geometry.MD_to_TVD(well,x['MD'])[2],axis=1)
+			ln1T=axT.plot(data['T'],data['TVD'],label=well,lw=0.5,alpha=0.75)
+			ln1T[0].set_color(cm(cnt/N))
+			ln1P = axP.plot(data['P'],data['TVD'],label=well,lw=0.5,alpha=0.75)
+			slope, intercept, r, p, se = linregress(data[data.P > 5]['P'].tolist(), data[data.P > 5]['TVD'].tolist())
+			if slope>-19:
+				slopes.append(slope)
+				intercepts.append(intercept)
+				string_file+="%s,%.2f,%.2f,%.2f\n"%(well,intercept,m,r)
+
+			ln1P[0].set_color(cm(cnt/N))
+
+	string_file+="average_real,%.2f,%.2f,0.0\n"%(np.average(slopes),np.average(intercepts))
+
+
+	ln1T = axT.plot(T,depths,linestyle='-',color=formats.plot_conf_color['T'][0],marker=formats.plot_conf_marker['current'][0],linewidth=0.5,ms=1,label='Initial T')
+
+	ln1P = axP.plot(P,depths,linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['current'][0],linewidth=0.5,ms=1,label='Initial P')
+
+	slope, intercept, r, p, se = linregress(P[30:-1],depths[30:-1])
+
+	string_file += "conditions,%.2f,%.2f,%.2f\n"%(intercept,slope,r)
+
+	if use_boiling:
+		title_s="using BPD"
+	elif use_equation:
+		title_s="using equation"
+
+	file_log=open('../output/initial_conditions/initial_conditions_%s.csv'%title_s,'w')
+	file_log.write(string_file)
+	file_log.close()
+
+	fig.suptitle('Initial conditions/Well conditions %s'%title_s, fontsize=fontsizex)
+	plt.rc('legend', fontsize=fontsize_legend)
 
 	axT.xaxis.tick_top()
 	axT.set_xlabel('Temperature [$^\circ$C]',fontsize=fontsize_axis)
@@ -578,8 +673,10 @@ def plot_init_conditions(input_dictionary):
 	axT.tick_params(axis='both', which='major', labelsize=fontsize_tick,pad=1)
 	axT.set_ylabel('TVD [m]',fontsize = fontsize_tick)
 	axT.tick_params(axis='y',which='major',length=1)
-	axT.set_xlim([0,max(T)])
-	axT.set_ylim([min(depths),max(depths)])
+	axT.set_xlim([0,max_T])
+	axT.set_ylim([max_depth,min_depth])
+	axT.grid(color = 'grey', linestyle = '--', linewidth = 0.1, alpha=0.5)
+	legend_T=axT.legend(loc=3,ncol=2,bbox_to_anchor=(0.05,0.0125))
 
 	axP.xaxis.tick_top()
 	axP.set_xlabel('Pressure [bar]',fontsize=fontsize_axis)
@@ -587,7 +684,16 @@ def plot_init_conditions(input_dictionary):
 	axP.tick_params(axis='both', which='major', labelsize=fontsize_tick,pad=1)
 	axP.set_ylabel('TVD [m]',fontsize = fontsize_tick)
 	axP.tick_params(axis='y',which='major',length=1)
-	axP.set_xlim([0,max(P)])
-	axP.set_ylim([min(depths),max(depths)])
+	axP.set_xlim([0,max_P])
+	axP.set_ylim(max_depth,min_depth)
+	axP.grid(color = 'grey', linestyle = '--', linewidth = 0.1, alpha=0.5)
+	legend_P=axP.legend(loc=3,ncol=2,bbox_to_anchor=(0.05,0.0125))
+
+	legend_P.get_frame().set_linewidth(0.25)
+	for legend_handle in legend_P.legendHandles:
+		legend_handle._legmarker.set_markersize(1.5)
+		legend_handle._legmarker.set_linewidth(0.25)
+	
+	fig.savefig("../output/initial_conditions/%s.png"%title_s, format='png',dpi=300)
 
 	plt.show()

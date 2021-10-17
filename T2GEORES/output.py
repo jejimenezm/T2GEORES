@@ -7,10 +7,10 @@ import sys
 import sqlite3
 import subprocess
 import json
+import datetime
+import re
+from T2GEORES import formats as formats
 
-"""
-It extracts the blocks information containing on a TOUGH2 output file.
-"""
 
 def write_PT_from_t2output(input_dictionary):
 	"""It writes the parameter for every block from every well from the last output file of TOUGH2 simulation
@@ -78,13 +78,13 @@ def write_PT_from_t2output(input_dictionary):
 	#Select the last line of TOUGH2 output file
 	for line in t2_output_array[output_headers[-1]:-1]:
 		for block in blocks_wells:
-			if  block in line.split() and len(line.split())==11:
+			if  block in line.split() and len(line.split())==12: #11
 				wells_data[blocks_wells[block]]+="%s\n"%(','.join(line.split()))
 
 	#Writes an output file for every well
 	for well in wells_data:
 		file_out=open("../output/PT/txt/%s_PT.dat"%(well), "w")
-		file_out.write("ELEM,INDEX,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW\n")
+		file_out.write("ELEM,INDEX,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW,LOG(PERM)\n")
 		file_out.write(wells_data[well])
 		file_out.close()
 
@@ -630,7 +630,7 @@ def t2_to_json(itime=None,save_full=False):
 				time=t2_line.rstrip().split(" ")[-2]
 				data_dictionary={}
 				data_dictionary[time]={}
-			if len(t2_line.split())==11 and t2_line.split()[0] in blocks.keys():
+			if len(t2_line.split())==12 and t2_line.split()[0] in blocks.keys():
 				t2_array=t2_line.rstrip().split(" ")
 				data_list= list(filter(None, t2_array))
 				data_dictionary[time][data_list[0]]={}
@@ -664,3 +664,437 @@ def t2_to_json(itime=None,save_full=False):
 		t2_output_file.write("}")
 		t2_output_file.close()
 
+def it2COF(input_dictionary):
+	"""Extracts the COF value for each block on the OBSERVATION section of the inverse file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		Contains the name of the iTOUGH2 file
+
+	Returns
+	-------
+	file
+		COF_PT.json: on the output/PT/json/ folder
+
+	Attention
+	---------
+	It might changed based on the iTOUGH2 version
+
+	Examples
+	--------
+	>>> it2COF(input_dictionary)
+	"""
+
+	it2_output_file="../model/t2/%s.out"%input_dictionary['iTOUGH2_file']
+	if os.path.isfile(it2_output_file):
+		pass
+	else:
+		return "Theres is not %.out file on t2/%s.out"%(input_dictionary['iTOUGH2_file'],input_dictionary['iTOUGH2_file'])
+
+	#First and last line in between the data
+	compare1 = " DATASET              DATAPOINTS          MEAN       MEDIAN    STD. DEV.    AVE. DEV.   SKEWNESS   KURTOSIS      M/S    DWA     COF"
+	compare2 = " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+
+	#Empty dataframe
+	data = pd.DataFrame(columns=["DATASET","DATAPOINTS","MEAN","MEDIAN","STD. DEV.","AVE. DEV.","SKEWNESS","KURTOSIS","M/S","DWA","COF"])
+
+	#Extracts the data based on compare1 and compare2
+	output_headers = []
+	with open(it2_output_file,'r') as t2_file:
+		it2_output_array = t2_file.readlines()
+		save = False
+		for line_i, line in enumerate(it2_output_array):
+
+			if compare1 in line.rstrip():
+				save = True
+			elif compare2 in line.rstrip():
+				save = False
+
+			if save:
+				output_headers.append(it2_output_array[line_i+1])
+
+	#Stores the date into the appropiate column
+	output_headers=output_headers[1:-1]
+	for values in output_headers:
+		data_i = values.split()
+		data = data.append({"DATASET":data_i[0],
+							"DATAPOINTS":data_i[2],
+							"MEAN":data_i[3],
+							"MEDIAN":data_i[4],
+							"STD. DEV.":data_i[5],
+							"AVE. DEV.":data_i[6],
+							"SKEWNESS":data_i[7],
+							"KURTOSIS":data_i[8],
+							"M/S":data_i[9],
+							"DWA":data_i[10],
+							"COF":data_i[12]},ignore_index = True)
+
+
+	data.to_json("../output/PT/json/COF_PT.json",indent=2)
+
+def it2DATASET(input_dictionary):
+	"""Extracts the OBSERVATION dataset on the the inverse file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		Contains the name of the iTOUGH2 file
+
+	Returns
+	-------
+	file
+		it2_PT.json: on the output/PT/json/ folder
+
+	Attention
+	---------
+	It might changed based on the iTOUGH2 version
+
+	Examples
+	--------
+	>>> it2DATASET(input_dictionary)
+	"""
+
+	it2_output_file="../model/t2/%s.out"%input_dictionary['iTOUGH2_file']
+	if os.path.isfile(it2_output_file):
+		pass
+	else:
+		return "Theres is not %s.out file on t2/%s.out"%(input_dictionary['iTOUGH2_file'],input_dictionary['iTOUGH2_file'])
+
+	#First and last line in between the data
+	compare1="#  OBSERVATION   AT TIME [sec]     MEASURED     COMPUTED     RESIDUAL     WEIGHT C.O.F [%]    STD. DEV.    Yi      Wi    DWi +/-"
+	compare2=" Residual Plots"
+
+	data = pd.DataFrame(columns=["NUMBER","OBSERVATION","TIME","MEASURED","COMPUTED","RESIDUAL","WEIGHT","C.O.F","STD.DEV"])
+
+	#Extracts the data based on compare1 and compare2
+	output_headers=[]
+	with open(it2_output_file,'r') as t2_file:
+		it2_output_array = t2_file.readlines()
+		save = False
+		for line_i, line in enumerate(it2_output_array):
+
+			if compare1 in line.rstrip():
+				save = True
+			elif compare2 in line.rstrip():
+				save = False
+
+			if save:
+				output_headers.append(it2_output_array[line_i+1])
+
+	#Stores the date into the corresponding column
+	output_headers=output_headers[1:-3][::2]
+	for values in output_headers:
+		data_i = values.split()
+		data = data.append({"NUMBER":data_i[0],
+							"OBSERVATION":data_i[1],
+							"TIME":data_i[2],
+							"MEASURED":data_i[3],
+							"COMPUTED":data_i[4],
+							"RESIDUAL":data_i[5],
+							"WEIGHT":data_i[6],
+							"C.O.F":data_i[7],
+							"STD":data_i[8]},ignore_index = True)
+
+	data.to_json("../output/PT/json/it2_PT.json",indent=2)
+
+def it2OBJF(input_dictionary):
+	"""Extracts the value of the objective function from the output inverse file and append it with the current time
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		Contains the name of the iTOUGH2 file
+
+	Returns
+	-------
+	file
+		OBJ.json: on the output/PT/json/ folder
+
+	Attention
+	---------
+	It might changed based on the iTOUGH2 version
+
+	Examples
+	--------
+	>>> it2OBJF(input_dictionary)
+	"""
+
+
+	it2_output_file="../model/t2/%s.out"%input_dictionary['iTOUGH2_file']
+	if os.path.isfile(it2_output_file):
+		pass
+	else:
+		return "Theres is not %s.out file on t2/%s.out"%(input_dictionary['iTOUGH2_file'],input_dictionary['iTOUGH2_file'])
+
+	#First and last line in between the data
+
+	compare1 = "Objective Function"
+	compare2 = "=================================================================================================================================="
+
+	#Extracts the data based on compare1 and compare2
+	cnt=0
+	output_headers=[]
+	with open(it2_output_file,'r') as t2_file:
+		it2_output_array = t2_file.readlines()
+		save = False
+		for line_i, line in enumerate(it2_output_array):
+
+			if compare1 in line.rstrip():
+				cnt+=1
+				save = True
+			elif compare2 in line.rstrip():
+				save = False
+
+			if cnt == 2 and save:
+				output_headers.append(it2_output_array[line_i+1])
+	
+	OBJ_file = "../output/PT/json/OBJ.json"
+
+	OBJ = pd.read_json(OBJ_file)
+
+	#Add the current time to the file
+	OBJ.loc[len(OBJ.index)] = [datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S'), float(output_headers[2][1:-4].split()[6])]
+
+	OBJ.to_json(OBJ_file,indent=2)
+
+
+#not documented
+def normal_directions(input_dictionary,block,block2):
+	"""
+	not documented
+	"""
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	points=pd.read_sql_query("SELECT x1,y1,x2,y2,ELEME1,ELEME2 FROM segment WHERE ELEME1='%s' AND ELEME2='%s';"%(block,block2),conn)
+	conn.close()
+	if block[0]!=block2[0]:
+		vectors=[]
+		if (formats.formats_t2['LAYERS'][block[0]]-formats.formats_t2['LAYERS'][block2[0]])>0:
+			duz=-1
+		else:
+			duz=1
+		dux=0
+		duy=0
+		points=pd.DataFrame([[dux,duy,duz]],columns=['dux','duy','duz'])
+	elif block[0]==block2[0]:
+		points['dx']=points['x2']-points['x1']
+		points['dy']=points['y2']-points['y1']
+		points['r']=(points['dx']**2+points['dy']**2)**0.5
+		points['ux']=points['dx']/points['r']
+		points['uy']=points['dy']/points['r']
+		points['dux']=-points['uy']
+		points['duy']=points['ux']
+		points['duz']=0
+	return points
+
+def output_flows(input_dictionary):
+	"""
+	Read the .out file from the standard TOUGH2 file and store the data into a database. It includes the model version and timestamp.
+	"""
+
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
+	elements_list=elements['ELEME'].values.tolist()
+	conn.close()
+
+	column_names=['ELEME1', 'ELEME2', 'INDEX','FHEAT','FLOH','FLOF','FLOG','FLOAQ','FLOWTR2','VELG','VELAQ','TURB_COEFF','model_time','model_version','model_output_timestamp']
+
+	time_now=datetime.datetime.now()
+
+	output_t2_file="../model/t2/t2.out"
+
+	bulk_data=[]
+
+	allow=False
+	allowed_line=1E50
+	if os.path.isfile(output_t2_file):
+		t2_file=open(output_t2_file, "r")
+		for n,t2_line in enumerate(t2_file):
+			if "OUTPUT DATA AFTER" in t2_line:
+				time=t2_line.rstrip().split(" ")[-2]
+				fix_data=[time,input_dictionary['model_version'],time_now]
+				allow=True
+
+			if t2_line=="                          (W)        (J/KG)        (KG/S)       (KG/S)       (KG/S)       (KG/S)        (M/S)        (M/S)        (1/M)\n":
+				allowed_line=n+2
+
+			if t2_line==" ELEMENT SOURCE INDEX      GENERATION RATE     ENTHALPY      X1           X2          FF(GAS)      FF(AQ.)         P(WB)\n":
+				allow=False
+				allowed_line=1E50
+
+			if allow and n>=allowed_line:
+				content=t2_line.split()
+				if len(content)==12 and content[0]!='ELEM1':
+					data_list= list(filter(None, content))
+					data_list.extend(fix_data)
+					bulk_data.append(data_list)
+
+			"""
+			Previous logic
+			#if len(t2_line.split())==12 and elements.ELEME.str.count(t2_line.split()[0]).sum()==1 and elements.ELEME.str.count(t2_line.split()[1]).sum()==1:
+			#if len(t2_line.split())==12 and bool(re.match("^[A-Z][A-Z][0-9][0-9][0-9]$",str(t2_line.split()[0]))) and bool(re.match("^[A-Z][A-Z][0-9][0-9][0-9]$",str(t2_line.split()[1]))): #3000s
+			if len(t2_line.split())==12 and len(t2_line.split()[0])==5 and not(any(y in t2_line.split() for y in ['ELEM1','GENER'] )): #2950s #t2_line.split()[0] in elements_list and t2_line.split()[1] in elements_list: #3500s
+				#print(t2_line.split())
+				t2_array=t2_line.rstrip().split(" ")
+				data_list= list(filter(None, t2_array))
+				data_list.extend(fix_data)
+				data_line={}
+
+				for i,name in enumerate(column_names):
+					try:
+						data_line[name]=float(data_list[i])
+					except (ValueError,TypeError):
+						data_line[name]=data_list[i]
+				
+				flows_df=flows_df.append(data_line,ignore_index=True)
+			"""
+		flows_df = pd.DataFrame(bulk_data,columns = column_names)
+		t2_file.close()
+
+		#Writing the dataframe to the database
+
+		conn=sqlite3.connect(input_dictionary['db_path'])
+		flows_df.to_sql('t2FLOWSout',if_exists='append',con=conn,index=False)
+		conn.close()
+
+	else:
+		sys.exit("The file %s or directory do not exist"%output_t2_file)
+
+def flow_direction(input_dictionary):
+	"""
+	not documented
+	"""
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
+	elements_list=elements['ELEME'].values.tolist()
+	
+	flows_dict={}
+
+	for element in elements_list:
+
+		#print("PRE DIRECTIONS",datetime.datetime.now())
+		directions=normal_directions(input_dictionary,element)
+		#print("AFTER DIRECTIONS",datetime.datetime.now())
+		
+		#Direction 1
+		#print("PRE query flow",datetime.datetime.now())
+		flow_data=pd.read_sql_query("SELECT * FROM t2FLOWSout WHERE ELEME1='%s'AND model_time=-3359500000.0"%element,conn)
+		#print("AFTER query flow",datetime.datetime.now())
+
+		flow_data['flow_x']=0
+		flow_data['flow_y']=0
+
+		#print("PRE FIRST LOOP",datetime.datetime.now())
+		for index, row in flow_data.iterrows(): #horizontal
+
+			if row['ELEME2'][0]!=row['ELEME1'][0]:
+				#Establish the direction of the flow
+				if (formats.formats_t2['LAYERS'][row['ELEME1'][0]]-formats.formats_t2['LAYERS'][row['ELEME2'][0]])>0:
+					uy=-1
+				else:
+					uy=1
+
+				#It is necessary to check if the right position of ELEME1 and ELEME2 exists
+				if element==row['ELEME1']:
+					flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*row['FLOF']
+				else:
+					flow_data.loc[(flow_data['ELEME1']==row['ELEME2']) & (flow_data['ELEME2']==row['ELEME1']),"flow_y"]=-uy*row['FLOF']
+
+			else:
+
+				ux=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['dux'])
+				uy=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['duy'])
+				
+				flux=float(flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2'])]['FLOF'])
+				
+				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_x"]=ux*flux
+				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*flux
+		#print("AFTER FIRST LOOP",datetime.datetime.now())
+
+
+		#Direction 2
+		flow_data2=pd.read_sql_query("SELECT * FROM t2FLOWSout WHERE ELEME2='%s' AND model_time=-3359500000.0"%element,conn)
+		flow_data.append(flow_data2)
+
+		#print("PRE SECOND LOOP",datetime.datetime.now())
+
+		for index, row in flow_data.iterrows(): #horizontal
+
+			if row['ELEME2'][0]!=row['ELEME1'][0]:
+				#Establish the direction of the flow
+				if (formats.formats_t2['LAYERS'][row['ELEME1'][0]]-formats.formats_t2['LAYERS'][row['ELEME2'][0]])>0:
+					uy=-1
+				else:
+					uy=1
+
+				#It is necessary to check if the right position of ELEME1 and ELEME2 exists
+				if element==row['ELEME1']:
+					flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*row['FLOF']
+				else:
+					flow_data.loc[(flow_data['ELEME1']==row['ELEME2']) & (flow_data['ELEME2']==row['ELEME1']),"flow_y"]=-uy*row['FLOF']
+
+			else:
+
+				ux=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['dux'])
+				uy=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['duy'])
+				
+				flux=float(flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2'])]['FLOF'])
+				
+				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_x"]=ux*flux
+				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*flux
+		#print("AFTER SECOND LOOP",datetime.datetime.now())
+
+		#print("PRE CALCS",datetime.datetime.now())
+		sum_flowx=flow_data['flow_x'].sum()
+		sum_flowy=flow_data['flow_y'].sum()
+		flows_dict[element]=[sum_flowx,sum_flowy,(sum_flowx**2+sum_flowy**2)**0.5]
+		#print("AFTER CALCS",datetime.datetime.now())
+		#print(element,flows_dict[element])
+
+	flows=pd.DataFrame.from_dict(flows_dict,orient='index',columns=['flow_x','flow_y','flow_mag'])
+	#left_side=flow_data.loc[flow_data['ELEME1']==element]
+	#right_side=flow_data.loc[flow_data['ELEME2']==element]
+	flows.to_csv('directions.csv')
+	conn.close()
+
+def flow_direction2(input_dictionary):
+	"""
+	not documented
+	"""
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
+	elements_list=elements['ELEME'].values.tolist()
+	
+	flows_dict={}
+
+	flow_data=pd.read_sql_query("SELECT * FROM t2FLOWSout WHERE model_time=-3359500000.0",conn)
+
+	flow_data['x_flow']=flow_data.apply(lambda row : normal_directions(input_dictionary,row['ELEME1'],row['ELEME2'])['dux']*row['FLOF'],axis=1)
+	flow_data['y_flow']=flow_data.apply(lambda row : normal_directions(input_dictionary,row['ELEME1'],row['ELEME2'])['duy']*row['FLOF'],axis=1)
+	flow_data['z_flow']=flow_data.apply(lambda row : normal_directions(input_dictionary,row['ELEME1'],row['ELEME2'])['duz']*row['FLOF'],axis=1)
+
+	#[Finished in 905.5s]
+
+	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
+	elements_list=elements['ELEME'].values.tolist()
+
+	bulk_data=[]
+	time_now=datetime.datetime.now()
+	time=-3359500000.0
+
+	for element in elements_list:
+		x=flow_data.loc[flow_data['ELEME1']==element,'x_flow'].sum()-flow_data.loc[flow_data['ELEME2']==element,'x_flow'].sum()
+		y=flow_data.loc[flow_data['ELEME1']==element,'y_flow'].sum()-flow_data.loc[flow_data['ELEME2']==element,'y_flow'].sum()
+		z=flow_data.loc[flow_data['ELEME1']==element,'z_flow'].sum()-flow_data.loc[flow_data['ELEME2']==element,'z_flow'].sum()
+		bulk_data.append([element,x,y,z,time,input_dictionary['model_version'],time_now])
+
+
+	column_names=['ELEME','FLOF_x','FLOF_y','FLOF_z','model_time','model_version','model_output_timestamp']
+
+	flows_df = pd.DataFrame(bulk_data,columns = column_names)
+
+	#Writing the dataframe into the database
+
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	flows_df.to_sql('t2FLOWVectors',if_exists='append',con=conn,index=False)
+	conn.close()

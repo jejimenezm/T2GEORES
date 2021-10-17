@@ -5,6 +5,7 @@ import sys
 import os
 import pandas as pd
 import sqlite3
+import json
 
 def converter(value,format_t2,def_value):
 	"""Returns the input value on the specified format
@@ -552,46 +553,93 @@ def merge_ELEME_and_in_to_t2():
 	--------
 	>>> merge_ELEME_and_in_to_t2()
 	"""
-	source_file="../mesh/to_steinar/in"
 	eleme_file="../mesh/to_steinar/eleme"
 	output_file="../model/t2/sources/ELEME"
 
-	if os.path.isfile(source_file) and os.path.isfile(eleme_file):
+
+	block_eleme_file="../mesh/ELEME.json"
+	if os.path.isfile(block_eleme_file):
+		with open(block_eleme_file) as file:
+			blocks=json.load(file)
+	else:
+		sys.exit("The file %s or directory do not exist"%block_eleme_file)
+
+	col_eleme=[(0,6),(15,20),(20,30)]
+
+
+	if os.path.isfile(eleme_file):
 		string="ELEME----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
-		data_in=pd.read_csv(source_file,delim_whitespace=True,skiprows=7,header=None,names=['block','li','X','Y','Z','h'])
-		data_eleme=pd.read_csv(eleme_file,delim_whitespace=True,skiprows=1,header=None,names=['block','rocktype','vol'])
-		data_in.set_index('block')
-		data_eleme.set_index('block')
+		data_eleme=pd.read_fwf(eleme_file,colspecs=col_eleme,skiprows=1,header=None,names=['ELEME','MA1','VOLX'])
 
-		for n in range(len(data_eleme['block'])):
-			selection=data_in.loc[data_in['block']==data_eleme['block'][n]].values.tolist()
-			if data_eleme['vol'][n]>0:
-				string+="%5s%10s%5s%10.3E%10s%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n],\
-	                                                                      " ",\
-	                                                data_eleme['rocktype'][n],\
-	                                                     data_eleme['vol'][n],\
-	                                                                       " ",\
-	                                                                       " ",\
-	                                                           selection[0][2],\
-	                                                           selection[0][3],\
-	                                                           selection[0][4])
-
-			else:
-				string+="%5s%10s%5s%10s%10s%10.3E%10.3E%10.3E\n"%(data_eleme['block'][n],\
-					                                                                      " ",\
-					                                                data_eleme['rocktype'][n],\
-					                                                                       " ",\
-					                                                                       " ",\
-					                                                           selection[0][2],\
-					                                                           selection[0][3],\
-					                                                           selection[0][4])
-
+		for i, row in data_eleme.iterrows():
+			try:
+				string+="%5s%10s%5s%10.3E%10s%10s%10.3E%10.3E%10.3E\n"%(row['ELEME'],\
+					                                                    " ",\
+					                                                row['MA1'],\
+					                                                     row['VOLX'],\
+		                                                                       " ",\
+		                                                                       " ",\
+		                                                           blocks[row['ELEME']]['X'],\
+		                                                           blocks[row['ELEME']]['Y'],\
+		                                                           blocks[row['ELEME']]['Z'])
+			except KeyError:
+				pass
 		string+='\n'
 		file=open(output_file,'w')
 		file.write(string)
 		file.close()
 	else:
 		sys.exit("The file %s or directory do not exist"%file_source_file)
+
+def ATM_data():
+
+
+	block_eleme_file="../mesh/vtu/ELEME.json"
+	if os.path.isfile(block_eleme_file):
+		with open(block_eleme_file) as file:
+			blocks=json.load(file)
+	else:
+		sys.exit("The file %s or directory do not exist"%block_eleme_file)
+
+	conne_file_st=open('../model/t2/sources/CONNE2','w')  
+	conne_file=open('../model/t2/sources/CONNE','r')  
+	data_conne=conne_file.readlines()
+
+	for line in data_conne:
+		#if both are on the conne line, the line should not exist
+		if line[0:5] in blocks.keys() and line[5:10] in blocks.keys():
+			conne_file_st.write(line)
+		elif line[0:5] not in blocks.keys() and line[5:10] not in blocks.keys() :
+			pass
+		elif line[0:5] not in blocks.keys():
+			if line[0]!=line[5]:
+				conne_file_st.write('ATM01'+line[5:10]+'                   3 1.000e-02'+line[40:-1]+'\n')
+			else:
+				conne_file_st.write('ATM01'+line[5:10]+'                   1 1.000e-02'+line[40:-1]+'\n')
+		elif  line[5:10] not in blocks.keys():
+			if line[0]!=line[5]:
+				conne_file_st.write(line[0:5]+'ATM01'+'                   3'+line[30:41]+'1.000e-02'+line[50:-1]+'\n')
+			else:
+				conne_file_st.write(line[0:5]+'ATM01'+'                   1'+line[30:41]+'1.000e-02'+line[50:-1]+'\n')
+
+	conne_file_st.close()
+	conne_file.close()
+
+
+	eleme_file_st=open('../model/t2/sources/ELEME2','w')  
+	eleme_file=open('../model/t2/sources/ELEME','r')  
+	data_eleme=eleme_file.readlines()
+
+	for line in data_eleme:
+		if (line[0:5]) in blocks.keys():
+			eleme_file_st.write(line)
+		else:
+			continue
+	eleme_file_st.write("ATM01          ATMOS 1.000E+50\n")
+	eleme_file_st.close()
+	eleme_file.close()
+
+
 
 def ELEME_adder(input_dictionary):
 	""""It takes the ELEME file from ../model/t2/sources and print it as a string
@@ -827,7 +875,7 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 			output+="START----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 		output+=func(input_dictionary)
 
-	output+=GENER_adder(input_dictionary)
+	#output+=GENER_adder(input_dictionary)
 
 	output+="ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 

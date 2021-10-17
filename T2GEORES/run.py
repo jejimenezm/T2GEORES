@@ -103,6 +103,10 @@ def incon_to_t2(input_dictionary):
 		input_incon="../model/t2/sources/INCON"
 		blocks='odd'
 		incon_file_len=len(open(input_incon).readlines())
+	elif incon_state=='init_mod':
+		input_incon="../model/t2/sources/INCON_MOD"
+		blocks='odd'
+		incon_file_len=len(open(input_incon).readlines())
 
 	input_fi_file="../model/t2/t2"
 
@@ -295,25 +299,37 @@ def update_rock_distribution(input_dictionary):
 	>>> update_rock_distribution(input_dictionary)
 	"""
 
-	t2w.CONNE_from_steinar_to_t2()
-	t2w.merge_ELEME_and_in_to_t2()
+	#writer.CONNE_from_steinar_to_t2()
+	writer.merge_ELEME_and_in_to_t2()
 
 	t2_string=""
 	input_fi_file="../model/t2/t2"
 
 	if os.path.isfile(input_fi_file):
 		t2_file=open(input_fi_file, "r")
-		indicator=False
-		for t2_line in t2_file:
-			if 'ELEME' not in t2_line and not indicator:
+		ELEME_line=1E50
+		add_gener=False
+		add_ELEME=False
+		for i,t2_line in enumerate(t2_file):
+			if 'ELEME' not in t2_line and ELEME_line>i:
 				t2_string+=t2_line
-			elif indicator and 'GENER' in t2_line:
-				t2_string+=t2_line
-			else:
-				t2_string+=t2_writer.ELEME_adder(input_dictionary)
-				t2_string+=t2_writer.CONNE_adder(input_dictionary)
-				indicator=True
 
+			if 'ELEME' in t2_line:
+				add_ELEME=True
+				ELEME_line=0
+
+			if 'GENER' in t2_line:
+				add_gener=True
+
+			if add_gener:
+				t2_string+=t2_line
+
+			if add_ELEME:
+				t2_string+=writer.ELEME_adder(input_dictionary)
+				t2_string+=writer.CONNE_adder(input_dictionary)
+				add_ELEME=False
+
+		t2_file.close()
 		t2_file_out=open(input_fi_file, "w")
 		t2_file_out.write(t2_string)
 		t2_file_out.close()
@@ -428,3 +444,45 @@ def run(input_dictionary):
 				shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
 			except shutil.Error:
 				print("File already exist %s"%file_name)
+
+def rock_update(input_dictionary):
+	"""
+	It updates the rock type on the TOUGH2 file
+	Parameters
+	----------
+	input_dictionary : dictionary
+		TOUGH2 file name
+	"""
+
+	t2_string = ""
+	input_fi_file = "../model/t2/%s"%input_dictionary['TOUGH2_file']
+	if os.path.isfile(input_fi_file):
+		t2_file=open(input_fi_file, "r")
+		ELEME_line = 1E50
+		add_param = False
+		add_rocks = False
+		for i,t2_line in enumerate(t2_file):
+
+			if 'ROCKS' not in t2_line and ELEME_line>i:
+				t2_string+=t2_line
+
+			if 'ROCKS' in t2_line:
+				add_rocks=True
+				ELEME_line=0
+
+			if 'PARAM' in t2_line or 'START' in t2_line:
+				add_param = True
+
+			if add_param:
+				t2_string += t2_line
+
+			if add_rocks:
+				t2_string += writer.ROCKS_writer(input_dictionary)
+				add_rocks = False
+
+		t2_file.close()
+		t2_file_out = open(input_fi_file, "w")
+		t2_file_out.write(t2_string)
+		t2_file_out.close()
+	else:
+		sys.exit("The file %s or directory do not exist"%input_fi_file)

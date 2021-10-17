@@ -14,10 +14,19 @@ import pylab as plb
 import math
 import sys
 from scipy.spatial import ConvexHull
+from scipy.interpolate import griddata
+from scipy.spatial.distance import cdist
+from scipy.spatial import cKDTree
 import pandas as pd
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 import pyvista as pv
 import vtk
+import sqlite3
+
+import geopandas as gpd
+import string
+
+from lloydRelax import Field
 
 class py2amesh:
 	"""It creates a mesh based on well positions and irregular blocks
@@ -148,7 +157,9 @@ class py2amesh:
 		toler,layers,layer_to_plot,x_space,y_space,radius_criteria,\
 		x_from_boarder,y_from_boarder,\
 		x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,\
-		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog,line_file,fault_distance,with_polygon,polygon_shape,set_inac_from_poly,set_inac_from_inner,rotate,angle,inner_mesh_type):
+		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog,line_file,fault_distance,with_polygon,polygon_shape,set_inac_from_poly,set_inac_from_inner,rotate,angle,inner_mesh_type,\
+		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well):
+
 		self.filename=filename
 		self.filepath=filepath
 		self.layers=layers
@@ -194,6 +205,15 @@ class py2amesh:
 		self.rotate=rotate
 		self.angle=angle
 		self.inner_mesh_type=inner_mesh_type
+		self.polygon_shape=polygon_shape
+
+
+		self.distance_points=distance_points
+		self.fault_rows=fault_rows
+		self.relaxation_times=relaxation_times
+		self.points_around_well=points_around_well
+
+		self.distance_points_around_well=distance_points_around_well
 
 		if self.with_polygon:
 			shape = shapefile.Reader(polygon_shape)
@@ -206,6 +226,17 @@ class py2amesh:
 				for v in points[n]:
 					if n=='coordinates':
 						self.polygon.append([v[0],v[1]]) # (GeoJSON format)
+
+		#Read border to clip write into in files
+		borders=gpd.read_file('../../GIS/reservoir/reservoir_limits_1_pol.shp')
+
+		border_points=[]
+		for line in borders.iterrows():
+			pointList = line[1].geometry.exterior.coords.xy
+			for point in zip(pointList[0],pointList[1]):
+				border_points.append([point[0],point[1]])	
+
+		self.polygon_external=border_points[::-1][0:-1]
 
 		self.color_dict = {1:[['AA','AB','AC','AD','AE','AF','AG'],'ROCK1','red'],\
 						   2:[['BA','BB','BC','BD','BE','BF','BG'],'ROCK2','white'],\
@@ -225,7 +256,15 @@ class py2amesh:
 						   16:[['PA','PB','PC','PD','PE','PF','PG'],'ROK16','#cd853f'],\
 						   17:[['QA','QB','QC','QD','QE','QF','QG'],'ROK17','#bc8f8f'],\
 						   18:[['RA','RB','RC','RD','RE','RF','RG'],'ROK18','#5f9ea0'],\
-						   19:[['SA','SB','SC','SD','SE','SF','SG'],'ROK19','#daa520']}
+						   19:[['SA','SB','SC','SD','SE','SF','SG'],'ROK19','#daa520'],
+						   20:[['TA','TB','SC','SD','SE','SF','SG'],'ROK20','#daa520'],
+						   21:[['UA','UB','UC','UD','UE','UF','UG'],'ROK21','#daa520'],
+						   22:[['VA','VB','SC','VD','VE','VF','VG'],'ROK22','#daa520'],
+						   23:[['WA','WB','SC','WD','WE','WF','WG'],'ROK23','#daa520'],
+						   24:[['XA','XB','SC','XD','XE','XF','XG'],'ROK19','#daa520'],
+						   25:[['YA','YB','SC','YD','YE','YF','YG'],'ROK19','#daa520'],
+						   26:[['ZA','ZB','SC','ZD','ZE','ZF','ZG'],'ROK19','#daa520']}
+
 
 		self.rock_dict={}
 		prof_cont=0
@@ -279,13 +318,19 @@ class py2amesh:
 
 		return np.array(self.mesh_array)
 
-	def check_in_out(self,point,source):
+	def check_in_out(self,position,point,source):
 		"""Verifica si un punto de la malla del campo cercano esta dentro o fuera del poligo definido por el shapefile de entrada o del campo cercano
 		"""
 
+		if position=='internal':
+			polygon=self.polygon
+		elif position=='external':
+			polygon=self.polygon_external
+
+
 		boolean=False
 		if source=='shapefile':
-			polygon=self.polygon
+
 			cnt=0
 			for n in range(len(polygon)):
 				if n+1!=len(polygon):
@@ -310,8 +355,15 @@ class py2amesh:
 	def reg_pol_mesh(self):
 		"""Crea malla regular cuando existe un poligono de entrada
 		"""
-		x_regular=np.arange(self.Xmin+self.x_from_boarder,self.Xmax+self.x_space-self.x_from_boarder,self.x_space)
-		y_regular=np.arange(self.Ymin+self.y_from_boarder,self.Ymax+self.y_space-self.y_from_boarder,self.y_space)
+		#x_regular=np.arange(self.Xmin+self.x_from_boarder,self.Xmax+self.x_space-self.x_from_boarder,self.x_space)
+		#y_regular=np.arange(self.Ymin+self.y_from_boarder,self.Ymax+self.y_space-self.y_from_boarder,self.y_space)
+
+		nx=40 #number of elements in one direction
+		n_times=4
+		ny=int((self.Ymax+2*n_times*self.x_from_boarder-self.Ymin)*nx/(self.Xmax-self.Xmin+n_times*2*self.x_from_boarder))
+
+		x_regular=np.linspace(self.Xmin-n_times*self.x_from_boarder,self.Xmax+n_times*self.x_from_boarder,nx,endpoint=True) #generation of regular grid on X
+		y_regular=np.linspace(self.Ymin-n_times*self.y_from_boarder,self.Ymax+n_times*self.x_from_boarder,ny,endpoint=True) #generation of regular grid on Y
 
 		self.mesh_array=[]
 		for nx in x_regular:
@@ -321,10 +373,10 @@ class py2amesh:
 		if self.rotate:
 			angle=self.angle
 			for pair in range(len(self.mesh_array)):
-				x1=self.mesh_array[pair][0]-self.Xmin
-				y1=self.mesh_array[pair][1]-self.Ymin
-				self.mesh_array[pair][0]=x1*math.cos(math.pi*angle/180)-y1*math.sin(math.pi*angle/180)+self.Xmin
-				self.mesh_array[pair][1]=x1*math.sin(math.pi*angle/180)+y1*math.cos(math.pi*angle/180)+self.Ymin
+				x1=self.mesh_array[pair][0]-(self.Xmin-n_times*self.x_from_boarder)
+				y1=self.mesh_array[pair][1]-(self.Ymin-n_times*self.x_from_boarder)
+				self.mesh_array[pair][0]=x1*math.cos(math.pi*angle/180)-y1*math.sin(math.pi*angle/180)+self.Xmin-n_times*self.x_from_boarder
+				self.mesh_array[pair][1]=x1*math.sin(math.pi*angle/180)+y1*math.cos(math.pi*angle/180)+self.Ymin-n_times*self.x_from_boarder
 
 
 		x_pol=[]
@@ -336,16 +388,20 @@ class py2amesh:
 		y_pol.append(int(self.polygon[0][1]))
 
 
-		x_gap_min=min(x_pol)
-		x_gap_max=max(x_pol)
+		x_gap_min=self.x_gap_min#min(x_pol)
+		x_gap_max=self.x_gap_max#max(x_pol)
 	
-		y_gap_min=min(y_pol)
-		y_gap_max=max(y_pol)
+		y_gap_min=self.y_gap_min#min(y_pol)
+		y_gap_max=self.y_gap_max#max(y_pol)
 
 		small_mesh=[]
 
-		x_regular_small=np.arange(x_gap_min,x_gap_max+self.x_gap_space,self.x_gap_space)
-		y_regular_small=np.arange(y_gap_min,y_gap_max+self.y_gap_space,self.y_gap_space)
+		#x_regular_small=np.arange(x_gap_min,x_gap_max+self.x_gap_space,self.x_gap_space)
+		#y_regular_small=np.arange(y_gap_min,y_gap_max+self.y_gap_space,self.y_gap_space)
+
+		x_regular_small=np.arange(x_gap_min,x_gap_max,self.x_gap_space)
+		y_regular_small=np.arange(y_gap_min,y_gap_max,self.y_gap_space)
+
 
 		for nxx in x_regular_small:
 			cnt=0
@@ -371,7 +427,7 @@ class py2amesh:
 		to_delete=[]
 		for v in range(len(self.mesh_array)):
 			point=[self.mesh_array[v][0],self.mesh_array[v][1]]
-			check=self.check_in_out(point,source='shapefile')
+			check=self.check_in_out('internal',point,source='shapefile')
 			if check:
 				to_delete.append(v)
 
@@ -381,7 +437,7 @@ class py2amesh:
 		to_delete=[]
 		for v in range(len(small_mesh)):
 			point=[small_mesh[v][0],small_mesh[v][1]]
-			check=self.check_in_out(point,source='shapefile')
+			check=self.check_in_out('internal',point,source='shapefile') 
 			if not check:
 				to_delete.append(v)
 
@@ -396,11 +452,19 @@ class py2amesh:
 
 		return np.array(mesh_pol)
 
-	def radius_select(self,x0,y0,xr,yr):
+	def radius_select(self,x0,y0,xr,yr,type_i='mesh'):
 		"""Verifica si dos puntos estan mas cerca que el criterio seleccionado
 		"""
 		r=((x0-xr)**2+(y0-yr)**2)**0.5
-		if r<self.radius_criteria:
+
+		if type_i=='mesh':
+			cx=self.radius_criteria
+		elif type_i=='well':
+			cx=10*0.4*2**0.5
+		elif type_i=='fault':
+			cx=15
+
+		if r<cx:
 			boolean=1
 		else:
 			boolean=0
@@ -500,7 +564,7 @@ class py2amesh:
 		"""Define los puntos que ingresaran al archivo de entrada para amesh. Adicionalmente, en caso de definir un linea en el archivo de entrada <i><lines_data/i> se procedera a ingresar estos puntos y crear puntos paralelos en ambos extremos de la linea
 		"""
 		self.raw_data=np.genfromtxt(self.filepath+self.filename,dtype={'names':('ID','MD','X','Y','Z','TYPE'),'formats':('<U7','f4','f4','f4','f4','<U10')},delimiter=',',skip_header=True)
-		print(self.raw_data)
+
 		self.IDXY={}
 
 		if not self.from_leapfrog:
@@ -510,7 +574,7 @@ class py2amesh:
 				regular_mesh=self.regular_mesh()
 		else:
 			x,x1,y1,y2,regular_mesh=self.from_leapfrog_mesh()
-		
+
 		for n in range(len(self.raw_data['ID'])):
 			#Store the data from wells
 			self.IDXY["%s"%(str(self.raw_data['ID'][n]))]=[self.raw_data['X'][n],self.raw_data['Y'][n],self.raw_data['TYPE'][n]]
@@ -529,8 +593,49 @@ class py2amesh:
 
 			regular_mesh=np.delete(regular_mesh, to_delete, 0)
 
+		#Mesh around the wells
+
+		well_mesh=[]
+		d=self.distance_points_around_well
+		dw=np.linspace(-d*0.4,d*0.4,num=self.points_around_well)
+		dw=dw[dw!=0]
+		for n in range(len(self.raw_data['ID'])):
+			x=self.raw_data['X'][n]
+			y=self.raw_data['Y'][n]
+			for xr in dw:
+				for yr in dw:
+					xi=x+xr
+					yi=y+yr
+					
+					#Rotating mesh around the wells
+					if self.rotate:
+						angle=self.angle
+						x1=xi-(x)
+						y1=yi-(y)
+						xii=x1*math.cos(math.pi*angle/180)-y1*math.sin(math.pi*angle/180)+(x)
+						yii=x1*math.sin(math.pi*angle/180)+y1*math.cos(math.pi*angle/180)+(y)
+						well_mesh.append([xii,yii])
+
+					else:
+						well_mesh.append([xi,yi])
+
+		well_mesh=np.array(well_mesh)
+
+		#Deleting elements on the mesh around the well to close to other regular elements of the mesh
+		for point in regular_mesh:
+			to_delete=[]
+			for i,well_point in enumerate(well_mesh):
+				boolean=self.radius_select(well_point[0],well_point[1],point[0],point[1],type_i='well')
+				if boolean==1:
+					to_delete.append(i)
+
+			well_mesh=np.delete(well_mesh, to_delete, 0)
+
+		#Finally appending the mesh
+		regular_mesh=np.append(regular_mesh,well_mesh,axis=0)
+
 		cnt=0
-		if len(self.line_file)>0:
+		if self.line_file:
 			self.lines_data=np.loadtxt(self.filepath+self.line_file,dtype={'names':('ID','X','Y'),'formats':('S10','f4','f4')},delimiter=',',skiprows=1)
 			lines_dict={}
 			for v in self.lines_data:
@@ -540,46 +645,127 @@ class py2amesh:
 				else:
 					lines_dict[key].append([float(v[1]),float(v[2])])
 
-			d=self.fault_distance
+			d=self.fault_distance #Fine more of this for better definition a long the faults
+			#ds=np.arange(d,d*2.5,step=d/2)
+			#df=self.x_gap_space-d/4 #step=d/2
+
+			ds=[]
+			init_d=d/2
+			for j in range(self.fault_rows):
+				d_val=init_d*2**(j)
+				ds.append(d_val)
+			ds=np.array(ds)
+
+			#Iter over every structure
 			for n in lines_dict:
 				x_lines=[]
 				y_lines=[]
 				for v in lines_dict[n]:
 					x_lines.append(v[0])
 					y_lines.append(v[1])
-				x_lines_np=np.array([])
-				y_lines_np=np.array([])
+
+				x_lines_np=np.array([]) #Initialize X position of structures
+				y_lines_np=np.array([]) #Initialize Y position of structures
 
 				for nv in range(len(x_lines)):
 					if nv+1<len(x_lines):
 
-						x_lines_np_local=np.linspace(x_lines[nv],x_lines[nv+1],num=20)
-						y_lines_np_local=np.linspace(y_lines[nv],y_lines[nv+1],num=20)
+						#Generates a line with the usual two points of the fault
+						line=[(x_lines[nv],y_lines[nv]),(x_lines[nv+1],y_lines[nv+1])]
+
+						#Calculates the distance between the points
+						distDiag = cdist(line,line,'euclidean').diagonal(1)
+						#Estimastes the number of new points
+						d_btw_points=self.distance_points #  10
+						num_steps=int(distDiag//d_btw_points)
+
+						#Generates the new x positions to evaluate
+						x_lines_np_local=np.linspace(x_lines[nv],x_lines[nv+1],num=num_steps)
+						y_lines_np_local=np.linspace(y_lines[nv],y_lines[nv+1],num=num_steps)
+
+						#Generates a double quantity of new x positions
+						x_lines_np_local2=[]
+						y_lines_np_local2=[]
+
+						for h, val in enumerate(x_lines_np_local):
+							if h+1<len(x_lines_np_local):
+								x_val=(val+x_lines_np_local[h+1])/2
+								y_val=(y_lines_np_local[h]+y_lines_np_local[h+1])/2
+
+								x_lines_np_local2.append(x_val)
+								y_lines_np_local2.append(y_val)
+
+						x_lines_np_local2=np.array(x_lines_np_local2)
+						y_lines_np_local2=np.array(y_lines_np_local2)
 						
-						x_lines_np=np.append(x_lines_np,np.linspace(x_lines[nv],x_lines[nv+1],num=20))
-						y_lines_np=np.append(y_lines_np,np.linspace(y_lines[nv],y_lines[nv+1],num=20))
+						x_lines_np=np.append(x_lines_np,x_lines_np_local)
+						y_lines_np=np.append(y_lines_np,y_lines_np_local)
 
+						#calculates line parameters
 						m,b=plb.polyfit(x_lines_np_local,y_lines_np_local,1)
-
+						#perpendicular splope
 						p_s=(-1/m)
-						c=abs(((d**2)/(1+(p_s)**2))**0.5)
 
-						x_u=[c+x for x in x_lines_np_local]
-						x_d=[-c+x for x in x_lines_np_local]
+						for i, d in enumerate(ds):
+							c=d*(1+m**2)**0.5+b
 
-						y_u=[]
-						y_d=[]
+							if b<0:
+								c=b-d*(1+m**2)**0.5
 
-						for v in range(len(x_u)):
-							y_u.append(p_s*x_u[v]+y_lines_np_local[v]-p_s*x_lines_np_local[v])
-							y_d.append(p_s*x_d[v]+y_lines_np_local[v]-p_s*x_lines_np_local[v])
+							if i%2!=0:
 
+								b2p=[]
+								for point in zip(x_lines_np_local,y_lines_np_local):
+									b2p.append(point[1]-point[0]*p_s)
 
-						x_lines_np=np.append(x_lines_np,x_u)
-						x_lines_np=np.append(x_lines_np,x_d)
+								if b>0:
+									x_u=[(c-b2)/(p_s-m) for x,b2 in zip(x_lines_np_local,b2p)]
+									x_d=[(2*b-c-b2)/(p_s-m) for x,b2 in zip(x_lines_np_local,b2p)]
+								else:
+									x_u=[(2*b-c-b2)/(p_s-m) for x,b2 in zip(x_lines_np_local,b2p)]
+									x_d=[(c-b2)/(p_s-m) for x,b2 in zip(x_lines_np_local,b2p)]	
 
-						y_lines_np=np.append(y_lines_np,y_u)
-						y_lines_np=np.append(y_lines_np,y_d)
+								y_u=[p_s*xu+b2 for xu,b2 in zip(x_u,b2p)]
+								y_d=[p_s*xd+b2 for xd,b2 in zip(x_d,b2p)]
+
+								x_lines_np=np.append(x_lines_np,x_u)
+								x_lines_np=np.append(x_lines_np,x_d)
+
+								y_lines_np=np.append(y_lines_np,y_u)
+								y_lines_np=np.append(y_lines_np,y_d)
+
+							else:
+
+								x_u=[]
+								x_d=[]
+
+								y_u=[]
+								y_d=[]
+
+								for i2, x in enumerate(x_lines_np_local2):
+									b2p=y_lines_np_local2[i2]-x*p_s
+
+									if b>0:
+										x_uu=(c-b2p)/(p_s-m)
+										x_dd=(2*b-c-b2p)/(p_s-m)
+									else:
+										x_uu=(2*b-c-b2p)/(p_s-m)
+										x_dd=(c-b2p)/(p_s-m)
+
+									x_u.append(x_uu)
+									x_d.append(x_dd)
+
+									y_uu=p_s*x_uu+b2p
+									y_u.append(y_uu)
+									y_dd=p_s*x_dd+b2p
+									y_d.append(y_dd)
+
+								x_lines_np=np.append(x_lines_np,x_u)
+								x_lines_np=np.append(x_lines_np,x_d)
+
+								y_lines_np=np.append(y_lines_np,y_u)
+								y_lines_np=np.append(y_lines_np,y_d)
+
 
 				for n2 in range(len(x_lines_np)):
 
@@ -589,10 +775,9 @@ class py2amesh:
 					y0=y_lines_np[n2]
 					
 					for ngrid in range(len(regular_mesh)):
-						if abs(x0-regular_mesh[ngrid][0])<self.radius_criteria or abs(y0-regular_mesh[ngrid][1])<self.radius_criteria:
-							boolean=self.radius_select(x0,y0,regular_mesh[ngrid][0],regular_mesh[ngrid][1])
-							if boolean==1:
-								to_delete.append(ngrid)
+						boolean=self.radius_select(x0,y0,regular_mesh[ngrid][0],regular_mesh[ngrid][1],type_i='fault')
+						if boolean==1:
+							to_delete.append(ngrid)
 
 					regular_mesh=np.delete(regular_mesh, to_delete, 0)
 
@@ -664,6 +849,227 @@ class py2amesh:
 		json.dump(self.wells_correlative, open("../mesh/wells_correlative.txt",'w'),sort_keys=True, indent=4)
 
 		return {'well_names':self.well_names, 'well_blocks_names':self.well_blocks_names}
+
+
+	def to_translate(self,points):
+		#Converts data points to new coordinate system
+		n_times=4
+		if self.rotate:
+			angle=self.angle
+			for n, point in enumerate(points):
+				if point[1]!=(self.Ymin-n_times*self.x_from_boarder) and point[0]!=(self.Xmin-n_times*self.x_from_boarder):
+					line=[(self.Xmin-n_times*self.x_from_boarder,self.Ymin-n_times*self.x_from_boarder),(point[0],point[1])]
+					r = cdist(line,line,'euclidean').diagonal(1)
+					alpha = np.arctan((point[1]-self.Ymin+n_times*self.x_from_boarder)/(point[0]-self.Xmin+n_times*self.x_from_boarder))
+
+					if alpha<0:
+						alpha=np.pi+alpha
+
+					betha = alpha - np.deg2rad(angle)
+
+					points[n][0]=r*np.cos(betha)
+					points[n][1]=r*np.sin(betha)
+				else:
+					points[n][0]=0
+					points[n][1]=0
+
+		return points
+
+	def de_translate(self,points):
+		#Converts data points to new coordinate system
+		n_times=4
+		if self.rotate:
+			angle=self.angle
+			for n, point in enumerate(points):
+				if point[1]!=0 and point[0]!=0:
+					betha = np.arctan(point[1]/point[0])
+					alpha=betha+np.deg2rad(angle)
+
+					line=[(0,0),(point[0],point[1])]
+					r = cdist(line,line,'euclidean').diagonal(1)
+
+
+					points[n][0]=r*np.cos(alpha)+(self.Xmin-n_times*self.x_from_boarder)
+					points[n][1]=r*np.sin(alpha)+(self.Ymin-n_times*self.x_from_boarder)
+				else:
+					points[n][0]=self.Xmin
+					points[n][1]=self.Ymin	
+
+		return points
+
+
+	def well_block_assign_from_relaxation(self,layer,i):
+		letters=string.ascii_uppercase
+		name=layer+letters[int(i/810)]+str(int(1+(i-810*int(i/810))/90))+str(10+i-90*int(i/90))
+		return name
+
+
+	def relaxation(self):
+		data={'blocks':{},'borders':[]}
+
+
+		#Extracts the points from the regular mesh, it considers the rotation already and internal region of shapefile
+		data_dict=self.data()['IDXY']
+		points=[]
+		for key in data_dict:
+			points.append([data_dict[key][0],data_dict[key][1]])
+		points=np.array(points)
+
+
+		points=np.array(points)
+		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
+		ax.plot(points[:,0],points[:,1],'ok', linestyle='None',ms=1)
+
+		for k, dot in enumerate(self.polygon_external):
+			if k+1<len(self.polygon_external):
+				ax.plot([dot[0],self.polygon_external[k+1][0]],[dot[1],self.polygon_external[k+1][1]],'og')
+		ax.set_aspect('equal')
+		plt.savefig('points_original.png',dpi=600)
+		plt.show()
+
+
+		points=self.to_translate(points)
+		
+		points=np.array(points)
+		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
+		ax.plot(points[:,0],points[:,1],'or', linestyle='None',ms=1)
+		ax.set_aspect('equal')
+		plt.savefig('points_traslated.png',dpi=600)
+		plt.show()
+
+
+
+		#Perform relaxation
+		for i in range(self.relaxation_times):
+			field = Field(points)
+			field.relax()
+			points= field.get_points()
+		
+		points=np.array(points)
+		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
+		ax.plot(points[:,0],points[:,1],'og', linestyle='None',ms=1)
+		ax.set_aspect('equal')
+		plt.savefig('points_traslated_relaxed.png',dpi=600)
+		plt.show()
+
+
+
+		points=self.de_translate(points)
+
+		points=np.array(points)
+		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
+		ax.plot(points[:,0],points[:,1],'om', linestyle='None',ms=1)
+		for k, dot in enumerate(self.polygon_external):
+			if k+1<len(self.polygon_external):
+				ax.plot([dot[0],self.polygon_external[k+1][0]],[dot[1],self.polygon_external[k+1][1]],'og')
+		ax.set_aspect('equal')
+		plt.savefig('points_relaxed.png',dpi=600)
+		plt.show()
+
+
+
+		#Drops points out of shapefile
+		rlx_points=[]
+		for point in points:
+			if self.check_in_out('external',[point[0],point[1]],'shapefile'):
+				rlx_points.append([point[0],point[1]])
+		rlx_points=np.array(rlx_points)
+
+
+		#Assign names to new points
+		position={}
+		for n, layer in enumerate(self.rock_dict):
+			for i,point in enumerate(rlx_points):
+				name=self.well_block_assign_from_relaxation(self.rock_dict[layer][0][0],i)
+				data['blocks'][name]=[n+1,point[0],point[1],self.rock_dict[layer][4],self.rock_dict[layer][5]]
+				if n==0:
+					position[i]=name
+	
+
+		#Read border to clip write into in file
+		borders=gpd.read_file('../../GIS/reservoir/reservoir_limits_1_pol.shp')
+
+		border_points=[]
+		for line in borders.iterrows():
+			pointList = line[1].geometry.exterior.coords.xy
+			for point in zip(pointList[0],pointList[1]):
+				border_points.append([point[0],point[1]])	
+
+		data['borders']=self.polygon_external
+
+		#Rewrite the wells dictionaries by finding the new closer position to the wells
+
+		wells_dictionary={}
+		well_corr={}
+		wells=pd.read_csv('../input/well_feedzone_xyz.csv',sep=',')
+		tree = cKDTree(rlx_points)
+
+		for index, well in wells.iterrows():
+
+			distance = tree.query([well['x'],well['y']])
+			block_assig=position[distance[1]]
+
+			well_corr[well['well']]=[block_assig[1:5]]
+			x= data['blocks'][block_assig][1]
+			y=data['blocks'][block_assig][2]
+
+			for n in range(self.number_of_layer):
+				block_assig_i=self.rock_dict[n+1][0]+block_assig[2:5]
+
+				wells_dictionary[block_assig_i]=[well['well'],\
+											   x,\
+											   y,\
+											   well['type'],\
+											   n+1,
+											   data['blocks'][block_assig][3],\
+											   self.rock_dict[n+1][2],\
+											   data['blocks'][block_assig][4]]
+
+
+		json.dump(well_corr, open("../mesh/well_dict.txt",'w'),sort_keys=True, indent=4)
+		json.dump(wells_dictionary, open("../mesh/wells_correlative.txt",'w'),sort_keys=True, indent=4)
+
+		return data
+
+	def input_file_to_amesh_from_relaxation(self):
+
+		data=self.relaxation()
+		blocks_dict=data['blocks']
+		file=open(self.filename_out, "w")
+		file.write("locat\n")
+
+		#Writing ELEMENTS
+		for x in sorted(blocks_dict.keys()):
+			string="{:5s}{:5d}{:20.2f}{:20.2f}{:20.2f}{:20.2f}\n".format(x,blocks_dict[x][0],\
+				                                       blocks_dict[x][1],\
+				                                       blocks_dict[x][2],\
+				                                       blocks_dict[x][3],\
+				                                       blocks_dict[x][4])
+			file.write(string)
+		file.write("     \n")
+		file.write("bound\n")
+
+		#Writing borders
+		for point in data['borders']:
+			string_bound=" %9.3E %9.3E\n"%(point[0],point[1])
+			file.write(string_bound)
+
+		file.write("     \n")
+		file.write("toler")
+		file.write("     \n")
+		file.write("%10s\n"%self.toler)
+		file.write("     ")
+		file.close()
+		pass
+
+	def run_amesh_from_relaxation(self):
+		os.system("amesh\n")
+		files2move=['in','conne','eleme','segmt']
+		for fn in files2move:
+			shutil.move(fn,'../mesh/from_amesh/%s'%fn)
+		return None
+
+
 
 	def input_file_to_amesh(self):
 		"""Genera el archivo de entrada para amesh
@@ -821,19 +1227,19 @@ class py2amesh:
 					source='shapefile'
 					
 				for index, row in data_eleme.iterrows():
-					check=self.check_in_out([row['X'],row['Y']],source=source)
+					check=self.check_in_out('internal',[row['X'],row['Y']],source=source) 
 					outside=1
 					if not check:
 						outside=-1
 					ele_file_st.write("%5s%10s%5s%10.3E\n"%(row['block']," ",row['rocktype'],row['vol']*outside))
 			else:
 				cnt=0
+				ele_file_st.write("eleme")
 				for a_line in data_eleme:
 					if cnt!=0:
 						name_rock_vol = a_line[0:30]  
-						ele_file_st.write("%s\n"%name_rock_vol)
-					else:
-						ele_file_st.write("eleme\n")
+						ele_file_st.write("\n")
+						ele_file_st.write("%s"%name_rock_vol)
 					cnt+=1
 			ele_file_st.close()
 			ele_file.close()
@@ -887,8 +1293,6 @@ class py2amesh:
 			conne_file.close()
 
 			in_file_st=open('../mesh/to_steinar/in','w')
-
-			#block_file=open('block_name.csv','w')
 			in_file=open('../mesh/from_amesh/in','r')  
 			data_in=in_file.readlines()
 			in_file_st.write("bound\n")
@@ -901,11 +1305,19 @@ class py2amesh:
 				Xarray=np.array([xmin,xmax])
 				Yarray=np.array([ymin,ymax])
 
-			in_file_st.write(" %6.2d %6.2d\n"%(Xarray[0],Yarray[0]))
-			in_file_st.write(" %6.2d %6.2d\n"%(Xarray[0],Yarray[1]))
-			in_file_st.write(" %6.2d %6.2d\n"%(Xarray[1],Yarray[1]))
-			in_file_st.write(" %6.2d %6.2d\n\n"%(Xarray[1],Yarray[0]))
-			in_file_st.write("locat\n")
+
+			if self.rotate:
+				borders=self.polygon_external
+				for point in borders:
+					string_bound=" %6.2d %6.2d\n"%(point[0],point[1])
+					in_file_st.write(string_bound)
+			else:
+				in_file_st.write(" %6.2d %6.2d\n"%(Xarray[0],Yarray[0]))
+				in_file_st.write(" %6.2d %6.2d\n"%(Xarray[0],Yarray[1]))
+				in_file_st.write(" %6.2d %6.2d\n"%(Xarray[1],Yarray[1]))
+				in_file_st.write(" %6.2d %6.2d\n\n"%(Xarray[1],Yarray[0]))
+
+			in_file_st.write("\nlocat\n")
 
 			cnt=0
 
@@ -923,14 +1335,12 @@ class py2amesh:
 					in_file_st.write("%24.8E"%float(read4))
 					in_file_st.write("%24.8E"%float(read5))
 					in_file_st.write("%24.8E\n"%float(read6))
-
-					#stringx="%.2f,%.2f,%.2f\n"%(float(read3),float(read4),float(read5))
-					#block_file.write(stringx)
 				cnt+=1
 
 			in_file_st.close()
 			in_file.close()
-			#block_file.close()
+
+			#Dummy rocktype
 			rock_file_st=open('../mesh/to_steinar/rocks','w')
 			rock_file_st.write("rock1    02.6500E+031.0000E-011.0000E-151.0000E-151.0000E-152.1000E+008.5000E+02 160 243 150")
 			rock_file_st.close()
@@ -949,7 +1359,7 @@ class py2amesh:
 				min_layer=self.layer_to_plot
 
 			for ln in range(min_layer,max_layer+1,1):
-				w=shapefile.Writer('../mesh/GIS/mesh_cga_layer_%s'%ln)
+				w=shapefile.Writer('../mesh/GIS/mesh_layer_%s'%ln)
 				w.field('BLOCK_NAME', 'C', size=5)
 				w.field('ROCKTYPE', 'C', size=5)
 				w.field('VOLUMEN', 'F', decimal=10)
@@ -1087,28 +1497,28 @@ def mesh_creation_func(input_mesh_dictionary,input_dictionary):
 			input_mesh_dictionary['toler'],layers_thick,input_mesh_dictionary['layer_to_plot'],input_mesh_dictionary['x_space'],input_mesh_dictionary['y_space'],input_mesh_dictionary['radius_criteria'],input_mesh_dictionary['x_from_boarder'],input_mesh_dictionary['y_from_boarder'],\
 			input_mesh_dictionary['x_gap_min'],input_mesh_dictionary['x_gap_max'],input_mesh_dictionary['x_gap_space'],input_mesh_dictionary['y_gap_min'],input_mesh_dictionary['y_gap_max'],input_mesh_dictionary['y_gap_space'],input_mesh_dictionary['plot_names'],input_mesh_dictionary['plot_centers'],\
 			input_dictionary['z_ref'],input_mesh_dictionary['plot_all_GIS'],input_mesh_dictionary['from_leapfrog'],input_mesh_dictionary['line_file'],input_mesh_dictionary['fault_distance'],input_mesh_dictionary['with_polygon'],input_mesh_dictionary['polygon_shape'],\
-			input_mesh_dictionary['set_inac_from_poly'],input_mesh_dictionary['set_inac_from_inner'],input_mesh_dictionary['rotate'],input_mesh_dictionary['angle'],input_mesh_dictionary['inner_mesh_type'])
+			input_mesh_dictionary['set_inac_from_poly'],input_mesh_dictionary['set_inac_from_inner'],input_mesh_dictionary['rotate'],input_mesh_dictionary['angle'],input_mesh_dictionary['inner_mesh_type'],\
+			input_mesh_dictionary['distance_points'],input_mesh_dictionary['fault_rows'],input_mesh_dictionary['relaxation_times'],input_mesh_dictionary['points_around_well'],input_mesh_dictionary['distance_points_around_well'])
+
+	#data=blocks.relaxation()
 
 	if input_mesh_dictionary['mesh_creation']:
+		if input_mesh_dictionary['relaxation_times']>0:
+			blocks.input_file_to_amesh_from_relaxation()
+			blocks.run_amesh_from_relaxation()
+		else:
+			blocks.input_file_to_amesh()
 
-		blocks.input_file_to_amesh()
+	if input_mesh_dictionary['to_steinar']:
+		blocks.to_steinar()
 
-		if input_mesh_dictionary['plot_layer']:
-			blocks.plot_voronoi()
-		if input_mesh_dictionary['to_steinar']:
-			blocks.to_steinar()
-		if input_mesh_dictionary['to_GIS']:
-			blocks.to_GIS()
+	if input_mesh_dictionary['plot_layer']:
+		blocks.plot_voronoi()
 
-	elif not input_mesh_dictionary['mesh_creation']:
-		if input_mesh_dictionary['plot_layer']:
-			blocks.plot_voronoi()
-		if input_mesh_dictionary['to_steinar']:
-			blocks.to_steinar()
-		if input_mesh_dictionary['to_GIS']:
-			blocks.to_GIS()
+	if input_mesh_dictionary['to_GIS']:
+		blocks.to_GIS()
 
-	return None
+	return None #data #None
 
 def change_ref_elevation(variation=0):
 	"""It modifies the in files from the folders to_steinar and from_amesh by increasing (or decreasing) a fixed value
@@ -1203,8 +1613,13 @@ def empty_mesh():
 			except IsADirectoryError:
 				pass
 
-def ELEM_to_json():
+def ELEM_to_json(input_dictionary,to_sql=False):
 	"""It combines the files eleme and in from the steinar folder into a single json file
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Returns
 	-------
@@ -1226,24 +1641,36 @@ def ELEM_to_json():
 	col_eleme=[(0,6),(15,20),(20,30)]
 
 	if os.path.isfile(source_file) and os.path.isfile(eleme_file):
-		data_in=pd.read_csv(source_file,delim_whitespace=True,skiprows=7,header=None,names=['block','li','X','Y','Z','h'])
-		data_eleme=pd.read_fwf(eleme_file,colspecs=col_eleme,skiprows=1,header=None,names=['block','rocktype','vol'])
+		data_in=pd.read_csv(source_file,delim_whitespace=True,skiprows=7,header=None,names=['ELEME','LAYER_N','X','Y','Z','h'])
+		data_eleme=pd.read_fwf(eleme_file,colspecs=col_eleme,skiprows=1,header=None,names=['ELEME','MA1','VOLX'])
 
 		#data_eleme[['rocktype','vol']] =data_eleme.data.apply(lambda x: pd.Series([str(x)[0:5],str(x)[5:16]]))
 		#data_eleme.drop('data', axis=1, inplace=True)
 
-		data_in.set_index('block')
-		data_eleme.set_index('block')
+		data_in.set_index('ELEME')
+		data_eleme.set_index('ELEME')
 
-		data_eleme=data_eleme.merge(data_in, left_on='block', right_on='block',how='left')
-		data_eleme.set_index('block',inplace=True)
+		data_eleme=data_eleme.merge(data_in, left_on='ELEME', right_on='ELEME',how='left')
+		data_eleme.set_index('ELEME',inplace=True)
+
+		if to_sql:
+			data_eleme['model_version']=[input_dictionary['model_version']]*len(data_eleme)
+			data_eleme['model_timestamp']=[datetime.datetime.now()]*len(data_eleme)
+			conn=sqlite3.connect(input_dictionary['db_path'])
+			data_eleme.to_sql('ELEME',if_exists='append',con=conn,index=True)
+			conn.close()
 		data_eleme.to_json('../mesh/ELEME.json',orient="index",indent=2)
 
 	else:
 		sys.exit("The file %s or directory do not exist"%source_file)
 
-def CONNE_to_json():
+def CONNE_to_json(input_dictionary,to_sql=False):
 	"""It creates a json file from the CONNE file on mesh/to_steinar folder 
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Returns
 	-------
@@ -1268,18 +1695,30 @@ def CONNE_to_json():
 			for line in rock_file.readlines()[1:]:
 				linex=line.split()
 				if float(linex[8])<=0:
-					conne_dict[linex[0]]=[int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),float(linex[8])]
+					conne_dict[linex[0]]=[linex[0][0:5],linex[0][5:10],int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),float(linex[8])]
 				else:
-					conne_dict[linex[0]]=[int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),-1*float(linex[8])]
+					conne_dict[linex[0]]=[linex[0][0:5],linex[0][5:10],int(linex[4]),float(linex[5]),float(linex[6]),float(linex[7]),-1*float(linex[8])]
 
-		CONNE_pd=pd.DataFrame.from_dict(conne_dict,orient='index', columns=['ISOT','D1','D2','AREAX', 'BETAX'])
+		CONNE_pd=pd.DataFrame.from_dict(conne_dict,orient='index', columns=['ELEME1','ELEME2','ISOT','D1','D2','AREAX', 'BETAX'])
 		CONNE_pd.to_json('../mesh/CONNE.json',orient="index",indent=2)
 
+		if to_sql:
+			CONNE_pd['model_version']=[input_dictionary['model_version']]*len(CONNE_pd)
+			CONNE_pd['model_timestamp']=[datetime.datetime.now()]*len(CONNE_pd)
+			conn=sqlite3.connect(input_dictionary['db_path'])
+			CONNE_pd.to_sql('CONNE',if_exists='append',con=conn,index=False)
+			conn.close()
 	else:
 		sys.exit("The file %s or directory do not exist"%source_file)
 
-def segmnt_to_json():
+def segmnt_to_json(input_dictionary,to_sql=False):
+
 	"""It combines the information from eleme and segmt from folder mesh/to_steinar into a single json
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
 
 	Returns
 	-------
@@ -1303,11 +1742,18 @@ def segmnt_to_json():
 	col_segment=[(0,15),(15,30),(30,45),(45,60),(60,65),(65,70),(70,75)]
 	if os.path.isfile(segmt_file) and os.path.isfile(eleme_file):
 
-		segmt_data=pd.read_fwf(segmt_file,colspecs=col_segment,header=None,names=['X1','Y1','X2','Y2','redunt','eleme1','eleme2'])
+		segmt_data=pd.read_fwf(segmt_file,colspecs=col_segment,header=None,names=['X1','Y1','X2','Y2','redundant','ELEME1','ELEME2'])
+
+		if to_sql:
+			segmt_data['model_version']=[input_dictionary['model_version']]*len(segmt_data)
+			segmt_data['model_timestamp']=[datetime.datetime.now()]*len(segmt_data)
+			conn=sqlite3.connect(input_dictionary['db_path'])
+			segmt_data.to_sql('segment',if_exists='append',con=conn,index=False)
+			conn.close()
 
 		eleme_data=pd.read_fwf(eleme_file,colspecs=col_eleme,skiprows=1,header=None,names=['block','rocktype','vol'])
 
-		eleme_data=eleme_data.merge(segmt_data, left_on='block', right_on='eleme1',how='left')
+		eleme_data=eleme_data.merge(segmt_data, left_on='block', right_on='ELEME1',how='left')
 
 		eleme_data['points'] = eleme_data[['X1','Y1','X2','Y2']].apply(lambda r: tuple(r), axis=1).apply(np.array)
 
@@ -1454,6 +1900,81 @@ def plot_voronoi(input_mesh_dictionary, geners,layer='D',plot_center=False,mark_
 	else:
 		sys.exit("The file %s does not exist"%(segmt_json_file))
 
+def to_GIS(input_mesh_dictionary, layer='A'):
+	"""It plots a selected layer, showing the rock distribution
+
+	Returns
+	-------
+	layer : str
+	  It defines the layer correlative to plot
+	plot_center : bool
+	  If True it plots the center point for each element
+	mark_elements : bool
+	  If True it considers the final four identifiers from each constant sink/source element defined on geners and fill the block with a different color.
+	cross_section : bool
+	  If true plot a line where a vertical cross section is created with the output module
+	savefig : bool
+	  If true a png file is saved on ../mesh
+	input_mesh_dictionary : dictionary
+	  Contains a unique color for every rocktype.
+	geners : dictionary
+	  Contains the neccesary information to define a sink/source. g.e. 'DA110':{'SL':'GEN','NS':10,'TYPE':'MASS','GX':1,'EX':1.1E6}
+	
+	Returns
+	-------
+	plot
+	  layer_{layer}: containing the rock distribution from the selected layer
+
+	Attention
+	---------
+	The functions ELEM_to_json() 
+
+	Examples
+	--------
+	>>> segmnt_to_json() and segmnt_to_json() should be executed previously
+	"""
+
+	segmt_json_file='../mesh/segmt.json'
+
+	eleme_json_file='../mesh/ELEME.json'
+
+	wells_corr_json_file='../mesh/wells_correlative.txt'
+
+
+	if os.path.isfile(segmt_json_file):
+		with open(segmt_json_file) as file:
+		  	blocks=json.load(file)
+
+
+
+		if os.path.isfile(eleme_json_file):
+			with open(eleme_json_file) as file:
+			  	ELEME=json.load(file)
+
+		w=shapefile.Writer('../mesh/GIS/mesh_layer_%s'%layer)
+		w.field('BLOCK_NAME', 'C', size=5)
+		w.field('ROCKTYPE', 'C', size=5)
+		w.field('VOLUMEN', 'F', decimal=10)
+
+		colors_on_plot=[]
+		legends=[]
+		for block in blocks:
+			if block[0]==layer:
+				points=[]
+				for i, point in enumerate(blocks[block]['points']):
+					if i%2==0:
+						x=point
+					else:	
+						y=point
+						points.append([x,y])
+
+				w.poly([points])
+				w.record(block,blocks[block]['rocktype'],blocks[block]['vol'])
+
+		w.close()
+	else:
+		sys.exit("The file %s does not exist"%(segmt_json_file))
+
 def CONNE_count(save_csv=False):
 	"""
 	Return a dataframe with the name of elements and the number of connection
@@ -1538,66 +2059,179 @@ def mesh_to_paraview(input_dictionary):
 
 	points_vtk=vtk.vtkPoints()
 
+	#elem_file='../mesh/vtu/ELEME.json'
+	elem_file='../mesh/ELEME.json'
+
+	if os.path.isfile(elem_file):
+		with open(elem_file) as file:
+		  	blocks_eleme=json.load(file)
+	else:
+		sys.exit("The file %s or directory do not exist, run segmnt_to_json from regeo_mesh"%elem_file)		
+
 	cnt=0
 	for block in blocks:
 
-		faceId=vtk.vtkIdList()
-		block_name.InsertNextValue(block)
-		rocktype.InsertNextValue(blocks[block]['rocktype'])
-		points=[]
-		for i, point in enumerate(blocks[block]['points']):
-			if i%2==0:
-				point_x=point
-			elif i%2==1:
-				point_y=point
+		if block in blocks_eleme.keys():
 
-			if i%2==1 and i!=0 and [point_x,point_y] not in points:
-				points.append([point_x,point_y])
+			faceId=vtk.vtkIdList()
+			block_name.InsertNextValue(block)
+			rocktype.InsertNextValue(blocks[block]['rocktype'])
+			points=[]
+			for i, point in enumerate(blocks[block]['points']):
+				if i%2==0:
+					point_x=point
+				elif i%2==1:
+					point_y=point
 
-		points=np.array(points)
-		hull = ConvexHull(points)
+				if i%2==1 and i!=0 and [point_x,point_y] not in points:
+					points.append([point_x,point_y])
 
-		dict_points={}
-		
-		cnt_int=0
-		for n in range(len(points[hull.vertices,0])):
-			dict_points[n]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][0]]
-			cnt_int+=1
+			points=np.array(points)
+			hull = ConvexHull(points)
 
-		for n in range(len(points[hull.vertices,0])):
-			dict_points[n+len(points)]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][1]]
-			cnt_int+=1
+			dict_points={}
+			
+			cnt_int=0
+			for n in range(len(points[hull.vertices,0])):
+				dict_points[n]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][0]]
+				cnt_int+=1
 
-		for key in dict_points:
-			points_vtk.InsertNextPoint(dict_points[key])
+			for n in range(len(points[hull.vertices,0])):
+				dict_points[n+len(points)]=[points[hull.vertices,0][::-1][n],points[hull.vertices,1][::-1][n],layers_name[block[0]][1]]
+				cnt_int+=1
 
-		faceId.InsertNextId(len(points)+2)
+			for key in dict_points:
+				points_vtk.InsertNextPoint(dict_points[key])
 
-		faces=[[] for n in range(len(points)+2)]
-		faces[0]=[face+cnt for face in range(len(points))]
-		faces[1]=[face+len(points)+cnt for face in range(len(points))]
-		
-		for nx in range(len(points)):
-			if nx+1<len(points):
-				faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+1+len(points)+cnt,nx+1+cnt]
-			else:
-				faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+cnt+1,cnt]
-		
-		cnt+=cnt_int
-		
-		for face in faces:
-			faceId.InsertNextId(len(face))
-			[faceId.InsertNextId(i) for i in face]
+			faceId.InsertNextId(len(points)+2)
 
-		ugrid.InsertNextCell(vtk.VTK_POLYHEDRON,faceId)
-		ugrid.GetCellData().AddArray(block_name)
-		ugrid.GetCellData().AddArray(rocktype)
+			faces=[[] for n in range(len(points)+2)]
+			faces[0]=[face+cnt for face in range(len(points))]
+			faces[1]=[face+len(points)+cnt for face in range(len(points))]
+			
+			for nx in range(len(points)):
+				if nx+1<len(points):
+					faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+1+len(points)+cnt,nx+1+cnt]
+				else:
+					faces[nx+2]=[nx+cnt,nx+len(points)+cnt,nx+cnt+1,cnt]
+			
+			cnt+=cnt_int
+			
+			for face in faces:
+				faceId.InsertNextId(len(face))
+				[faceId.InsertNextId(i) for i in face]
+
+			ugrid.InsertNextCell(vtk.VTK_POLYHEDRON,faceId)
+			ugrid.GetCellData().AddArray(block_name)
+			ugrid.GetCellData().AddArray(rocktype)
 
 	ugrid.SetPoints(points_vtk)
 
 	writer=vtk.vtkXMLUnstructuredGridWriter()
 	writer.SetInputData(ugrid)
-	writer.SetFileName('../mesh/model_mesh.vtu')
+	writer.SetFileName('../mesh/vtu/model_mesh.vtu')
 	writer.SetDataModeToAscii()
 	writer.Update()
 	writer.Write()
+
+def surface_cut(input_mesh_dictionary):
+	"""It generates an json file with the elements below the surface
+
+	Parameters
+	----------
+	input_mesh_dictionary: dictionary
+	  Contains the path for the file on csv format with the topography data
+
+	Returns
+	-------
+	file
+	  ELEME.json: on the path ../mesh/vtu/
+
+	Attention
+	---------
+	csv file should have X,Y,Z on the first line and comma (,) as a delimiter
+	"""
+	data_file=input_mesh_dictionary['surface_data']
+	surface=pd.read_csv(data_file,index_col=None,delimiter=';')
+	X=list(surface['X'])
+	Y=list(surface['Y'])
+	Z=list(surface['Z'])
+
+
+	elem_file='../mesh/ELEME.json'
+
+	if os.path.isfile(elem_file):
+		with open(elem_file) as file:
+		  	blocks=json.load(file)
+
+	X_eleme=[]
+	Y_eleme=[]
+	for block in blocks:
+		if block[0]=='A':
+			X_eleme.append(blocks[block]['X'])
+			Y_eleme.append(blocks[block]['Y'])
+
+
+	Zi=griddata((X,Y),Z,(X_eleme,Y_eleme),method='linear')
+
+	eleme_suf=np.array((X_eleme,Y_eleme,Zi)).T
+
+	tree=cKDTree(eleme_suf)
+
+	eleme_suf_limit={}
+	for i,block in enumerate(blocks):
+		if block[0]=='A':
+			eleme_suf_limit[block[1:6]]=Zi[i]
+		else:
+			break
+
+	delete=[]
+	for i,block in enumerate(blocks):
+		blocks[block]['OUT']=False
+		eq_suf_elevation_i=tree.query([blocks[block]['X'],blocks[block]['Y'],blocks[block]['Z']])[1]
+		if blocks[block]['Z']>eleme_suf[eq_suf_elevation_i][2]:
+			blocks[block]['OUT']=True
+			delete.append(block)
+
+	copy_eleme=blocks
+
+	for key in delete: del copy_eleme[key]
+
+	json.dump(copy_eleme, open("../mesh/vtu/ELEME.json",'w'),sort_keys=True, indent=4)
+
+def clip_steinar_data():
+	"""Modifies the eleme file on steinar folder. It converts all elements on top of topography to ATMOS rock type and add rocktype to rock file
+
+	Attention
+	---------
+	The output file is written on a file named rocks2
+	"""
+	copy_eleme_file="../mesh/vtu/ELEME.json"
+	with open(copy_eleme_file) as file:
+		copy_eleme=json.load(file)
+
+	
+	eleme_file_st=open('../mesh/to_steinar/eleme2','w')
+	eleme_file=open('../mesh/to_steinar/eleme','r')  
+	data_eleme=eleme_file.readlines()
+	cnt=0
+	for line in data_eleme:
+		if (line[0:5]) in copy_eleme.keys():
+			eleme_file_st.write(line)
+		elif line[0:5]!='eleme':
+			eleme_file_st.write(line[0:5]+"          "+'ATMOS'+line[20:-1]+'\n')	
+	eleme_file_st.close()
+	eleme_file.close()
+
+
+	rock_file=open('../mesh/to_steinar/rocks','r')
+	rock_file2=open('../mesh/to_steinar/rocks2','w')  
+	rock_data=rock_file.readlines()
+	cnt=0
+	for line in rock_data:
+		rock_file2.write(line)
+	rock_file2.write("ATMOS    02.6500E+030.9990E+001.0000E-121.0000E-121.0000E-122.1000E+008.5000E+02   0   0   0")
+	rock_file2.close()
+	rock_file.close()
+
+
