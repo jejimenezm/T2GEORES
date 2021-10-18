@@ -45,4 +45,7 @@ Recent changes are listed.
 ### 2021-06-06
 - Fix GENER block update during production state
 
-[0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/tag/T2GEORES-0.1.7
+### 2021-10-17
+- Severals updates on mesh creation (lloyd relaxation) and incon creation
+
+[0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/tag/T2GEORES-0.1.8

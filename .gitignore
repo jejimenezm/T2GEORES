@@ -1,3 +1,7 @@
 /dist
 /docs
+/__pycache__
+/T2GEORES/dist
+/T2GEORES/docs
+/T2GEORES/__pycache__
 *.pyc
