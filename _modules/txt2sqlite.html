@@ -225,6 +225,12 @@
 <span class="s1">		              [east] REAL,</span>
 <span class="s1">		              [north] REAL,</span>
 <span class="s1">		              [elevation] REAL,</span>
+<span class="s1">		              [lnr_init] REAL,</span>
+<span class="s1">		              [lnr_end] REAL,</span>
+<span class="s1">		              [lnr_D] TEXT,</span>
+<span class="s1">		              [ptube_init] REAL,</span>
+<span class="s1">		              [ptube_end] REAL,</span>
+<span class="s1">		              [ptube_D] TEXT,</span>
 <span class="s1">		              [drilldate] datetime)&#39;&#39;&#39;</span><span class="p">)</span>
 
 		<span class="c1">#Create table - survey</span>
@@ -275,7 +281,7 @@
 			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  wellfeedzone</span>
 <span class="s1">						 ([well] TEXT,</span>
 <span class="s1">						 [MeasuredDepth] REAL,</span>
-<span class="s1">						 [porcentage] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="s1">						 [contribution] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
 
 		<span class="c1">#Create table - TOUGH2 well block(correlative)</span>
 		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2wellblock&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
@@ -297,6 +303,55 @@
 <span class="s1">						 [top] REAL,</span>
 <span class="s1">						 [middle] REAL,</span>
 <span class="s1">						 [bottom] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+			
+		<span class="c1">#Create table - stores ELEME section of mesh</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;ELEME&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  ELEME</span>
+<span class="s1">						 ([model_version] REAL,</span>
+<span class="s1">						 [model_output_timestamp] timestamp,</span>
+<span class="s1">						 [ELEME] TEXT,</span>
+<span class="s1">						 [NSEQ] REAL,</span>
+<span class="s1">						 [NADD] REAL,</span>
+<span class="s1">						 [MA1] REAL,</span>
+<span class="s1">						 [MA2] REAL,</span>
+<span class="s1">						 [VOLX] REAL,</span>
+<span class="s1">						 [AHTX] REAL,</span>
+<span class="s1">						 [PMX] REAL,</span>
+<span class="s1">						 [X] REAL,</span>
+<span class="s1">						 [Y] REAL,</span>
+<span class="s1">						 [Z] REAL,</span>
+<span class="s1">						 [LAYER_N] REAL,</span>
+<span class="s1">						 [h] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - stores CONNE section of mesh</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;CONNE&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  CONNE</span>
+<span class="s1">						 ([model_version] REAL,</span>
+<span class="s1">						 [model_output_timestamp] timestamp,</span>
+<span class="s1">						 [ELEME1] TEXT,</span>
+<span class="s1">						 [ELEME2] TEXT,</span>
+<span class="s1">						 [NSEQ] REAL,</span>
+<span class="s1">						 [NAD1] REAL,</span>
+<span class="s1">						 [NAD2] REAL,</span>
+<span class="s1">						 [ISOT] REAL,</span>
+<span class="s1">						 [D1] REAL,</span>
+<span class="s1">						 [D2] REAL,</span>
+<span class="s1">						 [AREAX] REAL,</span>
+<span class="s1">						 [BETAX] REAL,</span>
+<span class="s1">						 [SIGX] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - stores segment</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;segment&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  segment</span>
+<span class="s1">						 ([model_version] REAL,</span>
+<span class="s1">						 [model_output_timestamp] timestamp,</span>
+<span class="s1">						 [x1] REAL,</span>
+<span class="s1">						 [y1] REAL,</span>
+<span class="s1">						 [x2] REAL,</span>
+<span class="s1">						 [y2] REAL,</span>
+<span class="s1">						 [redundant] REAL,</span>
+<span class="s1">						 [ELEME1] TEXT,</span>
+<span class="s1">						 [ELEME2] TEXT)&#39;&#39;&#39;</span><span class="p">)</span>
 
 		<span class="c1">#Create table - PT out</span>
 		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2PTout&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
@@ -315,6 +370,60 @@
 <span class="s1">						 [PCAP] REAL,</span>
 <span class="s1">						 [DG] REAL,</span>
 <span class="s1">						 [DW] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - stores flows TOUGH2 output section</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2FLOWSout&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  t2FLOWSout</span>
+<span class="s1">						 ([model_version] REAL,</span>
+<span class="s1">						 [model_output_timestamp] timestamp,</span>
+<span class="s1">						 [ELEME1] TEXT,</span>
+<span class="s1">						 [ELEME2] TEXT,</span>
+<span class="s1">						 [INDEX] INT,</span>
+<span class="s1">						 [FHEAT] REAL,</span>
+<span class="s1">						 [FLOH] REAL,</span>
+<span class="s1">						 [FLOF] REAL,</span>
+<span class="s1">						 [FLOG] REAL,</span>
+<span class="s1">						 [FLOAQ] REAL,</span>
+<span class="s1">						 [FLOWTR2] REAL,</span>
+<span class="s1">						 [VELG] REAL,</span>
+<span class="s1">						 [VELAQ] REAL,</span>
+<span class="s1">						 [TURB_COEFF] REAL,</span>
+<span class="s1">						 [model_time] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - stores flows directions from every block</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;t2FLOWVectors&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  t2FLOWVectors</span>
+<span class="s1">						 ([model_version] REAL,</span>
+<span class="s1">						 [model_output_timestamp] timestamp,</span>
+<span class="s1">						 [ELEME] TEXT,</span>
+<span class="s1">						 [FHEAT_x] REAL,</span>
+<span class="s1">						 [FHEAT_y] REAL,</span>
+<span class="s1">						 [FHEAT_z] REAL,</span>
+<span class="s1">						 [FLOH_x] REAL,</span>
+<span class="s1">						 [FLOH_y] REAL,</span>
+<span class="s1">						 [FLOH_z] REAL,</span>
+<span class="s1">						 [FLOF_x] REAL,</span>
+<span class="s1">						 [FLOF_y] REAL,</span>
+<span class="s1">						 [FLOF_z] REAL,</span>
+<span class="s1">						 [FLOG_x] REAL,</span>
+<span class="s1">						 [FLOG_y] REAL,</span>
+<span class="s1">						 [FLOG_z] REAL,</span>
+<span class="s1">						 [FLOAQ_x] REAL,</span>
+<span class="s1">						 [FLOAQ_y] REAL,</span>
+<span class="s1">						 [FLOAQ_z] REAL,</span>
+<span class="s1">						 [FLOWTR2_x] REAL,</span>
+<span class="s1">						 [FLOWTR2_y] REAL,</span>
+<span class="s1">						 [FLOWTR2_z] REAL,</span>
+<span class="s1">						 [VELG_x] REAL,</span>
+<span class="s1">						 [VELG_y] REAL,</span>
+<span class="s1">						 [VELG_z] REAL,</span>
+<span class="s1">						 [VELAQ_x] REAL,</span>
+<span class="s1">						 [VELAQ_y] REAL,</span>
+<span class="s1">						 [VELAQ_z] REAL,</span>
+<span class="s1">						 [TURB_COEFF_x] REAL,</span>
+<span class="s1">						 [TURB_COEFF_y] REAL,</span>
+<span class="s1">						 [TURB_COEFF_z] REAL,</span>
+<span class="s1">						 [model_time] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
 
 		<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 		<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -379,8 +488,8 @@
 	<span class="n">feedzones</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;well_feedzone.csv&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 
 	<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">feedzones</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-		<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO wellfeedzone(well,MeasuredDepth,porcentage) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
-		<span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;porcentage&#39;</span><span class="p">])</span>
+		<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO wellfeedzone(well,MeasuredDepth,contribution) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
+		<span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;contribution&#39;</span><span class="p">])</span>
 		<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 		<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -587,6 +696,7 @@
 			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
+				<span class="nb">print</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
 				<span class="n">mh</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
 				<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">mh</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
 					<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
@@ -758,9 +868,9 @@
 
 	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
 
-	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../mesh/wells_correlative.txt&#39;</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../mesh/well_dict.txt&#39;</span><span class="p">):</span>
 
-		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../mesh/wells_correlative.txt&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../mesh/well_dict.txt&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
 		    <span class="n">wells_correlative</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
 
 		<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>

@@ -200,7 +200,7 @@
 
 <dl class="function">
 <dt id="geometry.MD_to_TVD_one_var_array">
-<code class="descclassname">geometry.</code><code class="descname">MD_to_TVD_one_var_array</code><span class="sig-paren">(</span><em>well</em>, <em>var_array</em>, <em>MD_array</em>, <em>num_points</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#MD_to_TVD_one_var_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.MD_to_TVD_one_var_array" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">geometry.</code><code class="descname">MD_to_TVD_one_var_array</code><span class="sig-paren">(</span><em>well</em>, <em>var_array</em>, <em>MD_array</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#MD_to_TVD_one_var_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.MD_to_TVD_one_var_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>It returns the position X, Y and Z for every point on a log along Pressure or Temperature.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -210,7 +210,6 @@
 <li><strong>well</strong> (<em>str</em>) – Selected well</li>
 <li><strong>var_array</strong> (<em>array</em>) – It contains the log of pressure or temperature</li>
 <li><strong>MD_array</strong> (<em>array</em>) – It contains the measure depth values corresponding with every point on var_array</li>
-<li><strong>num_points</strong> (<em>int</em>) – Number of points for the output array</li>
 </ul>
 </td>
 </tr>
@@ -387,6 +386,28 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="geometry.feedzone_to_GIS">
+<code class="descclassname">geometry.</code><code class="descname">feedzone_to_GIS</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#feedzone_to_GIS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.feedzone_to_GIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>It writes a shapefile (point type) from the wells feedzones position</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">well_survey: on the path ../mesh/GIS</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">feedzone_to_GIS</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="geometry.line_intersect">
 <code class="descclassname">geometry.</code><code class="descname">line_intersect</code><span class="sig-paren">(</span><em>Ax1</em>, <em>Ay1</em>, <em>Ax2</em>, <em>Ay2</em>, <em>Bx1</em>, <em>By1</em>, <em>Bx2</em>, <em>By2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#line_intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.line_intersect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the intersection point between two lines</p>
@@ -402,6 +423,46 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="geometry.remap">
+<code class="descclassname">geometry.</code><code class="descname">remap</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#remap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.remap" title="Permalink to this definition">¶</a></dt>
+<dd><p>It returns an array with the number of values as the reference pressure array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>dict</em>) – Contains ‘MD_P’,’P’ and ‘MD_T’ at least. The depths values for P are found base on the depths of MD_T</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data : with ‘remap_P’ cointaning the values of P for the depths listed at MD_T</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="geometry.survey_to_GIS">
+<code class="descclassname">geometry.</code><code class="descname">survey_to_GIS</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#survey_to_GIS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.survey_to_GIS" title="Permalink to this definition">¶</a></dt>
+<dd><p>It writes a shapefile (line type) from the wells surveys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">well_survey: on the path ../mesh/GIS</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">survey_to_GIS</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -422,6 +483,33 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="geometry.write_feedzone_from_dict">
+<code class="descclassname">geometry.</code><code class="descname">write_feedzone_from_dict</code><span class="sig-paren">(</span><em>wells</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#write_feedzone_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.write_feedzone_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a file on csv format containing the well feedzone position and coordinates from a python dictionary with well information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wells</strong> (<em>dictionary</em>) – Contains the wells names, feedzone and contribution</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">well_feedzone: on ../input</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">regeo_mesh uses this file as an input</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wells</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;TR-1&#39;</span><span class="p">:{</span><span class="n">type_w</span><span class="s1">&#39;:&#39;</span><span class="n">OBS</span><span class="s1">&#39;,&#39;</span><span class="n">feedzones</span><span class="s1">&#39;:{&#39;</span><span class="n">A</span><span class="s1">&#39;:{&#39;</span><span class="n">MD</span><span class="s1">&#39;:600,&#39;</span><span class="n">contribution</span><span class="s1">&#39;:1}}}},</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">write_feedzone_position_from_dict</span><span class="p">(</span><span class="n">wells</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -446,6 +534,33 @@
 </div>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_feedzone_position</span><span class="p">(</span><span class="n">source_txt</span><span class="o">=</span><span class="s1">&#39;../input/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="geometry.write_feedzone_position_from_dict">
+<code class="descclassname">geometry.</code><code class="descname">write_feedzone_position_from_dict</code><span class="sig-paren">(</span><em>wells</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geometry.html#write_feedzone_position_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geometry.write_feedzone_position_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a file on csv format containing the well feedzone position and coordinates from a python dictionary with well information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wells</strong> (<em>dictionary</em>) – Contains the wells names, feedzone and contribution</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">well_feedzone_xyz: on ../input</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">regeo_mesh uses this file as an input</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wells</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;TR-1&#39;</span><span class="p">:{</span><span class="n">type_w</span><span class="s1">&#39;:&#39;</span><span class="n">OBS</span><span class="s1">&#39;,&#39;</span><span class="n">feedzones</span><span class="s1">&#39;:{&#39;</span><span class="n">A</span><span class="s1">&#39;:{&#39;</span><span class="n">MD</span><span class="s1">&#39;:600,&#39;</span><span class="n">contribution</span><span class="s1">&#39;:1}}}},</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">write_feedzone_position_from_dict</span><span class="p">(</span><span class="n">wells</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

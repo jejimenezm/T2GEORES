@@ -219,6 +219,12 @@
 	<span class="n">string_T</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;	&gt;&gt;TEMPERATURE&quot;&quot;&quot;</span>
 	<span class="n">string_P</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;	&gt;&gt;PRESSURE&quot;&quot;&quot;</span>
 
+	<span class="n">T0</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;To&#39;</span><span class="p">]</span>
+	<span class="n">cut_off_T</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;CUT_OFF_T_TOP&#39;</span><span class="p">]</span>
+
+	<span class="n">P0</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;Po&#39;</span><span class="p">]</span>
+	<span class="n">cut_off_P</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;INCONS_PARAM&#39;</span><span class="p">][</span><span class="s1">&#39;CUT_OFF_P_TOP&#39;</span><span class="p">]</span>
+
 	<span class="c1">#This blocks creates a linear interpolation on every layer depth with the formation temperature and pressure</span>
 	<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
 
@@ -247,11 +253,18 @@
 			<span class="n">P_md</span><span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">P_md</span><span class="p">]</span>
 			
 			<span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">T_md</span><span class="p">)):</span>
-				<span class="n">x_V</span><span class="p">,</span><span class="n">y_V</span><span class="p">,</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">T_md</span><span class="p">,</span><span class="n">md</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+				<span class="n">x_V</span><span class="p">,</span><span class="n">y_V</span><span class="p">,</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">T_md</span><span class="p">,</span><span class="n">md</span><span class="p">)</span>
 				<span class="n">func_T</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span><span class="p">)</span>
 
 			<span class="k">try</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">func_T</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+					<span class="n">Ti</span><span class="o">=</span><span class="n">func_T</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">])</span>
+					<span class="k">if</span> <span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;A&#39;</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">Ti</span><span class="o">&gt;</span><span class="n">cut_off_T</span><span class="p">:</span>
+							<span class="n">Ti</span><span class="o">=</span><span class="n">cut_off_T</span>
+						<span class="k">elif</span> <span class="n">Ti</span><span class="o">&lt;</span><span class="n">T0</span><span class="p">:</span>
+							<span class="n">Ti</span><span class="o">=</span><span class="n">T0</span>
+
 					<span class="n">string_T</span><span class="o">+=</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">			&gt;&gt;&gt; ELEMENT : </span><span class="si">%s</span><span class="s2"></span>
 <span class="s2">				&gt;&gt;&gt;&gt; ANNOTATION : </span><span class="si">%s</span><span class="s2">-T-</span><span class="si">%s</span><span class="s2"></span>
@@ -259,25 +272,33 @@
 <span class="s2">				&gt;&gt;&gt;&gt; WINDOW     : 0.0 60.0 [SECONDS]</span>
 <span class="s2">				&gt;&gt;&gt;&gt; DATA</span>
 <span class="s2">						 0 </span><span class="si">%s</span><span class="s2"></span>
-<span class="s2">				&lt;&lt;&lt;&lt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">T_DEV</span><span class="p">,</span><span class="n">func_T</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]))</span>
+<span class="s2">				&lt;&lt;&lt;&lt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">T_DEV</span><span class="p">,</span><span class="n">Ti</span><span class="p">)</span>
 			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
 				<span class="k">pass</span>
 
+
 			<span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">P_md</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">P_md</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-				<span class="n">x_V</span><span class="p">,</span><span class="n">y_V</span><span class="p">,</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">P_md</span><span class="p">,</span><span class="n">md</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+				<span class="n">x_V</span><span class="p">,</span><span class="n">y_V</span><span class="p">,</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span><span class="o">=</span><span class="n">geomtr</span><span class="o">.</span><span class="n">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">P_md</span><span class="p">,</span><span class="n">md</span><span class="p">)</span>
 				<span class="n">func_P</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span><span class="p">)</span>
 
 				<span class="k">try</span><span class="p">:</span>
-					<span class="k">if</span> <span class="n">func_P</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">])</span><span class="o">&gt;</span><span class="mf">1.0</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">func_P</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">])</span><span class="o">&gt;</span><span class="mf">0.0</span><span class="p">:</span>
+						<span class="n">Pi</span><span class="o">=</span><span class="n">func_P</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">])</span>
+						<span class="k">if</span> <span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;A&#39;</span><span class="p">:</span>
+							<span class="k">if</span> <span class="n">Pi</span><span class="o">&gt;</span><span class="n">cut_off_P</span><span class="p">:</span>
+								<span class="n">Pi</span><span class="o">=</span><span class="n">cut_off_P</span><span class="o">+</span><span class="mf">0.92</span>
+							<span class="k">elif</span> <span class="n">Pi</span><span class="o">&lt;</span><span class="n">P0</span><span class="p">:</span>
+								<span class="n">Pi</span><span class="o">=</span><span class="n">P0</span><span class="o">+</span><span class="mf">0.92</span>
+
 						<span class="n">string_P</span><span class="o">+=</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">			&gt;&gt;&gt; ELEMENT : </span><span class="si">%s</span><span class="s2"></span>
 <span class="s2">				&gt;&gt;&gt;&gt; ANNOTATION : </span><span class="si">%s</span><span class="s2">-P-</span><span class="si">%s</span><span class="s2"></span>
 <span class="s2">				&gt;&gt;&gt;&gt; FACTOR     : 1.0E5 [bar] - [Pa]</span>
-<span class="s2">				&gt;&gt;&gt;&gt; DEVIATION  : </span><span class="si">%s</span><span class="s2"></span>
 <span class="s2">				&gt;&gt;&gt;&gt; WINDOW     : 0.0 60.0 [SECONDS]</span>
+<span class="s2">				&gt;&gt;&gt;&gt; DEVIATION  : </span><span class="si">%s</span><span class="s2"></span>
 <span class="s2">				&gt;&gt;&gt;&gt; DATA</span>
 <span class="s2">					    0 </span><span class="si">%s</span><span class="s2"></span>
-<span class="s2">				&lt;&lt;&lt;&lt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">P_DEV</span><span class="p">,</span><span class="n">func_P</span><span class="p">(</span><span class="n">middle_tvd</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]))</span>
+<span class="s2">				&lt;&lt;&lt;&lt;</span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">corr_layer</span><span class="p">[</span><span class="n">tvdn</span><span class="p">]</span><span class="o">+</span><span class="n">blockcorr</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">P_DEV</span><span class="p">,</span><span class="n">Pi</span><span class="p">)</span>
 				<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
 					<span class="k">pass</span>
 

@@ -205,6 +205,18 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="output.flow_direction">
+<code class="descclassname">output.</code><code class="descname">flow_direction</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#flow_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.flow_direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>not documented</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.flow_direction2">
+<code class="descclassname">output.</code><code class="descname">flow_direction2</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#flow_direction2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.flow_direction2" title="Permalink to this definition">¶</a></dt>
+<dd><p>not documented</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="output.from_sav_to_json">
 <code class="descclassname">output.</code><code class="descname">from_sav_to_json</code><span class="sig-paren">(</span><em>sav_version='sav1'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#from_sav_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.from_sav_to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes a json file with temperature and pressure data from the specified .sav for every block including coordinates</p>
@@ -246,6 +258,96 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.it2COF">
+<code class="descclassname">output.</code><code class="descname">it2COF</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2COF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.it2COF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the COF value for each block on the OBSERVATION section of the inverse file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">COF_PT.json: on the output/PT/json/ folder</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">It might changed based on the iTOUGH2 version</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2COF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.it2DATASET">
+<code class="descclassname">output.</code><code class="descname">it2DATASET</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2DATASET"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.it2DATASET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the OBSERVATION dataset on the the inverse file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">it2_PT.json: on the output/PT/json/ folder</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">It might changed based on the iTOUGH2 version</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2DATASET</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.it2OBJF">
+<code class="descclassname">output.</code><code class="descname">it2OBJF</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2OBJF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.it2OBJF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the value of the objective function from the output inverse file and append it with the current time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">OBJ.json: on the output/PT/json/ folder</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">It might changed based on the iTOUGH2 version</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2OBJF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.normal_directions">
+<code class="descclassname">output.</code><code class="descname">normal_directions</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>block</em>, <em>block2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#normal_directions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.normal_directions" title="Permalink to this definition">¶</a></dt>
+<dd><p>not documented</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.output_flows">
+<code class="descclassname">output.</code><code class="descname">output_flows</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#output_flows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.output_flows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the .out file from the standard TOUGH2 file and store the data into a database. It includes the model version and timestamp.</p>
 </dd></dl>
 
 <dl class="function">

@@ -164,6 +164,7 @@
 <span class="kn">import</span> <span class="nn">shapefile</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
 
 <div class="viewcode-block" id="vertical_layers"><a class="viewcode-back" href="../modules/geometry.html#geometry.vertical_layers">[docs]</a><span class="k">def</span> <span class="nf">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It returns the layers information on a dictionary</span>
@@ -280,7 +281,7 @@
 		<span class="n">z_out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 	<span class="k">return</span> <span class="n">x_out</span><span class="p">,</span><span class="n">y_out</span><span class="p">,</span><span class="n">z_out</span></div>
 
-<div class="viewcode-block" id="MD_to_TVD_one_var_array"><a class="viewcode-back" href="../modules/geometry.html#geometry.MD_to_TVD_one_var_array">[docs]</a><span class="k">def</span> <span class="nf">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">var_array</span><span class="p">,</span><span class="n">MD_array</span><span class="p">,</span><span class="n">num_points</span><span class="p">):</span>
+<div class="viewcode-block" id="MD_to_TVD_one_var_array"><a class="viewcode-back" href="../modules/geometry.html#geometry.MD_to_TVD_one_var_array">[docs]</a><span class="k">def</span> <span class="nf">MD_to_TVD_one_var_array</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">var_array</span><span class="p">,</span><span class="n">MD_array</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It returns the position X, Y and Z for every point on a log along Pressure or Temperature.</span>
 
 <span class="sd">	Parameters</span>
@@ -291,8 +292,6 @@
 <span class="sd">	  It contains the log of pressure or temperature</span>
 <span class="sd">	MD_array :array</span>
 <span class="sd">	  It contains the measure depth values corresponding with every point on var_array</span>
-<span class="sd">	num_points	:int</span>
-<span class="sd">	  Number of points for the output array</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
@@ -361,14 +360,14 @@
 	<span class="n">z_V</span><span class="o">=</span><span class="p">[]</span>
 	<span class="n">var_V</span><span class="o">=</span><span class="p">[]</span>
 
-	<span class="n">MD_array_reconvert</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">MD_array</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">MD_array</span><span class="p">),</span><span class="n">num_points</span><span class="p">)</span>
+	<span class="c1">#MD_array_reconvert=np.linspace(min(MD_array),max(MD_array),num_points)</span>
 
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MD_array_reconvert</span><span class="p">:</span>
+	<span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">MD_array</span><span class="p">:</span>
 		<span class="k">try</span><span class="p">:</span>
-			<span class="n">x_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funxmd</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-			<span class="n">y_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funymd</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-			<span class="n">z_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funzmd</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-			<span class="n">var_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funcV</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="n">x_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funxmd</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+			<span class="n">y_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funymd</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+			<span class="n">z_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funzmd</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+			<span class="n">var_V</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">funcV</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 		<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
 			<span class="k">pass</span>
 
@@ -509,6 +508,33 @@
 			<span class="n">MD</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">MD</span></div>
 
+<div class="viewcode-block" id="remap"><a class="viewcode-back" href="../modules/geometry.html#geometry.remap">[docs]</a><span class="k">def</span> <span class="nf">remap</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It returns an array with the number of values as the reference pressure array </span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	data : dict</span>
+<span class="sd">	  Contains &#39;MD_P&#39;,&#39;P&#39; and &#39;MD_T&#39; at least. The depths values for P are found base on the depths of MD_T</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	dict</span>
+<span class="sd">	  data : with &#39;remap_P&#39; cointaning the values of P for the depths listed at MD_T</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">map_function</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MD_P&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">])</span>
+
+	<span class="n">p</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">for</span> <span class="n">MD</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;MD_T&#39;</span><span class="p">]:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">map_function</span><span class="p">(</span><span class="n">MD</span><span class="p">))</span>
+		<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+			<span class="n">p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+	<span class="n">data</span><span class="p">[</span><span class="s1">&#39;remap_P&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">p</span>
+
+	<span class="k">return</span> <span class="n">data</span></div>
+
 <div class="viewcode-block" id="line_intersect"><a class="viewcode-back" href="../modules/geometry.html#geometry.line_intersect">[docs]</a><span class="k">def</span> <span class="nf">line_intersect</span><span class="p">(</span><span class="n">Ax1</span><span class="p">,</span> <span class="n">Ay1</span><span class="p">,</span> <span class="n">Ax2</span><span class="p">,</span> <span class="n">Ay2</span><span class="p">,</span> <span class="n">Bx1</span><span class="p">,</span> <span class="n">By1</span><span class="p">,</span> <span class="n">Bx2</span><span class="p">,</span> <span class="n">By2</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Finds the intersection point between two lines</span>
 
@@ -617,6 +643,73 @@
 		<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])</span>
 		<span class="n">string</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">],</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
 		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="write_feedzone_position_from_dict"><a class="viewcode-back" href="../modules/geometry.html#geometry.write_feedzone_position_from_dict">[docs]</a><span class="k">def</span> <span class="nf">write_feedzone_position_from_dict</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; It generates a file on csv format containing the well feedzone position and coordinates from a python dictionary with well information</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	wells : dictionary</span>
+<span class="sd">	  Contains the wells names, feedzone and contribution</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  well_feedzone_xyz: on ../input</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	regeo_mesh uses this file as an input</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; wells={&#39;TR-1&#39;:{type_w&#39;:&#39;OBS&#39;,&#39;feedzones&#39;:{&#39;A&#39;:{&#39;MD&#39;:600,&#39;contribution&#39;:1}}}},</span>
+<span class="sd">	&gt;&gt;&gt; write_feedzone_position_from_dict(wells)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../input/&#39;</span><span class="o">+</span><span class="s1">&#39;well_feedzone_xyz.csv&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;well,MD,x,y,z,type</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">]:</span>
+			<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;MD&#39;</span><span class="p">])</span>
+			<span class="n">string</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;type_w&#39;</span><span class="p">])</span>
+			<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="write_feedzone_from_dict"><a class="viewcode-back" href="../modules/geometry.html#geometry.write_feedzone_from_dict">[docs]</a><span class="k">def</span> <span class="nf">write_feedzone_from_dict</span><span class="p">(</span><span class="n">wells</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; It generates a file on csv format containing the well feedzone position and coordinates from a python dictionary with well information</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	wells : dictionary</span>
+<span class="sd">	  Contains the wells names, feedzone and contribution</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  well_feedzone: on ../input</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	regeo_mesh uses this file as an input</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; wells={&#39;TR-1&#39;:{type_w&#39;:&#39;OBS&#39;,&#39;feedzones&#39;:{&#39;A&#39;:{&#39;MD&#39;:600,&#39;contribution&#39;:1}}}},</span>
+<span class="sd">	&gt;&gt;&gt; write_feedzone_position_from_dict(wells)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../input/&#39;</span><span class="o">+</span><span class="s1">&#39;well_feedzone.csv&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+	<span class="n">string</span><span class="o">=</span><span class="s2">&quot;well,MD,contribution,type</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">]:</span>
+			<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;MD&#39;</span><span class="p">])</span>
+			<span class="n">string</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;feedzones&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;contribution&#39;</span><span class="p">],</span><span class="n">wells</span><span class="p">[</span><span class="n">well</span><span class="p">][</span><span class="s1">&#39;type_w&#39;</span><span class="p">])</span>
+			<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
 	<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PT_natural_to_GIS"><a class="viewcode-back" href="../modules/geometry.html#geometry.PT_natural_to_GIS">[docs]</a><span class="k">def</span> <span class="nf">PT_natural_to_GIS</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
@@ -771,6 +864,85 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">P</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Pmin</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">P</span></div>
+
+<div class="viewcode-block" id="survey_to_GIS"><a class="viewcode-back" href="../modules/geometry.html#geometry.survey_to_GIS">[docs]</a><span class="k">def</span> <span class="nf">survey_to_GIS</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It writes a shapefile (line type) from the wells surveys</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary contaning the path and name of database on keyword &#39;db_path&#39;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  well_survey: on the path ../mesh/GIS</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; survey_to_GIS(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="n">wells_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM survey ORDER BY well DESC;&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">wells</span><span class="o">=</span><span class="n">wells_data</span><span class="o">.</span><span class="n">well</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wells</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+		<span class="n">w</span><span class="o">=</span><span class="n">shapefile</span><span class="o">.</span><span class="n">Writer</span><span class="p">(</span><span class="s1">&#39;../mesh/GIS/well_survey&#39;</span><span class="p">)</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;WELL&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">wells_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">wells_data</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">well</span><span class="p">]</span>
+			<span class="n">points</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">]))</span>
+			<span class="n">points</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+			<span class="n">w</span><span class="o">.</span><span class="n">linez</span><span class="p">([</span><span class="n">points</span><span class="o">.</span><span class="n">tolist</span><span class="p">()])</span>
+			<span class="n">w</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;There is no well survey store on the database&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="feedzone_to_GIS"><a class="viewcode-back" href="../modules/geometry.html#geometry.feedzone_to_GIS">[docs]</a><span class="k">def</span> <span class="nf">feedzone_to_GIS</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It writes a shapefile (point type) from the wells feedzones position</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">	  Dictionary contaning the path and name of database on keyword &#39;db_path&#39;.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  well_survey: on the path ../mesh/GIS</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; feedzone_to_GIS(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">wells_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM wellfeedzone ORDER BY well DESC;&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">wells</span><span class="o">=</span><span class="n">wells_data</span><span class="o">.</span><span class="n">well</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+	<span class="n">wells_info</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM wells ORDER BY well DESC;&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wells</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+		<span class="n">w</span><span class="o">=</span><span class="n">shapefile</span><span class="o">.</span><span class="n">Writer</span><span class="p">(</span><span class="s1">&#39;../mesh/GIS/well_feedzone&#39;</span><span class="p">)</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;WELL&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;CONTRIBUTION&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">wells_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+			<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])</span>
+			<span class="n">w</span><span class="o">.</span><span class="n">pointz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+			<span class="n">w</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">wells_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">wells_info</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;contribution&#39;</span><span class="p">])</span>
+		<span class="n">w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;There is no well survey store on the database&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

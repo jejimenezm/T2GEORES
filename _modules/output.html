@@ -164,10 +164,10 @@
 <span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">T2GEORES</span> <span class="kn">import</span> <span class="n">formats</span> <span class="k">as</span> <span class="n">formats</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">It extracts the blocks information containing on a TOUGH2 output file.</span>
-<span class="sd">&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="write_PT_from_t2output"><a class="viewcode-back" href="../modules/output.html#output.write_PT_from_t2output">[docs]</a><span class="k">def</span> <span class="nf">write_PT_from_t2output</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It writes the parameter for every block from every well from the last output file of TOUGH2 simulation</span>
@@ -235,13 +235,13 @@
 	<span class="c1">#Select the last line of TOUGH2 output file</span>
 	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">t2_output_array</span><span class="p">[</span><span class="n">output_headers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
 		<span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks_wells</span><span class="p">:</span>
-			<span class="k">if</span>  <span class="n">block</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">==</span><span class="mi">11</span><span class="p">:</span>
+			<span class="k">if</span>  <span class="n">block</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">==</span><span class="mi">12</span><span class="p">:</span> <span class="c1">#11</span>
 				<span class="n">wells_data</span><span class="p">[</span><span class="n">blocks_wells</span><span class="p">[</span><span class="n">block</span><span class="p">]]</span><span class="o">+=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
 
 	<span class="c1">#Writes an output file for every well</span>
 	<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">wells_data</span><span class="p">:</span>
 		<span class="n">file_out</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../output/PT/txt/</span><span class="si">%s</span><span class="s2">_PT.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
-		<span class="n">file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ELEM,INDEX,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ELEM,INDEX,P,T,SG,SW,X(WAT1),X(WAT2),PCAP,DG,DW,LOG(PERM)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 		<span class="n">file_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">wells_data</span><span class="p">[</span><span class="n">well</span><span class="p">])</span>
 		<span class="n">file_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -787,7 +787,7 @@
 				<span class="n">time</span><span class="o">=</span><span class="n">t2_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 				<span class="n">data_dictionary</span><span class="o">=</span><span class="p">{}</span>
 				<span class="n">data_dictionary</span><span class="p">[</span><span class="n">time</span><span class="p">]</span><span class="o">=</span><span class="p">{}</span>
-			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t2_line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">==</span><span class="mi">11</span> <span class="ow">and</span> <span class="n">t2_line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t2_line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">==</span><span class="mi">12</span> <span class="ow">and</span> <span class="n">t2_line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 				<span class="n">t2_array</span><span class="o">=</span><span class="n">t2_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
 				<span class="n">data_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">t2_array</span><span class="p">))</span>
 				<span class="n">data_dictionary</span><span class="p">[</span><span class="n">time</span><span class="p">][</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="p">{}</span>
@@ -821,6 +821,440 @@
 		<span class="n">t2_output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span>
 		<span class="n">t2_output_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="it2COF"><a class="viewcode-back" href="../modules/output.html#output.it2COF">[docs]</a><span class="k">def</span> <span class="nf">it2COF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Extracts the COF value for each block on the OBSERVATION section of the inverse file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">		Contains the name of the iTOUGH2 file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">		COF_PT.json: on the output/PT/json/ folder</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	It might changed based on the iTOUGH2 version</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; it2COF(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">it2_output_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/</span><span class="si">%s</span><span class="s2">.out&quot;</span><span class="o">%</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">it2_output_file</span><span class="p">):</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;Theres is not %.out file on t2/</span><span class="si">%s</span><span class="s2">.out&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">],</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">])</span>
+
+	<span class="c1">#First and last line in between the data</span>
+	<span class="n">compare1</span> <span class="o">=</span> <span class="s2">&quot; DATASET              DATAPOINTS          MEAN       MEDIAN    STD. DEV.    AVE. DEV.   SKEWNESS   KURTOSIS      M/S    DWA     COF&quot;</span>
+	<span class="n">compare2</span> <span class="o">=</span> <span class="s2">&quot; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -&quot;</span>
+
+	<span class="c1">#Empty dataframe</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DATASET&quot;</span><span class="p">,</span><span class="s2">&quot;DATAPOINTS&quot;</span><span class="p">,</span><span class="s2">&quot;MEAN&quot;</span><span class="p">,</span><span class="s2">&quot;MEDIAN&quot;</span><span class="p">,</span><span class="s2">&quot;STD. DEV.&quot;</span><span class="p">,</span><span class="s2">&quot;AVE. DEV.&quot;</span><span class="p">,</span><span class="s2">&quot;SKEWNESS&quot;</span><span class="p">,</span><span class="s2">&quot;KURTOSIS&quot;</span><span class="p">,</span><span class="s2">&quot;M/S&quot;</span><span class="p">,</span><span class="s2">&quot;DWA&quot;</span><span class="p">,</span><span class="s2">&quot;COF&quot;</span><span class="p">])</span>
+
+	<span class="c1">#Extracts the data based on compare1 and compare2</span>
+	<span class="n">output_headers</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">it2_output_file</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">t2_file</span><span class="p">:</span>
+		<span class="n">it2_output_array</span> <span class="o">=</span> <span class="n">t2_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+		<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">for</span> <span class="n">line_i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it2_output_array</span><span class="p">):</span>
+
+			<span class="k">if</span> <span class="n">compare1</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">():</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="k">elif</span> <span class="n">compare2</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">():</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+
+			<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+				<span class="n">output_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it2_output_array</span><span class="p">[</span><span class="n">line_i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+	<span class="c1">#Stores the date into the appropiate column</span>
+	<span class="n">output_headers</span><span class="o">=</span><span class="n">output_headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">output_headers</span><span class="p">:</span>
+		<span class="n">data_i</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;DATASET&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+							<span class="s2">&quot;DATAPOINTS&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+							<span class="s2">&quot;MEAN&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+							<span class="s2">&quot;MEDIAN&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+							<span class="s2">&quot;STD. DEV.&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+							<span class="s2">&quot;AVE. DEV.&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+							<span class="s2">&quot;SKEWNESS&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+							<span class="s2">&quot;KURTOSIS&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+							<span class="s2">&quot;M/S&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+							<span class="s2">&quot;DWA&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+							<span class="s2">&quot;COF&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">12</span><span class="p">]},</span><span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+
+	<span class="n">data</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">&quot;../output/PT/json/COF_PT.json&quot;</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="it2DATASET"><a class="viewcode-back" href="../modules/output.html#output.it2DATASET">[docs]</a><span class="k">def</span> <span class="nf">it2DATASET</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Extracts the OBSERVATION dataset on the the inverse file</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">		Contains the name of the iTOUGH2 file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">		it2_PT.json: on the output/PT/json/ folder</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	It might changed based on the iTOUGH2 version</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; it2DATASET(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">it2_output_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/</span><span class="si">%s</span><span class="s2">.out&quot;</span><span class="o">%</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">it2_output_file</span><span class="p">):</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;Theres is not </span><span class="si">%s</span><span class="s2">.out file on t2/</span><span class="si">%s</span><span class="s2">.out&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">],</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">])</span>
+
+	<span class="c1">#First and last line in between the data</span>
+	<span class="n">compare1</span><span class="o">=</span><span class="s2">&quot;#  OBSERVATION   AT TIME [sec]     MEASURED     COMPUTED     RESIDUAL     WEIGHT C.O.F [%]    STD. DEV.    Yi      Wi    DWi +/-&quot;</span>
+	<span class="n">compare2</span><span class="o">=</span><span class="s2">&quot; Residual Plots&quot;</span>
+
+	<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NUMBER&quot;</span><span class="p">,</span><span class="s2">&quot;OBSERVATION&quot;</span><span class="p">,</span><span class="s2">&quot;TIME&quot;</span><span class="p">,</span><span class="s2">&quot;MEASURED&quot;</span><span class="p">,</span><span class="s2">&quot;COMPUTED&quot;</span><span class="p">,</span><span class="s2">&quot;RESIDUAL&quot;</span><span class="p">,</span><span class="s2">&quot;WEIGHT&quot;</span><span class="p">,</span><span class="s2">&quot;C.O.F&quot;</span><span class="p">,</span><span class="s2">&quot;STD.DEV&quot;</span><span class="p">])</span>
+
+	<span class="c1">#Extracts the data based on compare1 and compare2</span>
+	<span class="n">output_headers</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">it2_output_file</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">t2_file</span><span class="p">:</span>
+		<span class="n">it2_output_array</span> <span class="o">=</span> <span class="n">t2_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+		<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">for</span> <span class="n">line_i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it2_output_array</span><span class="p">):</span>
+
+			<span class="k">if</span> <span class="n">compare1</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">():</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="k">elif</span> <span class="n">compare2</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">():</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+
+			<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+				<span class="n">output_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it2_output_array</span><span class="p">[</span><span class="n">line_i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+	<span class="c1">#Stores the date into the corresponding column</span>
+	<span class="n">output_headers</span><span class="o">=</span><span class="n">output_headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">][::</span><span class="mi">2</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">output_headers</span><span class="p">:</span>
+		<span class="n">data_i</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;NUMBER&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+							<span class="s2">&quot;OBSERVATION&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+							<span class="s2">&quot;TIME&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+							<span class="s2">&quot;MEASURED&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+							<span class="s2">&quot;COMPUTED&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+							<span class="s2">&quot;RESIDUAL&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+							<span class="s2">&quot;WEIGHT&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+							<span class="s2">&quot;C.O.F&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+							<span class="s2">&quot;STD&quot;</span><span class="p">:</span><span class="n">data_i</span><span class="p">[</span><span class="mi">8</span><span class="p">]},</span><span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">data</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">&quot;../output/PT/json/it2_PT.json&quot;</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="it2OBJF"><a class="viewcode-back" href="../modules/output.html#output.it2OBJF">[docs]</a><span class="k">def</span> <span class="nf">it2OBJF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Extracts the value of the objective function from the output inverse file and append it with the current time</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary : dictionary</span>
+<span class="sd">		Contains the name of the iTOUGH2 file</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">		OBJ.json: on the output/PT/json/ folder</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	It might changed based on the iTOUGH2 version</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; it2OBJF(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="n">it2_output_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/</span><span class="si">%s</span><span class="s2">.out&quot;</span><span class="o">%</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">it2_output_file</span><span class="p">):</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;Theres is not </span><span class="si">%s</span><span class="s2">.out file on t2/</span><span class="si">%s</span><span class="s2">.out&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">],</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;iTOUGH2_file&#39;</span><span class="p">])</span>
+
+	<span class="c1">#First and last line in between the data</span>
+
+	<span class="n">compare1</span> <span class="o">=</span> <span class="s2">&quot;Objective Function&quot;</span>
+	<span class="n">compare2</span> <span class="o">=</span> <span class="s2">&quot;==================================================================================================================================&quot;</span>
+
+	<span class="c1">#Extracts the data based on compare1 and compare2</span>
+	<span class="n">cnt</span><span class="o">=</span><span class="mi">0</span>
+	<span class="n">output_headers</span><span class="o">=</span><span class="p">[]</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">it2_output_file</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">t2_file</span><span class="p">:</span>
+		<span class="n">it2_output_array</span> <span class="o">=</span> <span class="n">t2_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+		<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">for</span> <span class="n">line_i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it2_output_array</span><span class="p">):</span>
+
+			<span class="k">if</span> <span class="n">compare1</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">():</span>
+				<span class="n">cnt</span><span class="o">+=</span><span class="mi">1</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="k">elif</span> <span class="n">compare2</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">():</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+
+			<span class="k">if</span> <span class="n">cnt</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">save</span><span class="p">:</span>
+				<span class="n">output_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">it2_output_array</span><span class="p">[</span><span class="n">line_i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+	
+	<span class="n">OBJ_file</span> <span class="o">=</span> <span class="s2">&quot;../output/PT/json/OBJ.json&quot;</span>
+
+	<span class="n">OBJ</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">OBJ_file</span><span class="p">)</span>
+
+	<span class="c1">#Add the current time to the file</span>
+	<span class="n">OBJ</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">OBJ</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">output_headers</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">6</span><span class="p">])]</span>
+
+	<span class="n">OBJ</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">OBJ_file</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<span class="c1">#not documented</span>
+<div class="viewcode-block" id="normal_directions"><a class="viewcode-back" href="../modules/output.html#output.normal_directions">[docs]</a><span class="k">def</span> <span class="nf">normal_directions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">block2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">points</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT x1,y1,x2,y2,ELEME1,ELEME2 FROM segment WHERE ELEME1=&#39;</span><span class="si">%s</span><span class="s2">&#39; AND ELEME2=&#39;</span><span class="si">%s</span><span class="s2">&#39;;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="n">block2</span><span class="p">),</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="n">block2</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+		<span class="n">vectors</span><span class="o">=</span><span class="p">[]</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">][</span><span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">-</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">][</span><span class="n">block2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">duz</span><span class="o">=-</span><span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">duz</span><span class="o">=</span><span class="mi">1</span>
+		<span class="n">dux</span><span class="o">=</span><span class="mi">0</span>
+		<span class="n">duy</span><span class="o">=</span><span class="mi">0</span>
+		<span class="n">points</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="n">dux</span><span class="p">,</span><span class="n">duy</span><span class="p">,</span><span class="n">duz</span><span class="p">]],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dux&#39;</span><span class="p">,</span><span class="s1">&#39;duy&#39;</span><span class="p">,</span><span class="s1">&#39;duz&#39;</span><span class="p">])</span>
+	<span class="k">elif</span> <span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">block2</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;dx&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">]</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;dy&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;y2&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;y1&#39;</span><span class="p">]</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;dx&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;dy&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;ux&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;dx&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;uy&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;dy&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;dux&#39;</span><span class="p">]</span><span class="o">=-</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;uy&#39;</span><span class="p">]</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;duy&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;ux&#39;</span><span class="p">]</span>
+		<span class="n">points</span><span class="p">[</span><span class="s1">&#39;duz&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+	<span class="k">return</span> <span class="n">points</span></div>
+
+<div class="viewcode-block" id="output_flows"><a class="viewcode-back" href="../modules/output.html#output.output_flows">[docs]</a><span class="k">def</span> <span class="nf">output_flows</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Read the .out file from the standard TOUGH2 file and store the data into a database. It includes the model version and timestamp.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">elements</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT DISTINCT ELEME FROM ELEME WHERE model_version=</span><span class="si">%d</span><span class="s2">;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">]),</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">elements_list</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="s1">&#39;ELEME&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">,</span> <span class="s1">&#39;ELEME2&#39;</span><span class="p">,</span> <span class="s1">&#39;INDEX&#39;</span><span class="p">,</span><span class="s1">&#39;FHEAT&#39;</span><span class="p">,</span><span class="s1">&#39;FLOH&#39;</span><span class="p">,</span><span class="s1">&#39;FLOF&#39;</span><span class="p">,</span><span class="s1">&#39;FLOG&#39;</span><span class="p">,</span><span class="s1">&#39;FLOAQ&#39;</span><span class="p">,</span><span class="s1">&#39;FLOWTR2&#39;</span><span class="p">,</span><span class="s1">&#39;VELG&#39;</span><span class="p">,</span><span class="s1">&#39;VELAQ&#39;</span><span class="p">,</span><span class="s1">&#39;TURB_COEFF&#39;</span><span class="p">,</span><span class="s1">&#39;model_time&#39;</span><span class="p">,</span><span class="s1">&#39;model_version&#39;</span><span class="p">,</span><span class="s1">&#39;model_output_timestamp&#39;</span><span class="p">]</span>
+
+	<span class="n">time_now</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+	<span class="n">output_t2_file</span><span class="o">=</span><span class="s2">&quot;../model/t2/t2.out&quot;</span>
+
+	<span class="n">bulk_data</span><span class="o">=</span><span class="p">[]</span>
+
+	<span class="n">allow</span><span class="o">=</span><span class="kc">False</span>
+	<span class="n">allowed_line</span><span class="o">=</span><span class="mf">1E50</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">output_t2_file</span><span class="p">):</span>
+		<span class="n">t2_file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">output_t2_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">t2_line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">t2_file</span><span class="p">):</span>
+			<span class="k">if</span> <span class="s2">&quot;OUTPUT DATA AFTER&quot;</span> <span class="ow">in</span> <span class="n">t2_line</span><span class="p">:</span>
+				<span class="n">time</span><span class="o">=</span><span class="n">t2_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+				<span class="n">fix_data</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">],</span><span class="n">time_now</span><span class="p">]</span>
+				<span class="n">allow</span><span class="o">=</span><span class="kc">True</span>
+
+			<span class="k">if</span> <span class="n">t2_line</span><span class="o">==</span><span class="s2">&quot;                          (W)        (J/KG)        (KG/S)       (KG/S)       (KG/S)       (KG/S)        (M/S)        (M/S)        (1/M)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+				<span class="n">allowed_line</span><span class="o">=</span><span class="n">n</span><span class="o">+</span><span class="mi">2</span>
+
+			<span class="k">if</span> <span class="n">t2_line</span><span class="o">==</span><span class="s2">&quot; ELEMENT SOURCE INDEX      GENERATION RATE     ENTHALPY      X1           X2          FF(GAS)      FF(AQ.)         P(WB)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+				<span class="n">allow</span><span class="o">=</span><span class="kc">False</span>
+				<span class="n">allowed_line</span><span class="o">=</span><span class="mf">1E50</span>
+
+			<span class="k">if</span> <span class="n">allow</span> <span class="ow">and</span> <span class="n">n</span><span class="o">&gt;=</span><span class="n">allowed_line</span><span class="p">:</span>
+				<span class="n">content</span><span class="o">=</span><span class="n">t2_line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">==</span><span class="mi">12</span> <span class="ow">and</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;ELEM1&#39;</span><span class="p">:</span>
+					<span class="n">data_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">content</span><span class="p">))</span>
+					<span class="n">data_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">fix_data</span><span class="p">)</span>
+					<span class="n">bulk_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Previous logic</span>
+<span class="sd">			#if len(t2_line.split())==12 and elements.ELEME.str.count(t2_line.split()[0]).sum()==1 and elements.ELEME.str.count(t2_line.split()[1]).sum()==1:</span>
+<span class="sd">			#if len(t2_line.split())==12 and bool(re.match(&quot;^[A-Z][A-Z][0-9][0-9][0-9]$&quot;,str(t2_line.split()[0]))) and bool(re.match(&quot;^[A-Z][A-Z][0-9][0-9][0-9]$&quot;,str(t2_line.split()[1]))): #3000s</span>
+<span class="sd">			if len(t2_line.split())==12 and len(t2_line.split()[0])==5 and not(any(y in t2_line.split() for y in [&#39;ELEM1&#39;,&#39;GENER&#39;] )): #2950s #t2_line.split()[0] in elements_list and t2_line.split()[1] in elements_list: #3500s</span>
+<span class="sd">				#print(t2_line.split())</span>
+<span class="sd">				t2_array=t2_line.rstrip().split(&quot; &quot;)</span>
+<span class="sd">				data_list= list(filter(None, t2_array))</span>
+<span class="sd">				data_list.extend(fix_data)</span>
+<span class="sd">				data_line={}</span>
+
+<span class="sd">				for i,name in enumerate(column_names):</span>
+<span class="sd">					try:</span>
+<span class="sd">						data_line[name]=float(data_list[i])</span>
+<span class="sd">					except (ValueError,TypeError):</span>
+<span class="sd">						data_line[name]=data_list[i]</span>
+<span class="sd">				</span>
+<span class="sd">				flows_df=flows_df.append(data_line,ignore_index=True)</span>
+<span class="sd">			&quot;&quot;&quot;</span>
+		<span class="n">flows_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bulk_data</span><span class="p">,</span><span class="n">columns</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">)</span>
+		<span class="n">t2_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+		<span class="c1">#Writing the dataframe to the database</span>
+
+		<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+		<span class="n">flows_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;t2FLOWSout&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">output_t2_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="flow_direction"><a class="viewcode-back" href="../modules/output.html#output.flow_direction">[docs]</a><span class="k">def</span> <span class="nf">flow_direction</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">elements</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT DISTINCT ELEME FROM ELEME WHERE model_version=</span><span class="si">%d</span><span class="s2">;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">]),</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">elements_list</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="s1">&#39;ELEME&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+	
+	<span class="n">flows_dict</span><span class="o">=</span><span class="p">{}</span>
+
+	<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements_list</span><span class="p">:</span>
+
+		<span class="c1">#print(&quot;PRE DIRECTIONS&quot;,datetime.datetime.now())</span>
+		<span class="n">directions</span><span class="o">=</span><span class="n">normal_directions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">element</span><span class="p">)</span>
+		<span class="c1">#print(&quot;AFTER DIRECTIONS&quot;,datetime.datetime.now())</span>
+		
+		<span class="c1">#Direction 1</span>
+		<span class="c1">#print(&quot;PRE query flow&quot;,datetime.datetime.now())</span>
+		<span class="n">flow_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM t2FLOWSout WHERE ELEME1=&#39;</span><span class="si">%s</span><span class="s2">&#39;AND model_time=-3359500000.0&quot;</span><span class="o">%</span><span class="n">element</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+		<span class="c1">#print(&quot;AFTER query flow&quot;,datetime.datetime.now())</span>
+
+		<span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;flow_x&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+		<span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;flow_y&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+
+		<span class="c1">#print(&quot;PRE FIRST LOOP&quot;,datetime.datetime.now())</span>
+		<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span> <span class="c1">#horizontal</span>
+
+			<span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+				<span class="c1">#Establish the direction of the flow</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">][</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">-</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">][</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+					<span class="n">uy</span><span class="o">=-</span><span class="mi">1</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">uy</span><span class="o">=</span><span class="mi">1</span>
+
+				<span class="c1">#It is necessary to check if the right position of ELEME1 and ELEME2 exists</span>
+				<span class="k">if</span> <span class="n">element</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]:</span>
+					<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_y&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">uy</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_y&quot;</span><span class="p">]</span><span class="o">=-</span><span class="n">uy</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">]</span>
+
+			<span class="k">else</span><span class="p">:</span>
+
+				<span class="n">ux</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">directions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])][</span><span class="s1">&#39;dux&#39;</span><span class="p">])</span>
+				<span class="n">uy</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">directions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])][</span><span class="s1">&#39;duy&#39;</span><span class="p">])</span>
+				
+				<span class="n">flux</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])][</span><span class="s1">&#39;FLOF&#39;</span><span class="p">])</span>
+				
+				<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_x&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ux</span><span class="o">*</span><span class="n">flux</span>
+				<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_y&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">uy</span><span class="o">*</span><span class="n">flux</span>
+		<span class="c1">#print(&quot;AFTER FIRST LOOP&quot;,datetime.datetime.now())</span>
+
+
+		<span class="c1">#Direction 2</span>
+		<span class="n">flow_data2</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM t2FLOWSout WHERE ELEME2=&#39;</span><span class="si">%s</span><span class="s2">&#39; AND model_time=-3359500000.0&quot;</span><span class="o">%</span><span class="n">element</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+		<span class="n">flow_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flow_data2</span><span class="p">)</span>
+
+		<span class="c1">#print(&quot;PRE SECOND LOOP&quot;,datetime.datetime.now())</span>
+
+		<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">flow_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span> <span class="c1">#horizontal</span>
+
+			<span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+				<span class="c1">#Establish the direction of the flow</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">][</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">-</span><span class="n">formats</span><span class="o">.</span><span class="n">formats_t2</span><span class="p">[</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">][</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+					<span class="n">uy</span><span class="o">=-</span><span class="mi">1</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">uy</span><span class="o">=</span><span class="mi">1</span>
+
+				<span class="c1">#It is necessary to check if the right position of ELEME1 and ELEME2 exists</span>
+				<span class="k">if</span> <span class="n">element</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]:</span>
+					<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_y&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">uy</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_y&quot;</span><span class="p">]</span><span class="o">=-</span><span class="n">uy</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">]</span>
+
+			<span class="k">else</span><span class="p">:</span>
+
+				<span class="n">ux</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">directions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])][</span><span class="s1">&#39;dux&#39;</span><span class="p">])</span>
+				<span class="n">uy</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">directions</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">directions</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])][</span><span class="s1">&#39;duy&#39;</span><span class="p">])</span>
+				
+				<span class="n">flux</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])][</span><span class="s1">&#39;FLOF&#39;</span><span class="p">])</span>
+				
+				<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_x&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ux</span><span class="o">*</span><span class="n">flux</span>
+				<span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]),</span><span class="s2">&quot;flow_y&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">uy</span><span class="o">*</span><span class="n">flux</span>
+		<span class="c1">#print(&quot;AFTER SECOND LOOP&quot;,datetime.datetime.now())</span>
+
+		<span class="c1">#print(&quot;PRE CALCS&quot;,datetime.datetime.now())</span>
+		<span class="n">sum_flowx</span><span class="o">=</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;flow_x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">sum_flowy</span><span class="o">=</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;flow_y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">flows_dict</span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">sum_flowx</span><span class="p">,</span><span class="n">sum_flowy</span><span class="p">,(</span><span class="n">sum_flowx</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">sum_flowy</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">]</span>
+		<span class="c1">#print(&quot;AFTER CALCS&quot;,datetime.datetime.now())</span>
+		<span class="c1">#print(element,flows_dict[element])</span>
+
+	<span class="n">flows</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">flows_dict</span><span class="p">,</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;flow_x&#39;</span><span class="p">,</span><span class="s1">&#39;flow_y&#39;</span><span class="p">,</span><span class="s1">&#39;flow_mag&#39;</span><span class="p">])</span>
+	<span class="c1">#left_side=flow_data.loc[flow_data[&#39;ELEME1&#39;]==element]</span>
+	<span class="c1">#right_side=flow_data.loc[flow_data[&#39;ELEME2&#39;]==element]</span>
+	<span class="n">flows</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;directions.csv&#39;</span><span class="p">)</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="flow_direction2"><a class="viewcode-back" href="../modules/output.html#output.flow_direction2">[docs]</a><span class="k">def</span> <span class="nf">flow_direction2</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">elements</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT DISTINCT ELEME FROM ELEME WHERE model_version=</span><span class="si">%d</span><span class="s2">;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">]),</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">elements_list</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="s1">&#39;ELEME&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+	
+	<span class="n">flows_dict</span><span class="o">=</span><span class="p">{}</span>
+
+	<span class="n">flow_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM t2FLOWSout WHERE model_time=-3359500000.0&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+	<span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;x_flow&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">flow_data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span> <span class="p">:</span> <span class="n">normal_directions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])[</span><span class="s1">&#39;dux&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;y_flow&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">flow_data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span> <span class="p">:</span> <span class="n">normal_directions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])[</span><span class="s1">&#39;duy&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;z_flow&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">flow_data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span> <span class="p">:</span> <span class="n">normal_directions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">])[</span><span class="s1">&#39;duz&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;FLOF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">#[Finished in 905.5s]</span>
+
+	<span class="n">elements</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT DISTINCT ELEME FROM ELEME WHERE model_version=</span><span class="si">%d</span><span class="s2">;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">]),</span><span class="n">conn</span><span class="p">)</span>
+	<span class="n">elements_list</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="s1">&#39;ELEME&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+	<span class="n">bulk_data</span><span class="o">=</span><span class="p">[]</span>
+	<span class="n">time_now</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+	<span class="n">time</span><span class="o">=-</span><span class="mf">3359500000.0</span>
+
+	<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements_list</span><span class="p">:</span>
+		<span class="n">x</span><span class="o">=</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">,</span><span class="s1">&#39;x_flow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">-</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">,</span><span class="s1">&#39;x_flow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">y</span><span class="o">=</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">,</span><span class="s1">&#39;y_flow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">-</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">,</span><span class="s1">&#39;y_flow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">z</span><span class="o">=</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME1&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">,</span><span class="s1">&#39;z_flow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">-</span><span class="n">flow_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flow_data</span><span class="p">[</span><span class="s1">&#39;ELEME2&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">element</span><span class="p">,</span><span class="s1">&#39;z_flow&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">bulk_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">element</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">],</span><span class="n">time_now</span><span class="p">])</span>
+
+
+	<span class="n">column_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ELEME&#39;</span><span class="p">,</span><span class="s1">&#39;FLOF_x&#39;</span><span class="p">,</span><span class="s1">&#39;FLOF_y&#39;</span><span class="p">,</span><span class="s1">&#39;FLOF_z&#39;</span><span class="p">,</span><span class="s1">&#39;model_time&#39;</span><span class="p">,</span><span class="s1">&#39;model_version&#39;</span><span class="p">,</span><span class="s1">&#39;model_output_timestamp&#39;</span><span class="p">]</span>
+
+	<span class="n">flows_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bulk_data</span><span class="p">,</span><span class="n">columns</span> <span class="o">=</span> <span class="n">column_names</span><span class="p">)</span>
+
+	<span class="c1">#Writing the dataframe into the database</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">flows_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;t2FLOWVectors&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

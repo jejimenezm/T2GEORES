@@ -162,8 +162,8 @@
 <span id="model-plots"></span><h1>model_plots<a class="headerlink" href="#module-model_plots" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="model_plots.check_layers_and_feedzones">
-<code class="descclassname">model_plots.</code><code class="descname">check_layers_and_feedzones</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>show_fig</em>, <em>sav_fig</em>, <em>source_txt='../input/'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#check_layers_and_feedzones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.check_layers_and_feedzones" title="Permalink to this definition">¶</a></dt>
-<dd><p>Regresa informacion relacionada a las capas</p>
+<code class="descclassname">model_plots.</code><code class="descname">check_layers_and_feedzones</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>show_fig</em>, <em>sav_fig</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#check_layers_and_feedzones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.check_layers_and_feedzones" title="Permalink to this definition">¶</a></dt>
+<dd><p>It return a plot with the well TVD and the stratigrafy units</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -171,7 +171,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>show_fig</strong> (<em>bool</em>) – If True shows the figure</li>
 <li><strong>sav_fig</strong> (<em>bool</em>) – If True saves the figure on ../output/</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the infomation of the layer under the keyword ‘LAYER’ and ‘z_ref’. It also needs to specify the input files path under the keyword ‘source_txt’</li>
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the layers information under the keyword ‘LAYER’ and ‘z_ref’. It also needs to specify the input files path under the keyword ‘source_txt’</li>
 </ul>
 </td>
 </tr>
@@ -220,7 +220,7 @@
 
 <dl class="function">
 <dt id="model_plots.plot_init_conditions">
-<code class="descclassname">model_plots.</code><code class="descname">plot_init_conditions</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_init_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_init_conditions" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">model_plots.</code><code class="descname">plot_init_conditions</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>m</em>, <em>b</em>, <em>use_boiling=True</em>, <em>use_equation=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_init_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_init_conditions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot for the initial pressure and temperature values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
