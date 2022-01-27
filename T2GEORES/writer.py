@@ -566,22 +566,24 @@ def merge_ELEME_and_in_to_t2():
 
 	col_eleme=[(0,6),(15,20),(20,30)]
 
-
 	if os.path.isfile(eleme_file):
 		string="ELEME----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 		data_eleme=pd.read_fwf(eleme_file,colspecs=col_eleme,skiprows=1,header=None,names=['ELEME','MA1','VOLX'])
 
 		for i, row in data_eleme.iterrows():
+			data_eleme.at[i,'VOLX'] = blocks[row['ELEME']]['VOLX']
+
+		for i, row in data_eleme.sort_values(by=['VOLX'], ascending=False).iterrows():
 			try:
 				string+="%5s%10s%5s%10.3E%10s%10s%10.3E%10.3E%10.3E\n"%(row['ELEME'],\
 					                                                    " ",\
 					                                                row['MA1'],\
-					                                                     row['VOLX'],\
+					                                                blocks[row['ELEME']]['VOLX'],\
 		                                                                       " ",\
 		                                                                       " ",\
-		                                                           blocks[row['ELEME']]['X'],\
-		                                                           blocks[row['ELEME']]['Y'],\
-		                                                           blocks[row['ELEME']]['Z'])
+		                                                            blocks[row['ELEME']]['X'],\
+		                                                            blocks[row['ELEME']]['Y'],\
+		                                                            blocks[row['ELEME']]['Z'])
 			except KeyError:
 				pass
 		string+='\n'

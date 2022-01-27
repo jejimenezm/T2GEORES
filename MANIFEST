@@ -14,7 +14,6 @@ T2GEORES/output.py
 T2GEORES/regeo_mesh.py
 T2GEORES/report.py
 T2GEORES/run.py
-T2GEORES/setup.py
 T2GEORES/t2geores_functions.py
 T2GEORES/txt2sqlite.py
 T2GEORES/writer.py

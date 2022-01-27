@@ -780,7 +780,7 @@ def bottom_layer_incons(input_dictionary,input_mesh_dictionary,m,b,use_boiling=T
 	incon_out.write(incon)
 	incon_out.close()
 
-def incon_to_steinar():
+def incon_to_steinar(sav = None):
 	"""It converts the modified INCON file (INCON_MOD) to steinar input
 
 	Note
@@ -793,16 +793,23 @@ def incon_to_steinar():
 	"""
 
 
+	if sav == None:
+		incon_file='../model/t2/sources/INCON_MOD'
+	elif sav == 't2.sav':
+		incon_file='../model/t2/t2.sav'
 
-	incon_file='../model/t2/sources/INCON_MOD'
 	string=""
 	with open(incon_file) as file:
-	    for line in file:
-	    	if line[0].isalpha():
-	    		string+=line[0:5]+'    0    0         0.0000\n'
-	    	else:
-	    		string+=format(float(line[1:20]),'>20.13E')+format(float(line[20:40]),'>20.13E')+'\n'
-
+	    for i, line in enumerate(file):
+	    	if i!=0:
+	    		try:
+			    	if line[0].isalpha():
+			    		string+=line[0:5]+'    0    0         0.0000\n'
+			    	else:
+			    		string+=format(float(line[1:20]),'>20.13E')+format(float(line[20:40]),'>20.13E')+'\n'
+	    		except ValueError:
+	    			break
+	    			
 	incon_steinar='../mesh/to_steinar/incon_to_steinar'
 	file=open(incon_steinar,'w')
 	file.write(string)
@@ -838,3 +845,25 @@ def check_in_out(point,borders):
 		boolean=True
 
 	return boolean
+
+
+
+def incon_from_steinar():
+
+	incon_file = '../mesh/to_steinar/incon'
+
+	string=""
+	with open(incon_file) as file:
+	    for i, line in enumerate(file):
+    		try:
+		    	if line[0].isalpha():
+		    		string+=line[0:5]+'\n'
+		    	else:
+		    		string+=format(float(line[0:20]),'>20.13E')+format(float(line[20:40]),'>20.13E')+'\n'
+    		except ValueError:
+    			break
+	    			
+	incon_steinar='../model/t2/sources/STE_INCON'
+	file=open(incon_steinar,'w')
+	file.write(string)
+	file.close()

@@ -5,13 +5,13 @@ with open("README.md","r",encoding='utf-8') as fh:
 
 setup(
     name='T2GEORES',
-    version='0.1.8',
+    version='0.1.9',
     packages=['T2GEORES',],
     license='MIT',
     author='Erick Jiménez',
     author_email="erick@grogtp.is",
     url ="https://github.com/jejimenezm/T2GEORES",
-    download_url='https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.1.8/T2GEORES-0.1.8.tar.gz',
+    download_url='https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.1.9/T2GEORES-0.1.9.tar.gz',
     long_description_content_type='text/markdown',
     long_description=long_description,
     classifiers=[

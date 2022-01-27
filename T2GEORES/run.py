@@ -28,7 +28,11 @@ def incon_replace(incon_file,blocks,incon_file_len):
 	"""
 	string=""
 	for index, incon_line in enumerate(incon_file):
-		if blocks=='even' and index!=0 and index<=incon_file_len-3:
+		if '+++' in incon_line:
+			minus = 3
+		else: 
+			minus = 2
+		if blocks=='even' and index!=0 and index<=incon_file_len-minus:
 			if index%2==1:
 				string+=incon_line[0:5]+'\n'
 			else:
@@ -75,7 +79,7 @@ def incon_delete():
 	else:
 		sys.exit("The file %s or directory do not exist"%input_fi_file)
 
-def incon_to_t2(input_dictionary):
+def incon_to_t2(input_dictionary, file_name = None):
 	"""Adds the INCON block to the TOUGH2 input file
 
 	Parameters
@@ -96,7 +100,7 @@ def incon_to_t2(input_dictionary):
 	incon_state=input_dictionary['incon_state']
 
 	if incon_state=='current':
-		input_incon="../model/t2/t2.sav"
+		input_incon="../model/t2/%s"%file_name
 		blocks='even'
 		incon_file_len=len(open(input_incon).readlines())
 	elif incon_state=='init':
@@ -299,7 +303,7 @@ def update_rock_distribution(input_dictionary):
 	>>> update_rock_distribution(input_dictionary)
 	"""
 
-	#writer.CONNE_from_steinar_to_t2()
+	writer.CONNE_from_steinar_to_t2()
 	writer.merge_ELEME_and_in_to_t2()
 
 	t2_string=""
@@ -318,7 +322,7 @@ def update_rock_distribution(input_dictionary):
 				add_ELEME=True
 				ELEME_line=0
 
-			if 'GENER' in t2_line:
+			if 'GENER D' in t2_line:
 				add_gener=True
 
 			if add_gener:

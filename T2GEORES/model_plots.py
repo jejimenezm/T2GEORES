@@ -11,6 +11,8 @@ import matplotlib.gridspec as gridspec
 from iapws import IAPWS97
 import os
 
+import sqlite3
+
 
 def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
 	"""It plots the layers defined for the mesh
@@ -151,7 +153,7 @@ def permeability_plot(input_dictionary,show_fig,sav_fig):
 		if sav_fig:
 			fig.savefig("../output/coreys_permeabilities.png", idp=300) 
 
-def plot_one_drawdown_from_txt(well,depth):
+def plot_one_drawdown_from_txt(well,depth, savefig = False):
 	"""From the real drawndown data a plot is generated for a desired well
 
 	Parameters
@@ -184,6 +186,12 @@ def plot_one_drawdown_from_txt(well,depth):
 	data=pd.read_csv("../input/drawdown/%s_DD.dat"%well)
 	fontsize_layout=8
 
+	data_inj = pd.read_csv("../input/mh/filtered/total_inj.csv", usecols = ['date_time', 'steam', 'liquid'])
+	data_inj['date_time'] = pd.to_datetime(data_inj['date_time'] , format="%Y-%m-%d")
+
+	data_p = pd.read_csv("../input/mh/filtered/total_p.csv", usecols = ['date_time', 'steam', 'liquid'])
+	data_p['date_time'] = pd.to_datetime(data_p['date_time'] , format="%Y-%m-%d")
+
 	if len(data.loc[data['TVD']==depth]['datetime'])>1:
 
 		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
@@ -192,14 +200,17 @@ def plot_one_drawdown_from_txt(well,depth):
 		#Plotting
 
 		fig, ax = plt.subplots(figsize=(10,4))
-		ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown')
+		ln1 = ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown')
 		ax.set_title("Drawdown at well: %s at %s masl"%(well,depth) ,fontsize=fontsize_layout)
 		ax.set_xlabel("Time",fontsize = fontsize_layout)
 		ax.set_ylabel('Pressure [bar]',fontsize = fontsize_layout)
 
 
 		#Plotting formating
-		xlims=[min(dates)-timedelta(days=365),max(dates)+timedelta(days=365)]
+		#xlims=[min(dates)-timedelta(days=365),max(dates)+timedelta(days=365)]
+
+		xlims=[min(data_inj['date_time']),max(data_inj['date_time'])]
+
 		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
 
 		years = mdates.YearLocator()
@@ -208,6 +219,18 @@ def plot_one_drawdown_from_txt(well,depth):
 		ax.set_xlim(xlims)
 		ax.xaxis.set_major_formatter(years_fmt)
 
+
+		ax2 = ax.twinx()
+		ln2 = ax2.plot(data_inj['date_time'],data_p['steam']+data_p['liquid']-data_inj['liquid'],linestyle='-',color='m',linewidth=1,ms=1,label='Net flow rate',alpha=0.15)
+		ax2.set_ylim([0,1000])
+		ax2.set_yticks([50,100,150,200,250,300])
+		ax2.set_ylabel('Flow rate [kg/s]',fontsize = fontsize_layout)
+		ax2.yaxis.set_label_coords(1.05,0.18)
+
+		lns = ln1+ln2
+		labs = [l.get_label() for l in lns]
+		ax.legend(lns, labs, loc="upper right")
+
 		#ax.xaxis.set_major_locator(years)
 		#fig.autofmt_xdate()
 
@@ -215,10 +238,14 @@ def plot_one_drawdown_from_txt(well,depth):
 		ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
 		ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
 		ax.grid(True)
-	
+		if savefig:
+			fig.savefig("../input/drawdown/images/%s_%.2f.png"%(well,depth), idp=300)
+		plt.show()
+
 	else:
-		sys.exit("""Error message: there is no drawdown data at %s for the well %s"""%(depth,well))
-	return plt.show()
+		print("""Error message: there is no drawdown data at %s for the well %s"""%(depth,well))
+
+	return None
 
 def plot_one_cooling_from_txt(well,depth):
 	"""From the real cooling data a plot is generated for a desired well
@@ -363,7 +390,7 @@ def plot_one_cooling_and_drawdown_from_txt(well,depth):
 		
 		return plt.show()
 
-def plot_one_mh_from_txt(well):
+def plot_one_mh_from_txt(well,savefig=False):
 	"""Creates a plot using the flow and enthalpy measurements
 
 	Parameters
@@ -390,58 +417,81 @@ def plot_one_mh_from_txt(well):
 	fontsize_ylabel=8
 	fontsize_title=9
 
-	dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+	dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d_%H:%M:%S")
 
 	#Read file cooling
 	data=pd.read_csv("../input/mh/%s_mh.dat"%well)
-	dates=list(map(dates_func,data['date-time'].values))
+	dates=list(map(dates_func,data['date_time'].values))
+	max_liq=max(data['liquid'])
+	max_st=max(data['steam'])
 	data = data.replace(0,np.nan)
+
+	#Quality
+	data['quality']= data['steam']/(data['liquid']+data['steam'])
+	q_max = max(data['quality'].fillna(0))
 
 
 	#Setting plot
-	gs = gridspec.GridSpec(3, 1)
-	fig, ax = plt.subplots(figsize=(10,4))
+	gs = gridspec.GridSpec(4, 1)
+	fig, ax = plt.subplots(figsize=(12,7))
 
 
 	#Flow plot
-	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
 	ax=plt.subplot(gs[0,0])
-	ln1=ax.plot(dates,data['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
+	ln1=ax.plot(dates,data['steam'],linestyle='None',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
+	ax.set_ylim([0,max(max_liq,max_st)])
 
 	ax1b = ax.twinx()
-	ln2=ax1b.plot(dates,data['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
+	ln2=ax1b.plot(dates,data['liquid'],linestyle='None',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
 	ax.set_ylabel('Flow s[kg/s]',fontsize = fontsize_ylabel)
 	ax1b.set_ylabel('Flow l[kg/s]',fontsize = fontsize_ylabel)
-	
+	ax1b.set_ylim([0,max(max_liq,max_st)])
+
 	# legend for flow
 	lns = ln1+ln2
 	labs = [l.get_label() for l in lns]
 	ax.legend(lns, labs, loc="upper right")
 
 	#Enthalpy plot
-	ax2=plt.subplot(gs[1,0])
-	ax2.plot(dates,data['enthalpy'],linestyle='-',color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.75)
+	ax2=plt.subplot(gs[1,0], sharex = ax)
+	ax2.plot(dates,data['enthalpy'],linestyle='None',color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.75)
 	ax2.legend(loc="upper right")
 	ax2.set_ylabel('Enthalpy [kJ/kg]',fontsize = fontsize_ylabel)
 
 
 	#WHPressure plot
-	ax3=plt.subplot(gs[2,0])
-	ax3.plot(dates,data['WHPabs'],linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
+	ax3=plt.subplot(gs[3,0], sharex = ax)
+	ax3.plot(dates,data['WHPabs']+0.92,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
 	ax3.legend(loc="upper right")
 	ax3.set_ylabel('Pressure [bara]',fontsize = fontsize_ylabel)
+
+
+	#Quality
+	ax4=plt.subplot(gs[2,0], sharex = ax)
+	ax4.plot(dates,data['quality'],linestyle='None',color=formats.plot_conf_color['SG'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Quality',alpha=0.75)
+	ax4.legend(loc="upper right")
+	ax4.set_ylim([0,q_max+0.05])
+	ax4.set_ylabel('Quality',fontsize = fontsize_ylabel)
 
 	years = mdates.YearLocator()
 	years_fmt = mdates.DateFormatter('%Y')
 
 	plt.setp(ax.get_xticklabels(), visible=False)
 	plt.setp(ax2.get_xticklabels(), visible=False)
+	plt.setp(ax4.get_xticklabels(), visible=False)
 
 	ax.xaxis.set_major_formatter(years_fmt)
 	ax2.xaxis.set_major_formatter(years_fmt)
 	ax3.xaxis.set_major_formatter(years_fmt)
+	ax4.xaxis.set_major_formatter(years_fmt)
 
-	fig.suptitle('Production history of well %s'%well,fontsize=fontsize_title)
+	#plt.subplots_adjust(hspace=0.0)
+
+	fig.suptitle('Production history %s'%well,fontsize=fontsize_title)
+
+	if savefig:
+		fig.savefig("../input/mh/images/%s_raw.png"%well, format='png',dpi=300) 
 
 	plt.show()
 
@@ -522,9 +572,6 @@ def check_layers_and_feedzones(input_dictionary, show_fig,sav_fig):
 	handles, labels = plt.gca().get_legend_handles_labels()
 	by_label = dict(zip(labels, handles))
 	ax.legend(by_label.values(), by_label.keys())
-
-	
-	
 
 	ax.set_xticks(index2plot)
 	ax.set_xticklabels(wells_ticks,rotation=90)
@@ -696,4 +743,603 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 	
 	fig.savefig("../output/initial_conditions/%s.png"%title_s, format='png',dpi=300)
 
+	plt.show()
+
+
+#not documented
+
+def plot_liquid_vs_WHP(well,savefig=False):
+	"""Creates a plot using the flow and enthalpy measurements
+
+	Parameters
+	----------
+	well : str
+	  Selected well
+
+	Returns
+	-------
+	plot
+	  Enthalpy (yaxis1), flow (yaxis2) vs time 
+	  
+	Attention
+	---------
+	The file ../input/mh/{well}_mh.dat must exist
+
+
+	Examples
+	--------
+	>>> plot_one_mh_from_txt('WELL-1')
+	"""
+
+
+	fontsize_ylabel=8
+	fontsize_title=9
+
+	#Read file cooling
+	data=pd.read_csv("../input/mh/%s_mh.dat"%well)
+	max_liq=max(data['liquid'])
+	max_st=max(data['steam'])
+	data = data.replace(0,np.nan)
+
+	#Setting plot
+	fig, ax = plt.subplots(figsize=(10,10))
+
+	#Flow plot
+	ax=plt.subplot(111)
+	ln1=ax.plot(data['WHPabs']+0.92,data['liquid'],linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
+
+	ax.set_ylim([0,max(data['liquid'].fillna(0))])
+	ax.set_xlim([0,max(data['WHPabs'].fillna(0))])
+	ax.set_ylabel('Flow [kg/s]',fontsize = fontsize_ylabel)
+	ax.set_xlabel('Pressure [bara]',fontsize = fontsize_ylabel)
+	fig.suptitle('%s'%well,fontsize=fontsize_title)
+
+	if savefig:
+		fig.savefig("../input/mh/images/%s_injector.png"%well, format='png',dpi=300) 
+
+	plt.show()
+
+def plot_total_vs_WHP(well,savefig=False):
+	"""Creates a plot using the flow and enthalpy measurements
+
+	Parameters
+	----------
+	well : str
+	  Selected well
+
+	Returns
+	-------
+	plot
+	  Enthalpy (yaxis1), flow (yaxis2) vs time 
+	  
+	Attention
+	---------
+	The file ../input/mh/{well}_mh.dat must exist
+
+
+	Examples
+	--------
+	>>> plot_one_mh_from_txt('WELL-1')
+	"""
+
+	fontsize_ylabel=8
+	fontsize_title=9
+
+	#Read file cooling
+	data=pd.read_csv("../input/mh/%s_mh.dat"%well)
+	max_liq=max(data['liquid'])
+	max_st=max(data['steam'])
+	data = data.replace(0,np.nan)
+
+	#Setting plot
+	fig, ax = plt.subplots(figsize=(10,10))
+
+	#Flow plot
+	ax=plt.subplot(111)
+	ln1=ax.plot(data['WHPabs']+0.92,data['liquid']+data['steam'],linestyle='None',color=formats.plot_conf_color['m'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Total',alpha=0.75)
+	ln2=ax.plot(data['WHPabs']+0.92,data['steam'],linestyle='None',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
+	ln3=ax.plot(data['WHPabs']+0.92,data['liquid'],linestyle='None',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
+
+
+	lns = ln1+ln2+ln3
+	labs = [l.get_label() for l in lns]
+	ax.legend(lns, labs, loc="lower left")
+
+	ax.set_ylim([0,max((data['liquid']+data['steam']).fillna(0))])
+	ax.set_xlim([0,max(data['WHPabs'].fillna(0))])
+	ax.set_ylabel('Flow [kg/s]',fontsize = fontsize_ylabel)
+	ax.set_xlabel('Pressure [bara]',fontsize = fontsize_ylabel)
+	fig.suptitle('%s'%well,fontsize=fontsize_title)
+
+	if savefig:
+		fig.savefig("../input/mh/images/%s_producer.png"%well, format='png',dpi=300) 
+
+	plt.show()
+
+
+def total_flow(wells, savefig = None, ffill = False):
+
+
+	years = range(1990,2022,1)
+	months = range(1,13)
+	days = [7, 14, 21, 28]
+
+	dates_x = []
+	for year in years:
+		for month in months:
+			if month<10:
+				month_s='0%s'%month
+			else:
+				month_s=month
+			for day in days:
+				if day<10:
+					day_s='0%s'%day
+				else:
+					day_s=day
+				dates_x.append("%s-%s-%s_00:00:00"%(year,month_s,day_s))
+
+	data_week = pd.DataFrame(columns = ['date_time', 'steam', 'liquid'])
+	data_week['date_time'] = dates_x
+	data_week['date_time'] = pd.to_datetime(data_week['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+
+
+	fontsize_ylabel=8
+	fontsize_title=9
+
+	data_p = pd.DataFrame(columns = ['date_time', 'steam', 'liquid'])
+	data_inj = pd.DataFrame(columns = ['date_time', 'steam', 'liquid'])
+
+	data_p_r = pd.DataFrame(columns = ['date_time', 'steam', 'liquid'])
+	data_inj_r = pd.DataFrame(columns = ['date_time', 'steam', 'liquid'])
+
+	fig, ax = plt.subplots(figsize=(12,7))
+
+	#Flow plot
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax = plt.subplot(111)
+
+	#inspect = ['TR-5', 'TR-5A', 'TR-5B', 'TR-5C', 'TR-5D']
+	#inspect = ['TR-18', 'TR-18A', 'TR-18B', 'TR-18C']
+	#inspect = ['TR-2', 'TR-9']
+	inspect = []
+
+	for well in wells:
+		
+		data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'steam', 'liquid'])
+		data_x['date_time'] = pd.to_datetime(data_x['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+		
+		data_i = pd.read_csv("../input/mh/filtered/%s_week_avg.csv"%well, usecols = ['date_time', 'steam', 'liquid'])
+		data_i['date_time'] = pd.to_datetime(data_i['date_time'] , format="%Y-%m-%d %H:%M:%S")
+
+		data_i.index = data_i['date_time']
+		data_ii_inter = data_i
+
+		if ffill:
+			data_ix = data_x.copy()
+			data_ix.index = data_ix['date_time']
+			del data_ix['date_time']
+			data_ii_inter_x = data_ix.resample('D').mean().ffill()
+			data_ii_inter_x['date_time'] = data_ii_inter_x.index
+		else:
+			data_ii_inter_x = data_x
+
+		if wells[well]['type'] == 'producer' and well in inspect:
+			c = ax.plot(data_ii_inter['steam'].index,data_ii_inter['steam'],linestyle='-',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label="%s_avg"%well,alpha=0.5)
+			ax.plot(data_x['date_time'],data_x['steam'],linestyle='-',color = c[0].get_color(),marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label="%s_real"%well,alpha=0.75)
+
+		if wells[well]['type'] == 'producer':
+			data_p = data_p.append(data_ii_inter, ignore_index = True)
+			data_p_r = data_p_r.append(data_ii_inter_x, ignore_index = True)
+		elif wells[well]['type'] == 'injector':
+			data_inj = data_inj.append(data_ii_inter, ignore_index = True)
+			data_inj_r = data_inj_r.append(data_ii_inter_x, ignore_index = True)
+
+
+	data_p = data_p.groupby('date_time').sum()
+	data_inj = data_inj.groupby('date_time').sum()
+
+	data_p_r = data_p_r.groupby('date_time').sum()
+	data_inj_r = data_inj_r.groupby('date_time').sum()
+
+	ln1 = ax.plot(data_p['steam'].index,data_p['steam']+data_p['liquid'],linestyle='-',color=formats.plot_conf_color['m'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Total',alpha=0.75)
+	ln2 = ax.plot(data_p['steam'].index,data_p['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Steam',alpha=0.75)
+	ln3 = ax.plot(data_p['liquid'].index,data_p['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Liquid',alpha=0.75)
+	ln4 = ax.plot(data_inj['liquid'].index,data_inj['liquid'],linestyle='--',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Injection',alpha=0.75)
+
+	ln6 = ax.plot(data_p_r['steam'].index,data_p_r['steam'],linestyle='-',color='y',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam real',alpha=0.5)
+	ln7 = ax.plot(data_p_r['liquid'].index,data_p_r['liquid'],linestyle='-',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid real',alpha=0.5)
+
+	#ln5 = ax.plot(data_inj['liquid'].index,data_p['steam']+data_p['liquid']-data_inj['liquid'],linestyle='-',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Net',alpha=0.75)
+
+
+	data_inj.to_csv('../input/mh/filtered/total_inj.csv' , index = True)
+	data_p.to_csv('../input/mh/filtered/total_p.csv' , index = True)
+
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+	ax.xaxis.set_major_formatter(years_fmt)
+
+	ax.legend(loc="upper left")
+	ax.set_ylabel('Mass flow [kg/s]',fontsize = fontsize_ylabel)
+	ax.set_xlabel('Time ',fontsize = fontsize_ylabel)
+	ax.set_ylim([0,max(data_p['steam']+data_p['liquid'])+25])
+
+	plt.show()
+
+	if savefig:
+		fig.savefig("../input/mh/images/total_flow.png", format='png',dpi=300) 
+
+
+def resample(well, type_well, save_fig = True):
+
+	#Reading files
+
+	data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy', 'status'])
+	data_x['date_time'] = pd.to_datetime(data_x['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+
+
+	#Resampling the data for every day and filling values backwards
+	data_ii = data_x.copy()
+	data_ii.index = data_ii['date_time']
+	del data_ii['date_time']
+
+	def mode_IP(x):
+		return x.mode()
+
+	data_ii_inter = data_ii.resample('D').agg({'steam': 'mean', 'liquid': 'mean', 'WHPabs': 'mean', 'enthalpy': 'mean', 'status' :mode_IP }).ffill()
+	#data_ii_inter = data_ii.resample('D').mean().ffill()
+	data_ii_inter['date_time'] = data_ii_inter.index
+
+	#Finding cummulative sum for raw data
+	data_ii_inter.fillna(0, inplace = True)
+	data_c_real = data_ii_inter.cumsum()
+
+	print(data_ii_inter)
+
+	#Generating initial and last values of each interval
+
+	dates_x = []
+	years = range(1990,2022,1)
+	months = range(1,13)
+	days =  [15] #[7, 14, 21, 28] #[8, 23]
+
+	for year in years:
+		for month in months:
+			if month<10:
+				month_s='0%s'%month
+			else:
+				month_s=month
+			for day in days:
+				if day<10:
+					day_s='0%s'%day
+				else:
+					day_s=day
+				dates_x.append("%s-%s-%s_00:00:00"%(year,month_s,day_s))
+
+	data_week = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy', 'status'])
+	data_week['date_time'] = dates_x
+	data_week['date_time'] = pd.to_datetime(data_week['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+	data_week = data_week[data_week['date_time'] < '2021-08-17'] #The last value day with data
+
+
+	#******* Approach one, simple average every 7 days *******
+
+	data_f = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy', 'status'])
+
+	data = data_ii_inter
+
+	data.drop(['date_time'], axis=1 , inplace = True)
+
+	data = data.rename_axis('date_time').reset_index()
+
+	prev_type = data['status'][0]
+
+	for index in data_week.index[0:-2]:
+		mask = (data['date_time'] > data_week['date_time'][index]) & (data['date_time'] <= data_week['date_time'][index+1])
+
+		avg_time = pd.DataFrame(data = [ ['X',data_week['date_time'][index]],['X',data_week['date_time'][index+1]] ], columns = ['d','time'])
+
+		avg_time.time = pd.to_datetime(avg_time.time).values.astype(np.int64)
+
+		avg_time = pd.DataFrame(pd.to_datetime(avg_time.groupby('d').mean().time))
+
+		tmp = data.loc[mask]
+
+		tmp.reset_index(inplace=True)
+
+		no_data = False
+		
+		if tmp.empty and data_week['date_time'][index] < data['date_time'][0]:
+			print("No data")
+			no_data = True
+
+		elif len(tmp) != 0:
+			t1 = avg_time['time'][0]
+
+			op_mode = tmp['status'].mode()[0]
+
+			if len(op_mode) == 0:
+				op_mode = prev_type
+
+			prev_type = op_mode
+
+
+			if t1 < tmp['date_time'][0]:
+				t1 = tmp['date_time'][0]
+
+			ml = tmp['liquid'].mean()
+			data_i = {'date_time' : [t1],\
+			          'liquid' : [ml],
+			          'enthalpy':[tmp['enthalpy'].mean()],
+					  'WHPabs':[tmp['WHPabs'].mean()],
+					  'status': [op_mode]}
+
+			if type_well == 'producer':
+				ms = tmp['steam'].mean()
+				steam_flow = {'steam' : [ms]}
+			else:
+				steam_flow = {'steam' : [0.0]}
+
+			data_i.update(steam_flow)
+		else:
+			no_data = True
+
+		if not no_data:
+			df = pd.DataFrame(data_i)
+			df['date_time'] = pd.to_datetime(df['date_time'] , format="%Y-%m-%d %H:%M:%S")
+			data_f = data_f.append(df, ignore_index = True)
+
+	data_f['date_time'] = pd.to_datetime(data_f['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+	data_f.index = data_f['date_time']
+	del data_f['date_time']
+
+	#Cummulative for values first approach 
+	data_1 = data_f.resample('D').mean().ffill()
+	data_1_c = data_1.cumsum()
+
+
+	#******* Second approach, use cummulative values *******
+
+
+	data_c = data_ii_inter.cumsum()
+	
+	data_f_i = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy', 'type'])
+	
+
+	for index in data_week.index[0:-2]:
+		mask = (data_c.index > data_week['date_time'][index]) & (data_c.index <= data_week['date_time'][index+1])
+
+		avg_time = pd.DataFrame(data = [ ['X',data_week['date_time'][index]],['X',data_week['date_time'][index+1]] ], columns = ['d','time'])
+		avg_time.time = pd.to_datetime(avg_time.time).values.astype(np.int64)
+		avg_time = pd.DataFrame(pd.to_datetime(avg_time.groupby('d').mean().time))
+
+		tmp = data_c.loc[mask]
+		tmp_st = data_c.loc[mask]
+
+		tmp.reset_index(inplace=True)
+		no_data = False
+
+		if tmp.empty and data_week['date_time'][index] < data_c.index[0]:
+			print("No data")
+			no_data = True
+
+		elif len(tmp) != 0:
+
+			#dt = pd.Series(len(tmp)*np.array([24*3600]))
+
+			tmp.drop(['status'], axis=1 , inplace = True)
+			tmp_dt = tmp.diff()
+			tmp_dt['type'] = tmp_st['status'].mode()
+
+			t1 = avg_time['time'][0]
+			if t1 < tmp['date_time'][0]:
+				t1 = tmp['date_time'][0]
+
+
+			ml = tmp_dt['liquid'].mean()
+			h = tmp_dt['enthalpy'].mean()
+			WHP = tmp_dt['WHPabs'].mean()
+
+			data_i = {'date_time' : [t1],\
+			          'liquid' : [ml],
+			          'enthalpy':[h],
+					  'WHPabs':[WHP],
+					  'status': [op_mode]}
+
+			if type_well == 'producer':
+				ms = tmp_dt['steam'].mean()
+				steam_flow = {'steam' : [ms]}
+			else:
+				steam_flow = {'steam' : [0.0]}
+
+			data_i.update(steam_flow)
+		
+		else:
+			no_data = True
+
+		if not no_data:
+			df = pd.DataFrame(data_i)
+			df['date_time'] = pd.to_datetime(df['date_time'] , format="%Y-%m-%d %H:%M:%S")
+			data_f_i = data_f_i.append(df, ignore_index = True)
+
+	data_f_i['date_time'] = pd.to_datetime(data_f_i['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+	data_f_i.index = data_f_i['date_time']
+	del data_f_i['date_time']
+	
+	#Cummulative for values second approach 
+	data_2 = data_f_i.resample('D').mean().ffill()
+	data_2_c = data_2.cumsum()
+
+
+	data_f.to_csv('../input/mh/filtered/%s_week_avg.csv'%well, index = True)
+
+	#Setting the plot
+	figs = plt.figure(figsize=(12,7))
+	fontsize_ylabel=8
+	fontsize_title=9
+
+	#Steam plot comparisson
+
+	ax = figs.add_subplot(111)
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax.set_ylabel('Mass flow [kg/s]',fontsize = fontsize_ylabel)
+	ax.set_xlabel('Time ',fontsize = fontsize_ylabel)
+	ax.set_title('%s Steam comparisson'%well,fontsize=fontsize_title)
+
+	ln1_s = ax.plot(data_x['date_time'],data_x['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam raw data',alpha=0.75)
+	ln2_s = ax.plot(data_ii_inter['steam'].index,data_ii_inter['steam'],linestyle='None',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam resample 1D',alpha=0.75)
+	ln3_s = ax.plot(data_f['steam'].index,data_f['steam'],linestyle='None',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Avg steam approach 1',alpha=0.75)
+	ln4_s = ax.plot(data_f_i['steam'].index,data_f_i['steam'],linestyle='None',color='g',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Avg steam approach 2',alpha=0.75)
+
+	ax.legend(loc="upper left")
+
+	#Liquid plot comparisson
+
+	figl = plt.figure(figsize=(12,7))
+
+	axl = figl.add_subplot(111)
+	axl.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	axl.set_ylabel('Mass flow [kg/s]',fontsize = fontsize_ylabel)
+	axl.set_xlabel('Time ',fontsize = fontsize_ylabel)
+	axl.set_title('%s Liquid comparisson'%well,fontsize=fontsize_title)
+
+	ln1_l = axl.plot(data_x['date_time'],data_x['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid raw data',alpha=0.75)
+	ln2_l = axl.plot(data_ii_inter['liquid'].index,data_ii_inter['liquid'],linestyle='None',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid resample 1D',alpha=0.75)
+	ln3_l = axl.plot(data_f['liquid'].index,data_f['liquid'],linestyle='None',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=2,label='Avg liquid approach 1',alpha=0.75)
+	ln4_l = axl.plot(data_f_i['liquid'].index,data_f_i['liquid'],linestyle='None',color='g',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=2,label='Avg liquid approach 2',alpha=0.75)
+
+	axl.legend(loc="upper left")
+
+	#Steam cummulative comparisson
+	
+	fig_comp_s = plt.figure(figsize=(12,7))
+
+	ax_cs = fig_comp_s.add_subplot(111)
+	ax_cs.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax_cs.set_ylabel('Mass [kg]',fontsize = fontsize_ylabel)
+	ax_cs.set_xlabel('Time ',fontsize = fontsize_ylabel)
+	ax_cs.set_title('%s cummulative comparisson'%well,fontsize=fontsize_title)
+
+	ln1_c = ax_cs.plot(data_c_real['date_time'].index,data_c_real['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Real cummulative steam',alpha=0.75)
+	ln2_c = ax_cs.plot(data_1_c['steam'].index,data_1_c['steam'],linestyle='None',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=2,label='Cummulative steam approach 1',alpha=0.75)
+	ln3_c = ax_cs.plot(data_2_c['steam'].index,data_2_c['steam'],linestyle='None',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=2,label='Cummulative steam approach 2',alpha=0.75)
+
+	ax_cs.legend(loc="upper left")
+
+
+	#Liquid cummulative comparisson
+	
+	fig_comp_l = plt.figure(figsize=(12,7))
+
+	ax_cl = fig_comp_l.add_subplot(111)
+	ax_cl.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax_cl.set_ylabel('Mass [kg]',fontsize = fontsize_ylabel)
+	ax_cl.set_xlabel('Time ',fontsize = fontsize_ylabel)
+	ax_cl.set_title('%s cummulative comparisson'%well,fontsize=fontsize_title)
+
+	ln1_c = ax_cl.plot(data_c_real['date_time'].index,data_c_real['liquid'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam C real',alpha=0.75)
+	ln2_c = ax_cl.plot(data_1_c['liquid'].index,data_1_c['liquid'],linestyle='None',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Cummulative liquid approach 1',alpha=0.75)
+	ln3_c = ax_cl.plot(data_2_c['liquid'].index,data_2_c['liquid'],linestyle='None',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Cummulative liquid approach 2',alpha=0.75)
+
+	ax_cl.legend(loc="upper left")
+
+	#Steam cummulative comparisson
+	
+	fig_comp_sp = plt.figure(figsize=(12,7))
+
+	ax_csp = fig_comp_sp.add_subplot(111)
+	ax_csp.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax_csp.set_ylabel('Percentage [%]',fontsize = fontsize_ylabel)
+	ax_csp.set_xlabel('Time ',fontsize = fontsize_ylabel)
+	ax_csp.set_title('%s cummulative difference'%well,fontsize=fontsize_title)
+
+	del data_c_real['date_time']
+	diff_1 = (data_1_c.merge(right=data_c_real, left_on='date_time', right_on='date_time', how='left').assign(steam_diff=lambda df: (df['steam_x'] - df['steam_y'])*100/df['steam_y'] ))
+	diff_2 = (data_2_c.merge(right=data_c_real, left_on='date_time', right_on='date_time', how='left').assign(steam_diff=lambda df: (df['steam_x'] - df['steam_y'])*100/df['steam_y'] ))
+
+	ln2_c = ax_csp.plot(diff_1['steam_diff'].index,diff_1['steam_diff'],linestyle='None',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Cummulative diff steam approach 1',alpha=0.75)
+	ln3_c = ax_csp.plot(diff_2['steam_diff'].index,diff_2['steam_diff'],linestyle='None',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Cummulative diff steam approach 2',alpha=0.75)
+
+	ax_csp.legend(loc="lower right")
+
+	#Histogram
+
+	from scipy.stats import norm
+
+	fig_ap=  plt.figure(figsize=(12,7))
+	ax_ap1=fig_ap.add_subplot(121)
+	ax_ap2=fig_ap.add_subplot(122)
+	# An "interface" to matplotlib.axes.Axes.hist() method
+	m_diff_1 = (data_1['steam']-data_ii_inter['steam'])
+	m_diff_1.dropna(inplace = True)
+	n, bins, patches = ax_ap1.hist(x=m_diff_1, bins = 80, density = True, rwidth=0.85)
+	muT, stdT = norm.fit(m_diff_1)
+	m_diff_1_x = np.linspace(min(m_diff_1), max(m_diff_1), 100)
+	ax_ap1.plot(bins,norm.pdf(bins, muT, stdT),'--r')
+
+	m_diff_2 = (data_2['steam']-data_ii_inter['steam']) 
+	m_diff_2.dropna(inplace = True)
+	n2, bins2, patches2 = ax_ap2.hist(x=m_diff_2, bins = 80, density = True, rwidth=0.85)
+	muT2, stdT2 = norm.fit(m_diff_2)
+	m_diff_2_x = np.linspace(min(m_diff_2), max(m_diff_2), 100)
+	ax_ap2.plot(bins2,norm.pdf(bins2, muT2, stdT2),'--r')
+
+	ax_ap1.set_xlabel(r'Diff [$\dot{m}$]')
+	ax_ap1.set_ylabel('Probability')
+	ax_ap1.set_title('Approach 1: ' + r'$\mu = '+'%.4f ,'%muT+r'\sigma$ = '+'%.4f'%stdT)
+
+	ax_ap2.set_xlabel(r'Diff [$\dot{m}$]')
+	ax_ap2.set_ylabel('Probability')
+	ax_ap2.set_title('Approach 2: ' + r'$\mu = '+'%.4f ,'%muT2+r'\sigma$ = '+'%.4f'%stdT2)
+
+	if save_fig:
+		figs.savefig('../input/mh/filtered/images/steam/%s_steam.png'%well,dpi = 300)
+		figl.savefig('../input/mh/filtered/images/liquid/%s_liquid.png'%well,dpi = 300)
+		fig_comp_s.savefig('../input/mh/filtered/images/cummulative/%s_c_s.png'%well,dpi = 300)
+		fig_comp_l.savefig('../input/mh/filtered/images/cummulative/%s_c_l.png'%well,dpi = 300)
+		fig_comp_sp.savefig('../input/mh/filtered/images/diff/%s_porc_s.png'%well,dpi = 300)
+		fig_ap.savefig('../input/mh/filtered/images/diff/%s_diff_histo.png'%well,dpi = 300)
+		plt.close()
+	else:
+		plt.show()
+
+
+def mh_duplicates(input_dictionary):
+
+	db_path=input_dictionary['db_path']
+
+	conn=sqlite3.connect(db_path)
+
+	types='WELLS'
+	wells=[]
+	try:
+		for well in input_dictionary[types]:
+			wells.append(well)
+	except KeyError:
+			pass
+
+	#Setting the plot
+	fig= plt.figure(figsize=(12,7))
+
+	ax = fig.add_subplot(111)
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+
+	colormap = plt.cm.nipy_spectral
+	colors = [colormap(i) for i in np.linspace(0, 1,len(wells))]
+	ax.set_prop_cycle('color', colors)
+
+
+	for i, well in enumerate(sorted(wells)):
+		data=pd.read_sql_query("SELECT type,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure FROM mh_f WHERE well='%s';"%well,conn)
+		data['date_time'] = pd.to_datetime(data['date_time'] , format="%Y-%m-%d %H:%M:%S")
+
+		i_s = [i for n in range(len(data['m_total']))]
+
+		if well == 'TR-9':
+			for  index,row in data.iterrows():
+				ax.plot([row['date_time'],row['date_time']],[0,37], '-k', lw = 0.15, alpha = 0.5)
+
+		ax.plot(data['date_time'],i_s, marker = 'o', ms = 2, linestyle = 'None' ,label = well)
+
+	ax.legend(loc = 'upper right', fontsize = 6)
 	plt.show()

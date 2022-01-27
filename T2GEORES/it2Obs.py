@@ -1,9 +1,11 @@
 from T2GEORES import geometry as geomtr
 import sqlite3
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy as  np
 from scipy import interpolate
+import locale
+locale.setlocale(locale.LC_TIME, 'en_US.utf8') 
 
 def observations_to_it2_PT(input_dictionary):
 	"""It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure
@@ -29,11 +31,18 @@ def observations_to_it2_PT(input_dictionary):
 
 
 	#Preparing input data
-	T_DEV=input_dictionary['IT2']['T_DEV']
-	P_DEV=input_dictionary['IT2']['P_DEV']
 	db_path=input_dictionary['db_path']
 
 	source_txt=input_dictionary['source_txt']
+	
+	t2_ver=float(input_dictionary['VERSION'][0:3])
+	ref_date = input_dictionary['ref_date']
+	ref_date_f = (ref_date - timedelta(minutes = 30)).strftime("%d-%b-%Y_%H:%M:%S")
+	ref_date_f0 = ref_date.strftime("%d-%b-%Y")
+	ref_date_fi = (ref_date + timedelta(minutes = 30)).strftime("%d-%b-%Y_%H:%M:%S")
+
+	layers=geomtr.vertical_layers(input_dictionary)
+
 
 	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
 	wells=[]
@@ -59,8 +68,8 @@ def observations_to_it2_PT(input_dictionary):
 		middle_tvd.append(row[1])
 
 	string=""
-	string_T="""	>>TEMPERATURE"""
-	string_P="""	>>PRESSURE"""
+	string_T="""	>> TEMPERATURE"""
+	string_P="""	>> PRESSURE"""
 
 	T0=input_dictionary['INCONS_PARAM']['To']
 	cut_off_T=input_dictionary['INCONS_PARAM']['CUT_OFF_T_TOP']
@@ -95,6 +104,14 @@ def observations_to_it2_PT(input_dictionary):
 			T_md= [np.nan if x == 0 else x for x in T_md]
 			P_md= [np.nan if x == 0 else x for x in P_md]
 			
+
+			if corr_layer[tvdn] in [layers['name'][0],layers['name'][-1]]:
+				T_DEV = 9.99E3 
+				P_DEV = 9.99E3
+			else:
+				T_DEV = input_dictionary['IT2']['T_DEV']
+				P_DEV = input_dictionary['IT2']['P_DEV']
+
 			if not np.isnan(np.mean(T_md)):
 				x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(name,T_md,md)
 				func_T=interpolate.interp1d(z_V,var_V)
@@ -109,13 +126,23 @@ def observations_to_it2_PT(input_dictionary):
 							Ti=T0
 
 					string_T+="""
-			>>> ELEMENT : %s
-				>>>> ANNOTATION : %s-T-%s
-				>>>> DEVIATION  : %s
-				>>>> WINDOW     : 0.0 60.0 [SECONDS]
-				>>>> DATA
-						 0 %s
-				<<<<\n"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,T_DEV,Ti)
+		>>> ELEMENT : %s
+			>>>> ANNOTATION : %s-T-%s
+			>>>> DEVIATION  : %.2f"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,T_DEV)
+			
+					if t2_ver<7:
+						string_T+="""
+			>>>> WINDOW     : 0.0 60.0 [SECONDS]
+			>>>> DATA
+				 0 %.2f
+			<<<<\n"""%Ti
+					else:
+						string_T+="""
+			>>>> WINDOW     : %s	%s [DATES]
+			>>>> DATA DATES
+				 %s	%.2f
+			<<<<\n"""%(ref_date_f,ref_date_fi, ref_date_f0, Ti)
+
 			except ValueError:
 				pass
 
@@ -134,14 +161,24 @@ def observations_to_it2_PT(input_dictionary):
 								Pi=P0+0.92
 
 						string_P+="""
-			>>> ELEMENT : %s
-				>>>> ANNOTATION : %s-P-%s
-				>>>> FACTOR     : 1.0E5 [bar] - [Pa]
-				>>>> WINDOW     : 0.0 60.0 [SECONDS]
-				>>>> DEVIATION  : %s
-				>>>> DATA
-					    0 %s
-				<<<<\n"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,P_DEV,Pi)
+		>>> ELEMENT : %s
+			>>>> ANNOTATION : %s-P-%s
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : %.2f"""%(corr_layer[tvdn]+blockcorr,corr_layer[tvdn]+blockcorr,name,P_DEV)
+						if t2_ver<7:
+							string_P+="""
+			>>>> WINDOW     : 0.0 60.0 [SECONDS]
+			>>>> DATA
+				 0 %2.f
+			<<<<"""%Pi
+						else:
+							string_P+="""
+			>>>> WINDOW     : %s	%s [DATES]
+			>>>> DATA DATES
+				 %s	%.2f
+			<<<<\n"""%(ref_date_f,ref_date_fi, ref_date_f0, Pi)
+
+
 				except ValueError:
 					pass
 
@@ -153,7 +190,7 @@ def observations_to_it2_PT(input_dictionary):
 	observation_file.write(string)
 	observation_file.close()
 
-def observations_to_it2_h(input_dictionary):
+def observations_to_it2_h(input_dictionary, dates_format = True):
 	"""It generates the flowing enthalpy observation section for the iTOUGH2 file
 
 	Parameters
@@ -181,6 +218,8 @@ def observations_to_it2_h(input_dictionary):
 	ref_date=input_dictionary['ref_date']
 	source_txt=input_dictionary['source_txt']
 
+	t2_ver=float(input_dictionary['VERSION'][0:3])
+
 	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
 	wells=[]
 	for scheme in types:
@@ -193,38 +232,57 @@ def observations_to_it2_h(input_dictionary):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	
-	string="	>>ENTHALPY\n"
+	string="	>> ENTHALPY\n"
 
 	for name in sorted(wells):
 
-		q_source="SELECT source_nickname FROM t2wellsource WHERE well='%s'"%name
-		c.execute(q_source)
-		rows=c.fetchall()
-		for row in rows:
-			source_nickname=row[0]
+		#data=pd.read_sql_query("SELECT type, flowing_enthalpy, date_time,(steam_flow+liquid_flow) as flow FROM mh WHERE well='%s' ORDER BY date_time;"%name,conn)
 
-		data=pd.read_sql_query("SELECT flowing_enthalpy, date_time,(steam_flow+liquid_flow) as flow FROM mh WHERE well='%s' ORDER BY date_time;"%name,conn)
+		data=pd.read_sql_query("SELECT type, flowing_enthalpy, date_time,(steam_flow+liquid_flow) as flow FROM mh WHERE well='%s' and substr(date_time,9,2) IN ('15') ORDER BY date_time;"%name,conn)
 
-		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d_%H:%M:%S")
 
 		dates=list(map(dates_func,data['date_time']))
 
-		if len(dates)>0:
-			if (min(dates)-ref_date).total_seconds()<0:
-				min_window=0
-			else:
-				min_window=(min(dates)-ref_date).total_seconds()
-			string+="""		>>>SINK: %s
+		if len(dates)>0 and data[data.type == 'P'].shape[0]>0:
+
+			if t2_ver>7 and dates_format:
+				time_type = '[DATES]'
+				max_window = max(dates)
+				min_window=min(dates)
+				if (min(dates)-ref_date).total_seconds()<0:
+					min_window=ref_date
+				else:
+					min_window = min(dates)
+			elif t2_ver<7 or not dates_format: 
+				time_type = '[SECONDS]'
+				max_window = (max(dates)-ref_date).total_seconds()
+				if (min(dates)-ref_date).total_seconds()<0:
+					min_window=(min(dates)-ref_date).total_seconds()
+				else:
+					min_window = 0
+
+
+			data_s = pd.read_sql_query("SELECT well, blockcorr, source_nickname FROM t2wellsource WHERE flow_type = 'P' AND well = '%s'"%name, conn)
+
+			string += "		>>> SINK: "
+			for source in data_s['source_nickname'].tolist():
+				string += "%s "%source
+
+			string+="""
 			>>>> ANNOTATION: %s-FLOWH
 			>>>> FACTOR    : 1000 [kJ/kg] - [J/kg]
 			>>>> DEVIATION : %s   [kJ/kg]
-			>>>> WINDOW     : %s %s [SECONDS]
-			>>>> DATA\n"""%(source_nickname,name,h_DEV,min_window,(max(dates)-ref_date).total_seconds())
+			>>>> DATA %s \n"""%(name,h_DEV, time_type)
 
 			for n in range(len(dates)):
-				timex=(dates[n]-ref_date).total_seconds()
+				if t2_ver>7 and dates_format:
+					timex=dates[n].strftime("%d-%b-%Y_%H:%M:%S")
+				elif t2_ver<7 or not dates_format: 
+					timex=(dates[n]-ref_date).total_seconds()
+
 				if data['flowing_enthalpy'][n]>0 and data['flow'][n]>0 :
-					string_x="				 %s 	%6.3E\n"%(timex,data['flowing_enthalpy'][n])
+					string_x="				 %s 	%0.2f\n"%(timex  ,data['flowing_enthalpy'][n])
 					string+=string_x
 			string+="			<<<<\n"
 	string+="""		<<<\n"""
@@ -233,7 +291,7 @@ def observations_to_it2_h(input_dictionary):
 	observation_file_h.write(string)
 	observation_file_h.close()
 
-def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None):
+def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_block=None, include_wells = True, dates_format = True):
 	"""It generates the drawdown observation section for the iTOUGH2 file
 	
 	Parameters
@@ -244,6 +302,13 @@ def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None)
 	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
 	p_res_block : str
 	  Block name at which monitoring pressure data is recorded
+	obfs_info : dictionary
+	  Includes well nama as keyword and an array with [TVD, layer_correlative]
+	include_wells : bool
+	  If True includes well drawdown include on obs_info, default : True
+	dates_format : bool
+	  In case SECONDS are prefered on the DATA section, default : True
+
 
 	Returns
 	-------
@@ -264,7 +329,11 @@ def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None)
 	db_path=input_dictionary['db_path']
 	ref_date=input_dictionary['ref_date']
 	source_txt=input_dictionary['source_txt']
+	P_DEV=2.0 #input_dictionary['IT2']['P_DEV']
+	t2_ver=float(input_dictionary['VERSION'][0:3])
 
+	raw_source = False
+	
 	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
 	wells=[]
 	for scheme in types:
@@ -277,60 +346,140 @@ def observations_to_it2_DD(input_dictionary,include_pres=False,p_res_block=None)
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
-	string="	>>DRAWDOWN"
 
-	for name in sorted(wells):
-		q0="SELECT DISTINCT TVD from drawdown WHERE well='%s'"%name
-		c.execute(q0)
-		rows=c.fetchall()
-		for row in rows:
-			q1="SELECT correlative FROM layers WHERE middle=%s"%row[0]
-			c.execute(q1)
-			rows_corr=c.fetchall()
-			if len(rows_corr)>0:
-				q2="SELECT blockcorr FROM t2wellblock WHERE well='%s'"%name
-				c.execute(q2)
-				rows_bkc=c.fetchall()
-				for row2 in rows_bkc:
-					block=rows_corr[0][0]+row2[0]
+	if t2_ver>7 and dates_format:
+		time_type = '[DATES]'
+	elif t2_ver<7 or not dates_format: 
+		time_type = '[SECONDS]'
 
-				data=pd.read_sql_query("SELECT date_time, pressure FROM drawdown WHERE well='%s' AND TVD=%s ORDER BY date_time;"%(name,row[0]),conn)
-				
-				dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
-				#Read file cooling
-				dates=list(map(dates_func,data['date_time']))
 
-				if len(dates)>0:
-					string+="""
+	string="	>> DRAWDOWN"
+
+	if include_wells:
+
+		for well in sorted(obs_info):
+
+
+			corr=pd.read_sql_query("SELECT correlative FROM layers WHERE middle=%s"%obs_info[well][0],conn)
+
+			blockcorr=pd.read_sql_query("SELECT blockcorr FROM t2wellblock WHERE well='%s'"%well,conn)
+
+			block=str(corr.values[0][0])+str(blockcorr.values[0][0])
+
+			data=pd.read_sql_query("SELECT date_time, pressure FROM drawdown WHERE well='%s' AND TVD=%s ORDER BY date_time;"%(well,obs_info[well][0]),conn)
+
+			dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+			#Read file cooling
+			dates=list(map(dates_func,data['date_time']))
+
+
+			data_PT=pd.read_sql_query("SELECT MeasuredDepth, Pressure, Temperature from PT WHERE well='%s' ORDER BY MeasuredDepth"%well, conn)
+
+			data_PT.replace(0, np.nan, inplace=True)
+
+			if not np.isnan(np.mean(data_PT['Pressure'])):
+				x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(well,data_PT['Pressure'],data_PT['MeasuredDepth'])
+				func_P=interpolate.interp1d(z_V,var_V)
+
+				P0 = (func_P(obs_info[well][0])+0.92)*1E5
+
+
+			if len(dates)>0 and any(data['pressure']-P0 < 0):
+				string+="""
 		>>> ELEMENT: %s
 			>>>> ANNOTATION: %s-DD-%s
 			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
 			>>>> DEVIATION  : %s [bar]
-			>>>> DATA\n"""%(block,name,row[0],P_DEV)
+			>>>> DATA %s\n"""%(block,well,obs_info[well][0],P_DEV, time_type)
 
-					for n in range(len(dates)):
+				for n in range(len(dates)):
+
+					time_i = (dates[n]-ref_date).total_seconds()
+
+					if t2_ver>7 and dates_format:
+						timex=dates[n].strftime("%d-%b-%Y_%H:%M:%S")
+
+					elif t2_ver<7 or not dates_format: 
 						timex=(dates[n]-ref_date).total_seconds()
-						string_x="				 %s 	%6.3E\n"%(timex,data['pressure'][n])
+
+					if time_i>0 and data['pressure'][n]*1E5 < P0:
+						string_x="				 %s 	%0.2f\n"%(timex,(data['pressure'][n]*1E5 - P0)/1E5)
 						string+=string_x
-					string+="""			<<<<\n"""
+				string+="""			<<<<\n"""
+
+	if include_wells and raw_source:
+		for name in sorted(wells):
+			q0="SELECT DISTINCT TVD from drawdown WHERE well='%s'"%name
+			c.execute(q0)
+			rows=c.fetchall()
+			for row in rows:
+				q1="SELECT correlative FROM layers WHERE middle=%s"%row[0]
+				c.execute(q1)
+				rows_corr=c.fetchall()
+				if len(rows_corr)>0:
+					q2="SELECT blockcorr FROM t2wellblock WHERE well='%s'"%name
+					c.execute(q2)
+					rows_bkc=c.fetchall()
+					for row2 in rows_bkc:
+						block=rows_corr[0][0]+row2[0]
+
+					data=pd.read_sql_query("SELECT date_time, pressure FROM drawdown WHERE well='%s' AND TVD=%s ORDER BY date_time;"%(name,row[0]),conn)
+					
+					dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+					#Read file cooling
+					dates=list(map(dates_func,data['date_time']))
+
+					if len(dates)>0:
+						string+="""
+			>>> ELEMENT: %s
+				>>>> ANNOTATION: %s-DD-%s
+				>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+				>>>> DEVIATION  : %s [bar]
+				>>>> DATA\n"""%(block,name,row[0],P_DEV)
+
+						for n in range(len(dates)):
+							timex=(dates[n]-ref_date).total_seconds()
+							string_x="				 %s 	%6.3E\n"%(timex,data['pressure'][n])
+							string+=string_x
+						string+="""			<<<<\n"""
 	
 
 	#iTOUGH2 reservoir pressure
 
 	if include_pres:
-		pres_data=pd.read_csv("../input/drawdown/p_res.csv",delimiter=';')
-		dates_func_res=lambda datesX: datetime.strptime(datesX, "%d/%m/%Y")
-		dates_res=list(map(dates_func_res,pres_data['date']))
+		pres_data = pd.read_csv("../input/field_data.csv",delimiter=',')
+
+		pres_data = pres_data.sort_values(by ='fecha' )
+
+		dates_func_res=lambda datesX: datetime.strptime(str(datesX), "%Y%m%d")
+
+		dates_res=list(map(dates_func_res,pres_data['fecha']))
+
+		P_DEV_res = 1.0
+
 		string+="""
-			>>> ELEMENT: %s
-				>>>> ANNOTATION: RES
-				>>>> FACTOR     : 1.0E5 [bar] - [Pa]
-				>>>> DEVIATION  : %s [bar]
-				>>>> DATA\n"""%(p_res_block,P_DEV)
+		>>> ELEMENT: %s
+			>>>> ANNOTATION: RES
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : %.2f [bar]
+			>>>> DATA %s\n"""%(p_res_block, P_DEV_res, time_type)
+		p_ref = 1E50
+		save = False
 		for n in range(len(dates_res)):
-			timex=(dates_res[n]-ref_date).total_seconds()
-			string_x="				 %s 	%6.3E\n"%(timex,pres_data['pres'][n])
-			string+=string_x
+			if pres_data['prs1'][n] > 0 and n%10 == 0:
+
+				if pres_data['prs1'][n] < p_ref and not save:
+					p_ref = pres_data['prs1'][n]
+					save = True
+
+				if save:
+					if t2_ver>7 and dates_format:
+						timex=dates_res[n].strftime("%d-%b-%Y_%H:%M:%S")
+					elif t2_ver<7 or not dates_format: 
+						timex=(dates_res[n]-ref_date).total_seconds()
+
+					string_x="				 %s 	%6.3E\n"%(timex,pres_data['prs1'][n]-p_ref)
+					string+=string_x
 		string+="""			<<<<\n"""
 	
 	string+="""		<<<\n"""
@@ -393,3 +542,240 @@ def observations_to_it2(input_dictionary,include_pres=False,p_res_block=None):
 					outfile.write(line)
 		outfile.write("""	<<\n""")
 	outfile.close()
+
+def observations_delta_it2_filtered(input_dictionary,obs_info):
+	"""It generates the drawdown observation section for the iTOUGH2 file
+	
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 'IT2':{P_DEV':5}
+	include_pres : bool
+	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
+	p_res_block : str
+	  Block name at which monitoring pressure data is recorded
+
+	Returns
+	-------
+	file
+	  observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time
+
+	Attention
+	---------
+	The input data comes from sqlite
+
+	Examples
+	--------
+	>>> observations_to_it2_DD(input_dictionary)
+	"""
+
+	#Preparing input data
+	db_path=input_dictionary['db_path']
+	ref_date=input_dictionary['ref_date']
+	source_txt=input_dictionary['source_txt']
+
+	T_DEV=input_dictionary['IT2']['T_DEV']
+	P_DEV=input_dictionary['IT2']['P_DEV']
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	string="	>>DELTA (PRESSURE)"
+
+	for name in sorted(obs_info):
+
+
+		corr=pd.read_sql_query("SELECT correlative FROM layers WHERE middle=%s"%obs_info[name][0],conn)
+
+		blockcorr=pd.read_sql_query("SELECT blockcorr FROM t2wellblock WHERE well='%s'"%name,conn)
+
+		block=str(corr.values[0][0])+str(blockcorr.values[0][0])
+
+		data=pd.read_sql_query("SELECT date_time, pressure FROM drawdown WHERE well='%s' AND TVD=%s ORDER BY date_time;"%(name,obs_info[name][0]),conn)
+
+		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+		#Read file cooling
+		dates=list(map(dates_func,data['date_time']))
+
+
+		data_PT=pd.read_sql_query("SELECT MeasuredDepth, Pressure, Temperature from PT WHERE well='%s' ORDER BY MeasuredDepth"%name, conn)
+
+		data_PT.replace(0, np.nan, inplace=True)
+
+		if not np.isnan(np.mean(data_PT['Pressure'])):
+			x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(name,data_PT['Pressure'],data_PT['MeasuredDepth'])
+			func_P=interpolate.interp1d(z_V,var_V)
+
+			P0 = (func_P(obs_info[name][0])+0.92)*1E5
+
+
+		if len(dates)>0:
+			string+="""
+		>>> ELEMENT: %s
+			>>>> ANNOTATION: %s-DD-%s
+			>>>> REFERENCE P: %.1f
+			>>>> SHIFT : 	  -%.1f
+			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+			>>>> DEVIATION  : %s [bar]
+			>>>> DATA\n"""%(block,name,obs_info[name][0],P0,P0,P_DEV)
+
+			for n in range(len(dates)):
+				timex=(dates[n]-ref_date).total_seconds()
+				if timex>0 and data['pressure'][n]*1E5 < P0:
+					string_x="				 %s 	%6.3E\n"%(timex,data['pressure'][n])
+					string+=string_x
+			string+="""			<<<<\n"""
+
+	observation_file_dd=open("../model/it2/delta_dd.dat",'w')
+	observation_file_dd.write(string)
+	observation_file_dd.close()
+
+def it2_weighted_h(input_dictionary):
+
+
+	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
+	wells_m=[]
+	for scheme in types:
+		try:
+			for well in input_dictionary[scheme]:
+				wells_m.append(well)
+		except KeyError:
+				pass
+
+	string_h = """	>> ENTHALPY\n"""
+	string_r = """	>> GENERATION\n"""
+
+	db_path=input_dictionary['db_path']
+	conn=sqlite3.connect(db_path)
+
+	data = pd.read_sql_query("SELECT well, blockcorr, source_nickname FROM t2wellsource WHERE flow_type = 'P'", conn)
+
+	string_h += "		>>> SINK: "
+	for source in data['source_nickname'].tolist():
+		string_h += "%s "%source
+	string_h += "\n"
+	string_h += "			>>>> ANNOTATION: PROD_FLOWH\n"
+	string_h += "			>>>> NO DATA\n"
+	string_h += "			<<<< \n"
+
+
+	string_r += "		>>> SINK: "
+	for source in data['source_nickname'].tolist():
+		string_r += "%s "%source
+	string_r += "\n"
+	string_r += "			>>>> ANNOTATION: PROD_FLOWR\n"
+	string_r += "			>>>> NO DATA\n"
+	string_r += "			<<<< \n"
+
+
+	wells = data['well'].unique().tolist()
+
+	for well in wells:
+		if well in wells_m:
+			sources_i = data.loc[data['well'] == well, 'source_nickname'].tolist()
+			
+			if len(sources_i) > 1:
+				string_h += "		>>> SINK: "
+				for source in sources_i:
+					string_h += "%s "%source
+				string_h += "\n"
+				string_h += "			>>>> ANNOTATION: %s-FLOWHW\n"%well
+				string_h += "			>>>> NO DATA\n"
+				string_h += "			<<<< \n"
+
+
+				string_r += "		>>> SINK: "
+				for source in sources_i:
+					string_r += "%s "%source
+				string_r += "\n"
+				string_r += "			>>>> ANNOTATION: %s-FLOWHR\n"%well
+				string_r += "			>>>> NO DATA\n"
+				string_r += "			<<<< \n"
+
+	string_r += "		<<< \n"
+
+	string_r += '\n'+string_h
+
+	weighted_file_h=open("../model/it2/weighted_file_hr.dat",'w')
+	weighted_file_h.write(string_r)
+	weighted_file_h.close()
+
+
+
+def observations_to_it2_POWER(input_dictionary, dates_format = True):
+
+	t2_ver=float(input_dictionary['VERSION'][0:3])
+
+	if t2_ver>7 and dates_format:
+		time_type = '[DATES]'
+	elif t2_ver<7 or not dates_format: 
+		time_type = '[SECONDS]'
+
+
+	gen_data = pd.read_csv("../input/generation_data.csv",delimiter=',')
+
+	gen_data = gen_data.sort_values(by ='fecha' )
+
+	gen_data['fecha'] = pd.to_datetime(gen_data['fecha'] , format="%Y%m%d")
+
+	PW_DEV_res = 3.0
+
+	string = "  >> POWER"
+
+	string+="""
+	>>> SINK: 
+		>>>> ANNOTATION: UNIT1&2
+		>>>> FACTOR : 2.1 [MW] - [kg/s]
+		>>>> REAL   : 12.0E5 [Pa]
+		>>>> DEVIATION  : %s
+		>>>> DATA %s\n"""%( PW_DEV_res, time_type)
+
+	gen_data_u12 = gen_data.loc[ ((gen_data.unidad == 'u1') | (gen_data.unidad == 'u2')) & (gen_data.generation > 0), ['generation','fecha','unidad']]
+
+	gen_data_u12 = gen_data_u12.groupby(['fecha']).sum()
+	gen_data_u12['fecha'] = gen_data_u12.index
+	gen_data_u12 = gen_data_u12.reset_index(drop=True)
+
+	for n, row in gen_data_u12.iterrows():
+		if n%10 == 0:
+			if t2_ver>7 and dates_format:
+				timex=row['fecha'].strftime("%d-%b-%Y_%H:%M:%S")
+			elif t2_ver<7 or not dates_format: 
+				timex=(row['fecha'] - ref_date).total_seconds()
+
+			string_x="				 %s 	%6.3E\n"%(timex,row['generation'])
+
+			string+=string_x
+	string+="""			<<<<\n"""
+
+
+	string+="""
+	>>> SINK: 
+		>>>> ANNOTATION: UNIT3
+	    >>>> FACTOR : 2.4 [MW] - [kg/s]
+	    >>>> REAL   : 9.0E5 [Pa]
+	    >>>> DEVIATION  : %s
+		>>>> DATA %s\n"""%( PW_DEV_res, time_type)
+
+	gen_data_u3 = gen_data.loc[ (gen_data.unidad == 'u3') & (gen_data.generation > 0), ['generation','fecha','unidad']]
+	gen_data_u3 = gen_data_u3.reset_index(drop=True)
+
+	for n, row in gen_data_u3.iterrows():
+		if n%10 == 0:
+			if t2_ver>7 and dates_format:
+				timex=row['fecha'].strftime("%d-%b-%Y_%H:%M:%S")
+			elif t2_ver<7 or not dates_format: 
+				timex=(row['fecha'] - ref_date).total_seconds()
+
+			string_x="				 %s 	%6.3E\n"%(timex,row['generation'])
+
+			string+=string_x
+	string+="""			<<<<\n"""
+
+	string+="""		<<<\n"""
+
+	observation_file_power=open("../model/it2/observations_power.dat",'w')
+	observation_file_power.write(string)
+	observation_file_power.close()
+
+

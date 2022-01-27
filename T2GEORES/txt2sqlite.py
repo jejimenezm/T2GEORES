@@ -92,11 +92,22 @@ def db_creation(input_dictionary):
 						 [Pressure] REAL,
 						 [Temperature] REAL)''')
 
-		#Create table - mh
+		#Create table - raw mh
 		if checktable('mh',c)==0:
 			c.execute('''CREATE TABLE  mh
 						 ([well] TEXT,
 						 [type] TEXT,
+						 [date_time] datetime,
+						 [steam_flow] REAL,
+						 [liquid_flow] REAL,
+						 [flowing_enthalpy] REAL,
+						 [well_head_pressure] REAL)''')
+
+		#Create table - filtered mh
+		if checktable('mh_f',c)==0:
+			c.execute('''CREATE TABLE  mh_f
+						 ([well] TEXT,
+						 [status] TEXT,
 						 [date_time] datetime,
 						 [steam_flow] REAL,
 						 [liquid_flow] REAL,
@@ -137,6 +148,8 @@ def db_creation(input_dictionary):
 			c.execute('''CREATE TABLE  t2wellsource
 						 ([well] TEXT,
 						 [blockcorr] TEXT ,
+						 [rocktype] TEXT ,
+						 [flow_type] TEXT ,
 						 [source_nickname] TEXT PRIMARY KEY)''')
 
 		#Create table - layers levels
@@ -330,6 +343,7 @@ def insert_feedzone_to_sqlite(input_dictionary):
 
 	feedzones=pd.read_csv(source_txt+'well_feedzone.csv',delimiter=',')
 
+
 	for index,row in feedzones.iterrows():
 		q="INSERT INTO wellfeedzone(well,MeasuredDepth,contribution) VALUES ('%s',%s,%s)"%\
 		(row['well'],row['MD'],row['contribution'])
@@ -432,12 +446,11 @@ def insert_drawdown_to_sqlite(input_dictionary):
 	for f in os.listdir(source_txt+'drawdown'):
 		well_name=f.replace("'","").replace("_DD.dat","")
 		if os.path.isfile(source_txt+'drawdown/'+f) and f!='p_res.csv':
-			C=pd.read_csv(source_txt+'drawdown/'+f)
-			for index, row in C.iterrows():
-				q="INSERT INTO drawdown(well,date_time,TVD,pressure) VALUES ('%s','%s',%s,%s)"%\
-				(well_name,row['datetime'],row['TVD'],row['pressure'])
-				c.execute(q)
-				conn.commit()
+			DD=pd.read_csv(source_txt+'drawdown/'+f)
+			DD['well'] = well_name
+			DD.rename(columns={'datetime': 'date_time', 'temperature': 'temp'}, inplace=True)
+			DD.to_sql('drawdown',if_exists='append',con=conn,index=False)
+			
 	conn.close()
 
 def insert_cooling_to_sqlite(input_dictionary):
@@ -457,6 +470,7 @@ def insert_cooling_to_sqlite(input_dictionary):
 	>>>  insert_cooling_to_sqlite(input_dictionary)
 	"""
 
+
 	db_path=input_dictionary['db_path']
 	source_txt=input_dictionary['source_txt']
 
@@ -465,15 +479,14 @@ def insert_cooling_to_sqlite(input_dictionary):
 	for f in os.listdir(source_txt+'cooling'):
 		well_name=f.replace("'","").replace("_C.dat","")
 		if os.path.isfile(source_txt+'cooling/'+f):
-			DD=pd.read_csv(source_txt+'cooling/'+f)
-			for index, row in DD.iterrows():
-				q="INSERT INTO cooling(well,date_time,TVD,temp) VALUES ('%s','%s',%s,%s)"%\
-				(well_name,row['datetime'],row['TVD'],row['temperature'])
-				c.execute(q)
-				conn.commit()
+			CC=pd.read_csv(source_txt+'cooling/'+f)
+			CC['well'] = well_name
+			CC.rename(columns={'datetime': 'date_time', 'temperature': 'temp'}, inplace=True)
+			CC.to_sql('cooling',if_exists='append',con=conn,index=False)
+			
 	conn.close()
 
-def insert_mh_to_sqlite(input_dictionary):
+def insert_raw_mh_to_sqlite(input_dictionary):
 	"""It stores all the data contain on the subfolder mh from the input file folder.
 
 	Parameters
@@ -497,14 +510,53 @@ def insert_mh_to_sqlite(input_dictionary):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	for f in os.listdir(source_txt+'mh'):
+		print(f)
 		well_name=f.replace("'","").replace("_mh.dat","")
 		if os.path.isfile(source_txt+'mh/'+f):
 			mh=pd.read_csv(source_txt+'mh/'+f)
-			for index, row in mh.iterrows():
-				q="INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES ('%s','%s','%s',%s,%s,%s,%s)"%\
-				(well_name,row['type'],row['date-time'],row['steam'],row['liquid'],row['enthalpy'],row['WHPabs'])
-				c.execute(q)
-				conn.commit()
+			mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status': 'type'}, inplace=True)
+	conn.close()
+
+def insert_filtered_mh_to_sqlite(input_dictionary, single_well = None):
+	"""It stores all the data contain on the subfolder mh from the input file folder.
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
+
+	Note
+	----
+	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat
+
+	Examples
+	--------
+	>>>  insert_mh_to_sqlite(input_dictionary)
+	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	if single_well == None:
+		for f in os.listdir(source_txt+'mh/filtered'):
+			print(f)
+			well_name=f.replace("'","").replace("_week_avg.csv","")
+			if os.path.isfile(source_txt+'mh/filtered/'+f) and well_name in input_dictionary['WELLS']:
+				mh=pd.read_csv(source_txt+'mh/filtered/'+f)
+				mh['well'] = well_name
+				mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure'}, inplace=True)
+				mh.to_sql('mh_f',if_exists='append',con=conn,index=False)
+	else:
+		file_name = single_well + "_week_avg.csv"
+		if os.path.isfile(source_txt+'mh/filtered/'+file_name) and single_well in input_dictionary['WELLS']:
+			mh=pd.read_csv(source_txt+'mh/filtered/'+file_name)
+			mh['well'] = single_well
+			mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure'}, inplace=True)
+			mh.to_sql('mh_f',if_exists='append',con=conn,index=False)
+			
 	conn.close()
 
 def replace_mh(wells_to_replace,input_dictionary):
@@ -711,10 +763,11 @@ def insert_wellblock_to_sqlite(input_dictionary):
 
 	db_path=input_dictionary['db_path']
 
-	if os.path.isfile('../mesh/well_dict.txt'):
+	if os.path.isfile('../mesh/wells_correlative.txt'):
 
-		with open('../mesh/well_dict.txt',encoding='utf8') as json_file:
+		with open('../mesh/wells_correlative.txt',encoding='utf8') as json_file:
 		    wells_correlative=json.load(json_file)
+
 
 		conn=sqlite3.connect(db_path)
 		c=conn.cursor()
@@ -727,7 +780,7 @@ def insert_wellblock_to_sqlite(input_dictionary):
 					wells.append(well)
 			except KeyError:
 					pass
-
+		print(wells_correlative['P-1'])
 		for name in wells:
 			try:
 				blocknumer=wells_correlative[name][0]
@@ -735,6 +788,7 @@ def insert_wellblock_to_sqlite(input_dictionary):
 				c.execute(q)
 				conn.commit()
 			except KeyError:
+				print("Error")
 				pass
 			except sqlite3.IntegrityError:
 				print("The block  number is already assing for the well: %s"%name)
@@ -777,4 +831,36 @@ def insert_layers_to_sqlite(input_dictionary):
 			conn.commit()
 		except sqlite3.IntegrityError:
 			print("The layer %s is already define, correlative is a PRIMARY KEY"%correlative[n])
+	conn.close()
+
+
+#Not documented
+
+def src_rocktype(input_dictionary):
+
+	elem_file='../mesh/ELEME.json'
+
+	if os.path.isfile(elem_file):
+		with open(elem_file) as file:
+		  	blocks=json.load(file)
+
+
+	db_path=input_dictionary['db_path']
+
+	#List the GEN elements
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+
+	data_source=pd.read_sql_query("SELECT well, blockcorr,source_nickname FROM t2wellsource ORDER BY source_nickname;",conn)
+
+	
+	data_source['rocktype'] = None
+
+	for n in range(len(data_source)):
+		blockcorr=data_source['blockcorr'][n]
+		rocktype_n = blocks[blockcorr]['MA1']
+		data_source['rocktype'][n] = rocktype_n
+
+	data_source.to_sql('t2wellsource',if_exists='replace',con=conn,index=False, index_label = 'source_nickname')
+
 	conn.close()

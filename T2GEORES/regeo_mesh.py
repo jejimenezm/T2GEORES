@@ -26,7 +26,7 @@ import sqlite3
 import geopandas as gpd
 import string
 
-from lloydRelax import Field
+from lloyd_relaxation import Field
 
 class py2amesh:
 	"""It creates a mesh based on well positions and irregular blocks
@@ -158,7 +158,7 @@ class py2amesh:
 		x_from_boarder,y_from_boarder,\
 		x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,\
 		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog,line_file,fault_distance,with_polygon,polygon_shape,set_inac_from_poly,set_inac_from_inner,rotate,angle,inner_mesh_type,\
-		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well):
+		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well, outer_polygon):
 
 		self.filename=filename
 		self.filepath=filepath
@@ -215,20 +215,32 @@ class py2amesh:
 
 		self.distance_points_around_well=distance_points_around_well
 
-		if self.with_polygon:
-			shape = shapefile.Reader(polygon_shape)
+		self.outer_polygon = outer_polygon
 
-			#first feature of the shapefile
-			feature = shape.shapeRecords()[0]
-			points = feature.shape.__geo_interface__ 
-			self.polygon=[]
-			for n in points:
-				for v in points[n]:
-					if n=='coordinates':
-						self.polygon.append([v[0],v[1]]) # (GeoJSON format)
+
+		"""
+		shape = shapefile.Reader(polygon_shape)
+
+		#first feature of the shapefile
+		feature = shape.shapeRecords()[0]
+		points = feature.shape.__geo_interface__ 
+		self.polygon=[]
+		for n in points:
+			for v in points[n]:
+				if n=='coordinates':
+					self.polygon.append([v[0],v[1]]) # (GeoJSON format)
+		"""
+		inner_borders=gpd.read_file(polygon_shape)
+		polygon=[]
+		for line in inner_borders.iterrows():
+			pointList = line[1].geometry.exterior.coords.xy
+			for point in zip(pointList[0],pointList[1]):
+				polygon.append([point[0],point[1]])	
+
+		self.polygon = polygon[::-1][0:-1]
 
 		#Read border to clip write into in files
-		borders=gpd.read_file('../../GIS/reservoir/reservoir_limits_1_pol.shp')
+		borders=gpd.read_file(outer_polygon)
 
 		border_points=[]
 		for line in borders.iterrows():
@@ -334,23 +346,52 @@ class py2amesh:
 			cnt=0
 			for n in range(len(polygon)):
 				if n+1!=len(polygon):
-					m,b=plb.polyfit([polygon[n][0],polygon[n+1][0]],[polygon[n][1],polygon[n+1][1]],1)
+
+					if polygon[n][0]==polygon[n+1][0]:
+						m = np.inf
+						b = np.inf
+						x = polygon[n][0]
+					elif polygon[n][1] == polygon[n+1][1]:
+						m = 0
+						b = polygon[n][1]
+						x = point[0]
+					else:
+						m,b=plb.polyfit([polygon[n][0],polygon[n+1][0]],[polygon[n][1],polygon[n+1][1]],1)
+						
 					val_range=[polygon[n][1],polygon[n+1][1]]
+
 				elif n+1==len(polygon):
-					m,b=plb.polyfit([polygon[-1][0],polygon[0][0]],[polygon[-1][1],polygon[0][1]],1)
+
+					if polygon[-1][0] == polygon[0][0]:
+						m = np.inf
+						b = np.inf
+						x = polygon[-1][0]
+					elif polygon[-1][1] == polygon[0][1]:
+						m = 0
+						b = polygon[-1][1]
+						x = point[0]
+					else:
+						m,b=plb.polyfit([polygon[-1][0],polygon[0][0]],[polygon[-1][1],polygon[0][1]],1)
+
 					val_range=[polygon[-1][1],polygon[0][1]]
-				
-				x=(point[1]-b)/m
+
+
+				if m != np.inf and m != 0:
+					x = (point[1]-b)/m
+
 				if point[0]<x and min(val_range)<point[1] and point[1]<max(val_range):
 					cnt+=1
+
 			if cnt==1:
 				boolean=True
+
 		elif source=='inner':
 			Xarray_inner=np.array([self.x_gap_min,self.x_gap_max+self.x_gap_space])
 			Yarray_inner=np.array([self.y_gap_min,self.y_gap_max+self.y_gap_space])
 			if Xarray_inner[0]<point[0] and Xarray_inner[1]>point[0] and Yarray_inner[0]<point[1] and Yarray_inner[1]>point[1]:
 				boolean=True
 		return boolean
+
 
 	def reg_pol_mesh(self):
 		"""Crea malla regular cuando existe un poligono de entrada
@@ -432,7 +473,6 @@ class py2amesh:
 				to_delete.append(v)
 
 		self.mesh_array=np.delete(self.mesh_array, to_delete, 0)
-
 
 		to_delete=[]
 		for v in range(len(small_mesh)):
@@ -595,44 +635,45 @@ class py2amesh:
 
 		#Mesh around the wells
 
-		well_mesh=[]
-		d=self.distance_points_around_well
-		dw=np.linspace(-d*0.4,d*0.4,num=self.points_around_well)
-		dw=dw[dw!=0]
-		for n in range(len(self.raw_data['ID'])):
-			x=self.raw_data['X'][n]
-			y=self.raw_data['Y'][n]
-			for xr in dw:
-				for yr in dw:
-					xi=x+xr
-					yi=y+yr
-					
-					#Rotating mesh around the wells
-					if self.rotate:
-						angle=self.angle
-						x1=xi-(x)
-						y1=yi-(y)
-						xii=x1*math.cos(math.pi*angle/180)-y1*math.sin(math.pi*angle/180)+(x)
-						yii=x1*math.sin(math.pi*angle/180)+y1*math.cos(math.pi*angle/180)+(y)
-						well_mesh.append([xii,yii])
+		if self.points_around_well > 0:
+			well_mesh=[]
+			d=self.distance_points_around_well
+			dw=np.linspace(-d*0.4,d*0.4,num=self.points_around_well)
+			dw=dw[dw!=0]
+			for n in range(len(self.raw_data['ID'])):
+				x=self.raw_data['X'][n]
+				y=self.raw_data['Y'][n]
+				for xr in dw:
+					for yr in dw:
+						xi=x+xr
+						yi=y+yr
+						
+						#Rotating mesh around the wells
+						if self.rotate:
+							angle=self.angle
+							x1=xi-(x)
+							y1=yi-(y)
+							xii=x1*math.cos(math.pi*angle/180)-y1*math.sin(math.pi*angle/180)+(x)
+							yii=x1*math.sin(math.pi*angle/180)+y1*math.cos(math.pi*angle/180)+(y)
+							well_mesh.append([xii,yii])
 
-					else:
-						well_mesh.append([xi,yi])
+						else:
+							well_mesh.append([xi,yi])
 
-		well_mesh=np.array(well_mesh)
+			well_mesh=np.array(well_mesh)
 
-		#Deleting elements on the mesh around the well to close to other regular elements of the mesh
-		for point in regular_mesh:
-			to_delete=[]
-			for i,well_point in enumerate(well_mesh):
-				boolean=self.radius_select(well_point[0],well_point[1],point[0],point[1],type_i='well')
-				if boolean==1:
-					to_delete.append(i)
+			#Deleting elements on the mesh around the well to close to other regular elements of the mesh
+			for point in regular_mesh:
+				to_delete=[]
+				for i,well_point in enumerate(well_mesh):
+					boolean=self.radius_select(well_point[0],well_point[1],point[0],point[1],type_i='well')
+					if boolean==1:
+						to_delete.append(i)
 
-			well_mesh=np.delete(well_mesh, to_delete, 0)
+				well_mesh=np.delete(well_mesh, to_delete, 0)
 
-		#Finally appending the mesh
-		regular_mesh=np.append(regular_mesh,well_mesh,axis=0)
+			#Finally appending the mesh
+			regular_mesh=np.append(regular_mesh,well_mesh,axis=0)
 
 		cnt=0
 		if self.line_file:
@@ -850,7 +891,6 @@ class py2amesh:
 
 		return {'well_names':self.well_names, 'well_blocks_names':self.well_blocks_names}
 
-
 	def to_translate(self,points):
 		#Converts data points to new coordinate system
 		n_times=4
@@ -897,12 +937,10 @@ class py2amesh:
 
 		return points
 
-
 	def well_block_assign_from_relaxation(self,layer,i):
 		letters=string.ascii_uppercase
 		name=layer+letters[int(i/810)]+str(int(1+(i-810*int(i/810))/90))+str(10+i-90*int(i/90))
 		return name
-
 
 	def relaxation(self):
 		data={'blocks':{},'borders':[]}
@@ -967,7 +1005,6 @@ class py2amesh:
 		plt.show()
 
 
-
 		#Drops points out of shapefile
 		rlx_points=[]
 		for point in points:
@@ -987,7 +1024,7 @@ class py2amesh:
 	
 
 		#Read border to clip write into in file
-		borders=gpd.read_file('../../GIS/reservoir/reservoir_limits_1_pol.shp')
+		borders=gpd.read_file(	self.outer_polygon)
 
 		border_points=[]
 		for line in borders.iterrows():
@@ -1068,8 +1105,6 @@ class py2amesh:
 		for fn in files2move:
 			shutil.move(fn,'../mesh/from_amesh/%s'%fn)
 		return None
-
-
 
 	def input_file_to_amesh(self):
 		"""Genera el archivo de entrada para amesh
@@ -1498,7 +1533,7 @@ def mesh_creation_func(input_mesh_dictionary,input_dictionary):
 			input_mesh_dictionary['x_gap_min'],input_mesh_dictionary['x_gap_max'],input_mesh_dictionary['x_gap_space'],input_mesh_dictionary['y_gap_min'],input_mesh_dictionary['y_gap_max'],input_mesh_dictionary['y_gap_space'],input_mesh_dictionary['plot_names'],input_mesh_dictionary['plot_centers'],\
 			input_dictionary['z_ref'],input_mesh_dictionary['plot_all_GIS'],input_mesh_dictionary['from_leapfrog'],input_mesh_dictionary['line_file'],input_mesh_dictionary['fault_distance'],input_mesh_dictionary['with_polygon'],input_mesh_dictionary['polygon_shape'],\
 			input_mesh_dictionary['set_inac_from_poly'],input_mesh_dictionary['set_inac_from_inner'],input_mesh_dictionary['rotate'],input_mesh_dictionary['angle'],input_mesh_dictionary['inner_mesh_type'],\
-			input_mesh_dictionary['distance_points'],input_mesh_dictionary['fault_rows'],input_mesh_dictionary['relaxation_times'],input_mesh_dictionary['points_around_well'],input_mesh_dictionary['distance_points_around_well'])
+			input_mesh_dictionary['distance_points'],input_mesh_dictionary['fault_rows'],input_mesh_dictionary['relaxation_times'],input_mesh_dictionary['points_around_well'],input_mesh_dictionary['distance_points_around_well'], input_mesh_dictionary['outer_polygon'])
 
 	#data=blocks.relaxation()
 
@@ -2235,3 +2270,98 @@ def clip_steinar_data():
 	rock_file.close()
 
 
+
+def reasig_feedzone(input_dictionary):
+
+	layers_info=geometry.vertical_layers(input_dictionary)
+
+	layer_middle={layers_info['name'][n]:layers_info['middle'][n] for n in range(len(layers_info['name']))}
+
+	layers_thickness = {input_dictionary['LAYERS'][k][0] : input_dictionary['LAYERS'][k][1] for k in input_dictionary['LAYERS']}
+
+	elem_file='../mesh/ELEME.json'
+
+	if os.path.isfile(elem_file):
+		with open(elem_file) as file:
+		  	blocks=json.load(file)
+	
+	rlx_points = []
+	block_name = []
+	for block in blocks:
+		if block[0]=='A':
+			rlx_points.append([blocks[block]['X'],blocks[block]['Y']])
+			block_name.append(block)
+
+	wells_dictionary={}
+	well_corr={}
+	wells=pd.read_csv('../input/well_feedzone_xyz.csv',sep=',')
+	tree = cKDTree(rlx_points)
+
+	for index, well in wells.iterrows():
+
+		distance = tree.query([well['x'],well['y']])
+		print(distance)
+		block_assig=block_name[distance[1]]
+
+		well_corr[well['well']]=[block_assig[1:5]]
+		x= blocks[block_assig]['X']
+		y=blocks[block_assig]['Y']
+
+		for n, layer in enumerate(layer_middle):
+			block_assig_i=layer+block_assig[1:5]
+
+			wells_dictionary[block_assig_i]=[well['well'],\
+										   x,\
+										   y,\
+										   well['type'],\
+										   n+1,
+										   layer_middle[block_assig[0]],\
+										   "red",\
+										   layers_thickness[block_assig[0]]]
+
+	json.dump(well_corr, open("../mesh/well_dict.txt",'w'),sort_keys=True, indent=4)
+	json.dump(wells_dictionary, open("../mesh/wells_correlative.txt",'w'),sort_keys=True, indent=4)
+
+
+def set_layer_inactive(layers = []):
+
+	"""It sets innactive one layer from the mesh on the ELEME file
+
+	Parameters
+	----------
+ 	layer: str
+	  Layer to set inactive
+	Returns
+	-------
+	file
+	  in: modified on folders  ../mesh/to_steinar and ../mesh/from_amesh
+
+
+	Examples
+	--------
+	>>> set_layer_inactive(variation = 'A')
+	"""
+	source_file="../mesh/to_steinar/in"
+	eleme_file="../mesh/to_steinar/eleme"
+
+	eleme_dict={}
+	col_eleme=[(0,6),(15,20),(20,30)]
+
+	if os.path.isfile(source_file) and os.path.isfile(eleme_file):
+		data_in=pd.read_csv(source_file,delim_whitespace=True,skiprows=7,header=None,names=['ELEME','LAYER_N','X','Y','Z','h'])
+		data_eleme=pd.read_fwf(eleme_file,colspecs=col_eleme,skiprows=1,header=None,names=['ELEME','MA1','VOLX'])
+
+		for layer in layers:
+			data_eleme.loc[(data_eleme['ELEME'].str[0] == layer) & (data_eleme.VOLX > 0), "VOLX"] = -data_eleme.VOLX
+
+		data_in.set_index('ELEME')
+		data_eleme.set_index('ELEME')
+
+		data_eleme=data_eleme.merge(data_in, left_on='ELEME', right_on='ELEME',how='left')
+
+		data_eleme.set_index('ELEME',inplace=True)
+
+		data_eleme.to_json('../mesh/ELEME.json',orient="index",indent=2)
+
+	else:
+		sys.exit("The file %s or directory do not exist"%source_file)

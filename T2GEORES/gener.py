@@ -4,12 +4,18 @@ from T2GEORES import geometry as geomtr
 from T2GEORES import txt2sqlite as txt2sql
 import sqlite3
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
 import os
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import matplotlib.dates as mdates
+import locale
+from iapws import IAPWS97
+locale.setlocale(locale.LC_TIME, 'en_US.utf8') 
 
 def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,input_dictionary):
-	"""It generaates the block of time, flow and enthalpy for each flow
+	"""It generates the block of time, flow and enthalpy for each flow
 
 	Parameters
 	----------
@@ -184,8 +190,8 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	else:
 		print("Time and variable array must have the same length")
 
-def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_flow):
-	"""It generaates the block of time, flow and enthalpy for each flow on datetime format
+def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_flow, def_T):
+	"""It generates the block of time, flow and enthalpy for each flow on datetime format
 
 	Parameters
 	----------
@@ -200,7 +206,9 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	type_flow :str
 	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
 	  'invariable' writes the GENER section for every well as it is written on the input file
-	
+	def_T: flot
+	  Default temperature value for injector wells with no flowing enthalpy provided.
+
 	Returns
 	-------
 	str
@@ -231,6 +239,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	flow_min=0
 	enthalpy_min=500E3
 	time_zero=0
+	now = datetime.now()
 
 	#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value
 	extra_time=365.25*24*3600/2
@@ -243,14 +252,26 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 		string_P+=format(t_min,'>20s')
 		string_P+=format(flow_min,'>10.3E')+'\n'
 
-		string_P+=format((time_array[0]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		ind = 0
+		for ix, vx in enumerate(var_type):
+			if vx == 'P':
+				ind = ix
+				break
+
+		string_P+=format((time_array[ind]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 		string_P+=format(flow_min,'>10.3E')+'\n'
 
 		string_R+=format(t_min,'>20s')
 		string_R+=format(flow_min,'>10.3E')
 		string_R+=format(enthalpy_min,'>10.3E')+'\n'
 
-		string_R+=format((time_array[0]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		ind = 0
+		for ix, vx in enumerate(var_type):
+			if vx == 'R':
+				ind = ix
+				break
+
+		string_R+=format((time_array[ind]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 		string_R+=format(flow_min,'>10.3E')
 		string_R+=format(enthalpy_min,'>10.3E')+'\n'
 
@@ -260,39 +281,97 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	if len(var_array)==len(time_array):
 		for n in range(len(var_type)):
 			if var_type[n]=='P':
-				string_P+=format(time_array[n].strftime("%Y-%m-%d_00:00:00"),'>20s')
-				string_P+=format(-var_array[n],'>10.3E')+'\n'
-				last_flow=var_array[n]
+
+				now_flow_P = var_array[n]
+				now_time_P = time_array[n]
+
+				if n >= 1 and 'last_time_P' in locals():
+					if (now_time_P-last_time_P).total_seconds()>=(365.25*3600*24*8/12) :
+						string_P += format((last_time_P + timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_P += format(0.0,'>10.2E')+'\n'
+						cnt_P+=1
+
+						string_P += format((now_time_P - timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_P += format(0.0,'>10.2E')+'\n'
+						cnt_P+=1
+
+				string_P+=format(now_time_P.strftime("%Y-%m-%d_00:00:00"),'>20s')
+				string_P+=format(-now_flow_P,'>10.2E')+'\n'
 				cnt_P+=1
+
+				last_flow_P = var_array[n]
+				last_time_P = time_array[n]
+				
+
 			elif var_type[n]=='R':
+
+				now_flow_R = var_array[n]
+				now_time_R = time_array[n]
+
+				if var_enthalpy[n] == 0.0:
+					var_enthalpy[n] = IAPWS97(T=(def_T+273.15),x=0).h*1E3
+
+				if n >= 1 and 'last_time_R' in locals():
+
+					if (now_time_R-last_time_R).total_seconds()>=(365.25*3600*24*8/12) :
+
+						string_R += format((last_time_R + timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_R += format(0.0,'>10.3E')
+						string_R += format(var_enthalpy[n],'>10.3E')+'\n'
+						cnt_R+=1
+
+						print(now_time_R, last_time_R)
+
+						string_R += format((now_time_R - timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_R += format(0.0,'>10.2E')
+						string_R+=format(var_enthalpy[n],'>10.3E')+'\n'
+						cnt_R+=1
+
 				string_R+=format(time_array[n].strftime("%Y-%m-%d_00:00:00"),'>20s')
 				string_R+=format(var_array[n],'>10.3E')
 				string_R+=format(var_enthalpy[n],'>10.3E')+'\n'
-				last_flow=var_array[n]
-				last_enthalpy=var_enthalpy[n]
 				cnt_R+=1
+
+				last_flow_R=var_array[n]
+				last_time_R=time_array[n]
+				last_enthalpy=var_enthalpy[n]
+
 			last_time=time_array[n]
 
 		if type_flow=="invariable":
 			pass
 		elif type_flow=="constant":
 			if cnt_R>3:
-				string_P+='\n'
-				cnt_R+=1
+				if (now-last_time_R).total_seconds()>=(365.25*3600*24*1):
+					cnt_R+=1
+					string_R+=format((last_time_R+timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					last_flow_R = 0
+					string_R += format(last_flow_R,'>10.2E')
+					string_R += format(last_enthalpy,'>10.3E')+'\n'
+
 				string_R+=format(t_max,'>20s')
-				string_R+=format(last_flow,'>10.3E')
+				string_R+=format(last_flow_R,'>10.2E')
 				string_R+=format(last_enthalpy,'>10.3E')+'\n'
+				cnt_R+=1
+
 			if cnt_P>3:
+
+				if (now-last_time_P).total_seconds()>=(365.25*3600*24*1):
+					last_flow_P = 0
+					string_P += format((last_timeP+timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					string_P += format(-last_flow_P,'>10.2E')+'\n'
+					cnt_P += 1
+
 				string_P+=format(t_max,'>20s')
-				string_P+=format(-last_flow,'>10.3E')+'\n'
+				string_P+=format(-last_flow_P,'>10.2E')+'\n'
 				cnt_P+=1
 		elif type_flow=="shutdown":
 
 			if cnt_R>3:
 				cnt_R+=2
 
-				string_R+=format((time_array[n]+extra_time).strftime("%Y-%m-%d_00:00:00"),'>20s')
-				string_R+=format(last_flow,'>10.6E')
+				string_R+=format((time_array[n]+extra_time).strftime("%d-%b-%Y_00:00:00"),'>20s')
+				string_R+=format(last_flow_R,'>10.3E')
 				string_R+=format(last_enthalpy,'>10.3E')+'\n'
 
 				string_R+=format(t_max,'>20s')
@@ -301,11 +380,11 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 			if cnt_P>3:
 				cnt_P+=2
-				string_P+=format((time_array[n]+extra_time).strftime("%Y-%m-%d_00:00:00"),'>20s')
-				string_P+=format(-last_flow,'>10.3E')+'\n'
+				string_P+=format((time_array[n]+extra_time).strftime("%d-%b-%Y_00:00:00"),'>20s')
+				string_P+=format(-last_flow_P,'>10.2E')+'\n'
 
 				string_P+=format(t_max,'>20s')
-				string_P+=format(-flow_min,'>10.3E')+'\n'
+				string_P+=format(-flow_min,'>10.2E')+'\n'
 
 		if cnt_R==2 or cnt_R==3:
 			string_R=''
@@ -319,7 +398,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	else:
 		print("Time and variable array must have the same length")
 
-def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
+def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None):
 	"""It is the main function on this module, it writes the GENER section from the mh input files
 
 	Parameters
@@ -327,12 +406,14 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 	input_dictionary: dictionary
 	  Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.
 	wells : array
-	  Arreglo con nombre de pozos a ser incluidos en la etapa de produccion
+	  Wells to be included
 	type_flow :str
 	  It defines the type of flow on the well. 'constant' adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, 'shutdown' closes the well after the last record, 'invariable'
 	  'invariable' writes the GENER section for every well as it is written on the input file
-	make_up  : bool
+	make_up : bool
 	   If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD
+	def_inj_T : dictionary
+	  Defines the default temperature for the injector wells when there is no flowing enthalpy provided.
 		
 	Returns
 	-------
@@ -358,7 +439,6 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 	except KeyError:
 			pass
 
-
 	db_path=input_dictionary['db_path']
 	t2_ver=float(input_dictionary['VERSION'][0:3])
 
@@ -371,26 +451,32 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 
 
 	for name in sorted(wells):
-		data=pd.read_sql_query("SELECT type,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure\
-		 FROM mh WHERE well='%s';"%name,conn)
+
+		try:
+			def_T = def_inj_T[name]
+		except KeyError:
+			def_T = None
+
+		data=pd.read_sql_query("SELECT status,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure\
+		 FROM mh_f WHERE well='%s';"%name,conn)
 
 		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
 		#Read file cooling
 		dates=list(map(dates_func,data['date_time']))
 
-		q_wf="SELECT MeasuredDepth,porcentage from wellfeedzone WHERE well='%s'"%name
+		q_wf="SELECT MeasuredDepth,contribution from wellfeedzone WHERE well='%s'"%name
 		c.execute(q_wf)
 		rows=c.fetchall()
 		
 		wellfeedzone=[]
-		porcentage=[]
+		contribution=[]
 		for row in rows:
 			wellfeedzone.append(row[0])
-			porcentage.append(row[1])
+			contribution.append(row[1])
 
 		x,y,masl_depth=geomtr.MD_to_TVD(name,wellfeedzone)
 
-		for feedn in range(len(porcentage)):
+		for feedn in range(len(contribution)):
 
 			#Create t the block name for each feedzone
 			q_layer="SELECT correlative FROM layers where top>=%s and bottom<%s"%(masl_depth[feedn],masl_depth[feedn])
@@ -430,21 +516,39 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 				c.execute(q_corr_sqlite)
 				conn.commit()
 				rows=c.fetchall()
-				for row in rows:
-					source_corr_num_sqlite=row[0]
+
+				if len(rows)>1:
+					for ix, row in enumerate(rows):
+						if ix ==0:
+							source_corr_num_sqlite=row[0]
+						else:
+							source_corr_num_sqlite_R=row[0]
+				else:
+					for row in rows:
+						source_corr_num_sqlite = row[0]
+						source_corr_num_sqlite_R = row[0]
+
 
 				#if the block is already on the database, it creates a new name
 				if len(rows)==0:
 					source_corr_num=int(source_last)+1
 					source_corr="SRC%s"%source_corr_num
+					source_corr_R=source_corr
 				else:
 					#If the block name exists it takes that value
-					source_corr=source_corr_num_sqlite
+					if len(rows)>1:
+						source_corr = source_corr_num_sqlite
+						source_corr_R = source_corr_num_sqlite_R
+					else:
+						source_corr = source_corr_num_sqlite
+						source_corr_R = source_corr_num_sqlite
+
+				print(source_corr, source_corr_R)
 
 			if t2_ver<7:
-				P,R, LTAB_P, LTAB_R= write_t2_format_gener(data['m_total'].values*porcentage[feedn],dates,data['type'],data['flowing_enthalpy']*1E3,type_flow,input_dictionary=input_dictionary)
+				P,R, LTAB_P, LTAB_R = write_t2_format_gener(data['m_total'].values*contribution[feedn], dates, data['status'], data['flowing_enthalpy']*1E3, type_flow, input_dictionary=input_dictionary)
 			else:
-				P,R, LTAB_P, LTAB_R=write_t2_format_gener_dates(data['m_total'].values*porcentage[feedn],dates,data['type'],data['flowing_enthalpy']*1E3,type_flow)
+				P,R, LTAB_P, LTAB_R = write_t2_format_gener_dates(data['m_total'].values*contribution[feedn], dates, data['status'], data['flowing_enthalpy']*1E3, type_flow, def_T)
 
 			if type_flow=="invariable":
 				condition=1
@@ -456,10 +560,15 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 			r_check=False
 			
 			if LTAB_R>condition:
-				gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr,LTAB_R)
+				if input_dictionary['MOMOP']['MOP2_32'] == 0 or input_dictionary['MOMOP']['MOP2_32'] == None :
+					gener+="%s%s                %4d     MASSi\n"%(source_block,source_corr_R,LTAB_R)
+				elif input_dictionary['MOMOP']['MOP2_32'] == 1:
+					gener+="%s%s                %4d     MASSi                     2.400E+07  5.00E+06\n"%(source_block,source_corr_R,LTAB_R)
+				elif input_dictionary['MOMOP']['MOP2_32'] == 2:
+					gener+="%s%s                %4d     MASSi                     2.000E+05\n"%(source_block,source_corr_R,LTAB_R)
 				gener+=R
 				try:
-					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
+					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname,flow_type) VALUES ('%s','%s','%s','R')"%(name,source_block,source_corr_R)
 					c.execute(q)
 					conn.commit()
 					r_check=True
@@ -476,12 +585,16 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False):
 				if r_check:
 					source_corr_num+=1
 					source_corr="SRC%s"%source_corr_num
+				if input_dictionary['MOMOP']['MOP2_32'] == 0 or input_dictionary['MOMOP']['MOP2_32'] == None :
+					gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P)
+				elif input_dictionary['MOMOP']['MOP2_32'] == 1:
+					gener+="%s%s                %4d     MASS                      8.00E+05  2.00E+05\n"%(source_block,source_corr,LTAB_P)
+				elif input_dictionary['MOMOP']['MOP2_32'] == 2:
+					gener+="%s%s                %4d     MASS                      2.00E+05\n"%(source_block,source_corr,LTAB_P)
 
-				
-				gener+="%s%s                %4d     MASS\n"%(source_block,source_corr,LTAB_P)
 				gener+=P
 				try:
-					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname) VALUES ('%s','%s','%s')"%(name,source_block,source_corr)
+					q="INSERT INTO t2wellsource(well,blockcorr,source_nickname,flow_type) VALUES ('%s','%s','%s','P')"%(name,source_block,source_corr)
 					c.execute(q)
 					conn.commit()
 					p_check=True
@@ -692,3 +805,405 @@ def plot_makeup_wells(flow_times):
 	plt.yticks(y_positions, well_tick)
 	plt.show()
 	fig.savefig('wells_flow.png')
+
+
+def raw_to_sqlite(well, type_well = 'injector', savefig = False):
+
+	import matplotlib.dates as mdates
+
+
+	dates_x = []
+	years = range(1990,2022,1)
+	months = range(1,13)
+	days = [7, 14, 21, 28]
+
+	for year in years:
+		for month in months:
+			if month<10:
+				month_s='0%s'%month
+			else:
+				month_s=month
+			for day in days:
+				if day<10:
+					day_s='0%s'%day
+				else:
+					day_s=day
+				dates_x.append("%s-%s-%s_00:00:00"%(year,month_s,day_s))
+
+	data_week = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy'])
+	data_week['date_time'] = dates_x
+	data_week['date_time'] = pd.to_datetime(data_week['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+
+	data_week = data_week[data_week['date_time'] < '2021-08-17']
+
+
+	data_f = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy'])
+
+	data = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy'])
+
+	data['date_time'] = pd.to_datetime(data['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+
+	print(well+'*****************************************')
+
+	for index in data_week.index[0:-2]:
+		mask = (data['date_time'] > data_week['date_time'][index]) & (data['date_time'] <= data_week['date_time'][index+1])
+		tmp = data.loc[mask]
+		tmp.reset_index(inplace=True)
+		no_data = False
+
+		#Case one, no zeros
+		if tmp.empty and data_week['date_time'][index] < data['date_time'][0]:
+			#print(data_week['date_time'][index]+pd.Timedelta(hours=1),data_week['date_time'][index+1]-pd.Timedelta(hours=1))
+			print("No data")
+			no_data = True
+
+		elif tmp.empty and (data_week['date_time'][index] >=  data['date_time'][0] or data_week['date_time'][index+1] >=  data['date_time'][0] ):
+			t1 = data_week['date_time'][index]+pd.Timedelta(hours=1)
+			t2 = data_week['date_time'][index+1]-pd.Timedelta(hours=1)
+			ml = 0.0
+			data_i = {'date_time' : [t1, t2],\
+			          'liquid' : [ml, ml],
+			          'enthalpy':[0.0,0.0],
+			          'WHPabs':[0.0,0.0]}
+
+			if type_well == 'producer':
+				ms = 0.0
+				steam_flow = {'steam' : [ms, ms]}
+			else:
+				steam_flow = {'steam' : [0.0, 0.0]}
+			
+			data_i.update(steam_flow)
+
+		elif (tmp['steam']+tmp['liquid'] > 0).all() and (data_week['date_time'][index] >=  data['date_time'][0] or data_week['date_time'][index+1] >=  data['date_time'][0] ):
+			print("data")
+			print(tmp.empty)
+			t1 = tmp['date_time'][0]+pd.Timedelta(hours=1)
+			t2 = tmp['date_time'][len(tmp)-1]-pd.Timedelta(hours=1)
+			ml = tmp['liquid'].mean()
+			data_i = {'date_time' : [t1, t2],\
+			          'liquid' : [ml, ml],
+			          'enthalpy':[tmp['enthalpy'].mean(),tmp['enthalpy'].mean()],
+					  'WHPabs':[tmp['WHPabs'].mean(),tmp['WHPabs'].mean()]}
+
+			if type_well == 'producer':
+				ms = tmp['steam'].mean()
+				steam_flow = {'steam' : [ms, ms]}
+			else:
+				steam_flow = {'steam' : [0.0, 0.0]}
+
+			data_i.update(steam_flow)
+
+		elif (tmp['steam']+tmp['liquid'] == 0).all() and (data_week['date_time'][index] >=  data['date_time'][0] or data_week['date_time'][index+1] >=  data['date_time'][0] ):
+			print("all zero")
+			t1 = tmp['date_time'][0]+pd.Timedelta(hours=1)
+			t2 = tmp['date_time'][len(tmp)-1]-pd.Timedelta(hours=1)
+			data_i = {'date_time' : [t1, t2],\
+			          'liquid' : [0.0, 0.0],
+			          'enthalpy':[tmp['enthalpy'].mean(),tmp['enthalpy'].mean()],
+					  'WHPabs':[tmp['WHPabs'].mean(),tmp['WHPabs'].mean()]}
+
+			ms = 0.0
+			steam_flow = {'steam' : [ms, ms]}
+			data_i.update(steam_flow)
+
+		else:
+			mask_flow = (tmp['steam'] == 0) & (tmp['liquid'] == 0)
+			zero_index = mask_flow[mask_flow].index
+
+			not_mask_flow = ~mask_flow
+			not_zero_index = not_mask_flow[not_mask_flow].index
+
+			if 0 in zero_index and len(tmp)-1 not in zero_index:
+				print("case1")
+				t0 = tmp['date_time'][zero_index[0]]
+				t1 = tmp['date_time'][zero_index[-1]]+pd.Timedelta(hours=1)
+				t2 = tmp['date_time'][zero_index[-1]+1]-pd.Timedelta(hours=1)
+				t3 = tmp['date_time'][not_zero_index[-1]]
+				m2_l = tmp[not_mask_flow]['liquid'].mean()
+				whp2 = tmp[not_mask_flow]['WHPabs'].mean()
+				h2 = tmp[not_mask_flow]['enthalpy'].mean()
+
+				data_i = {'date_time' : [t0, t1, t2, t3],\
+				          'liquid' : [0.0, 0.0, m2_l, m2_l],\
+				          'WHPabs' : [0.0, 0.0, whp2, whp2],\
+				          'enthalpy' : [0.0, 0.0, h2, h2]}
+
+				if type_well == 'producer':
+					m2_s = tmp[not_mask_flow]['steam'].mean()
+					steam_flow = {'steam' : [0.0, 0.0, m2_s, m2_s]}
+				else:
+					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0]}
+				
+				data_i.update(steam_flow)
+
+			elif len(tmp)-1  in zero_index and 0 not in zero_index:
+				print("case 2")
+				t0 = tmp['date_time'][not_zero_index[0]]
+				t1 = tmp['date_time'][zero_index[0]-1]+pd.Timedelta(hours=1)
+				t2 = tmp['date_time'][zero_index[0]]-pd.Timedelta(hours=1)
+				t3 = tmp['date_time'][zero_index[-1]]
+
+				m1_l = tmp[not_mask_flow]['liquid'].mean()
+				whp1 = tmp[not_mask_flow]['WHPabs'].mean()
+				h1 = tmp[not_mask_flow]['enthalpy'].mean()
+
+				data_i = {'date_time' : [t0, t1, t2, t3],\
+				          'liquid' : [m1_l, m1_l, 0.0, 0.0],
+				          'enthalpy' : [h1, h1, 0.0, 0.0],
+				          'WHPabs' : [whp1, whp1, 0.0, 0.0]}
+
+				if type_well == 'producer':
+					m1_s = tmp[not_mask_flow]['steam'].mean()
+					steam_flow = {'steam' : [m1_s, m1_s, 0.0, 0.0]}
+				else:
+					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0]}
+				
+				data_i.update(steam_flow)
+
+			elif len(tmp)-1 in zero_index and 0 in zero_index:
+				print("case 3")
+				t0 = tmp['date_time'][zero_index[0]]
+				t1 = tmp['date_time'][not_zero_index[0]-1]+pd.Timedelta(hours=1)
+				t2 = tmp['date_time'][not_zero_index[0]]-pd.Timedelta(hours=1)
+				t3 = tmp['date_time'][not_zero_index[-1]]+pd.Timedelta(hours=1)
+				t4 = tmp['date_time'][not_zero_index[-1]+1]-pd.Timedelta(hours=1)
+				t5 = tmp['date_time'][zero_index[-1]]
+				
+				m2_l = tmp[not_mask_flow]['liquid'].mean()
+				whp2 = tmp[not_mask_flow]['WHPabs'].mean()
+				h2 = tmp[not_mask_flow]['enthalpy'].mean()
+
+				data_i = {'date_time' : [t0, t1, t2, t3, t4, t5],\
+				          'liquid' : [0.0, 0.0, m2_l, m2_l, 0.0, 0.0],
+				          'enthalpy' : [0.0, 0.0, h2, h2, 0.0, 0.0],
+				          'WHPabs' : [0.0, 0.0, whp2, whp2, 0.0, 0.0]}
+
+				if type_well == 'producer': 
+					m2_s = tmp[not_mask_flow]['steam'].mean()
+					steam_flow = {'steam' : [0.0, 0.0, m2_s, m2_s, 0.0, 0.0]}
+				else:
+					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}
+
+				data_i.update(steam_flow)
+
+			elif len(tmp)-1 not in zero_index and 0 not in zero_index:
+				print("case 4")
+				t0 = tmp['date_time'][not_zero_index[0]]
+				t1 = tmp['date_time'][zero_index[0]-1]+pd.Timedelta(hours=1)
+				t2 = tmp['date_time'][zero_index[0]]-pd.Timedelta(hours=1)
+				t3 = tmp['date_time'][zero_index[-1]]+pd.Timedelta(hours=1)
+				t4 = tmp['date_time'][zero_index[-1]+1]-pd.Timedelta(hours=1)
+				t5 = tmp['date_time'][not_zero_index[-1]]
+				
+				m1_i = [i for i in range(not_zero_index[0],zero_index[0],1)]
+				m3_i = [i for i in range(zero_index[-1]+1,not_zero_index[-1]+1,1)]
+
+				m1_l = tmp['liquid'][m1_i].mean()
+				whp1 = tmp['WHPabs'][m1_i].mean()
+				h1 = tmp['enthalpy'][m1_i].mean()
+
+				m3_l = tmp['liquid'][m3_i].mean()
+				whp3 = tmp['WHPabs'][m3_i].mean()
+				h3 = tmp['enthalpy'][m3_i].mean()
+
+				data_i = {'date_time' : [t0, t1, t2, t3, t4, t5],\
+				          'liquid' : [m1_l, m1_l, 0.0, 0.0, m3_l, m3_l],
+				          'WHPabs' : [whp1, whp1, 0.0, 0.0, whp3, whp3],
+				          'enthalpy' : [h1, h1, 0.0, 0.0, h3, h3]}
+
+				if type_well == 'producer':
+					m1_s = tmp['steam'][m1_i].mean()
+					m3_s = tmp['steam'][m3_i].mean()
+					steam_flow = {'steam' : [m1_s, m1_s, 0.0, 0.0, m3_s, m3_s]}
+				else:
+					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}
+
+				data_i.update(steam_flow)
+			
+
+		if not no_data:
+			df = pd.DataFrame(data_i)
+			df['date_time'] = pd.to_datetime(df['date_time'] , format="%Y-%m-%d %H:%M:%S")
+			data_f = data_f.append(df, ignore_index = True)
+
+	if type_well == 'injector':
+		identifier = 'R'
+	elif type_well == 'producer':
+		identifier = 'P'
+
+	data_f['type'] = identifier
+
+	data_f.to_csv('../input/mh/filtered/%s_week_avg.csv'%well, index = False)
+
+	#Setting plot
+
+	gs = gridspec.GridSpec(4, 1)
+	fig, ax = plt.subplots(figsize=(16,9))
+	ax_s=plt.subplot(gs[0,0])
+	ax_l=plt.subplot(gs[1,0])
+	ax_WHP=plt.subplot(gs[2,0])
+	ax_h=plt.subplot(gs[3,0])
+
+	fontsize_ylabel=8
+	fontsize_title=9
+
+	#Flow plot
+	ax_s.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax_l.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax_WHP.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	ax_h.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+
+	ln1 = ax_s.plot(data['date_time'],data['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='steam',alpha=0.6)
+	ln2 = ax_l.plot(data['date_time'],data['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='liquid',alpha=0.6)
+	ln3 = ax_WHP.plot(data['date_time'],data['WHPabs'],linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='WHP',alpha=0.6)
+	ln4 = ax_h.plot(data['date_time'],data['enthalpy'],linestyle='-',color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.6)
+
+	ln5 = ax_s.plot(data_f['date_time'],data_f['steam'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='steam_w',alpha=0.25)
+	ln6 = ax_l.plot(data_f['date_time'],data_f['liquid'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='liquid_w',alpha=0.25)
+	ln7 = ax_WHP.plot(data_f['date_time'],data_f['WHPabs'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='WHP',alpha=0.25)
+	ln8 = ax_h.plot(data_f['date_time'],data_f['enthalpy'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='Enthalpy',alpha=0.25)
+
+
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+	ax_s.xaxis.set_major_formatter(years_fmt)
+	ax_l.xaxis.set_major_formatter(years_fmt)
+	ax_WHP.xaxis.set_major_formatter(years_fmt)
+	ax_h.xaxis.set_major_formatter(years_fmt)
+
+	ax_s.legend(loc="upper left")
+	ax_s.set_ylabel('Steam flow rate[kg/s]',fontsize = fontsize_ylabel)
+	ax_s.set_title('Weekly flow %s'%well, fontsize=fontsize_title)
+
+	ax_l.legend(loc="upper left")
+	ax_l.set_ylabel('Liquid flow rate [kg/s]',fontsize = fontsize_ylabel)
+
+
+	ax_WHP.legend(loc="upper left")
+	ax_WHP.set_ylabel('Pressure [bara]',fontsize = fontsize_ylabel)
+	ax_WHP.set_xlabel('Time ',fontsize = fontsize_ylabel)
+
+	ax_h.legend(loc="upper left")
+	ax_h.set_ylabel('Enthalpy [kJ/kg]',fontsize = fontsize_ylabel)
+	ax_h.set_xlabel('Time ',fontsize = fontsize_ylabel)
+
+	if savefig:
+		fig.savefig("../input/mh/filtered/images/%s_avg.png"%well, format='png',dpi=300)
+	else:
+		plt.show()
+
+
+
+def check_gener_D(input_dictionary):
+	"""
+	It plots the listed wells on an input dictionary from the T2 input file.
+	"""
+
+
+
+	input_fi_file="../model/t2/t2"
+
+	keywords = ['MASS','MASSi']
+	not_allowed = ['DELV']
+
+	data_dict = {'source':[],
+				 'block':[],
+				 'datetime':[],
+				 'm':[],
+				 'h':[],
+				 'type':[]}
+
+	ref_date_string = input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00")
+	ref_date_inf_string = datetime.now().strftime("%Y-%m-%d_00:00:00")
+
+	sources = 0
+	record = False
+	if os.path.isfile(input_fi_file):
+		t2_file=open(input_fi_file, "r")
+		for t2_line in t2_file:
+
+			if any (x in t2_line for x in keywords):
+				try:
+					data_lines = float(t2_line[20:31])
+					sources += 1
+					record = True
+					block= t2_line[0:5]
+					source = t2_line[5:10]
+					type_i = t2_line[30:41]
+					continue
+				except ValueError:
+					data_lines = 0
+					pass
+
+			if record and any (x not in t2_line for x in not_allowed) and data_lines > 0:
+
+				if t2_line == '\n':
+					break
+
+				date = t2_line[0:21].strip()
+				flowrate = float(t2_line[20:31].strip())
+				h = t2_line[30:41].strip()
+
+
+				if date == '-infinity':
+					date = ref_date_string
+				if date == 'infinity':
+					date = ref_date_inf_string
+
+
+				data_dict['source'].append(source)
+				data_dict['block'].append(block)
+				data_dict['type'].append(type_i)
+				data_dict['datetime'].append(date)
+				data_dict['m'].append(flowrate)
+				data_dict['h'].append(h)
+
+	data = pd.DataFrame.from_dict(data_dict)
+
+	data['datetime'] = pd.to_datetime(data['datetime'] , format="%Y-%m-%d_%H:%M:%S")
+	
+	sources = data['source'].unique()
+
+	sources_part = np.array_split(sources, 5)
+
+	for sources in sources_part:
+
+		fig = plt.figure()
+		gs = fig.add_gridspec(len(sources), hspace=0)
+		ax = gs.subplots(sharex=True, sharey=True)
+		
+		fig.suptitle('GENERD data')
+
+		for i, source in enumerate(sources):
+
+			data_i = data.loc[data['source'] == source, ['datetime', 'm', 'block', 'type']]
+
+			type_i = data_i['type'].unique()[0]
+
+			if 'i' in type_i:
+				color_i = 'b'
+			elif 'i' not in type_i:
+				color_i = 'r'
+
+			y_limits = [0,119]
+			y_ticks = [0,30,60,90,120]
+
+			ax[i].plot(data_i.datetime, abs(data_i.m), color = color_i)
+
+			ax[i].format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+			years = mdates.YearLocator()
+			years_fmt = mdates.DateFormatter('%Y')
+			ax[i].xaxis.set_major_formatter(years_fmt)
+
+			ax[i].set_yticks(y_ticks)
+			ax[i].set_ylim(y_limits)
+			ax[i].set_ylabel(source+'\n'+data_i['block'].unique()[0],fontsize = 6)
+
+
+		# Hide x labels and tick labels for all but bottom plot.
+		for axis in ax:
+		    axis.label_outer()
+
+		plt.show()
+
+

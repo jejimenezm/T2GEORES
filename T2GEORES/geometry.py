@@ -478,13 +478,14 @@ def write_feedzone_position(input_dictionary):
 	except FileNotFoundError:
 		sys.exit("There is no MD file for the well %s"%source_file)
 
-	file=open(source_txt+'well_feedzone_xyz.csv','w')
+	file=open('../input/well_feedzone_xyz.csv','w')
 
 	string="well,MD,x,y,z,type\n"
 	file.write(string)
 	for index,row in feedzones.iterrows():
-		x,y,z=MD_to_TVD(row['well'],row['MeasuredDepth'])
-		string="%s,%s,%s,%s,%s,%s\n"%(row['well'],row['MeasuredDepth'],x,y,z,row['type'])
+		x,y,z=MD_to_TVD(row['well'],row['MD'])
+		string="%s,%s,%s,%s,%s,%s\n"%(row['well'],row['MD'],x,y,z,row['type'])
+		print(string)
 		file.write(string)
 	file.close()
 

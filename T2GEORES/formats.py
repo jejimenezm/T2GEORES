@@ -197,7 +197,9 @@ formats_t2={'TITLE':['TOUGH2 INPUT FILE','<80s',1],
 					'MOP2_27':[None,'>1s',1],
 					'MOP2_28':[None,'>1s',1],
 					'MOP2_29':[None,'>1s',1],
-					'MOP2_30':[None,'>1s',1]
+					'MOP2_30':[None,'>1s',1],
+					'MOP2_31':[None,'>1s',1],
+					'MOP2_32':[None,'>1s',1]
 			         },
 			'OUTPU':{
 					 'FORMATS':['CSV','TECPLOT','PETRASIM','GNU'],
@@ -298,8 +300,11 @@ structure={'calib':{'drawdown_cooling':{'images':None},
 					'PT':{'images':{'layer_distribution':None}}
 					},
 			'input':{'cooling':None,
-			         'drawdown':None,
-			         'mh':None,
+			         'drawdown':{'images':None},
+			         'mh':{'images':None,
+			         		'filtered':{'images':None,
+			         				 	'txt':None}
+			         	   },
 			         'PT':{'GIS':None,
 			               'selection_PT':None,
 			               'warm_up':None},

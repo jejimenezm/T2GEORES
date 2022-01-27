@@ -23,6 +23,8 @@ import vtk
 import numpy as np
 from scipy.spatial import ConvexHull
 from scipy import stats
+from scipy.stats import norm
+from iapws import IAPWS97
 
 def plot_compare_one(well,savefig, no_real_data, data, TVD_elem, TVD_elem_top,axT,axP,PT_real_dictionary,layer_bottom,limit_layer,input_dictionary,label=None,def_colors=True):
 	"""It generates two plots, they compare real downhole temperature and pressure measurements with model output 
@@ -476,7 +478,7 @@ def image_save_all_plots(typePT,input_dictionary,width=3,height=6):
 	else:
 		sys.exit("There is no real data for the parameter selected: %s "%typePT)
 
-def to_paraview(input_dictionary,itime=None):
+def to_paraview(input_dictionary,itime=None, num = None):
 	"""
 	It generates a vtu file to be read on Paraview for different time output including all the parameters from each block.
 
@@ -582,37 +584,61 @@ def to_paraview(input_dictionary,itime=None):
 	src_files = os.listdir(src_directory)
 	files_dictionary={}
 	for file_name in src_files:
-		time=file_name.split("_")[2].split(".j")[0]
-		full_file_name = os.path.join(src_directory, file_name)
-		files_dictionary[time]=full_file_name
+		if not os.path.isdir(os.path.join(src_directory, file_name)):
+			time=file_name.split("_")[2].split(".j")[0]
+			full_file_name = os.path.join(src_directory, file_name)
+			files_dictionary[time]=full_file_name
+	print(files_dictionary)
+
+	if num != None:
+		positions = np.linspace(0, len(files_dictionary), num).astype(int)
+	else:
+		positions = range(len(files_dictionary))
 
 	if itime==None:
 		if files_dictionary:
-			for t in files_dictionary.keys():
-				file_name=src_directory+'/t2_output_%s.json'%t
-				with open(file_name) as file:
-				  	data_time_n=json.load(file)
+			for ix, t in enumerate(files_dictionary.keys()):
 
-				temperature=vtk.vtkFloatArray()
-				temperature.SetName('temperature')
+				if ix in positions:
+					file_name=src_directory+'/t2_output_%.0f.json'%float(t)
+					with open(file_name) as file:
+					  	data_time_n=json.load(file)
 
-				pressure=vtk.vtkFloatArray()
-				pressure.SetName('pressure')
+					print(data_time_n.keys())
 
-				for block in blocks:
-					pressure.InsertNextValue(float(data_time_n[t][block]['P'])/1E5)
-					temperature.InsertNextValue(float(data_time_n[t][block]['T']))
-					ugrid.GetCellData().AddArray(pressure)
-					ugrid.GetCellData().AddArray(temperature)
+					t = "%.1f"%float(t)
 
-				writer=vtk.vtkXMLUnstructuredGridWriter()
-				writer.SetInputData(ugrid)
-				writer.SetFileName('../output/vtu/model_%s.vtu'%t)
-				series["files"].append({"name":"mesh_%s.vtu"%t,"time":float(t)})
-				writer.SetDataModeToAscii()
-				writer.Update()
+					data = {}
+					for head in data_time_n[t][block]:
+						if head != 'ELEM':
+							data[head] = vtk.vtkFloatArray()
+							data[head].SetName(head)
 
-				writer.Write()
+					#temperature=vtk.vtkFloatArray()
+					#temperature.SetName('temperature')
+
+					#pressure=vtk.vtkFloatArray()
+					#pressure.SetName('pressure')
+
+					for block in blocks:
+						for head in data_time_n[t][block]:
+							if head != 'ELEM':
+								data[head].InsertNextValue(float(data_time_n[t][block][head]))
+								ugrid.GetCellData().AddArray(data[head])
+
+						#pressure.InsertNextValue(float(data_time_n[t][block]['P'])/1E5)
+						#temperature.InsertNextValue(float(data_time_n[t][block]['T']))
+						#ugrid.GetCellData().AddArray(pressure)
+						#ugrid.GetCellData().AddArray(temperature)
+
+					writer=vtk.vtkXMLUnstructuredGridWriter()
+					writer.SetInputData(ugrid)
+					writer.SetFileName('../output/vtu/model_%.0f.vtu'%float(t))
+					series["files"].append({"name":"mesh_%.0f.vtu"%float(t),"time":float(t)})
+					writer.SetDataModeToAscii()
+					writer.Update()
+
+					writer.Write()
 
 			with open("../output/vtu/model_.vtu.series","w") as f:
 				json.dump(series,f)
@@ -1115,7 +1141,6 @@ def plot_evol_well_lines(calculated,real_data,parameter,depth,header,well,layer,
 	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
 	ax.grid(True)
 
-
 def cross_section_real_data(wells,ngrid,masl,PT,save_img,model_version):
 	"""It Generates a vertical cross section for a specified parameter on a defined path.
 
@@ -1238,8 +1263,6 @@ def cross_section_real_data(wells,ngrid,masl,PT,save_img,model_version):
 
 
 
-#Not documented
-
 def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt",previnpath="../output/PT/txt/prev",show=False):
 
 	conn=sqlite3.connect(db_path)
@@ -1254,76 +1277,77 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 	fig= plt.figure(figsize=(10, 12), dpi=300)
 
 	axT=fig.add_subplot(121)
-	axT_COF = axT.twiny()
 
 	axP=fig.add_subplot(122)
-	axP_COF = axP.twiny()
-
-
-	COF_locations = [0, 0.2, 0.4, 0.6, 0.8, 1]
-
-	# Move twinned axis ticks and label from top to bottom
-	axT_COF.xaxis.set_ticks_position("top")
-	axT_COF.xaxis.set_label_position("top")
-
-	# Offset the twin axis below the host
-	axT_COF.spines["top"].set_position(("axes", 1.03))
-
-	# Turn on the frame for the twin axis, but then hide all 
-	# but the bottom spine
-	axT_COF.set_frame_on(True)
-	axT_COF.patch.set_visible(False)
-
-	for sp in axT_COF.spines.values():
-	    sp.set_visible(False)
-	axT_COF.spines["top"].set_visible(True)
-
-	axT_COF.set_xticks(COF_locations)
-	axT_COF.set_xlabel("COF")
-	axT_COF.set_xlim([0,1])
-
-
-	# Move twinned axis ticks and label from top to bottom
-	axP_COF.xaxis.set_ticks_position("top")
-	axP_COF.xaxis.set_label_position("top")
-
-	# Offset the twin axis below the host
-	axP_COF.spines["top"].set_position(("axes", 1.03))
-
-	# Turn on the frame for the twin axis, but then hide all 
-	# but the bottom spine
-	axP_COF.set_frame_on(True)
-	axP_COF.patch.set_visible(False)
-
-	for sp in axP_COF.spines.values():
-	    sp.set_visible(False)
-	axP_COF.spines["top"].set_visible(True)
-
-	axP_COF.set_xticks(COF_locations)
-	axP_COF.set_xlabel("COF")
-
-	axP_COF.set_xlim([0,1])
-
-	#Real data
-	data_PT_real=pd.read_sql_query("SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well='%s' ORDER BY MeasuredDepth DESC;"%name,conn)
-
 
 	col_name=['rocktype','data','R','G','B']
 	rocks_colors=pd.read_csv("../mesh/to_steinar/rocks",delim_whitespace=True,names=col_name)
 	rocks_colors.set_index('rocktype', inplace=True)
 
-	x_T,y_T,z_T,var_T=geometry.MD_to_TVD_one_var_array(name,data_PT_real['Temperature'].values,data_PT_real['MeasuredDepth'].values)
+	#Real data
+	data_PT_real=pd.read_sql_query("SELECT well, MeasuredDepth, Pressure, Temperature FROM PT WHERE well='%s' ORDER BY MeasuredDepth DESC;"%name,conn)
 
-	ln1T=axT.plot(var_T,z_T,'-r',linewidth=1,label='Measured')
+	if len(data_PT_real)>0:
 
-	x_P,y_P,z_P,var_P=geometry.MD_to_TVD_one_var_array(name,data_PT_real['Pressure'].values,data_PT_real['MeasuredDepth'].values)
+		x_T,y_T,z_T,var_T=geometry.MD_to_TVD_one_var_array(name,data_PT_real['Temperature'].values,data_PT_real['MeasuredDepth'].values)
 
-	ln1P=axP.plot(var_P,z_P,'-b',linewidth=1,label='Measured')
+		ln1T=axT.plot(var_T,z_T,'-r',linewidth=1,label='Estimated ')
+
+		x_P,y_P,z_P,var_P=geometry.MD_to_TVD_one_var_array(name,data_PT_real['Pressure'].values,data_PT_real['MeasuredDepth'].values)
+
+		ln1P=axP.plot(var_P,z_P,'-b',linewidth=1,label='Estimated ')
 
 
 	COF_PT_file = "../output/PT/json/COF_PT.json"
 	if os.path.isfile(COF_PT_file):
 		COF_PT = pd.read_json(COF_PT_file)
+
+		axP_COF = axP.twiny()
+		axT_COF = axT.twiny()
+
+		COF_locations = [0, 0.2, 0.4, 0.6, 0.8, 1]
+
+		# Move twinned axis ticks and label from top to bottom
+		axT_COF.xaxis.set_ticks_position("top")
+		axT_COF.xaxis.set_label_position("top")
+
+		# Offset the twin axis below the host
+		axT_COF.spines["top"].set_position(("axes", 1.03))
+
+		# Turn on the frame for the twin axis, but then hide all 
+		# but the bottom spine
+		axT_COF.set_frame_on(True)
+		axT_COF.patch.set_visible(False)
+
+		for sp in axT_COF.spines.values():
+		    sp.set_visible(False)
+		axT_COF.spines["top"].set_visible(True)
+
+		axT_COF.set_xticks(COF_locations)
+		axT_COF.set_xlabel("COF")
+		axT_COF.set_xlim([0,1])
+
+
+		# Move twinned axis ticks and label from top to bottom
+		axP_COF.xaxis.set_ticks_position("top")
+		axP_COF.xaxis.set_label_position("top")
+
+		# Offset the twin axis below the host
+		axP_COF.spines["top"].set_position(("axes", 1.03))
+
+		# Turn on the frame for the twin axis, but then hide all 
+		# but the bottom spine
+		axP_COF.set_frame_on(True)
+		axP_COF.patch.set_visible(False)
+
+		for sp in axP_COF.spines.values():
+		    sp.set_visible(False)
+		axP_COF.spines["top"].set_visible(True)
+
+		axP_COF.set_xticks(COF_locations)
+		axP_COF.set_xlabel("COF")
+
+		axP_COF.set_xlim([0,1])
 	else:
 		print("No file on %s"%COF_PT_file)
 
@@ -1333,9 +1357,7 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 	else:
 		print("No file on %s"%COF_PT_prev_file)
 
-	
 	layers_block={layers['name'][n]:layers['middle'][n] for n in range(len(layers['name']))}
-
 
 	#Model
 
@@ -1347,12 +1369,22 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 
 		data=pd.read_csv(in_file)
 
+		if 'T' in data.columns:
+			T_colum = 'T'
+		elif 'TEMP' in data.columns:
+			T_colum = 'TEMP'
+
+		if 'P' in data.columns:
+			P_colum = 'P'
+		elif 'PRES_VAP' in data.columns:
+			P_colum = 'PRES_VAP'
+
+
 		blk_num=data['ELEM'].values
 
 		TVD_elem=[0 for n in range(len(blk_num))]
 		TVD_elem_top=[0 for n in range(len(blk_num))]
 		TVD_elem_bottom=[0 for n in range(len(blk_num))]
-
 		for n in range(len(blk_num)):
 			TVD_elem[n]=float(pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['middle'])
 			TVD_elem_top[n]=float(pd.read_sql_query("SELECT top FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['top'])
@@ -1379,70 +1411,56 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 
 			lnCOFP = axP_COF.plot(P_COF['COF'],P_COF['masl'],'--+',lw=0.2,ms=2, color = 'grey',label = 'Current calculation')
 
-
 		#Rock types
-		ys=TVD_elem_top[0:-1]
-		ys.append(TVD_elem_top[0])
-		ys.append(TVD_elem_top[-1])
-		ys.append(TVD_elem_bottom[-1])
+		layers_block_limits = {layers['name'][n]:[layers['top'][n],layers['bottom'][n]] for n in range(len(layers['name']))}
+
+		#like {'A':[500,400],'B': [400,300]}
+
 		xs=[290,310]
-
-		for iy,ysi in enumerate(ys):
-			if iy+2<len(ys):
-				colori=rocks_colors.loc[ELEME[blk_num[iy]]['MA1']]
-				if blk_num[iy][0]!='U' and blk_num[iy][0]!='T':
-					axT.fill_between(xs,ysi,ys[iy+1],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
-				elif blk_num[iy][0]=='T':
-					axT.fill_between(xs,ysi,ys[iy+3],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
-				else:
-					axT.fill_between(xs,ys[iy+1],ys[iy+2],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
-
-
-		ln2T=axT.plot(data['T'],TVD_elem,'+r',linewidth=1,label='Current calculation')
-
-		ln2P=axP.plot(data['P']/1E5,TVD_elem,'+b',linewidth=1,label='Current calculation')
-
-		axT.set_ylim([TVD_elem_bottom[-1],max(max(z_T),max(TVD_elem_top))])
-		axT.set_xlim([20,305])
-		axP.set_ylim([TVD_elem_bottom[-1],max(max(z_T),max(TVD_elem_top))])
-		axP.set_xlim([0,305])
-
-		ax2P = axP.twinx()
-
-		layer_corr=[data['ELEM'].values[n][0] for n in range(len(blk_num))]
-
-		ax2P.set_yticks(TVD_elem_top,minor=True)
-
-		ax2P.set_yticks(TVD_elem,minor=False)
-
-		ax2P.tick_params(axis='y',which='major',length=0)
-
-		ax2P.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
-
-		ax2P.set_yticklabels(layer_corr,fontsize=fontsize_layer)
-
-		ax2P.set_ylim(axP.get_ylim())
-
-
-		ax2T = axT.twinx()
-
-		ax2T.set_yticks(TVD_elem_top,minor=True)
-
-		ax2T.set_yticks(TVD_elem,minor=False)
 		
-		ax2T.tick_params(axis='y',which='major',length=0)
+		for iy,block in enumerate(blk_num):
+			colori=rocks_colors.loc[ELEME[block]['MA1']]
+			axT.fill_between(xs,layers_block_limits[block[0]][1],layers_block_limits[block[0]][0],alpha=0.5,color=[(colori['R']/255.0,colori['G']/255.0,colori['B']/255.0)])
 
-		ax2T.set_yticklabels(layer_corr,fontsize=fontsize_layer)
 
-		ax2T.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
+		ln2T=axT.plot(data[T_colum],TVD_elem,'+r',linewidth=1,label='Current calculation')
 
-		ax2T.set_ylim(axT.get_ylim())
+		def tsat(y):
+			try:
+				val = IAPWS97(P=(y/1E6),x=0).T - 273.15
+			except NotImplementedError:
+				val = np.nan
+			return val
+
+		data['sat'] = data.apply(lambda y: tsat(y[P_colum]), axis = 1)
+
+		ln2Tsat=axT.plot(data['sat'],TVD_elem,'sr',linewidth=1,label='T SAT', ms = 4)
+
+		ln2P=axP.plot(data[P_colum]/1E5,TVD_elem,'+b',linewidth=1,label='Current calculation', ms = 4)
+
+		if 'PSAT' in data.columns:
+			ln2PSAT=axP.plot(data['PSAT']/1E5,TVD_elem,'sb',linewidth=1,label='PSAT')
+			lgd_PSAT = True
+		else:
+			lgd_PSAT = False
 
 	if os.path.isfile(prev_in_file):
 
 		data=pd.read_csv(prev_in_file)
 
+		if 'T' in data.columns:
+			T_colum = 'T'
+		elif 'TEMP' in data.columns:
+			T_colum = 'TEMP'
+
+		if 'P' in data.columns:
+			P_colum = 'P'
+		elif 'PRES_VAP' in data.columns:
+			P_colum = 'PRES_VAP'
+
+
 		blk_num=data['ELEM'].values
+
 
 		TVD_elem=[0 for n in range(len(blk_num))]
 		TVD_elem_top=[0 for n in range(len(blk_num))]
@@ -1451,9 +1469,10 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 			TVD_elem[n]=float(pd.read_sql_query("SELECT middle FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['middle'])
 			TVD_elem_top[n]=float(pd.read_sql_query("SELECT top FROM layers WHERE correlative='%s';"%data['ELEM'].values[n][0],conn)['top'])
 
-		ln3T=axT.plot(data['T'],TVD_elem,'.',linewidth=1,label='Previously calculated', color="orangered")
 
-		ln3P=axP.plot(data['P']/1E5,TVD_elem,'.',linewidth=1,label='Previously calculated', color="indigo")
+		ln3T=axT.plot(data[T_colum],TVD_elem,'.',linewidth=1,label='Previously calculated', color="orangered")
+
+		ln3P=axP.plot(data[P_colum]/1E5,TVD_elem,'.',linewidth=1,label='Previously calculated', color="indigo")
 
 
 		if os.path.isfile(COF_PT_prev_file):
@@ -1461,8 +1480,8 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 			T_COF_prev=COF_PT_prev[COF_PT_prev['DATASET'].str.endswith("T-%s"%name)]
 			P_COF_prev=COF_PT_prev[COF_PT_prev['DATASET'].str.endswith("P-%s"%name)]
 
-			T_COF_prev['ELEME']=None
-			T_COF_prev['masl']=None
+			T_COF_prev['ELEME'] = None
+			T_COF_prev['masl'] = None
 			for index, row in T_COF_prev.iterrows():
 				T_COF_prev.loc[T_COF_prev['DATASET']==row['DATASET'],'ELEME'] = row['DATASET'][0:5]
 				T_COF_prev.loc[T_COF_prev['DATASET']==row['DATASET'],'masl'] = layers_block[row['DATASET'][0]]
@@ -1478,45 +1497,95 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 
 			lnCOFP_prev=axP_COF.plot(P_COF_prev['COF'],P_COF_prev['masl'],'-+',lw=0.2,ms=2, color = 'teal',label = 'Previously calculated')
 
+		lnsT = ln2T+ln3T + ln2Tsat
 
-		lnsT = ln1T+ln2T+ln3T+lnCOFT
+		lnsP = ln2P+ln3P
+
+		if os.path.isfile(COF_PT_file):
+			lnsT += lnCOFT
+			lnsP += lnCOFP
+
+		if lgd_PSAT:
+			lnsP+=ln2PSAT
 
 		if os.path.isfile(COF_PT_prev_file):
+			lnsP+=lnCOFP_prev
 			lnsT+=lnCOFT_prev
+
+		if len(data_PT_real)>0:
+			lnsP+=ln1T
+			lnsT+=ln1P
 
 		labsT = [l.get_label() for l in lnsT]
 
 		axT.legend(lnsT, labsT, loc='lower left', fontsize=fontsizex)
 
-		axT.set_xlabel('Temperature [C]',fontsize=fontsizex)
-
-		axT.xaxis.set_label_coords(0.5,1.1)
-
-		axT.xaxis.tick_top()
-
-		axT.set_ylabel('m.a.s.l.',fontsize = fontsizex)
-
-		axT.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
-		
-		lnsP = ln1P+ln2P+ln3P+lnCOFP
-
-		if os.path.isfile(COF_PT_prev_file):
-			lnsP+=lnCOFP_prev
-
 		labsP = [l.get_label() for l in lnsP]
-
-		axP.legend(lnsP, labsP, loc='lower left', fontsize=fontsizex)
-		
-		axP.set_xlabel('Pressure [bar]',fontsize=fontsizex)
-
-		axP.xaxis.set_label_coords(0.5,1.1)
-
-		axP.xaxis.tick_top()
-
-		axP.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
-
-		fig.suptitle("%s"%name, fontsize=fontsizex)
 	
+		axP.legend(lnsP, labsP, loc='lower left', fontsize=fontsizex)
+
+	if len(data_PT_real)>0:
+		try:
+			axT.set_ylim([sorted(TVD_elem_bottom)[0],sorted(TVD_elem_top)[-1]])
+			axP.set_ylim([sorted(TVD_elem_bottom)[0],sorted(TVD_elem_top)[-1]])
+		except UnboundLocalError:
+			axT.set_ylim([-3000,550])
+			axP.set_ylim([-3000,550])
+			print(name)
+
+	axT.set_xlim([20,305])
+	axP.set_xlim([0,305])
+
+	ax2P = axP.twinx()
+
+	layer_corr=[data['ELEM'].values[n][0] for n in range(len(blk_num))]
+
+	ax2P.set_yticks(TVD_elem_top,minor=True)
+
+	ax2P.set_yticks(TVD_elem,minor=False)
+
+	ax2P.tick_params(axis='y',which='major',length=0)
+
+	ax2P.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
+
+	ax2P.set_yticklabels(layer_corr,fontsize=fontsize_layer)
+
+	ax2P.set_ylim(axP.get_ylim())
+
+	ax2T = axT.twinx()
+
+	ax2T.set_yticks(TVD_elem_top,minor=True)
+
+	ax2T.set_yticks(TVD_elem,minor=False)
+	
+	ax2T.tick_params(axis='y',which='major',length=0)
+
+	ax2T.set_yticklabels(layer_corr,fontsize=fontsize_layer)
+
+	ax2T.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.5, lw=0.5)
+
+	ax2T.set_ylim(axT.get_ylim())
+
+	axT.set_xlabel('Temperature [C]',fontsize=fontsizex)
+
+	axT.xaxis.set_label_coords(0.5,1.1)
+
+	axT.xaxis.tick_top()
+
+	axT.set_ylabel('m.a.s.l.',fontsize = fontsizex)
+
+	axT.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
+
+	axP.set_xlabel('Pressure [bar]',fontsize=fontsizex)
+
+	axP.xaxis.set_label_coords(0.5,1.1)
+
+	axP.xaxis.tick_top()
+
+	axP.tick_params(axis='both', which='major', labelsize=fontsizex,pad=1)
+
+	fig.suptitle("%s"%name, fontsize=fontsizex)
+
 	if  os.path.isfile(prev_in_file) and  os.path.isfile(in_file):
 		fig.savefig('../calib/PT/images/PT_%s.png'%name) 
 
@@ -1525,7 +1594,24 @@ def plot_compare_PT_curr_prev(db_path,name,ELEME,layers,inpath="../output/PT/txt
 
 	return fig
 
-def compare_runs_PT(input_dictionary,comment=''):
+def compare_runs_PT(input_dictionary,comment='', compare_wells = True):
+	"""It generates a pdf for calibration pourposes, comparing current and previous data set
+
+	Parameters
+	----------	   
+	input_dictionary : dict
+		Contains well names, model version, db path and layers information.
+
+	Returns
+	-------
+	pdf
+		run_{date_time}.pdf: on '../calib/PT/run
+
+	Note
+	----
+	Some other files such as ELEME.json, OBJ.json and COF_PT.json must be ready.
+
+	"""
 
 	db_path=input_dictionary['db_path']
 	model_version=input_dictionary['model_version']
@@ -1549,11 +1635,10 @@ def compare_runs_PT(input_dictionary,comment=''):
 	else:
 		sys.exit("The file %s does not exist"%(eleme_json_file))
 
-
-
-	for name in sorted(wells):
-		fig = plot_compare_PT_curr_prev(db_path,name,ELEME,layers,"../output/PT/txt","../output/PT/txt/prev",show=False)
-		pdf_pages.savefig(fig)
+	if compare_wells:
+		for name in sorted(wells):
+			fig = plot_compare_PT_curr_prev(db_path,name,ELEME,layers,"../output/PT/txt","../output/PT/txt/prev",show=False)
+			pdf_pages.savefig(fig)
 
 
 	#Scatter plot
@@ -1562,54 +1647,93 @@ def compare_runs_PT(input_dictionary,comment=''):
 	axT=fig.add_subplot(121)
 	axP=fig.add_subplot(122)
 
-	layers_block={layers['name'][n]:layers['middle'][n] for n in range(len(layers['name']))}
+	layers_block = {layers['name'][n]:layers['middle'][n] for n in range(len(layers['name']))}
 
 	OBJ_PT_file = "../output/PT/json/it2_PT.json"
 	if os.path.isfile(OBJ_PT_file):
 		OBJ_PT = pd.read_json(OBJ_PT_file)
+
+		data_T=[]
+		data_P=[]
+
+		for name in sorted(wells):
+			in_file="%s/%s_PT.dat"%("../output/PT/txt",name)
+			data=pd.read_csv(in_file)
+
+			if 'T' in data.columns:
+				T_colum = 'T'
+			elif 'TEMP' in data.columns:
+				T_colum = 'TEMP'
+
+			if 'P' in data.columns:
+				P_colum = 'P'
+			elif 'PRES_VAP' in data.columns:
+				P_colum = 'PRES_VAP'
+
+			for index,row in data.iterrows():
+				T_COF = OBJ_PT.loc[OBJ_PT['OBSERVATION']=="%s-T-%s"%(row['ELEM'],name),'MEASURED']
+				P_COF = OBJ_PT.loc[OBJ_PT['OBSERVATION']=="%s-P-%s"%(row['ELEM'],name),'MEASURED']
+				if len(P_COF)>0 and len(T_COF)>0:
+					print(row[T_colum],float(T_COF.values[0]))
+					data_T.append([row[T_colum],float(T_COF.values[0])])
+					data_P.append([row[P_colum]/1E5,float(P_COF.values[0])/1E5])
+
+		data_T=np.array(data_T)
+		resT = stats.linregress(data_T[:,0],data_T[:,1])
+		
+		data_P=np.array(data_P)
+		resP = stats.linregress(data_P[:,0],data_P[:,1])
+
+		axT.plot(data_T[:,0],data_T[:,1],'or',linestyle='None')
+		T_s=np.linspace(min(data_T[:,0]),max(data_T[:,0]),10)
+		axT.plot(T_s,resT.slope*T_s+resT.intercept,'--k',label='%.2f*P+%.2f'%(resT.slope,resT.intercept))
+		axT.set_xlim([50,320])
+		axT.set_ylim([50,320])
+		axT.set_ylabel('Calculated Temperature [C]')
+		axT.set_xlabel('Measured Temperature [C]')
+		axT.legend()
+
+		axP.plot(data_P[:,0],data_P[:,1],'ob',linestyle='None')
+		P_s=np.linspace(min(data_P[:,0]),max(data_P[:,0]),10)
+		axP.plot(P_s,resP.slope*P_s+resP.intercept,'--k',label='%.2f*P+%.2f'%(resP.slope,resP.intercept))
+		axP.set_xlim([0,250])
+		axP.set_ylim([0,250])
+		axP.set_ylabel('Calculated Pressure [bar]')
+		axP.set_xlabel('Measured Pressure [bar]')
+		axP.legend()
+
+		pdf_pages.savefig()
+		plt.close()
+
+		#Histogram
+
+		fig= plt.figure(figsize=(24, 12), dpi=300)
+		ax=fig.add_subplot(121)
+		ax2=fig.add_subplot(122)
+		# An "interface" to matplotlib.axes.Axes.hist() method
+		T_diff = (data_T[:,0]-data_T[:,1]) 
+		n, bins, patches = ax.hist(x=T_diff, bins = 20, density = True, rwidth=0.85, color = "lightcoral")
+		muT, stdT = norm.fit(T_diff)
+		T_diff_x = np.linspace(min(T_diff), max(T_diff), 100)
+		ax.plot(bins,norm.pdf(bins, muT, stdT),'--r')
+
+		P_diff = (data_P[:,0]-data_P[:,1]) 
+		n2, bins2, patches2 = ax2.hist(x=P_diff, bins = 20, density = True, width=0.85, color = "steelblue")
+		P_diff_x = np.linspace(min(P_diff), max(P_diff), 100)
+		muP, stdP = norm.fit(P_diff)
+		ax2.plot(bins2,norm.pdf(bins2, muP, stdP),'--r')
+
+		ax.set_xlabel('Diff [C]')
+		ax.set_ylabel('Frequency')
+		ax.set_title(r'$\mu = '+'%.2f ,'%muT+r'\sigma$ = '+'%.2f'%stdT)
+
+		ax2.set_xlabel('Diff [bar]')
+		ax2.set_ylabel('Frequency')
+		ax2.set_title(r'$\mu = '+'%.2f ,'%muP+r'\sigma$ = '+'%.2f'%stdP)
+		pdf_pages.savefig()
+		plt.close()
 	else:
 		print("No file on %s"%OBJ_PT_file)
-
-	data_T=[]
-	data_P=[]
-
-	for name in sorted(wells):
-		in_file="%s/%s_PT.dat"%("../output/PT/txt",name)
-		data=pd.read_csv(in_file)
-
-		for index,row in data.iterrows():	
-			T_COF = OBJ_PT.loc[OBJ_PT['OBSERVATION']=="%s-T-%s"%(row['ELEM'],name),'MEASURED']
-			P_COF = OBJ_PT.loc[OBJ_PT['OBSERVATION']=="%s-P-%s"%(row['ELEM'],name),'MEASURED']
-			if len(P_COF)>0 and len(T_COF)>0:
-				data_T.append([row['T'],T_COF.values[0]])
-				data_P.append([row['P']/1E5,P_COF.values[0]/1E5])
-
-	data_T=np.array(data_T)
-	resT = stats.linregress(data_T[:,0],data_T[:,1])
-	
-	data_P=np.array(data_P)
-	resP = stats.linregress(data_P[:,0],data_P[:,1])
-
-	axT.plot(data_T[:,0],data_T[:,1],'or',linestyle='None')
-	T_s=np.linspace(min(data_T[:,0]),max(data_T[:,0]),10)
-	axT.plot(T_s,resT.slope*T_s+resT.intercept,'--k',label='%.2f*P+%.2f'%(resT.slope,resT.intercept))
-	axT.set_xlim([50,320])
-	axT.set_ylim([50,320])
-	axT.set_ylabel('Calculated Temperature [C]')
-	axT.set_xlabel('Measured Temperature [C]')
-	axT.legend()
-
-	axP.plot(data_P[:,0],data_P[:,1],'ob',linestyle='None')
-	P_s=np.linspace(min(data_P[:,0]),max(data_P[:,0]),10)
-	axP.plot(P_s,resP.slope*P_s+resP.intercept,'--k',label='%.2f*P+%.2f'%(resP.slope,resP.intercept))
-	axP.set_xlim([0,250])
-	axP.set_ylim([0,250])
-	axP.set_ylabel('Calculated Pressure [bar]')
-	axP.set_xlabel('Measured Pressure [bar]')
-	axP.legend()
-
-	pdf_pages.savefig()
-	plt.close()
 
 	#Objective function
 
@@ -1624,8 +1748,17 @@ def compare_runs_PT(input_dictionary,comment=''):
 
 		ax.plot(OBJ["TIME"],OBJ['OBJ'],'ok',ms=2,linestyle="None")
 
+		labels = []
+		for label in OBJ["TIME"].to_list():
+			label = label.split('_')
+			labels.append(label[0] + '\n' + label[1])
+
+		ax.set_xticklabels(labels)
+
 		ax.set_ylabel('Val')
 		ax.set_xlabel('Time')
+
+		ax.tick_params(axis='x', labelrotation=90,labelsize=6)
 
 		pdf_pages.savefig()
 		plt.close()
@@ -1651,3 +1784,769 @@ def compare_runs_PT(input_dictionary,comment=''):
 
 	# Write the PDF document to the disk
 	pdf_pages.close()
+
+def plot_compare_mh(input_dictionary, well,block,source,save,show, production_dictionary, years = 35, variables = [], plot_feedzones = True):
+	"""Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular
+
+	Parameters
+	----------	  
+	well : str
+	  Nombre de pozo
+	block : str
+	  Nombre de bloque, en general donde se ubica zona de alimentacion
+	source : str
+	  Nombre de fuente asociada a pozo
+	save : bool
+	  Almacaena la grafica generada
+	show : bool
+	  Almacaena la grafica generada
+
+	Returns
+	-------
+	image
+		{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/
+
+	Note
+	----
+	El archivo correspondiente en la carpeta  ../output/mh/txt debe existir
+
+	Examples
+	--------
+	>>> plot_compare_mh('AH-1','DA110','SRC1',save=True,show=False)
+	"""
+
+	#Read file, current calculated
+	file="../output/mh/txt/%s_%s_%s_evol_mh.dat"%(well,block,source)
+	OBJ_file = "../output/PT/json/it2_PT.json"
+	OBJ_file_prev = "../output/PT/json/prev/it2_PT.json"
+
+	if os.path.isfile(file):
+
+		fig = plt.figure(figsize=(10,4.5))
+		ax = plt.subplot(111)
+		ax1 = ax.twinx()
+
+		#Section dedicated to wells with more with one feedzone. iT2 computes the weighted enthlapy and the flowrate sum for each timestep define on the iT2 file
+		if well in production_dictionary and not plot_feedzones:
+			data_t = pd.read_json(OBJ_file)
+			data_h = data_t.loc[data_t['OBSERVATION'] == production_dictionary[well][0],['TIME','COMPUTED']]
+			data_r = data_t.loc[data_t['OBSERVATION'] == production_dictionary[well][1],['TIME','COMPUTED']]
+
+			times = data_h['TIME']
+
+			dates_h=[]
+			for ind in times.index:
+				if float(times[ind])>=0:
+					try:
+						dates_h.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+					except OverflowError:
+						print(times[ind],"plus",str(times[ind]),"wont be plot")
+				else:
+					print(times[ind])
+
+			times = data_r['TIME']
+
+			dates_r=[]
+			for ind in times.index:
+				if float(times[ind])>=0:
+					try:
+						dates_r.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+					except OverflowError:
+						print(times[ind],"plus",str(times[ind]),"wont be plot")
+				else:
+					print(times[ind])
+
+			ax.set_title("Well: %s"%(well) ,fontsize=8)
+			ax.set_ylabel('Flow rate [kg/s]',fontsize = 8)
+			ax.set_xlabel("Time",fontsize = 8)
+
+
+			ax.plot(dates_r,np.absolute(data_r['COMPUTED']),color=formats.plot_conf_color['m'][1],\
+				linestyle='--',ms=5,label='Computed flow',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+
+			ax1.set_ylabel('Enthalpy [kJ/kg]',fontsize = 8)
+
+			ax1.plot(dates_h,np.absolute(data_h['COMPUTED'])/1E3,\
+				linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,label='Computed enthalpy',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+			ax1.set_ylim([500,3000])
+
+			data_t = pd.read_json(OBJ_file_prev)
+			data_h = data_t.loc[data_t['OBSERVATION'] == production_dictionary[well][0],['TIME','COMPUTED']]
+			data_r = data_t.loc[data_t['OBSERVATION'] == production_dictionary[well][1],['TIME','COMPUTED']]
+
+			times = data_h['TIME']
+
+			dates_h=[]
+			for ind in times.index:
+				if float(times[ind])>=0:
+					try:
+						dates_h.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+					except OverflowError:
+						print(times[ind],"plus",str(times[ind]),"wont be plot")
+				else:
+					print(times[ind])
+
+			times = data_r['TIME']
+
+			dates_r=[]
+			for ind in times.index:
+				if float(times[ind])>=0:
+					try:
+						dates_r.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+					except OverflowError:
+						print(times[ind],"plus",str(times[ind]),"wont be plot")
+				else:
+					print(times[ind])
+
+			ax.set_title("Well: %s"%(well) ,fontsize=8)
+			ax.set_ylabel('Flow rate [kg/s]',fontsize = 8)
+			ax.set_xlabel("Time",fontsize = 8)
+
+
+			ax.plot(dates_r,np.absolute(data_r['COMPUTED']),color=formats.plot_conf_color['m'][1],\
+				linestyle='--',ms=5,label='Computed flow prev',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1]-0.25)
+
+
+			ax1 = ax.twinx()
+			ax1.set_ylabel('Enthalpy [kJ/kg]',fontsize = 8)
+			ax1.set_ylim([500,3000])
+
+
+			ax1.plot(dates_h,np.absolute(data_h['COMPUTED'])/1E3,\
+				linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,label='Computed enthalpy prev',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1]-0.25)
+
+
+
+
+		else:
+			data=pd.read_csv(file)
+			#data.replace(0,np.nan, inplace=True)
+
+			#Setting the time to plot
+			
+			times=data['TIME']
+
+			dates=[]
+			for n in range(len(times)):
+				if float(times[n])>0:
+					try:
+						dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+					except OverflowError:
+						print(times[n],"plus",str(times[n]),"wont be plot")
+
+			if len(variables) == 0:
+
+				
+				enthalpy=[]
+				flow_rate=[]
+
+				for n in range(len(times)):
+					if float(times[n])>0:
+						try:
+							#dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+
+							if 'ENTHALPY' in data.columns:
+								H_colum = 'ENTHALPY'
+							elif 'ENTH' in data.columns:
+								H_colum = 'ENTH'
+
+							if 'GENERATION RATE' in data.columns:
+								m_colum = 'GENERATION RATE'
+							elif 'GEN' in data.columns:
+								m_colum = 'GEN'
+
+							enthalpy.append(data[H_colum][n]/1E3)
+							flow_rate.append(data[m_colum][n])
+						except OverflowError:
+							print(times[n],"plus",str(times[n]),"wont be plot")
+
+		
+			#Real data
+
+			ax.set_title("Well: %s, block %s, source %s"%(well,block,source) ,fontsize=8)
+			ax.set_ylabel('Flow rate [kg/s]',fontsize = 8)
+			ax.set_xlabel("Time",fontsize = 8)
+
+			ax1.set_ylabel('Enthalpy [kJ/kg]',fontsize = 8)
+			ax1.set_ylim([500,2700])
+			
+			if len(variables) == 0:
+
+				ax.plot(dates,np.absolute(flow_rate),color=formats.plot_conf_color['m'][1],\
+					linestyle='--',ms=5,label='Calculated flow',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+
+				ax1.plot(dates,enthalpy,\
+					linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,label='Calculated enthalpy',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+				
+			else:
+				for var in variables:
+					ax.plot(dates,data[var].loc[data.TIME>0],\
+						linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+		
+
+		try:
+			data_real=pd.read_csv("../input/mh/%s_mh.dat"%well)
+			data_real['date_time'] = pd.to_datetime(data_real['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+			data_real=data_real.set_index(['date_time'])
+			data_real.index = pd.to_datetime(data_real.index)
+
+			data_real['total_flow']=data_real['steam']+data_real['liquid']
+
+			#Plotting
+
+			#ax=data[['Flujo_total']].plot(figsize=(12,4),legend=False,linestyle="-")
+
+			ax.plot(data_real.index,data_real['steam']+data_real['liquid'],\
+				linestyle='-',color=formats.plot_conf_color['m'][0],ms=3,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+			ax1.plot(data_real.index,data_real['enthalpy'],'ob',\
+				linestyle='None',color=formats.plot_conf_color['h'][0],ms=3,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+			real_data=True
+			
+		except FileNotFoundError:
+			real_data=False
+			print("No real data for %s"%well)
+			pass
+
+		if len(variables) == 0:
+
+			if real_data:
+				plt.legend([ax.get_lines()[0],ax.get_lines()[1],ax1.get_lines()[0],ax1.get_lines()[1]],\
+				                   ['Computed flow rate ','Measured flow rate ',\
+				                    'Computed enthalpy', 'Estimated enthalpy'],loc="lower center", bbox_to_anchor=(0.5, -0.25), ncol=4, fancybox=True, shadow=True)
+			else:
+				plt.legend([ax.get_lines()[0],ax1.get_lines()[0]],\
+				           ['Computed Flow rate ','Estimated enthalpy'], loc="lower center", bbox_to_anchor=(0.5, -0.25), ncol=2,  fancybox=True, shadow=True)
+
+
+		box = ax.get_position()
+		ax.set_position([box.x0, box.y0+0.1, box.width, box.height*0.9])
+
+		#Plotting formating
+		#xlims=[min(dates)-datetime.timedelta(days=365),max(dates)+datetime.timedelta(days=365)]
+		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+
+		xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=years*365.25)]
+		#ylims=[0,100]
+		#ax1.set_ylim(ylims)
+
+		ax.set_xlim(xlims)
+		years = mdates.YearLocator()
+		years_fmt = mdates.DateFormatter('%Y')
+
+		ax.xaxis.set_major_formatter(years_fmt)
+
+		#ax.xaxis.set_major_locator(years)
+		#fig.autofmt_xdate()
+
+		#Grid style
+		ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+		ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+		ax.grid(True)
+
+		if save:
+			fig.savefig('../output/mh/images/%s_%s_%s_evol.png'%(well,block,source)) 
+		if show:
+			plt.show()
+	else:
+		print("There is not a file called %s, try running src_evol from output.py"%file)
+
+
+def plot_compare_PT(input_dictionary, well,block,save,show):
+	"""Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular
+
+	Parameters
+	----------	  
+	well : str
+	  Nombre de pozo
+	block : str
+	  Nombre de bloque, en general donde se ubica zona de alimentacion
+	source : str
+	  Nombre de fuente asociada a pozo
+	save : bool
+	  Almacaena la grafica generada
+	show : bool
+	  Almacaena la grafica generada
+
+	Returns
+	-------
+	image
+		{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/
+
+	Note
+	----
+	El archivo correspondiente en la carpeta  ../output/mh/txt debe existir
+
+	Examples
+	--------
+	>>> plot_compare_mh('AH-1','DA110','SRC1',save=True,show=False)
+	"""
+
+	#Read file, current calculated
+	file = "../output/PT/evol/%s_PT_evol.dat"%(well)
+
+	if os.path.isfile(file):
+		data=pd.read_csv(file)
+
+		#Setting the time to plot
+		
+		times = data['TIME'].loc[data['ELEM'] == block]
+		times.reset_index(drop=True)
+		dates = []
+		for time  in times:
+			try:
+				dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
+			except OverflowError:
+				print(time, "wont be plot")
+
+		#Real data
+
+		fig, ax = plt.subplots(figsize=(10,4))
+
+		ax.plot(dates,data['TEMP'].loc[(data['ELEM'] == block) & (data['TIME'] > 0)],color=formats.plot_conf_color['T'][1],\
+			linestyle='--',ms=5,label='Temperature',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+		ax.set_title("Well: %s, block %s "%(well,block) ,fontsize=8)
+		ax.set_xlabel("Time",fontsize = 8)
+		ax.set_ylabel('Temperature [C]',fontsize = 8)
+
+		ax1 = ax.twinx()
+
+		ax1.plot(dates,data['PRES_VAP'].loc[(data['ELEM'] == block) & (data['TIME']> 0 )]/1E5,\
+			linestyle='--',color=formats.plot_conf_color['P'][1],ms=5,label='Calculated enthalpy',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+		ax1.set_ylabel('Pressure [bar]',fontsize = 8)
+		
+
+		plt.legend([ax.get_lines()[0],ax1.get_lines()[0]],\
+			           ['Calculated Temperature','Calculated Pressure '],loc="upper right")
+
+		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+		xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=35*365.25)]
+		#ylims=[0,100]
+		#ax1.set_ylim(ylims)
+
+		ax.set_xlim(xlims)
+		years = mdates.YearLocator()
+		years_fmt = mdates.DateFormatter('%Y')
+
+		ax.xaxis.set_major_formatter(years_fmt)
+
+		#ax.xaxis.set_major_locator(years)
+		#fig.autofmt_xdate()
+
+		#Grid style
+		ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+		ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+		ax.grid(True)
+
+		if save:
+			fig.savefig('../output/mh/images/%s_%s_evol.png'%(well,block)) 
+		if show:
+			plt.show()
+	else:
+		print("There is not a file called %s, try running src_evol from output.py"%file)
+
+
+def plot_compare_PT_vertical(input_dictionary, well,block,save,show, years = 35, p_res_block = None, delta = False, var_name = 'P'):
+	"""Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular
+
+	Parameters
+	----------	  
+	well : str
+	  Nombre de pozo
+	block : str
+	  Nombre de bloque, en general donde se ubica zona de alimentacion
+	source : str
+	  Nombre de fuente asociada a pozo
+	save : bool
+	  Almacaena la grafica generada
+	show : bool
+	  Almacaena la grafica generada
+
+	Returns
+	-------
+	image
+		{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/
+
+	Note
+	----
+	El archivo correspondiente en la carpeta  ../output/mh/txt debe existir
+
+	Examples
+	--------
+	>>> plot_compare_mh('AH-1','DA110','SRC1',save=True,show=False)
+	"""
+
+	#Read file, current calculated
+	file = "../output/PT/evol/%s_PT_evol.dat"%(well)
+
+
+	layers_info=geometry.vertical_layers(input_dictionary)
+
+	blocks = [name+block[1:] for name in layers_info['name']]
+
+	if os.path.isfile(file):
+		data=pd.read_csv(file)
+
+		fig, ax = plt.subplots(figsize=(10,4))
+
+		ax.set_title("Well: %s "%(well) ,fontsize=8)
+		ax.set_xlabel("Time",fontsize = 8)
+
+		colormap = plt.cm.jet
+		colors = [colormap(i) for i in np.linspace(0, 1,len(blocks))]
+		ax.set_prop_cycle('color', colors)
+
+		for block_i in blocks:
+
+			#Setting the time to plot
+			
+			times = data['TIME'].loc[data['ELEM'] == block_i]
+			times.reset_index(drop=True)
+			dates = []
+			for time  in times:
+				try:
+					dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
+				except OverflowError:
+					print(time, "wont be plot")
+
+
+			if p_res_block != None and block_i == p_res_block:
+				linestyle_i = '--'
+			else:
+				linestyle_i = '-'
+
+			if var_name == 'P':
+				var_name = 'PRES_VAP'
+				label_y = 'Pressure [bar]'
+				divisor = 1E5
+			elif var_name == 'T':
+				var_name = 'TEMP'
+				label_y = 'Temperature [C]'
+				divisor = 1
+			elif var_name == 'Q':
+				var_name = 'SAT_VAP'
+				label_y = 'Quality'
+				divisor = 0.01
+
+
+			data_var = data[var_name].loc[(data['ELEM'] == block_i) & (data['TIME']> 0 )]/divisor
+
+			data_var = data_var.reset_index()
+
+			if delta:
+				var = 'delta'
+				pos = data_var.columns.get_loc(var_name)
+				data_var['delta'] =  data_var.iloc[1:, pos] - data_var.iat[0, pos]
+				
+			else:
+				var = var_name
+
+			ax.plot(dates,data_var[var],linestyle=linestyle_i,ms=2,label=block_i,marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+			if p_res_block != None and block_i == p_res_block:
+				pres_data=pd.read_csv("../input/field_data.csv",delimiter=',')
+				pres_data.replace(0, np.nan, inplace=True)
+
+				pres_data = pres_data[pres_data['prs1'].notna()]
+
+				if delta:
+					pos = pres_data.columns.get_loc('prs1')
+					pres_data['delta'] =  pres_data.iloc[1:, pos] - pres_data.iat[0, pos]
+
+				pres_data.to_csv('test.csv')
+
+				dates_func_res=lambda datesX: datetime.datetime.strptime(str(datesX), "%Y%m%d")
+				dates_res=list(map(dates_func_res,pres_data['fecha']))
+				
+
+				if delta:
+					ax.plot(dates_res,pres_data['delta'],label = 'p_res',color = 'black',linestyle = 'None' ,ms=0.5,marker='s',alpha=1)
+				else:
+					ax.plot(dates_res,pres_data['prs1'],label = 'p_res',color = 'black',linestyle = 'None' ,ms=0.5,marker='s',alpha=1)
+
+
+		ax.set_ylabel(label_y,fontsize = 8)
+
+		plt.legend(loc="upper right", fontsize = 8)
+
+		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+		xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=years*365.25)]
+
+		ax.set_xlim(xlims)
+		years = mdates.YearLocator()
+		years_fmt = mdates.DateFormatter('%Y')
+
+		ax.xaxis.set_major_formatter(years_fmt)
+
+		#Grid style
+		ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+		ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+		ax.grid(True)
+
+		if save:
+			fig.savefig('../output/PT/evol/%s_evol_%s.png'%(well,var_name)) 
+		if show:
+			plt.show()
+	else:
+		print("There is not a file called %s, try running src_evol from output.py"%file)
+
+
+def plot_compare_producers(input_dictionary, years = 35):
+
+	fig, ax = plt.subplots(figsize=(10,4))
+
+	OBJ_file = "../output/PT/json/it2_PT.json"
+
+	data_t = pd.read_json(OBJ_file)
+	data_h = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWH',['TIME','COMPUTED']]
+	data_r = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWHR',['TIME','COMPUTED']]
+
+	times = data_h['TIME']
+
+	dates=[]
+	for ind in times.index:
+		if float(times[ind])>=0:
+			try:
+				dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+			except OverflowError:
+				print(times[ind],"plus",str(times[ind]),"wont be plot")
+		else:
+			print(times[ind])
+
+	ax.set_title("Production wells" ,fontsize=8)
+	ax.set_ylabel('Flow rate [kg/s]',fontsize = 8)
+	ax.set_xlabel("Time",fontsize = 8)
+
+	ax.plot(dates,np.absolute(data_r['COMPUTED']),color=formats.plot_conf_color['m'][1],\
+		linestyle='--',ms=5,label='Computed flow',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+	ax1 = ax.twinx()
+	ax1.set_ylabel('Enthalpy [kJ/kg]',fontsize = 8)
+
+
+	ax1.plot(dates,np.absolute(data_h['COMPUTED'])/1E3,\
+		linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,label='Computed enthalpy',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+
+	data_real=pd.read_csv("../input/mh/total_prod_mh.csv")
+	data_real['date_time'] = pd.to_datetime(data_real['date_time'] , format="%Y-%m-%d")
+	data_real=data_real.set_index(['date_time'])
+	data_real.index = pd.to_datetime(data_real.index)
+
+
+	#Plotting
+
+	#ax=data[['Flujo_total']].plot(figsize=(12,4),legend=False,linestyle="-")
+
+	ax.plot(data_real.index,data_real['m'],\
+		linestyle='-',color=formats.plot_conf_color['m'][0],ms=3,label='Measured flow',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+	ax1.plot(data_real.index,data_real['h'],'ob',\
+		linestyle='None',color=formats.plot_conf_color['h'][0],ms=3,label='Estimated enthalpy',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+	
+	plt.legend([ax.get_lines()[0],ax.get_lines()[1],ax1.get_lines()[0],ax1.get_lines()[1]],\
+				                   ['Computed Flow rate ','Measured flow rate ',\
+				                    'Computed Enthalpy', 'Estimated enthalpy'], loc="lower center", bbox_to_anchor=(0.5, -0.27), ncol=4, fancybox=True, shadow=True)
+
+
+	box = ax.get_position()
+	ax.set_position([box.x0, box.y0+0.1, box.width, box.height*0.9])
+
+	fig.savefig('../output/mh/producer_wells.png') 
+
+	plt.show()
+
+
+def cross_section(input_dictionary, variable, layer, time, plot_mesh = False):
+
+
+	ngridx = 200
+	ngridy = 200
+
+	fontsize_labels = 6
+
+
+	file_output="../output/PT/json/evol/t2_output_%s.json"%time
+
+	elem_file='../mesh/ELEME.json'
+
+	if os.path.isfile(elem_file):
+		 blocks=pd.read_json(elem_file)
+
+	if os.path.isfile(file_output):
+		with open(file_output) as file:
+		  	data=json.load(file)
+		
+	data = data['%.1f'%time]
+
+	if variable == 'TEMP':
+		divisor = 1
+	elif variable == 'PRES_VAP':
+		divisor = 1E5
+	else:
+		divisor = 1
+
+	x = []
+	y = []
+	d = []
+	for eleme in data:
+		if eleme[0] == layer:
+			x.append(blocks[eleme]['X'])
+			y.append(blocks[eleme]['Y'])
+			d.append(data[eleme][variable]/divisor)
+
+	xi = np.linspace(min(x), max(x), ngridx)
+	yi = np.linspace(min(y), max(y), ngridy)
+	zi = griddata((x, y), d, (xi[None,:], yi[:,None]), method='linear')
+
+	fig=plt.figure(figsize=(10,10))
+	ax=fig.add_subplot(1,1,1)
+	ax.set_aspect('equal')
+
+	lv = np.linspace(min(d),max(d),20)
+
+	c=ax.contour(xi,yi,zi, linewidths = 1, colors = "k", levels = lv)
+	ax.clabel(c, inline = True, fontsize = fontsize_labels, fmt = '%4.1f', colors = "k")
+	contour = ax.contourf(xi,yi,zi, cmap = "jet", levels = lv)
+	cbar=fig.colorbar(contour,ax=ax)
+	cbar.set_label("%s"%variable)
+
+	ax.tick_params(axis='both', which='major', labelsize=fontsize_labels,pad=1)
+	ax.set_ylabel('North [m]',fontsize =fontsize_labels)
+	ax.set_xlabel('East [m]',fontsize=fontsize_labels)
+	ax.set_title("Layer %s"%layer,fontsize=fontsize_labels)
+
+
+	if plot_mesh:
+		segmt_json_file='../mesh/segmt.json'
+
+		if os.path.isfile(segmt_json_file):
+			with open(segmt_json_file) as file:
+			  	blocks_seg=json.load(file)
+
+			for block in blocks_seg:
+				if block[0]==layer:
+					for i, point in enumerate(blocks_seg[block]['points']):
+
+						if i==0:
+							line=[]
+						if i!=0 and (i)%4==0:
+							ax.plot([line[0],line[2]],[line[1],line[3]],'-k', lw = 0.25)
+							line=[]
+						if i%4 in [0,1,2,3]:
+							line.append(point)
+
+	fig.savefig('../output/PT/images/layer/%s_%s_%s.png'%(layer, variable, time)) 
+
+	plt.show()
+
+
+
+
+def plot_power(input_dictionary, save = True, show= True):
+
+	#Read file, current calculated
+	file="../input/generation_data.csv"
+	OBJ_file = "../output/PT/json/it2_PT.json"
+	OBJ_file_prev = "../output/PT/json/prev/it2_PT.json"
+
+	if os.path.isfile(file):
+
+		gen_data = pd.read_csv(file,delimiter=',')
+		gen_data = gen_data.sort_values(by ='fecha' )
+		gen_data['fecha'] = pd.to_datetime(gen_data['fecha'] , format="%Y%m%d")
+
+		gen_data_u12 = gen_data.loc[ ((gen_data.unidad == 'u1') | (gen_data.unidad == 'u2')) & (gen_data.generation > 0), ['generation','fecha','unidad']]
+		gen_data_u12 = gen_data_u12.groupby(['fecha']).sum()
+		gen_data_u12['fecha'] = gen_data_u12.index
+		gen_data_u12 = gen_data_u12.reset_index(drop=True)
+
+		gen_data_u3 = gen_data.loc[ (gen_data.unidad == 'u3') & (gen_data.generation > 0), ['generation','fecha','unidad']]
+		gen_data_u3 = gen_data_u3.reset_index(drop=True)
+
+
+
+
+		#Section dedicated to wells with more with one feedzone. iT2 computes the weighted enthlapy and the flowrate sum for each timestep define on the iT2 file
+		if os.path.isfile(OBJ_file):
+			fig = plt.figure(figsize=(10,4.5))
+			ax = plt.subplot(111)
+
+			data_t = pd.read_json(OBJ_file)
+
+			data_12 = data_t.loc[data_t['OBSERVATION'] == 'UNIT1&2',['TIME','COMPUTED']]
+
+			dates_12=[]
+			times = data_12['TIME']
+			for ind in times.index:
+				if float(times[ind])>=0:
+					try:
+						dates_12.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+					except OverflowError:
+						print(times[ind],"plus",str(times[ind]),"wont be plot")
+				else:
+					print(times[ind])
+
+			ax.set_title("Power Generation, Units 1 and 2" ,fontsize=8)
+			ax.set_ylabel('Generation [MW]',fontsize = 8)
+			ax.set_xlabel("Time",fontsize = 8)
+
+
+			ax.plot(dates_12,np.absolute(data_12['COMPUTED']),color=formats.plot_conf_color['m'][1],\
+				linestyle='--',ms=5,label='Computed power',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+			ax.plot(gen_data_u12['fecha'],gen_data_u12['generation'],color='k',\
+				linestyle='None',ms=1,label='Real power',marker=formats.plot_conf_marker['current'][0],alpha=0.5)
+
+			ax.legend(loc = 'lower right')
+
+			if show:
+				plt.show()
+			
+			if save:
+				fig.savefig('../output/power_12.png') 
+
+
+
+			fig = plt.figure(figsize=(10,4.5))
+			ax = plt.subplot(111)
+
+			data_3 = data_t.loc[data_t['OBSERVATION'] == 'UNIT3',['TIME','COMPUTED']]
+
+			dates_3=[]
+			times = data_3['TIME']
+			for ind in times.index:
+				if float(times[ind])>=0:
+					try:
+						dates_3.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[ind])))
+					except OverflowError:
+						print(times[ind],"plus",str(times[ind]),"wont be plot")
+				else:
+					print(times[ind])
+
+			ax.set_title("Power Generation, Unit 3" ,fontsize=8)
+			ax.set_ylabel('Generation [MW]',fontsize = 8)
+			ax.set_xlabel("Time",fontsize = 8)
+
+
+			ax.plot(dates_3,np.absolute(data_3['COMPUTED'])/32,color=formats.plot_conf_color['m'][1],\
+				linestyle='--',ms=5,label='Computed power',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+			ax.plot(gen_data_u3['fecha'],gen_data_u3['generation'],color='k',\
+				linestyle='None',ms=1,label='Real power',marker=formats.plot_conf_marker['current'][0],alpha=0.5)
+
+			ax.legend(loc = 'lower right')
+
+			if show:
+				plt.show()
+			
+			if save:
+				fig.savefig('../output/power_3.png') 

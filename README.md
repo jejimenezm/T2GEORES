@@ -45,6 +45,8 @@ Recent changes are listed.
 ### 2021-06-06
 - Fix GENER block update during production state
 
+## [0.1.8]
+
 ### 2021-10-17
 - Severals updates on mesh creation (lloyd relaxation) and incon creation
 
