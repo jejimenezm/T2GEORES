@@ -10,7 +10,7 @@ import json
 import datetime
 import re
 from T2GEORES import formats as formats
-
+from iapws import IAPWS97
 
 def write_PT_from_t2output(input_dictionary):
 	"""It writes the parameter for every block from every well from the last output file of TOUGH2 simulation
@@ -1477,7 +1477,7 @@ def t2_CSV_to_json(itime=None, all_times =False, path = None, num = None, last =
 
 def total_enthalpy(input_dictionary, wells, years = 35):
 
-	
+
 	#data['date_time'] = pd.date_range(start= input_dictionary['ref_date'], end= input_dictionary['ref_date']+datetime.timedelta(days=years*365.25), freq = 'D' )
 
 	data_p = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
@@ -1487,8 +1487,8 @@ def total_enthalpy(input_dictionary, wells, years = 35):
 
 		data = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
 		
-		data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'total_flow', 'enthalpy', 'status'])
-		data_x = data_x.loc[data_x['status'] == 'P']
+		data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'total_flow', 'enthalpy', 'status', 'steam'])
+		data_x = data_x.loc[data_x['steam'] > 0]
 		data_x['date_time'] = pd.to_datetime(data_x['date_time'] , format="%Y-%m-%d_%H:%M:%S")
 
 		
@@ -1512,4 +1512,141 @@ def total_enthalpy(input_dictionary, wells, years = 35):
 
 	data_p.to_csv('../input/mh/total_prod_mh.csv' , index = True)
 
+
+
+def power(input_dictionary, WHP):
+
+	def power_i(Px,hx,mx,ESC):
+		if mx <= 0:
+			try:
+				quality = IAPWS97(P=Px+0.092,h=hx).x
+				power = -quality*mx/ESC
+			except NotImplementedError:
+				print("Out of bounds, Pressure:", Px,"[bar], Enthalpy: ",hx, "[kJ/kg]")
+				power = 0
+		else:
+			power = 0
+		return power
+		
+	data_12 = pd.DataFrame(columns = ['date_time', 'h', 'm', 'power'])
+	data_3 = pd.DataFrame(columns = ['date_time', 'h', 'm', 'power'])
+
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	c=conn.cursor()
+
+	well_sources = pd.read_sql_query("SELECT * FROM t2wellsource WHERE well LIKE 'TR-%'",conn)
+
+	for index, row in well_sources.iterrows(): 
+		if str(row['well']) in [*WHP]:
+
+			evol_file = '../output/PT/evol/%s_PT_evol.dat'%row['well']
+
+			data_i = pd.read_csv(evol_file)
+
+			temp_i = data_i.loc[ (data_i['ELEM'] == row ['blockcorr']) & (data_i['TIME'] >=0 ), ['PRES_VAP','TIME']]
+			temp_i.reset_index(inplace = True)
+
+			file = "../output/mh/txt/%s_%s_%s_evol_mh.dat"%(row['well'],row['blockcorr'],row['source_nickname'])
+
+			data_mh = pd.read_csv(file)
+
+			times = data_mh['TIME']
+
+			dates=[]
+			enthalpy = []
+			flow_rate = []
+			pressures = []
+			power = []
+
+			for n in range(len(times)):
+				if float(times[n]) >= 0:
+					try:
+						pressures.append(temp_i['PRES_VAP'][n])
+						enthalpy.append(data_mh['ENTH'][n]/1E3)
+						flow_rate.append(data_mh['GEN'][n])
+						dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+						
+						if str(row['well']) in [*WHP]:
+							power.append(power_i(WHP[row['well']][0]/1E6,data_mh['ENTH'][n]/1E3,data_mh['GEN'][n],WHP[row['well']][1]))
+						else:
+							power.append(np.nan)
+
+					except (OverflowError, KeyError):
+						print(times[n],"plus",str(times[n]),"wont be plot")
+
+			input_row = {'date_time': dates,
+			                 'h': enthalpy,
+			                 'm': flow_rate,
+			               'BWP': pressures,
+			               'power':power}
+
+			output = pd.DataFrame.from_dict(input_row)
+
+			if WHP[row['well']][2] == '1_2':
+				data_12 = data_12.append(output, ignore_index = True)
+			elif WHP[row['well']][2] == '3':
+				data_3 = data_3.append(output, ignore_index = True)
+
+	data_12 = data_12.groupby(['date_time']).sum() 
+	data_3 = data_3.groupby(['date_time']).sum() 
+
+
+	data_12.to_csv('../output/unit_12_power.csv')
+	data_3.to_csv('../output/unit_3_power.csv')
+		
+
+
+def field_areas_enthalpy(wells):
+
+
+	data_p_12 = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
+	data_p_3_17 = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
+	data_p_3_18 = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
 	
+	for well in wells:
+
+		data = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
+		
+		data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'total_flow', 'enthalpy', 'status', 'steam'])
+		data_x = data_x.loc[data_x['steam'] > 0]
+		data_x['date_time'] = pd.to_datetime(data_x['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+
+		
+		data_ix = data_x.copy()
+		data_ix.index = data_ix['date_time']
+		del data_ix['date_time']
+		data_ii_inter_x = data_ix.resample('D').mean().ffill()
+		data_ii_inter_x['date_time'] = data_ii_inter_x.index
+
+
+		data['mh'] = data_ii_inter_x['total_flow']*data_ii_inter_x['enthalpy']
+		data['m'] = data_ii_inter_x['total_flow']
+		data['date_time'] = data_ii_inter_x['date_time']
+
+		if wells[well][2] == '1_2':
+			data_p_12 = data_p_12.append(data, ignore_index = True)
+		elif wells[well][2] == '3':
+			if '17' in well:
+				data_p_3_17 = data_p_3_17.append(data, ignore_index = True)
+			elif '18' in well:
+				data_p_3_18 = data_p_3_18.append(data, ignore_index = True)
+
+	data_p_12 = data_p_12.groupby('date_time').sum()
+
+	data_p_12['h'] = data_p_12['mh']/data_p_12['m']
+
+	data_p_12.to_csv('../input/mh/unit12_mh.csv' , index = True)
+
+
+	data_p_3_17 = data_p_3_17.groupby('date_time').sum()
+
+	data_p_3_17['h'] = data_p_3_17['mh']/data_p_3_17['m']
+
+	data_p_3_17.to_csv('../input/mh/unit3_17_mh.csv' , index = True)
+
+
+	data_p_3_18 = data_p_3_18.groupby('date_time').sum()
+
+	data_p_3_18['h'] = data_p_3_18['mh']/data_p_3_18['m']
+
+	data_p_3_18.to_csv('../input/mh/unit3_18_mh.csv' , index = True)

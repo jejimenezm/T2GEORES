@@ -107,6 +107,10 @@ def incon_to_t2(input_dictionary, file_name = None):
 		input_incon="../model/t2/sources/INCON"
 		blocks='odd'
 		incon_file_len=len(open(input_incon).readlines())
+	elif incon_state=='steinar':
+		input_incon="../model/t2/sources/STE_INCON"
+		blocks='odd'
+		incon_file_len=len(open(input_incon).readlines())
 	elif incon_state=='init_mod':
 		input_incon="../model/t2/sources/INCON_MOD"
 		blocks='odd'

@@ -1166,6 +1166,8 @@ def check_gener_D(input_dictionary):
 
 	sources_part = np.array_split(sources, 5)
 
+	data_out= pd.DataFrame(columns = ['datetime', 'm', 'block', 'type'])
+
 	for sources in sources_part:
 
 		fig = plt.figure()
@@ -1184,6 +1186,7 @@ def check_gener_D(input_dictionary):
 				color_i = 'b'
 			elif 'i' not in type_i:
 				color_i = 'r'
+				data_out = data_out.append(data_i, ignore_index = True)
 
 			y_limits = [0,119]
 			y_ticks = [0,30,60,90,120]
@@ -1205,5 +1208,25 @@ def check_gener_D(input_dictionary):
 		    axis.label_outer()
 
 		plt.show()
+
+	data_out['datetime'] = pd.to_datetime(data_out['datetime'] , format="%Y-%m-%d_%H:%M:%S")
+	data_out = data_out.groupby('datetime').sum()
+	
+	fig, ax = plt.subplots(figsize=(10,4))
+	
+	fig.suptitle('Total_flow')
+
+	ax.plot(data_out.index, abs(data_out.m), color = color_i)
+
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+	ax.xaxis.set_major_formatter(years_fmt)
+	ax.set_yticks(y_ticks)
+	ax.set_ylabel('Flow')
+
+	plt.show()
+
+
 
 

@@ -795,8 +795,12 @@ def incon_to_steinar(sav = None):
 
 	if sav == None:
 		incon_file='../model/t2/sources/INCON_MOD'
+	elif sav == 'init':
+		incon_file = '../model/t2/INCON'
 	elif sav == 't2.sav':
 		incon_file='../model/t2/t2.sav'
+	elif sav == 'SAVE1':
+		incon_file='../model/t2/SAVE1'
 
 	string=""
 	with open(incon_file) as file:

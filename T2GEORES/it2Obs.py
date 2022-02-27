@@ -5,7 +5,9 @@ from datetime import datetime, timedelta
 import numpy as  np
 from scipy import interpolate
 import locale
-locale.setlocale(locale.LC_TIME, 'en_US.utf8') 
+locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+import matplotlib.pyplot as plt
+plt.style.use('T2GEORES')
 
 def observations_to_it2_PT(input_dictionary):
 	"""It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure
@@ -291,7 +293,7 @@ def observations_to_it2_h(input_dictionary, dates_format = True):
 	observation_file_h.write(string)
 	observation_file_h.close()
 
-def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_block=None, include_wells = True, dates_format = True):
+def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_block=None, include_wells = True, dates_format = True, show_plot = False):
 	"""It generates the drawdown observation section for the iTOUGH2 file
 	
 	Parameters
@@ -302,8 +304,8 @@ def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_bl
 	  If True a special file is read: '../input/drawdown/p_res.csv' which contains the long history of pressure fluctuation.
 	p_res_block : str
 	  Block name at which monitoring pressure data is recorded
-	obfs_info : dictionary
-	  Includes well nama as keyword and an array with [TVD, layer_correlative]
+	obs_info : dictionary
+	  Includes well name as keyword and an array with [TVD, layer_correlative]
 	include_wells : bool
 	  If True includes well drawdown include on obs_info, default : True
 	dates_format : bool
@@ -359,6 +361,7 @@ def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_bl
 
 		for well in sorted(obs_info):
 
+			data_w= pd.DataFrame(columns = ['date_time', 'pressure'])
 
 			corr=pd.read_sql_query("SELECT correlative FROM layers WHERE middle=%s"%obs_info[well][0],conn)
 
@@ -383,6 +386,8 @@ def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_bl
 
 				P0 = (func_P(obs_info[well][0])+0.92)*1E5
 
+				data_i = {'pressure':P0, 'date_time': ref_date}
+				data_w = data_w.append(data_i, ignore_index = True)
 
 			if len(dates)>0 and any(data['pressure']-P0 < 0):
 				string+="""
@@ -394,18 +399,38 @@ def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_bl
 
 				for n in range(len(dates)):
 
-					time_i = (dates[n]-ref_date).total_seconds()
-
 					if t2_ver>7 and dates_format:
-						timex=dates[n].strftime("%d-%b-%Y_%H:%M:%S")
+						timex=dates[n]
 
 					elif t2_ver<7 or not dates_format: 
 						timex=(dates[n]-ref_date).total_seconds()
 
-					if time_i>0 and data['pressure'][n]*1E5 < P0:
-						string_x="				 %s 	%0.2f\n"%(timex,(data['pressure'][n]*1E5 - P0)/1E5)
-						string+=string_x
-				string+="""			<<<<\n"""
+					if data['pressure'][n]*1E5 < P0:
+
+						data_i = {'pressure':data['pressure'][n]*1E5 , 'date_time': timex}
+						data_w = data_w.append(data_i, ignore_index = True)
+
+
+			if len(data_w)>1:
+
+				for index, row in data_w.iterrows():
+					string_x="				 %s 	%6.3E\n"%(row['date_time'].strftime("%d-%b-%Y_%H:%M:%S"),row['pressure']-P0)
+					string+=string_x
+
+				data_w.drop_duplicates(inplace = True)
+				data_w['date_time'] = pd.to_datetime(data_w['date_time'] , format="%d-%b-%Y %H:%M:%S")
+				data_w.index = data_w['date_time']
+				del data_w['date_time']
+				data_resample= data_w.resample('D')
+
+				interpolated = data_resample.interpolate(method='linear')
+
+				if show_plot:
+					fig, ax = plt.subplots()
+					l1 =ax.plot(interpolated,label=well, lw=0, marker = 'o', ms = 0.5, linestyle = 'None')
+					ax.plot(data_w, marker = 'o', color = l1[0].get_color(), lw= 0)
+					ax.set_title(well)
+					plt.show()
 
 	if include_wells and raw_source:
 		for name in sorted(wells):
@@ -443,50 +468,13 @@ def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_bl
 							string+=string_x
 						string+="""			<<<<\n"""
 	
-
+	print(string)
 	#iTOUGH2 reservoir pressure
 
-	if include_pres:
-		pres_data = pd.read_csv("../input/field_data.csv",delimiter=',')
 
-		pres_data = pres_data.sort_values(by ='fecha' )
-
-		dates_func_res=lambda datesX: datetime.strptime(str(datesX), "%Y%m%d")
-
-		dates_res=list(map(dates_func_res,pres_data['fecha']))
-
-		P_DEV_res = 1.0
-
-		string+="""
-		>>> ELEMENT: %s
-			>>>> ANNOTATION: RES
-			>>>> FACTOR     : 1.0E5 [bar] - [Pa]
-			>>>> DEVIATION  : %.2f [bar]
-			>>>> DATA %s\n"""%(p_res_block, P_DEV_res, time_type)
-		p_ref = 1E50
-		save = False
-		for n in range(len(dates_res)):
-			if pres_data['prs1'][n] > 0 and n%10 == 0:
-
-				if pres_data['prs1'][n] < p_ref and not save:
-					p_ref = pres_data['prs1'][n]
-					save = True
-
-				if save:
-					if t2_ver>7 and dates_format:
-						timex=dates_res[n].strftime("%d-%b-%Y_%H:%M:%S")
-					elif t2_ver<7 or not dates_format: 
-						timex=(dates_res[n]-ref_date).total_seconds()
-
-					string_x="				 %s 	%6.3E\n"%(timex,pres_data['prs1'][n]-p_ref)
-					string+=string_x
-		string+="""			<<<<\n"""
-	
-	string+="""		<<<\n"""
-
-	observation_file_dd=open("../model/it2/observations_dd.dat",'w')
-	observation_file_dd.write(string)
-	observation_file_dd.close()
+	#observation_file_dd=open("../model/it2/observations_dd.dat",'w')
+	#observation_file_dd.write(string)
+	#observation_file_dd.close()
 
 def observations_to_it2(input_dictionary,include_pres=False,p_res_block=None):
 	"""It generates the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.
@@ -779,3 +767,116 @@ def observations_to_it2_POWER(input_dictionary, dates_format = True):
 	observation_file_power.close()
 
 
+def observation_pres(input_dictionary,use_formation=False):
+
+	string = ""
+
+	pres_data = pd.read_csv("../input/field_data.csv",delimiter=',')
+
+	pres_data = pres_data.sort_values(by ='fecha')
+
+	pres_data = pres_data.loc[pres_data['prs1'] > 0,['prs1','fecha']]
+
+	dates_func_res=lambda datesX: datetime.strptime(str(datesX), "%Y%m%d")
+
+	dates_res=list(map(dates_func_res,pres_data['fecha']))
+
+	pres_data['dates'] = dates_res
+
+	P_DEV_res = 1.0
+
+	time_type = 'DATES'
+
+
+	monitoring_wells = {'TR-4':{'dates':[
+								   [datetime(1992,2,1,0,0,0),datetime(2010,7,21,0,0,0)],
+								   [datetime(2018,10,25,0,0,0),datetime(2019,12,31,0,0,0)]
+								   ],
+							'feedzone':'NA746'},
+					 'TR-3':{'dates':[
+							 		  [datetime(2013,3,22,0,0,0),datetime(2016,2,7,0,0,0)],
+							         ],
+							 'feedzone':'LD367'
+							 },
+					 'TR-12A':{
+					 		'dates': [
+							 		  [datetime(2010,7,21,0,0,0),datetime(2013,3,21,0,0,0)],
+							 		 ],
+							 'feedzone':'OA135'},
+					 'TR-4A':{
+					 		'dates':[
+							 			[datetime(2020,1,1,0,0,0),datetime(2022,2,15,0,0,0)],
+							 		],
+							 'feedzone':'NA170'},
+			}
+
+	fig, ax = plt.subplots(figsize=(10,4))
+
+	for well in monitoring_wells:
+		for i, interval in  enumerate(monitoring_wells[well]['dates']):
+			string+="""
+			>>> ELEMENT: %s
+				>>>> ANNOTATION: RES-%s
+				>>>> FACTOR     : 1.0E5 [bar] - [Pa]
+				>>>> DEVIATION  : %.2f [bar]
+				>>>> DATA %s\n"""%(monitoring_wells[well]['feedzone'], well+'-'+str(i+1),P_DEV_res, time_type)
+
+
+			df = pres_data[(pres_data['dates'] > interval[0]) & (pres_data['dates'] < interval[1])]
+
+			df.reset_index(inplace = True)
+
+
+			if use_formation:
+				p_ref = pres_data['prs1'].iat[0]
+				string_x="         		 	 01-Feb-1992_00:00:00   0.000E+00\n"
+				string+=string_x
+
+				"""
+
+				db_path=input_dictionary['db_path']
+
+				conn=sqlite3.connect(db_path)
+				c=conn.cursor()
+				blockcorr = pd.read_sql_query("SELECT blockcorr FROM t2wellsource WHERE well='%s';"%well,conn)
+				blockcorr_w = blockcorr['blockcorr'].iat[0]
+
+				layers_info=geomtr.vertical_layers(input_dictionary)
+				layer_middle={layers_info['name'][n]:layers_info['middle'][n] for n in range(len(layers_info['name']))}
+
+				data_PT = pd.read_sql_query("SELECT MeasuredDepth, Pressure, Temperature from PT WHERE well='%s' ORDER BY MeasuredDepth"%well, conn)
+
+
+				if not np.isnan(np.mean(data_PT['Pressure'])):
+					x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(well,data_PT['Pressure'],data_PT['MeasuredDepth'])
+					func_P=interpolate.interp1d(z_V,var_V)
+					p_ref = (func_P(layer_middle[blockcorr_w[0]])+0.92)
+				"""
+			else:
+
+				p_ref = df['prs1'].iat[0]
+
+			print(well,p_ref)
+			dfx = df[df.reset_index().index % 10 == 0]
+
+			ax.plot(dfx['dates'], dfx['prs1']-p_ref, label = well+'-'+str(i+1), linestyle = 'None', marker = 'o', ms = 1)
+
+			for index, row in df.iterrows():
+				if index == 0:
+					string_x="					 %s 	%6.3E\n"%(row['dates'].strftime("%d-%b-%Y_%H:%M:%S"),row['prs1']-p_ref)
+					string+=string_x
+				elif index > 0 and index%10==0 and row['prs1'] >0:
+					string_x="					 %s 	%6.3E\n"%(row['dates'].strftime("%d-%b-%Y_%H:%M:%S"),row['prs1']-p_ref)
+					string+=string_x
+		string+="""				<<<<\n"""
+
+	ax.set_ylabel('Pressure [bar]')
+	plt.legend(loc = 'lower left')
+	ax.set_ylim([-40,1])
+	plt.show()
+
+	string+="""			<<<<\n"""
+	
+	observation_pres=open("../model/it2/observation_pres.dat",'w')
+	observation_pres.write(string)
+	observation_pres.close()

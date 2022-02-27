@@ -10,9 +10,11 @@ import sys
 import matplotlib.gridspec as gridspec
 from iapws import IAPWS97
 import os
+from statsmodels.nonparametric.smoothers_lowess import lowess
 
 import sqlite3
 
+plt.style.use('T2GEORES')
 
 def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
 	"""It plots the layers defined for the mesh
@@ -738,8 +740,8 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 
 	legend_P.get_frame().set_linewidth(0.25)
 	for legend_handle in legend_P.legendHandles:
-		legend_handle._legmarker.set_markersize(1.5)
-		legend_handle._legmarker.set_linewidth(0.25)
+		legend_handle.set_markersize(1.5)
+		legend_handle.set_linewidth(0.25)
 	
 	fig.savefig("../output/initial_conditions/%s.png"%title_s, format='png',dpi=300)
 
@@ -856,7 +858,6 @@ def plot_total_vs_WHP(well,savefig=False):
 
 	plt.show()
 
-
 def total_flow(wells, savefig = None, ffill = False):
 
 
@@ -968,7 +969,6 @@ def total_flow(wells, savefig = None, ffill = False):
 
 	if savefig:
 		fig.savefig("../input/mh/images/total_flow.png", format='png',dpi=300) 
-
 
 def resample(well, type_well, save_fig = True):
 
@@ -1303,7 +1303,6 @@ def resample(well, type_well, save_fig = True):
 	else:
 		plt.show()
 
-
 def mh_duplicates(input_dictionary):
 
 	db_path=input_dictionary['db_path']
@@ -1343,3 +1342,125 @@ def mh_duplicates(input_dictionary):
 
 	ax.legend(loc = 'upper right', fontsize = 6)
 	plt.show()
+
+
+def field(input_dictionary):
+	input_file = "../input/field_data.csv"
+	if os.path.isfile(input_file):
+		data=pd.read_csv(input_file)
+
+		data.dropna(inplace = True)
+
+		data['fecha'] = pd.to_datetime(data['fecha'] , format="%Y%m%d")
+		data=data.set_index(['fecha'])
+		data.index = pd.to_datetime(data.index)
+
+		fig=plt.figure()
+
+		ax=fig.add_subplot(111)
+
+		data['extraction'] = data['agua']+data['vapor']
+		data['net'] = data['agua']+data['vapor']-data['inyeccion']
+
+		extraction = data['extraction'].rolling(window = 180).mean()
+		injection = data['inyeccion'].rolling(window = 180).mean()
+		net = data['net'].rolling(window = 180).mean()
+
+
+		#ax.plot(extraction, lw = 1, label = 'Total extraction')
+		#ax.plot(injection, lw = 1, label = 'Injection')
+		ax.plot(net, lw = 1, label = 'Net extraction', color = '#4575b4')
+		ax.set_ylim([0, 300])
+		ax.set_ylabel('Mass flow rate [kg/s]')
+		ax.set_xlabel('Year')
+
+		axt = ax.twinx()
+		axt.set_ylabel('Pressure [bar]')
+		axt.set_ylim([-max(data['prs1']), 1])
+
+		drawdown = data.loc[data['prs1'] > 0,['prs1']]
+		drawdown = drawdown['prs1'].resample('60D').mean()
+		drawdown = pd.DataFrame({'dates':drawdown.index, 'prs1':drawdown.values})
+
+		#smooth = data.loc[data['prs1'] > 0,['prs1']]
+		#df_loess_5 = pd.DataFrame(lowess(smooth['prs1'],  np.arange(len(smooth['prs1'])), frac=0.05)[:, 1], index=smooth.index, columns=['prs1'])
+		#axt.plot(df_loess_5,linestyle = '-', marker = 'o', ms= 2)
+
+		axt.plot(drawdown['dates'], drawdown['prs1'] - drawdown['prs1'].iloc[0], linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#d73027')
+		
+		plt.legend([ax.get_lines()[0],axt.get_lines()[0]],\
+				                   ['Net flow rate extraction ','Pressure drawdown'],\
+				                    loc=1, fancybox=True, shadow=True)
+
+		plt.savefig('../output/net_flow_vs_pressure_dw.png', dpi = 600)
+
+		plt.show()
+
+
+def enthalpies_field(input_dictionary):
+
+	input_file_1 = "../input/mh/unit12_mh.csv"
+	input_file_2 = "../input/mh/unit3_17_mh.csv"
+	input_file_3 = "../input/mh/unit3_18_mh.csv"
+
+	if os.path.isfile(input_file_1) and os.path.isfile(input_file_2):
+
+		data_12=pd.read_csv(input_file_1)
+		data_12.dropna(inplace = True)
+		data_12['date_time'] = pd.to_datetime(data_12['date_time'] , format="%Y-%m-%d")
+		data_12=data_12.set_index(['date_time'])
+		data_12.index = pd.to_datetime(data_12.index)
+
+		h12 = data_12.loc[data_12['h'] > 0,['h','m']]
+		h12_out = h12['h'].resample('120D').mean()
+		h12_out_m = h12['m'].resample('120D').mean()
+		
+
+		data_3_17=pd.read_csv(input_file_2)
+		data_3_17.dropna(inplace = True)
+		data_3_17['date_time'] = pd.to_datetime(data_3_17['date_time'] , format="%Y-%m-%d")
+		data_3_17=data_3_17.set_index(['date_time'])
+		data_3_17.index = pd.to_datetime(data_3_17.index)
+
+		h3_17 = data_3_17.loc[data_3_17['h'] > 0,['h','m']]
+		h3_17_out = h3_17['h'].resample('120D').mean()
+		h3_17_out_m = h3_17['m'].resample('120D').mean()
+
+		data_3_18=pd.read_csv(input_file_3)
+		data_3_18.dropna(inplace = True)
+		data_3_18['date_time'] = pd.to_datetime(data_3_18['date_time'] , format="%Y-%m-%d")
+		data_3_18=data_3_18.set_index(['date_time'])
+		data_3_18.index = pd.to_datetime(data_3_18.index)
+
+		h3_18 = data_3_18.loc[data_3_18['h'] > 0,['h','m']]
+		h3_18_out = h3_18['h'].resample('120D').mean()
+		h3_18_out_m = h3_18['m'].resample('120D').mean()
+
+
+		fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=False)
+
+		ax1.plot(h12_out, lw = 1, linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#4575b4', label = 'Center')
+		ax1.plot(h3_17_out, lw = 1, linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#fc8d59', label = 'South 17s')
+		ax1.plot(h3_18_out, lw = 1, linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#d73027', label = 'South 18s')
+
+		ax2.fill_between(h12_out_m.index, h12_out_m.values, alpha=0.6, lw= 3, color = '#4575b4',  edgecolor = '#4575b4')
+		ax2.fill_between(h3_17_out_m.index,h3_17_out_m.values, alpha=0.6, lw=3, color = '#fc8d59', edgecolor = '#fc8d59')
+		ax2.fill_between(h3_18_out_m.index,h3_18_out_m.values, alpha=0.6, lw = 3, color = '#d73027', edgecolor = '#d73027')
+
+
+		ax1.set_ylim([1000, 2000])
+		ax1.set_ylabel('Enthalpy [kJ/kg]')
+		ax2.set_ylabel('Mass flow rate [kg/s]')
+		ax2.set_xlabel('Year')
+		xlims=[min(data_12.index),max(h12_out_m.index)]
+		ax2.set_xlim(xlims)
+		ax2.set_ylim([0,max(h12_out_m)])
+		
+		ax1.legend([ax1.get_lines()[0],ax1.get_lines()[1],ax1.get_lines()[2]],\
+				                   ['Center',"South TR-17's","South TR-18's"],\
+				                    loc=2, fancybox=True, shadow=True)
+
+		plt.savefig('../output/enthalpies_on_diff_areas.png', dpi = 600)
+
+		plt.show()
+		

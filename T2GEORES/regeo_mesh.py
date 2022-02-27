@@ -1,4 +1,6 @@
 from T2GEORES import geometry as geometry
+from T2GEORES import lloyd_relaxation as Field
+
 import numpy as np
 import re as re
 import subprocess
@@ -25,8 +27,6 @@ import sqlite3
 
 import geopandas as gpd
 import string
-
-from lloyd_relaxation import Field
 
 class py2amesh:
 	"""It creates a mesh based on well positions and irregular blocks

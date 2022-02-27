@@ -26,6 +26,8 @@ from scipy import stats
 from scipy.stats import norm
 from iapws import IAPWS97
 
+plt.style.use('T2GEORES')
+
 def plot_compare_one(well,savefig, no_real_data, data, TVD_elem, TVD_elem_top,axT,axP,PT_real_dictionary,layer_bottom,limit_layer,input_dictionary,label=None,def_colors=True):
 	"""It generates two plots, they compare real downhole temperature and pressure measurements with model output 
 
@@ -1826,6 +1828,8 @@ def plot_compare_mh(input_dictionary, well,block,source,save,show, production_di
 		ax = plt.subplot(111)
 		ax1 = ax.twinx()
 
+		line_index = 1
+
 		#Section dedicated to wells with more with one feedzone. iT2 computes the weighted enthlapy and the flowrate sum for each timestep define on the iT2 file
 		if well in production_dictionary and not plot_feedzones:
 			data_t = pd.read_json(OBJ_file)
@@ -1908,6 +1912,8 @@ def plot_compare_mh(input_dictionary, well,block,source,save,show, production_di
 			ax.plot(dates_r,np.absolute(data_r['COMPUTED']),color=formats.plot_conf_color['m'][1],\
 				linestyle='--',ms=5,label='Computed flow prev',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1]-0.25)
 
+			line_index = 2
+
 
 			ax1 = ax.twinx()
 			ax1.set_ylabel('Enthalpy [kJ/kg]',fontsize = 8)
@@ -1916,9 +1922,6 @@ def plot_compare_mh(input_dictionary, well,block,source,save,show, production_di
 
 			ax1.plot(dates_h,np.absolute(data_h['COMPUTED'])/1E3,\
 				linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,label='Computed enthalpy prev',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1]-0.25)
-
-
-
 
 		else:
 			data=pd.read_csv(file)
@@ -2003,8 +2006,10 @@ def plot_compare_mh(input_dictionary, well,block,source,save,show, production_di
 
 			ax.plot(data_real.index,data_real['steam']+data_real['liquid'],\
 				linestyle='-',color=formats.plot_conf_color['m'][0],ms=3,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
-			ax1.plot(data_real.index,data_real['enthalpy'],'ob',\
+
+			ax1.plot(data_real.index,data_real['enthalpy'],\
 				linestyle='None',color=formats.plot_conf_color['h'][0],ms=3,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+			
 			real_data=True
 			
 		except FileNotFoundError:
@@ -2015,7 +2020,7 @@ def plot_compare_mh(input_dictionary, well,block,source,save,show, production_di
 		if len(variables) == 0:
 
 			if real_data:
-				plt.legend([ax.get_lines()[0],ax.get_lines()[1],ax1.get_lines()[0],ax1.get_lines()[1]],\
+				plt.legend([ax.get_lines()[0],ax.get_lines()[line_index],ax1.get_lines()[0],ax1.get_lines()[1]],\
 				                   ['Computed flow rate ','Measured flow rate ',\
 				                    'Computed enthalpy', 'Estimated enthalpy'],loc="lower center", bbox_to_anchor=(0.5, -0.25), ncol=4, fancybox=True, shadow=True)
 			else:
@@ -2197,8 +2202,8 @@ def plot_compare_PT_vertical(input_dictionary, well,block,save,show, years = 35,
 
 		fig, ax = plt.subplots(figsize=(10,4))
 
-		ax.set_title("Well: %s "%(well) ,fontsize=8)
-		ax.set_xlabel("Time",fontsize = 8)
+		ax.set_title("Well: %s "%(well) )
+		ax.set_xlabel("Time")
 
 		colormap = plt.cm.jet
 		colors = [colormap(i) for i in np.linspace(0, 1,len(blocks))]
@@ -2273,9 +2278,9 @@ def plot_compare_PT_vertical(input_dictionary, well,block,save,show, years = 35,
 					ax.plot(dates_res,pres_data['prs1'],label = 'p_res',color = 'black',linestyle = 'None' ,ms=0.5,marker='s',alpha=1)
 
 
-		ax.set_ylabel(label_y,fontsize = 8)
+		ax.set_ylabel(label_y)
 
-		plt.legend(loc="upper right", fontsize = 8)
+		plt.legend(loc="upper right")
 
 		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
 
@@ -2308,7 +2313,7 @@ def plot_compare_producers(input_dictionary, years = 35):
 
 	data_t = pd.read_json(OBJ_file)
 	data_h = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWH',['TIME','COMPUTED']]
-	data_r = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWHR',['TIME','COMPUTED']]
+	data_r = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWR',['TIME','COMPUTED']]
 
 	times = data_h['TIME']
 
@@ -2337,6 +2342,7 @@ def plot_compare_producers(input_dictionary, years = 35):
 		linestyle='--',color=formats.plot_conf_color['h'][1],ms=5,label='Computed enthalpy',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
 
 
+	"""
 	data_real=pd.read_csv("../input/mh/total_prod_mh.csv")
 	data_real['date_time'] = pd.to_datetime(data_real['date_time'] , format="%Y-%m-%d")
 	data_real=data_real.set_index(['date_time'])
@@ -2348,6 +2354,21 @@ def plot_compare_producers(input_dictionary, years = 35):
 	#ax=data[['Flujo_total']].plot(figsize=(12,4),legend=False,linestyle="-")
 
 	ax.plot(data_real.index,data_real['m'],\
+		linestyle='-',color=formats.plot_conf_color['m'][0],ms=3,label='Measured flow',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+	ax1.plot(data_real.index,data_real['h'],'ob',\
+		linestyle='None',color=formats.plot_conf_color['h'][0],ms=3,label='Estimated enthalpy',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+	"""
+	data_real=pd.read_csv("../input/field_data.csv")
+	data_real['fecha'] = pd.to_datetime(data_real['fecha'] , format="%Y%m%d")
+	data_real=data_real.set_index(['fecha'])
+	data_real.index = pd.to_datetime(data_real.index)
+
+
+	#Plotting
+
+	#ax=data[['Flujo_total']].plot(figsize=(12,4),legend=False,linestyle="-")
+
+	ax.plot(data_real.index,data_real['agua']+data_real['vapor'],\
 		linestyle='-',color=formats.plot_conf_color['m'][0],ms=3,label='Measured flow',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
 	ax1.plot(data_real.index,data_real['h'],'ob',\
 		linestyle='None',color=formats.plot_conf_color['h'][0],ms=3,label='Estimated enthalpy',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
@@ -2450,8 +2471,65 @@ def cross_section(input_dictionary, variable, layer, time, plot_mesh = False):
 
 
 
-
 def plot_power(input_dictionary, save = True, show= True):
+
+	real_data = "../input/generation_data.csv"
+
+	gen_data = pd.read_csv(real_data,delimiter=',')
+	gen_data = gen_data.sort_values(by ='fecha' )
+	gen_data['fecha'] = pd.to_datetime(gen_data['fecha'] , format="%Y%m%d")
+
+	gen_data_u12 = gen_data.loc[ ((gen_data.unidad == 'u1') | (gen_data.unidad == 'u2')) & (gen_data.generation > 0), ['generation','fecha','unidad']]
+	gen_data_u12 = gen_data_u12.groupby(['fecha']).sum()
+	gen_data_u12['fecha'] = gen_data_u12.index
+	gen_data_u12 = gen_data_u12.reset_index(drop=True)
+
+	gen_data_u3 = gen_data.loc[ (gen_data.unidad == 'u3') & (gen_data.generation > 0), ['generation','fecha','unidad']]
+	gen_data_u3 = gen_data_u3.reset_index(drop=True)
+
+	file_12 = "../output/unit_12_power.csv"
+	file_3 = "../output/unit_3_power.csv"
+
+	data_12 = pd.read_csv(file_12, delimiter=',')
+	data_12['date_time'] = pd.to_datetime(data_12['date_time'] , format="%Y%m%d %H:%M:%S")
+
+	data_3 = pd.read_csv(file_3, delimiter=',')
+	data_3['date_time'] = pd.to_datetime(data_3['date_time'] , format="%Y%m%d %H:%M:%S")
+
+	fig12 = plt.figure(figsize=(10,4.5))
+
+	ax12 = plt.subplot(111)
+	ax12.set_title("Power Generation, Units 1 and 2" ,fontsize=8)
+	ax12.set_ylabel('Generation [MW]',fontsize = 8)
+	ax12.set_xlabel("Time",fontsize = 8)
+
+	fig3 = plt.figure(figsize=(10,4.5))
+
+	ax3 = plt.subplot(111)
+	ax3.set_title("Power Generation, Units 3" ,fontsize=8)
+	ax3.set_ylabel('Generation [MW]',fontsize = 8)
+	ax3.set_xlabel("Time",fontsize = 8)
+
+	ax12.plot(data_12['date_time'],data_12['power'],color=formats.plot_conf_color['m'][1],\
+		linestyle='--',ms=1,label='Computed power',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+	ax12.plot(gen_data_u12['fecha'],gen_data_u12['generation'],color='k',\
+		linestyle='None',ms=1,label='Real power',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+	ax12.legend(loc = 'lower right')
+
+	ax3.plot(data_3['date_time'],data_3['power'],color=formats.plot_conf_color['m'][1],\
+		linestyle='--',ms=1,label='Computed power',marker=formats.plot_conf_marker['current'][0],alpha=0.5)
+	ax3.plot(gen_data_u3['fecha'],gen_data_u3['generation'],color='k',\
+		linestyle='None',ms=1,label='Real power',marker=formats.plot_conf_marker['current'][0],alpha=0.5)
+	ax3.legend(loc = 'lower right')
+
+	if save:
+		fig12.savefig('../output/power_12.png',dpi=300) 
+		fig3.savefig('../output/power_3.png', dpi= 300) 
+
+	plt.show()
+
+
+def plot_power_it2(input_dictionary, save = True, show= True):
 
 	#Read file, current calculated
 	file="../input/generation_data.csv"
@@ -2471,8 +2549,6 @@ def plot_power(input_dictionary, save = True, show= True):
 
 		gen_data_u3 = gen_data.loc[ (gen_data.unidad == 'u3') & (gen_data.generation > 0), ['generation','fecha','unidad']]
 		gen_data_u3 = gen_data_u3.reset_index(drop=True)
-
-
 
 
 		#Section dedicated to wells with more with one feedzone. iT2 computes the weighted enthlapy and the flowrate sum for each timestep define on the iT2 file
@@ -2550,3 +2626,229 @@ def plot_power(input_dictionary, save = True, show= True):
 			
 			if save:
 				fig.savefig('../output/power_3.png') 
+
+
+
+def plot_compare_mh_filtered(input_dictionary, well):
+
+	years = 35
+
+	fig = plt.figure(figsize=(10,4.5))
+	ax = plt.subplot(111)
+	ax1 = ax.twinx()
+
+
+	ax.set_title("Well: %s"%(well) ,fontsize=8)
+	ax.set_ylabel('Flow rate [kg/s]',fontsize = 8)
+	ax.set_xlabel("Time",fontsize = 8)
+
+
+	data_real=pd.read_csv("../input/mh/%s_mh.dat"%well)
+	data_real['date_time'] = pd.to_datetime(data_real['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+	data_real=data_real.set_index(['date_time'])
+	data_real.index = pd.to_datetime(data_real.index)
+	data_real['total_flow']=data_real['steam']+data_real['liquid']
+
+	data_real_filtered=pd.read_csv("../input/mh/filtered/%s_week_avg.csv"%well)
+	data_real_filtered['date_time'] = pd.to_datetime(data_real_filtered['date_time'] , format="%Y-%m-%d %H:%M:%S")
+	data_real_filtered=data_real_filtered.set_index(['date_time'])
+	data_real_filtered.index = pd.to_datetime(data_real_filtered.index)
+	data_real_filtered['total_flow']=data_real_filtered['steam']+data_real_filtered['liquid']
+
+
+	#Plotting
+
+	#ax=data[['Flujo_total']].plot(figsize=(12,4),legend=False,linestyle="-")
+
+	ax.plot(data_real.index,data_real['steam']+data_real['liquid'],'or',\
+		linestyle='-',ms=1,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+	ax.plot(data_real_filtered.index,data_real_filtered['steam']+data_real_filtered['liquid'],'og',\
+		linestyle='-',ms=2,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+
+	ax1.plot(data_real.index,data_real['enthalpy'],'ob',\
+		linestyle='None',ms=3,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+	ax1.plot(data_real_filtered.index,data_real_filtered['enthalpy'],'ok',\
+		linestyle='None',ms=3,label='Real',marker=formats.plot_conf_marker['real'][0],alpha=formats.plot_conf_marker['current'][1])
+
+	box = ax.get_position()
+	ax.set_position([box.x0, box.y0+0.1, box.width, box.height*0.9])
+
+	#Plotting formating
+	#xlims=[min(dates)-datetime.timedelta(days=365),max(dates)+datetime.timedelta(days=365)]
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+
+	xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=years*365.25)]
+	#ylims=[0,100]
+	#ax1.set_ylim(ylims)
+
+	ax.set_xlim(xlims)
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+
+	ax.xaxis.set_major_formatter(years_fmt)
+
+	#ax.xaxis.set_major_locator(years)
+	#fig.autofmt_xdate()
+
+	#Grid style
+	ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.grid(True)
+
+	plt.legend([ax.get_lines()[0],ax.get_lines()[1],ax1.get_lines()[0],ax1.get_lines()[1]],\
+	                   ['Flow rate ','Filtered flow rate',\
+	                    'Enthalpy', 'Filtered enthalpy'],loc="lower center", bbox_to_anchor=(0.5, -0.25), ncol=4, fancybox=True, shadow=True)
+
+	plt.show()
+
+
+def pres(input_dictionary):
+	years = 35
+	"""
+	wells = {'TR-4':[
+					 [datetime.datetime(1992,1,1,0,0,0),datetime.datetime(2001,5,30,0,0,0)],
+					 [datetime.datetime(2002,5,22,0,0,0),datetime.datetime(2005,3,28,0,0)],
+					 [datetime.datetime(2006,1,1,0,0,0),datetime.datetime(2009,10,20,0,0,0)],
+					 [datetime.datetime(2018,9,8,0,0,0),datetime.datetime(2022,2,10,0,0,0)],
+					 ],
+			 'TR-3':[
+					 [datetime.datetime(2009,9,23,0,0,0),datetime.datetime(2010,5,7,0,0,0)],
+					 [datetime.datetime(2011,6,27,0,0,0),datetime.datetime(2012,6,18,0,0)],
+					 [datetime.datetime(2014,4,10,0,0,0),datetime.datetime(2016,6,7,0,0,0)],
+					 ],
+			 'TR-12A':[
+					 [datetime.datetime(2010,6,30,0,0,0),datetime.datetime(2010,11,30,0,0,0)],
+					 [datetime.datetime(2011,5,30,0,0,0),datetime.datetime(2012,4,30,0,0)],
+					 [datetime.datetime(2012,11,30,0,0,0),datetime.datetime(2013,3,1,0,0,0)],
+					 [datetime.datetime(2014,3,1,0,0,0),datetime.datetime(2015,3,1,0,0,0)],
+					 ]
+			}
+	
+
+	wells = {'TR-4':[
+					 [datetime.datetime(2005,1,29,0,0,0),datetime.datetime(2019,8,29,0,0,0)],
+					 ],
+			 'TR-3':[
+					 [datetime.datetime(2006,6,29,0,0,0),datetime.datetime(2018,4,4,0,0,0)],
+					 ],
+			 'TR-12A':[
+					 [datetime.datetime(2004,8,26,0,0,0),datetime.datetime(2015,1,26,0,0,0)],
+					 ],
+			 'TR-4A':[
+					 [datetime.datetime(2019,8,28,0,0,0),datetime.datetime(2022,2,15,0,0,0)],
+					 ],
+			 'TR-10A':[
+					 [datetime.datetime(2000,12,16,0,0,0),datetime.datetime(2009,6,10,0,0,0)],
+					 ]
+			}
+	"""
+	wells = {'TR-4':[
+					 [datetime.datetime(1992,1,1,0,0,0),datetime.datetime(2010,7,21,0,0,0)],
+					 [datetime.datetime(2018,9,8,0,0,0),datetime.datetime(2019,12,31,0,0,0)]
+					 ],
+			 'TR-3':[
+					 [datetime.datetime(2013,3,22,0,0,0),datetime.datetime(2013,12,22,0,0,0)],
+					 [datetime.datetime(2014,9,21,0,0,0),datetime.datetime(2015,1,1,0,0,0)],
+					 [datetime.datetime(2015,11,1,0,0,0),datetime.datetime(2016,2,7,0,0,0)],
+					 ],
+			 'TR-12A':[
+					 [datetime.datetime(2010,7,21,0,0,0),datetime.datetime(2013,3,21,0,0,0)],
+					 ],
+			 'TR-4A':[
+					 [datetime.datetime(2020,1,1,0,0,0),datetime.datetime(2022,2,15,0,0,0)],
+					 ],
+			}
+
+	colors_wells = {'TR-4':'red',
+					'TR-3':'green',
+					'TR-12A':'blue',
+					'TR-4A':'orange'}
+
+	wells_feezones = {'TR-4':'NA746',
+					'TR-3':'LD367',
+					'TR-12A':'OA135',
+					'TR-4A':'NA170'}
+
+	pres_data=pd.read_csv("../input/field_data.csv",delimiter=',')
+	pres_data.replace(0, np.nan, inplace=True)
+	pres_data = pres_data[pres_data['prs1'].notna()]
+	pos = pres_data.columns.get_loc('prs1')
+	pres_data['delta'] =  pres_data.iloc[1:, pos] - pres_data.iat[0, pos]
+
+	dates_func_res=lambda datesX: datetime.datetime.strptime(str(datesX), "%Y%m%d")
+	dates_res=list(map(dates_func_res,pres_data['fecha']))
+	
+	fig, ax = plt.subplots(figsize=(10,4))
+
+	init_value = 35
+	for i, well in enumerate(wells):
+		data = wells[well]
+
+		for n, dates_range in enumerate(data):
+			ax.fill_between(dates_range,[-init_value-i,-init_value-i], [-init_value-(i+1),-init_value-(i+1)],color= colors_wells[well], alpha = 0.75)
+			if n == 0:
+				ax.text(dates_range[0]- datetime.timedelta(days=365),-init_value-i-0.75, well, fontsize = 8)
+
+
+	for well in wells_feezones:
+
+		file = "../output/PT/evol/%s_PT_evol.dat"%(well)
+		data=pd.read_csv(file)
+
+		times = data['TIME'].loc[data['ELEM'] == wells_feezones[well]]
+		times.reset_index(drop=True)
+		dates = []
+		for time  in times:
+			try:
+				dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
+			except OverflowError:
+				print(time, "wont be plot")
+
+		data_var = data['PRES_VAP'].loc[(data['ELEM'] == wells_feezones[well]) & (data['TIME']> 0 )]/1E5
+
+		data_var = data_var.reset_index()
+
+		var = 'delta'
+		pos = data_var.columns.get_loc('PRES_VAP')
+		data_var['delta'] =  data_var.iloc[1:, pos] - data_var.iat[0, pos]
+		data_var['dates'] = dates
+
+		ax.plot(data_var['dates'],data_var[var],lw = 0.3, linestyle='--',alpha=1,  color = colors_wells[well] )
+
+		for interval in wells[well]:
+
+			df = data_var[(data_var['dates'] > interval[0]) & (data_var['dates'] < interval[1])]
+
+			ax.plot(df['dates'],df[var],linestyle='-',lw = 5, ms=2,marker=formats.plot_conf_marker['current'][0],alpha=0.5, color = colors_wells[well], label = well + ' ' + wells_feezones[well])
+
+
+	handles, labels = ax.get_legend_handles_labels()
+	unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+	ax.legend(*zip(*unique),loc="upper left")
+
+	ax.set_title("Monitoring pressure")
+	ax.set_xlabel("Time")
+	ax.set_ylabel("Pressure drawdown [bar]")
+
+	#Grid style
+	ax.yaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
+	ax.grid(True)
+
+	ax.plot(dates_res,pres_data['delta'],color = 'black',linestyle = 'None' ,ms=0.5,marker='s',alpha=1, label = 'Monitoring')
+
+
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
+
+	xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=years*365.25)]
+
+	ax.set_xlim(xlims)
+	years = mdates.YearLocator()
+	years_fmt = mdates.DateFormatter('%Y')
+
+	ax.xaxis.set_major_formatter(years_fmt)
+
+	fig.savefig('../output/res_pressure.png',dpi=300) 
+
+	plt.show()

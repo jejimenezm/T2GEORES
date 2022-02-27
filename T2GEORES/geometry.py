@@ -8,6 +8,8 @@ import shapefile
 import json
 from iapws import IAPWS97
 import sqlite3
+import math
+
 
 def vertical_layers(input_dictionary):
 	"""It returns the layers information on a dictionary
@@ -606,7 +608,8 @@ def PT_natural_to_GIS(input_dictionary):
 				try:
 					masl_MD=TVD_to_MD(well,elevation)
 					x,y,z=MD_to_TVD(well,masl_MD)
-					if float(fun_T(masl_MD)) and float(fun_P(masl_MD)):
+					if not math.isnan(fun_T(masl_MD)) and not math.isnan(fun_P(masl_MD)) and x != np.nan:
+						print(x,fun_T(masl_MD))
 						w.point(x,y)
 						w.record(float(fun_T(masl_MD)),float(fun_P(masl_MD)))
 				except (ValueError,shapefile.ShapefileException) :
