@@ -190,6 +190,21 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="model_plots.enthalpies_field">
+<code class="descclassname">model_plots.</code><code class="descname">enthalpies_field</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#enthalpies_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.enthalpies_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="model_plots.field">
+<code class="descclassname">model_plots.</code><code class="descname">field</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="model_plots.mh_duplicates">
+<code class="descclassname">model_plots.</code><code class="descname">mh_duplicates</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#mh_duplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.mh_duplicates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="model_plots.permeability_plot">
 <code class="descclassname">model_plots.</code><code class="descname">permeability_plot</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>show_fig</em>, <em>sav_fig</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#permeability_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.permeability_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates a plot for the permeability distribution. Currently just ‘Corey’ is available.</p>
@@ -236,6 +251,32 @@
 </table>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_init_conditions</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="model_plots.plot_liquid_vs_WHP">
+<code class="descclassname">model_plots.</code><code class="descname">plot_liquid_vs_WHP</code><span class="sig-paren">(</span><em>well</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_liquid_vs_WHP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_liquid_vs_WHP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot using the flow and enthalpy measurements</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>well</strong> (<em>str</em>) – Selected well</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Enthalpy (yaxis1), flow (yaxis2) vs time</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">plot</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The file ../input/mh/{well}_mh.dat must exist</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_one_mh_from_txt</span><span class="p">(</span><span class="s1">&#39;WELL-1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -314,7 +355,7 @@
 
 <dl class="function">
 <dt id="model_plots.plot_one_drawdown_from_txt">
-<code class="descclassname">model_plots.</code><code class="descname">plot_one_drawdown_from_txt</code><span class="sig-paren">(</span><em>well</em>, <em>depth</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_one_drawdown_from_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_one_drawdown_from_txt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">model_plots.</code><code class="descname">plot_one_drawdown_from_txt</code><span class="sig-paren">(</span><em>well</em>, <em>depth</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_one_drawdown_from_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_one_drawdown_from_txt" title="Permalink to this definition">¶</a></dt>
 <dd><p>From the real drawndown data a plot is generated for a desired well</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -350,7 +391,33 @@
 
 <dl class="function">
 <dt id="model_plots.plot_one_mh_from_txt">
-<code class="descclassname">model_plots.</code><code class="descname">plot_one_mh_from_txt</code><span class="sig-paren">(</span><em>well</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_one_mh_from_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_one_mh_from_txt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">model_plots.</code><code class="descname">plot_one_mh_from_txt</code><span class="sig-paren">(</span><em>well</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_one_mh_from_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_one_mh_from_txt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot using the flow and enthalpy measurements</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>well</strong> (<em>str</em>) – Selected well</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Enthalpy (yaxis1), flow (yaxis2) vs time</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">plot</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The file ../input/mh/{well}_mh.dat must exist</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_one_mh_from_txt</span><span class="p">(</span><span class="s1">&#39;WELL-1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="model_plots.plot_total_vs_WHP">
+<code class="descclassname">model_plots.</code><code class="descname">plot_total_vs_WHP</code><span class="sig-paren">(</span><em>well</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#plot_total_vs_WHP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.plot_total_vs_WHP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot using the flow and enthalpy measurements</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -402,6 +469,16 @@
 </pre></div>
 </div>
 </dd></dl>
+
+<dl class="function">
+<dt id="model_plots.resample">
+<code class="descclassname">model_plots.</code><code class="descname">resample</code><span class="sig-paren">(</span><em>well</em>, <em>type_well</em>, <em>save_fig=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.resample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="model_plots.total_flow">
+<code class="descclassname">model_plots.</code><code class="descname">total_flow</code><span class="sig-paren">(</span><em>wells</em>, <em>savefig=None</em>, <em>ffill=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model_plots.html#total_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model_plots.total_flow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 

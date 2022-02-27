@@ -299,6 +299,29 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="txt2sqlite.insert_filtered_mh_to_sqlite">
+<code class="descclassname">txt2sqlite.</code><code class="descname">insert_filtered_mh_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>single_well=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_filtered_mh_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_filtered_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dd><p>It stores all the data contain on the subfolder mh from the input file folder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="txt2sqlite.insert_layers_to_sqlite">
 <code class="descclassname">txt2sqlite.</code><code class="descname">insert_layers_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_layers_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_layers_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores layers and elevations</p>
@@ -321,8 +344,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="txt2sqlite.insert_mh_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_mh_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_mh_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dt id="txt2sqlite.insert_raw_mh_to_sqlite">
+<code class="descclassname">txt2sqlite.</code><code class="descname">insert_raw_mh_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_raw_mh_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_raw_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder mh from the input file folder.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -467,6 +490,11 @@ type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.
 </pre></div>
 </div>
 </dd></dl>
+
+<dl class="function">
+<dt id="txt2sqlite.src_rocktype">
+<code class="descclassname">txt2sqlite.</code><code class="descname">src_rocktype</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#src_rocktype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.src_rocktype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 

@@ -161,6 +161,12 @@
   <div class="section" id="module-gener">
 <span id="gener"></span><h1>gener<a class="headerlink" href="#module-gener" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
+<dt id="gener.check_gener_D">
+<code class="descclassname">gener.</code><code class="descname">check_gener_D</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#check_gener_D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.check_gener_D" title="Permalink to this definition">¶</a></dt>
+<dd><p>It plots the listed wells on an input dictionary from the T2 input file.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="gener.create_well_flow">
 <code class="descclassname">gener.</code><code class="descname">create_well_flow</code><span class="sig-paren">(</span><em>flow_times</em>, <em>input_dictionary</em>, <em>include_gener=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#create_well_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.create_well_flow" title="Permalink to this definition">¶</a></dt>
 <dd><p>It creates a mh text file for every well on the input dictionary. These wells need to have been defined on the general input_dictionary before the mesh was created</p>
@@ -244,8 +250,13 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 </dd></dl>
 
 <dl class="function">
+<dt id="gener.raw_to_sqlite">
+<code class="descclassname">gener.</code><code class="descname">raw_to_sqlite</code><span class="sig-paren">(</span><em>well</em>, <em>type_well='injector'</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#raw_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.raw_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="gener.write_gener_from_sqlite">
-<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>input_dictionary</em>, <em>make_up=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>input_dictionary</em>, <em>make_up=False</em>, <em>def_inj_T=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It is the main function on this module, it writes the GENER section from the mh input files</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -253,10 +264,11 @@ the data from newly generated file is added/overwritten to the sqlite databse</l
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</li>
-<li><strong>wells</strong> (<em>array</em>) – Arreglo con nombre de pozos a ser incluidos en la etapa de produccion</li>
+<li><strong>wells</strong> (<em>array</em>) – Wells to be included</li>
 <li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
 ‘invariable’ writes the GENER section for every well as it is written on the input file</li>
 <li><strong>make_up</strong> (<em>bool</em>) – If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</li>
+<li><strong>def_inj_T</strong> (<em>dictionary</em>) – Defines the default temperature for the injector wells when there is no flowing enthalpy provided.</li>
 </ul>
 </td>
 </tr>
@@ -314,7 +326,7 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 <dl class="function">
 <dt id="gener.write_t2_format_gener">
 <code class="descclassname">gener.</code><code class="descname">write_t2_format_gener</code><span class="sig-paren">(</span><em>var_array</em>, <em>time_array</em>, <em>var_type</em>, <em>var_enthalpy</em>, <em>type_flow</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_t2_format_gener" title="Permalink to this definition">¶</a></dt>
-<dd><p>It generaates the block of time, flow and enthalpy for each flow</p>
+<dd><p>It generates the block of time, flow and enthalpy for each flow</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -353,8 +365,8 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 
 <dl class="function">
 <dt id="gener.write_t2_format_gener_dates">
-<code class="descclassname">gener.</code><code class="descname">write_t2_format_gener_dates</code><span class="sig-paren">(</span><em>var_array</em>, <em>time_array</em>, <em>var_type</em>, <em>var_enthalpy</em>, <em>type_flow</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_t2_format_gener_dates" title="Permalink to this definition">¶</a></dt>
-<dd><p>It generaates the block of time, flow and enthalpy for each flow on datetime format</p>
+<code class="descclassname">gener.</code><code class="descname">write_t2_format_gener_dates</code><span class="sig-paren">(</span><em>var_array</em>, <em>time_array</em>, <em>var_type</em>, <em>var_enthalpy</em>, <em>type_flow</em>, <em>def_T</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_t2_format_gener_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the block of time, flow and enthalpy for each flow on datetime format</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -366,6 +378,7 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 <li><strong>var_enthalpy</strong> (<em>array</em>) – Contains the flowing enthalpy data</li>
 <li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
 ‘invariable’ writes the GENER section for every well as it is written on the input file</li>
+<li><strong>def_T</strong> (<em>flot</em>) – Default temperature value for injector wells with no flowing enthalpy provided.</li>
 </ul>
 </td>
 </tr>

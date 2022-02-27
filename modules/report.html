@@ -161,7 +161,29 @@
 <span id="report"></span><h1>report<a class="headerlink" href="#module-report" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="report.compare_runs_PT">
-<code class="descclassname">report.</code><code class="descname">compare_runs_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>comment=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#compare_runs_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.compare_runs_PT" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">report.</code><code class="descname">compare_runs_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>comment=''</em>, <em>compare_wells=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#compare_runs_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.compare_runs_PT" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a pdf for calibration pourposes, comparing current and previous data set</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dict</em>) – Contains well names, model version, db path and layers information.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">run_{date_time}.pdf: on ‘../calib/PT/run</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pdf</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some other files such as ELEME.json, OBJ.json and COF_PT.json must be ready.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.cross_section">
+<code class="descclassname">report.</code><code class="descname">cross_section</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>variable</em>, <em>layer</em>, <em>time</em>, <em>plot_mesh=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#cross_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.cross_section" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -231,8 +253,118 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="report.plot_compare_PT">
+<code class="descclassname">report.</code><code class="descname">plot_compare_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em>, <em>block</em>, <em>save</em>, <em>show</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_PT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>well</strong> (<em>str</em>) – Nombre de pozo</li>
+<li><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</li>
+<li><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</li>
+<li><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+<li><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="report.plot_compare_PT_curr_prev">
 <code class="descclassname">report.</code><code class="descname">plot_compare_PT_curr_prev</code><span class="sig-paren">(</span><em>db_path</em>, <em>name</em>, <em>ELEME</em>, <em>layers</em>, <em>inpath='../output/PT/txt'</em>, <em>previnpath='../output/PT/txt/prev'</em>, <em>show=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT_curr_prev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_PT_curr_prev" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="report.plot_compare_PT_vertical">
+<code class="descclassname">report.</code><code class="descname">plot_compare_PT_vertical</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em>, <em>block</em>, <em>save</em>, <em>show</em>, <em>years=35</em>, <em>p_res_block=None</em>, <em>delta=False</em>, <em>var_name='P'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT_vertical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_PT_vertical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>well</strong> (<em>str</em>) – Nombre de pozo</li>
+<li><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</li>
+<li><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</li>
+<li><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+<li><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.plot_compare_mh">
+<code class="descclassname">report.</code><code class="descname">plot_compare_mh</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em>, <em>block</em>, <em>source</em>, <em>save</em>, <em>show</em>, <em>production_dictionary</em>, <em>years=35</em>, <em>variables=[]</em>, <em>plot_feedzones=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_mh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_mh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>well</strong> (<em>str</em>) – Nombre de pozo</li>
+<li><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</li>
+<li><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</li>
+<li><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+<li><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="report.plot_compare_mh_filtered">
+<code class="descclassname">report.</code><code class="descname">plot_compare_mh_filtered</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_mh_filtered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_mh_filtered" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -312,6 +444,11 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="report.plot_compare_producers">
+<code class="descclassname">report.</code><code class="descname">plot_compare_producers</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>years=35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_producers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_producers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="report.plot_evol_well_data">
 <code class="descclassname">report.</code><code class="descname">plot_evol_well_data</code><span class="sig-paren">(</span><em>well</em>, <em>layer</em>, <em>parameter</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_evol_well_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_evol_well_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary</p>
@@ -385,8 +522,23 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="report.plot_power">
+<code class="descclassname">report.</code><code class="descname">plot_power</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>save=True</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="report.plot_power_it2">
+<code class="descclassname">report.</code><code class="descname">plot_power_it2</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>save=True</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power_it2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_power_it2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="report.pres">
+<code class="descclassname">report.</code><code class="descname">pres</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#pres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.pres" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="report.to_paraview">
-<code class="descclassname">report.</code><code class="descname">to_paraview</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>itime=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#to_paraview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.to_paraview" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">report.</code><code class="descname">to_paraview</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>itime=None</em>, <em>num=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#to_paraview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.to_paraview" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates a vtu file to be read on Paraview for different time output including all the parameters from each block.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

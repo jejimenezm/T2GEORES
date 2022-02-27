@@ -161,6 +161,49 @@
   <div class="section" id="module-it2Obs">
 <span id="it2obs"></span><h1>it2Obs<a class="headerlink" href="#module-it2Obs" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
+<dt id="it2Obs.it2_weighted_h">
+<code class="descclassname">it2Obs.</code><code class="descname">it2_weighted_h</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#it2_weighted_h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.it2_weighted_h" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="it2Obs.observation_pres">
+<code class="descclassname">it2Obs.</code><code class="descname">observation_pres</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>use_formation=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observation_pres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observation_pres" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="it2Obs.observations_delta_it2_filtered">
+<code class="descclassname">it2Obs.</code><code class="descname">observations_delta_it2_filtered</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>obs_info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_delta_it2_filtered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_delta_it2_filtered" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the drawdown observation section for the iTOUGH2 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</li>
+<li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
+<li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_DD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="it2Obs.observations_to_it2">
 <code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>include_pres=False</em>, <em>p_res_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.</p>
@@ -200,7 +243,7 @@ The name and path of the database a list of the wells for calibration and finall
 
 <dl class="function">
 <dt id="it2Obs.observations_to_it2_DD">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_DD</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>include_pres=False</em>, <em>p_res_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_DD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_DD" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_DD</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>obs_info</em>, <em>include_pres=False</em>, <em>p_res_block=None</em>, <em>include_wells=True</em>, <em>dates_format=True</em>, <em>show_plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_DD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_DD" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the drawdown observation section for the iTOUGH2 file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -210,6 +253,9 @@ The name and path of the database a list of the wells for calibration and finall
 <li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</li>
 <li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
 <li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
+<li><strong>obs_info</strong> (<em>dictionary</em>) – Includes well name as keyword and an array with [TVD, layer_correlative]</li>
+<li><strong>include_wells</strong> (<em>bool</em>) – If True includes well drawdown include on obs_info, default : True</li>
+<li><strong>dates_format</strong> (<em>bool</em>) – In case SECONDS are prefered on the DATA section, default : True</li>
 </ul>
 </td>
 </tr>
@@ -230,6 +276,11 @@ The name and path of the database a list of the wells for calibration and finall
 </pre></div>
 </div>
 </dd></dl>
+
+<dl class="function">
+<dt id="it2Obs.observations_to_it2_POWER">
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_POWER</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>dates_format=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_POWER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_POWER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="it2Obs.observations_to_it2_PT">
@@ -259,7 +310,7 @@ The name and path of the database a list of the wells for calibration and finall
 
 <dl class="function">
 <dt id="it2Obs.observations_to_it2_h">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_h</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_h" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_h</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>dates_format=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_h" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the flowing enthalpy observation section for the iTOUGH2 file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

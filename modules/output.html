@@ -183,6 +183,16 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="output.eleme_CSV">
+<code class="descclassname">output.</code><code class="descname">eleme_CSV</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#eleme_CSV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.eleme_CSV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="output.eleme_CSV_PT">
+<code class="descclassname">output.</code><code class="descname">eleme_CSV_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>path=None</em>, <em>def_time=300</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#eleme_CSV_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.eleme_CSV_PT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="output.extract_csv_from_t2out">
 <code class="descclassname">output.</code><code class="descname">extract_csv_from_t2out</code><span class="sig-paren">(</span><em>json_output=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#extract_csv_from_t2out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.extract_csv_from_t2out" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes the parameter for every block from the last output file of TOUGH2 simulation on csv or json</p>
@@ -203,6 +213,11 @@
 <p class="last">The file ELEME.json needs to be updated</p>
 </div>
 </dd></dl>
+
+<dl class="function">
+<dt id="output.field_areas_enthalpy">
+<code class="descclassname">output.</code><code class="descname">field_areas_enthalpy</code><span class="sig-paren">(</span><em>wells</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#field_areas_enthalpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.field_areas_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="output.flow_direction">
@@ -240,6 +255,24 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">from_sav_to_json</span><span class="p">(</span><span class="n">sav_version</span><span class="o">=</span><span class="s1">&#39;sav1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.gen_csv">
+<code class="descclassname">output.</code><code class="descname">gen_csv</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#gen_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.gen_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates an output file containing flow and flowing enthalpy for each GEN element from the T2 .csv output file. As a convention the library it is suggested to use GEN for any source/sink that is not a well</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -351,6 +384,29 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="output.power">
+<code class="descclassname">output.</code><code class="descname">power</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>WHP</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="output.src_csv">
+<code class="descclassname">output.</code><code class="descname">src_csv</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#src_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.src_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates an output file containing flow and flowing enthalpy for each GEN element from the T2 .csv output file. As a convention the library it is suggested to use GEN for any source/sink that is not a well</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="output.src_evol">
 <code class="descclassname">output.</code><code class="descname">src_evol</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#src_evol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.src_evol" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates an output file containing flow and flowing enthalpy for each SRC element. As a convention the library it is suggested to use SRC for any source/sink that is a well</p>
@@ -366,6 +422,39 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="output.t2_CSV_to_json">
+<code class="descclassname">output.</code><code class="descname">t2_CSV_to_json</code><span class="sig-paren">(</span><em>itime=None</em>, <em>all_times=False</em>, <em>path=None</em>, <em>num=None</em>, <em>last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#t2_CSV_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.t2_CSV_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>It creates a severals or a single json file from the output file from the TOUGH2 run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</li>
+<li><strong>save_full</strong> (<em>bool</em>) – If True it creates a single output json file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>files</em> – t2_ouput_{time}.json: on ../output/PT/json/evol/</li>
+<li><em>file</em> – t2_output:  on ../output/PT/json/</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">When t2_output is saved, the large could be too large for the system to handle it</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_to_json</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -400,6 +489,11 @@
 </pre></div>
 </div>
 </dd></dl>
+
+<dl class="function">
+<dt id="output.total_enthalpy">
+<code class="descclassname">output.</code><code class="descname">total_enthalpy</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>wells</em>, <em>years=35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#total_enthalpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.total_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="output.write_PT_from_t2output">

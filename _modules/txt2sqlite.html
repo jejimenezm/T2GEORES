@@ -249,11 +249,22 @@
 <span class="s1">						 [Pressure] REAL,</span>
 <span class="s1">						 [Temperature] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
 
-		<span class="c1">#Create table - mh</span>
+		<span class="c1">#Create table - raw mh</span>
 		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;mh&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
 			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  mh</span>
 <span class="s1">						 ([well] TEXT,</span>
 <span class="s1">						 [type] TEXT,</span>
+<span class="s1">						 [date_time] datetime,</span>
+<span class="s1">						 [steam_flow] REAL,</span>
+<span class="s1">						 [liquid_flow] REAL,</span>
+<span class="s1">						 [flowing_enthalpy] REAL,</span>
+<span class="s1">						 [well_head_pressure] REAL)&#39;&#39;&#39;</span><span class="p">)</span>
+
+		<span class="c1">#Create table - filtered mh</span>
+		<span class="k">if</span> <span class="n">checktable</span><span class="p">(</span><span class="s1">&#39;mh_f&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  mh_f</span>
+<span class="s1">						 ([well] TEXT,</span>
+<span class="s1">						 [status] TEXT,</span>
 <span class="s1">						 [date_time] datetime,</span>
 <span class="s1">						 [steam_flow] REAL,</span>
 <span class="s1">						 [liquid_flow] REAL,</span>
@@ -294,6 +305,8 @@
 			<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;CREATE TABLE  t2wellsource</span>
 <span class="s1">						 ([well] TEXT,</span>
 <span class="s1">						 [blockcorr] TEXT ,</span>
+<span class="s1">						 [rocktype] TEXT ,</span>
+<span class="s1">						 [flow_type] TEXT ,</span>
 <span class="s1">						 [source_nickname] TEXT PRIMARY KEY)&#39;&#39;&#39;</span><span class="p">)</span>
 
 		<span class="c1">#Create table - layers levels</span>
@@ -487,6 +500,7 @@
 
 	<span class="n">feedzones</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;well_feedzone.csv&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 
+
 	<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">feedzones</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
 		<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO wellfeedzone(well,MeasuredDepth,contribution) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
 		<span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;MD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;contribution&#39;</span><span class="p">])</span>
@@ -589,12 +603,11 @@
 	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown&#39;</span><span class="p">):</span>
 		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_DD.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span> <span class="ow">and</span> <span class="n">f</span><span class="o">!=</span><span class="s1">&#39;p_res.csv&#39;</span><span class="p">:</span>
-			<span class="n">C</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">C</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO drawdown(well,date_time,TVD,pressure) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
-				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">])</span>
-				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="n">DD</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;drawdown/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+			<span class="n">DD</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">well_name</span>
+			<span class="n">DD</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;datetime&#39;</span><span class="p">:</span> <span class="s1">&#39;date_time&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="s1">&#39;temp&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">DD</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;drawdown&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+			
 	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="insert_cooling_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_cooling_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_cooling_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
@@ -614,6 +627,7 @@
 <span class="sd">	&gt;&gt;&gt;  insert_cooling_to_sqlite(input_dictionary)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
+
 	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
 	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
 
@@ -622,15 +636,14 @@
 	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling&#39;</span><span class="p">):</span>
 		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_C.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
-			<span class="n">DD</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">DD</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO cooling(well,date_time,TVD,temp) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
-				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;TVD&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">])</span>
-				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="n">CC</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;cooling/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+			<span class="n">CC</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">well_name</span>
+			<span class="n">CC</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;datetime&#39;</span><span class="p">:</span> <span class="s1">&#39;date_time&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="s1">&#39;temp&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">CC</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;cooling&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+			
 	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="insert_mh_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_mh_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+<div class="viewcode-block" id="insert_raw_mh_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_raw_mh_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_raw_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder mh from the input file folder.</span>
 
 <span class="sd">	Parameters</span>
@@ -654,14 +667,53 @@
 	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 	<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh&#39;</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 		<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_mh.dat&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">):</span>
 			<span class="n">mh</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">mh</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-				<span class="n">q</span><span class="o">=</span><span class="s2">&quot;INSERT INTO mh(well,type,date_time,steam_flow,liquid_flow,flowing_enthalpy,well_head_pressure) VALUES (&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,&#39;</span><span class="si">%s</span><span class="s2">&#39;,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span>\
-				<span class="p">(</span><span class="n">well_name</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;date-time&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">])</span>
-				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="n">mh</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;steam&#39;</span><span class="p">:</span> <span class="s1">&#39;steam_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;liquid&#39;</span><span class="p">:</span> <span class="s1">&#39;liquid_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;enthalpy&#39;</span><span class="p">:</span> <span class="s1">&#39;flowing_enthalpy&#39;</span><span class="p">,</span>  <span class="s1">&#39;WHPabs&#39;</span><span class="p">:</span> <span class="s1">&#39;well_head_pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;type&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="insert_filtered_mh_to_sqlite"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.insert_filtered_mh_to_sqlite">[docs]</a><span class="k">def</span> <span class="nf">insert_filtered_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">single_well</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It stores all the data contain on the subfolder mh from the input file folder.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	input_dictionary: dictionary</span>
+<span class="sd">	  Dictionary containing the path and name of database and the path of the input file</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:</span>
+<span class="sd">	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt;  insert_mh_to_sqlite(input_dictionary)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">source_txt</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;source_txt&#39;</span><span class="p">]</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">single_well</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/filtered&#39;</span><span class="p">):</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+			<span class="n">well_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_week_avg.csv&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/filtered/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span> <span class="ow">and</span> <span class="n">well_name</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">]:</span>
+				<span class="n">mh</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/filtered/&#39;</span><span class="o">+</span><span class="n">f</span><span class="p">)</span>
+				<span class="n">mh</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">well_name</span>
+				<span class="n">mh</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;steam&#39;</span><span class="p">:</span> <span class="s1">&#39;steam_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;liquid&#39;</span><span class="p">:</span> <span class="s1">&#39;liquid_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;enthalpy&#39;</span><span class="p">:</span> <span class="s1">&#39;flowing_enthalpy&#39;</span><span class="p">,</span>  <span class="s1">&#39;WHPabs&#39;</span><span class="p">:</span> <span class="s1">&#39;well_head_pressure&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+				<span class="n">mh</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;mh_f&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">file_name</span> <span class="o">=</span> <span class="n">single_well</span> <span class="o">+</span> <span class="s2">&quot;_week_avg.csv&quot;</span>
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/filtered/&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">single_well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">]:</span>
+			<span class="n">mh</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">source_txt</span><span class="o">+</span><span class="s1">&#39;mh/filtered/&#39;</span><span class="o">+</span><span class="n">file_name</span><span class="p">)</span>
+			<span class="n">mh</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">single_well</span>
+			<span class="n">mh</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;steam&#39;</span><span class="p">:</span> <span class="s1">&#39;steam_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;liquid&#39;</span><span class="p">:</span> <span class="s1">&#39;liquid_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;enthalpy&#39;</span><span class="p">:</span> <span class="s1">&#39;flowing_enthalpy&#39;</span><span class="p">,</span>  <span class="s1">&#39;WHPabs&#39;</span><span class="p">:</span> <span class="s1">&#39;well_head_pressure&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">mh</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;mh_f&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+			
 	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="replace_mh"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.replace_mh">[docs]</a><span class="k">def</span> <span class="nf">replace_mh</span><span class="p">(</span><span class="n">wells_to_replace</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">):</span>
@@ -868,10 +920,11 @@
 
 	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
 
-	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../mesh/well_dict.txt&#39;</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;../mesh/wells_correlative.txt&#39;</span><span class="p">):</span>
 
-		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../mesh/well_dict.txt&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../mesh/wells_correlative.txt&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
 		    <span class="n">wells_correlative</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+
 
 		<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 		<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -884,7 +937,7 @@
 					<span class="n">wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
 			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 					<span class="k">pass</span>
-
+		<span class="nb">print</span><span class="p">(</span><span class="n">wells_correlative</span><span class="p">[</span><span class="s1">&#39;P-1&#39;</span><span class="p">])</span>
 		<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
 			<span class="k">try</span><span class="p">:</span>
 				<span class="n">blocknumer</span><span class="o">=</span><span class="n">wells_correlative</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -892,6 +945,7 @@
 				<span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 				<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 			<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>
 				<span class="k">pass</span>
 			<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
 				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The block  number is already assing for the well: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span>
@@ -934,6 +988,38 @@
 			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 		<span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">:</span>
 			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The layer </span><span class="si">%s</span><span class="s2"> is already define, correlative is a PRIMARY KEY&quot;</span><span class="o">%</span><span class="n">correlative</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<span class="c1">#Not documented</span>
+
+<div class="viewcode-block" id="src_rocktype"><a class="viewcode-back" href="../modules/txt2sqlite.html#txt2sqlite.src_rocktype">[docs]</a><span class="k">def</span> <span class="nf">src_rocktype</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+
+	<span class="n">elem_file</span><span class="o">=</span><span class="s1">&#39;../mesh/ELEME.json&#39;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">elem_file</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">elem_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+		  	<span class="n">blocks</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+
+	<span class="c1">#List the GEN elements</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="n">data_source</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT well, blockcorr,source_nickname FROM t2wellsource ORDER BY source_nickname;&quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+	
+	<span class="n">data_source</span><span class="p">[</span><span class="s1">&#39;rocktype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+	<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_source</span><span class="p">)):</span>
+		<span class="n">blockcorr</span><span class="o">=</span><span class="n">data_source</span><span class="p">[</span><span class="s1">&#39;blockcorr&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]</span>
+		<span class="n">rocktype_n</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="n">blockcorr</span><span class="p">][</span><span class="s1">&#39;MA1&#39;</span><span class="p">]</span>
+		<span class="n">data_source</span><span class="p">[</span><span class="s1">&#39;rocktype&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">rocktype_n</span>
+
+	<span class="n">data_source</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;t2wellsource&#39;</span><span class="p">,</span><span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">,</span><span class="n">con</span><span class="o">=</span><span class="n">conn</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index_label</span> <span class="o">=</span> <span class="s1">&#39;source_nickname&#39;</span><span class="p">)</span>
+
 	<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 </pre></div>
 
