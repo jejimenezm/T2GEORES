@@ -214,7 +214,6 @@ class py2amesh:
 		self.points_around_well=points_around_well
 
 		self.distance_points_around_well=distance_points_around_well
-
 		self.outer_polygon = outer_polygon
 
 
@@ -1024,7 +1023,7 @@ class py2amesh:
 	
 
 		#Read border to clip write into in file
-		borders=gpd.read_file(	self.outer_polygon)
+		borders=gpd.read_file(self.outer_polygon)
 
 		border_points=[]
 		for line in borders.iterrows():

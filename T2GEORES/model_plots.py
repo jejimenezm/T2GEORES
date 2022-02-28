@@ -638,7 +638,7 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 	#Plot configuration
 	fontsizex = 4
 	fontsize_axis = 4
-	fontsize_tick = 3
+	fontsize_tick = 5
 	fontsize_legend = 2
 	
 	#T and P limits
@@ -716,6 +716,8 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 	fig.suptitle('Initial conditions/Well conditions %s'%title_s, fontsize=fontsizex)
 	plt.rc('legend', fontsize=fontsize_legend)
 
+	fontsize_label=7
+
 	axT.xaxis.tick_top()
 	axT.set_xlabel('Temperature [$^\circ$C]',fontsize=fontsize_axis)
 	axT.xaxis.set_label_coords(0.5,1.08)
@@ -727,6 +729,17 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 	axT.grid(color = 'grey', linestyle = '--', linewidth = 0.1, alpha=0.5)
 	legend_T=axT.legend(loc=3,ncol=2,bbox_to_anchor=(0.05,0.0125))
 
+	layers_info =  geometry.vertical_layers(input_dictionary)	
+	ax2 = axT.twinx()            
+	ax2.set_yticks(layers_info['top'], minor=True)
+	ax2.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.6)
+	ax2.set_yticks(layers_info['middle'], minor=False)
+	ax2.set_yticklabels(layers_info['name'],fontsize=fontsize_label)
+	ax2.tick_params(axis='y',which='both',length=0)
+	ax2.set_ylabel('Layer',fontsize = fontsize_label)
+	ax2.yaxis.set_label_coords(1.05,0.5)
+	ax2.set_ylim(axT.get_ylim())
+
 	axP.xaxis.tick_top()
 	axP.set_xlabel('Pressure [bar]',fontsize=fontsize_axis)
 	axP.xaxis.set_label_coords(0.5,1.08)
@@ -737,6 +750,16 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 	axP.set_ylim(max_depth,min_depth)
 	axP.grid(color = 'grey', linestyle = '--', linewidth = 0.1, alpha=0.5)
 	legend_P=axP.legend(loc=3,ncol=2,bbox_to_anchor=(0.05,0.0125))
+
+	ax3 = axP.twinx()            
+	ax3.set_yticks(layers_info['top'], minor=True)
+	ax3.yaxis.grid(True, which='minor',linestyle='--', color='grey', alpha=0.6)
+	ax3.set_yticks(layers_info['middle'], minor=False)
+	ax3.set_yticklabels(layers_info['name'],fontsize=fontsize_label)
+	ax3.tick_params(axis='y',which='both',length=0)
+	ax3.set_ylabel('Layer',fontsize = fontsize_label)
+	ax3.yaxis.set_label_coords(1.05,0.5)
+	ax3.set_ylim(axP.get_ylim())
 
 	legend_P.get_frame().set_linewidth(0.25)
 	for legend_handle in legend_P.legendHandles:

@@ -190,7 +190,7 @@ def write_t2_format_gener(var_array,time_array,var_type,var_enthalpy,type_flow,i
 	else:
 		print("Time and variable array must have the same length")
 
-def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_flow, def_T):
+def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_flow, def_T, min_days, time_between_months):
 	"""It generates the block of time, flow and enthalpy for each flow on datetime format
 
 	Parameters
@@ -242,7 +242,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	now = datetime.now()
 
 	#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value
-	extra_time=365.25*24*3600/2
+	extra_time=365.25*time_between_months*3600*24/2
 
 	if type_flow=="invariable":
 		cnt_P=1
@@ -257,8 +257,8 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 			if vx == 'P':
 				ind = ix
 				break
-
-		string_P+=format((time_array[ind]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+    
+		string_P+=format((time_array[ind]-timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 		string_P+=format(flow_min,'>10.3E')+'\n'
 
 		string_R+=format(t_min,'>20s')
@@ -271,7 +271,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 				ind = ix
 				break
 
-		string_R+=format((time_array[ind]-timedelta(days=1)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		string_R+=format((time_array[ind]-timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 		string_R+=format(flow_min,'>10.3E')
 		string_R+=format(enthalpy_min,'>10.3E')+'\n'
 
@@ -286,12 +286,12 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 				now_time_P = time_array[n]
 
 				if n >= 1 and 'last_time_P' in locals():
-					if (now_time_P-last_time_P).total_seconds()>=(365.25*3600*24*8/12) :
-						string_P += format((last_time_P + timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					if (now_time_P-last_time_P).total_seconds()>=(extra_time) :
+						string_P += format((last_time_P + timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 						string_P += format(0.0,'>10.2E')+'\n'
 						cnt_P+=1
 
-						string_P += format((now_time_P - timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_P += format((now_time_P - timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 						string_P += format(0.0,'>10.2E')+'\n'
 						cnt_P+=1
 
@@ -313,16 +313,16 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 				if n >= 1 and 'last_time_R' in locals():
 
-					if (now_time_R-last_time_R).total_seconds()>=(365.25*3600*24*8/12) :
+					if (now_time_R-last_time_R).total_seconds()>=(extra_time) :
 
-						string_R += format((last_time_R + timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_R += format((last_time_R + timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 						string_R += format(0.0,'>10.3E')
 						string_R += format(var_enthalpy[n],'>10.3E')+'\n'
 						cnt_R+=1
 
 						print(now_time_R, last_time_R)
 
-						string_R += format((now_time_R - timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_R += format((now_time_R - timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 						string_R += format(0.0,'>10.2E')
 						string_R+=format(var_enthalpy[n],'>10.3E')+'\n'
 						cnt_R+=1
@@ -342,9 +342,9 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 			pass
 		elif type_flow=="constant":
 			if cnt_R>3:
-				if (now-last_time_R).total_seconds()>=(365.25*3600*24*1):
+				if (now-last_time_R).total_seconds()>=(extra_time):
 					cnt_R+=1
-					string_R+=format((last_time_R+timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					string_R+=format((last_time_R+timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 					last_flow_R = 0
 					string_R += format(last_flow_R,'>10.2E')
 					string_R += format(last_enthalpy,'>10.3E')+'\n'
@@ -356,9 +356,9 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 			if cnt_P>3:
 
-				if (now-last_time_P).total_seconds()>=(365.25*3600*24*1):
+				if (now-last_time_P).total_seconds()>=(extra_time):
 					last_flow_P = 0
-					string_P += format((last_timeP+timedelta(days=30)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					string_P += format((last_time_P+timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
 					string_P += format(-last_flow_P,'>10.2E')+'\n'
 					cnt_P += 1
 
@@ -398,7 +398,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	else:
 		print("Time and variable array must have the same length")
 
-def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None):
+def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None, min_days = 0.5, time_between_months = 120):
 	"""It is the main function on this module, it writes the GENER section from the mh input files
 
 	Parameters
@@ -454,13 +454,15 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T 
 
 		try:
 			def_T = def_inj_T[name]
-		except KeyError:
+		except (KeyError,TypeError):
 			def_T = None
 
-		data=pd.read_sql_query("SELECT status,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure\
-		 FROM mh_f WHERE well='%s';"%name,conn)
+		data=pd.read_sql_query("SELECT type,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure\
+		 FROM mh WHERE well='%s';"%name,conn)
+        
+		print(data)
 
-		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
+		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d_%H:%M:%S")
 		#Read file cooling
 		dates=list(map(dates_func,data['date_time']))
 
@@ -508,10 +510,12 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T 
 			#If there is not sources name it creates one base on the increment
 			if source_last==None:
 				source_corr="SRC%s"%source_corr_num
+				source_corr_R=source_corr
 			else:
 
 				#If there  is something,  it looks for that block source nickname
 				q_corr_sqlite="SELECT source_nickname FROM t2wellsource where blockcorr='%s'"%source_block
+                
 
 				c.execute(q_corr_sqlite)
 				conn.commit()
@@ -546,9 +550,9 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T 
 				print(source_corr, source_corr_R)
 
 			if t2_ver<7:
-				P,R, LTAB_P, LTAB_R = write_t2_format_gener(data['m_total'].values*contribution[feedn], dates, data['status'], data['flowing_enthalpy']*1E3, type_flow, input_dictionary=input_dictionary)
+				P,R, LTAB_P, LTAB_R = write_t2_format_gener(data['m_total'].values*contribution[feedn], dates, data['type'], data['flowing_enthalpy']*1E3, type_flow, input_dictionary=input_dictionary,min_days=min_days, time_between_months= time_between_months)
 			else:
-				P,R, LTAB_P, LTAB_R = write_t2_format_gener_dates(data['m_total'].values*contribution[feedn], dates, data['status'], data['flowing_enthalpy']*1E3, type_flow, def_T)
+				P,R, LTAB_P, LTAB_R = write_t2_format_gener_dates(data['m_total'].values*contribution[feedn], dates, data['type'], data['flowing_enthalpy']*1E3, type_flow, def_T,min_days = min_days, time_between_months= time_between_months)
 
 			if type_flow=="invariable":
 				condition=1
@@ -1166,8 +1170,6 @@ def check_gener_D(input_dictionary):
 
 	sources_part = np.array_split(sources, 5)
 
-	data_out= pd.DataFrame(columns = ['datetime', 'm', 'block', 'type'])
-
 	for sources in sources_part:
 
 		fig = plt.figure()
@@ -1186,7 +1188,6 @@ def check_gener_D(input_dictionary):
 				color_i = 'b'
 			elif 'i' not in type_i:
 				color_i = 'r'
-				data_out = data_out.append(data_i, ignore_index = True)
 
 			y_limits = [0,119]
 			y_ticks = [0,30,60,90,120]
@@ -1208,25 +1209,3 @@ def check_gener_D(input_dictionary):
 		    axis.label_outer()
 
 		plt.show()
-
-	data_out['datetime'] = pd.to_datetime(data_out['datetime'] , format="%Y-%m-%d_%H:%M:%S")
-	data_out = data_out.groupby('datetime').sum()
-	
-	fig, ax = plt.subplots(figsize=(10,4))
-	
-	fig.suptitle('Total_flow')
-
-	ax.plot(data_out.index, abs(data_out.m), color = color_i)
-
-	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-	years = mdates.YearLocator()
-	years_fmt = mdates.DateFormatter('%Y')
-	ax.xaxis.set_major_formatter(years_fmt)
-	ax.set_yticks(y_ticks)
-	ax.set_ylabel('Flow')
-
-	plt.show()
-
-
-
-
