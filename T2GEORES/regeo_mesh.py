@@ -158,7 +158,7 @@ class py2amesh:
 		x_from_boarder,y_from_boarder,\
 		x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,\
 		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog,line_file,fault_distance,with_polygon,polygon_shape,set_inac_from_poly,set_inac_from_inner,rotate,angle,inner_mesh_type,\
-		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well, outer_polygon):
+		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well,outer_polygon):
 
 		self.filename=filename
 		self.filepath=filepath

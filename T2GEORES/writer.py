@@ -705,32 +705,38 @@ def OUTPU_writer(input_dictionary):
 	string="OUTPU----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 
 	for outpu in input_dictionary['OUTPU']:
-		for key in input_dictionary['OUTPU'][outpu]:
-			if outpu=='FORMAT':
-				string+="%s\n"%(key)
-				n_variables=0
-				string_temp=''
-			else:
-				string_temp+=format(key,formats.formats_t2['OUTPU']['FORMAT'][0])
-				n_variables+=1
-				for i,parameter in enumerate(input_dictionary['OUTPU'][outpu][key]):
-					try:
-						if type(parameter)==formats.formats_t2['OUTPU'][outpu][key][i]:
-							if parameter!=None:
-								string_temp+=format(str(parameter),formats.formats_t2['OUTPU']['FORMAT'][1])
-						else:
-							sys.exit("OUTPU %s %s %s not correctly formatted"%(outpu,key,parameter))
-					except KeyError:
-						sys.exit("Key %s does not exist for OUTPU"%key)
-
-				if not all(ft2==type(None) for ft2 in formats.formats_t2['OUTPU'][outpu][key]):
-					cnt=0
-					for value in formats.formats_t2['OUTPU'][outpu][key]:
-						if value!=type(None):
-							cnt+=1
-					if i!=(cnt-1):
-						sys.exit("For the key %s the number of arguments required are not enough"%key)
-				string_temp+='\n'
+		if outpu=='FORMAT':
+			string+="%s\n"%(input_dictionary['OUTPU'][outpu])
+			n_variables=0
+			string_temp=''	
+		else:
+			for key in input_dictionary['OUTPU'][outpu]:
+				print(key)
+				if outpu=='FORMAT':
+					string+="%s\n"%(key)
+					n_variables=0
+					string_temp=''
+				else:
+					string_temp+=format(key,formats.formats_t2['OUTPU']['FORMAT'][0])
+					n_variables+=1
+					for i,parameter in enumerate(input_dictionary['OUTPU'][outpu][key]):
+						try:
+							if type(parameter)==formats.formats_t2['OUTPU'][outpu][key][i]:
+								if parameter!=None:
+									string_temp+=format(str(parameter),formats.formats_t2['OUTPU']['FORMAT'][1])
+							else:
+								sys.exit("OUTPU %s %s %s not correctly formatted"%(outpu,key,parameter))
+						except KeyError:
+							sys.exit("Key %s does not exist for OUTPU"%key)
+    
+					if not all(ft2==type(None) for ft2 in formats.formats_t2['OUTPU'][outpu][key]):
+						cnt=0
+						for value in formats.formats_t2['OUTPU'][outpu][key]:
+							if value!=type(None):
+								cnt+=1
+						if i!=(cnt-1):
+							sys.exit("For the key %s the number of arguments required are not enough"%key)
+					string_temp+='\n'
 	string=string+str(n_variables)+'\n'+string_temp+'\n'
 
 	return string
@@ -855,7 +861,7 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 	>>> t2_input(input_dictionary,include_FOFT=True,include_SOLVR=True,include_COFT=False,include_GOFT=True,include_RPCAP=False,include_MULTI=True,include_START=True,include_MOMOP=True,include_OUTPU=True)
 	"""
 
-	secctions=[TITLE_writer,ROCKS_writer,PARAM_writer,ELEME_adder,CONNE_adder]
+	secctions=[TITLE_writer,ROCKS_writer,PARAM_writer]
 
 	if_functions_dictionary={'MOMOP':[include_MOMOP,MOMOP_writer],
 							 'RPCAP':[include_RPCAP,RPCAP_writer],
@@ -871,6 +877,7 @@ def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,
 		if if_functions_dictionary[bools][0]:
 			secctions.append(if_functions_dictionary[bools][1])
 
+	secctions.extend([ELEME_adder,CONNE_adder])
 	output=""
 	for func in secctions:
 		if func==PARAM_writer and include_START:

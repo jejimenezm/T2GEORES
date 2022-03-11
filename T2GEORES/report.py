@@ -26,7 +26,6 @@ from scipy import stats
 from scipy.stats import norm
 from iapws import IAPWS97
 
-plt.style.use('T2GEORES')
 
 def plot_compare_one(well,savefig, no_real_data, data, TVD_elem, TVD_elem_top,axT,axP,PT_real_dictionary,layer_bottom,limit_layer,input_dictionary,label=None,def_colors=True):
 	"""It generates two plots, they compare real downhole temperature and pressure measurements with model output 

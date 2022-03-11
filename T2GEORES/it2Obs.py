@@ -7,7 +7,6 @@ from scipy import interpolate
 import locale
 locale.setlocale(locale.LC_TIME, 'en_US.utf8')
 import matplotlib.pyplot as plt
-plt.style.use('T2GEORES')
 
 def observations_to_it2_PT(input_dictionary):
 	"""It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure
@@ -832,26 +831,6 @@ def observation_pres(input_dictionary,use_formation=False):
 				string_x="         		 	 01-Feb-1992_00:00:00   0.000E+00\n"
 				string+=string_x
 
-				"""
-
-				db_path=input_dictionary['db_path']
-
-				conn=sqlite3.connect(db_path)
-				c=conn.cursor()
-				blockcorr = pd.read_sql_query("SELECT blockcorr FROM t2wellsource WHERE well='%s';"%well,conn)
-				blockcorr_w = blockcorr['blockcorr'].iat[0]
-
-				layers_info=geomtr.vertical_layers(input_dictionary)
-				layer_middle={layers_info['name'][n]:layers_info['middle'][n] for n in range(len(layers_info['name']))}
-
-				data_PT = pd.read_sql_query("SELECT MeasuredDepth, Pressure, Temperature from PT WHERE well='%s' ORDER BY MeasuredDepth"%well, conn)
-
-
-				if not np.isnan(np.mean(data_PT['Pressure'])):
-					x_V,y_V,z_V,var_V=geomtr.MD_to_TVD_one_var_array(well,data_PT['Pressure'],data_PT['MeasuredDepth'])
-					func_P=interpolate.interp1d(z_V,var_V)
-					p_ref = (func_P(layer_middle[blockcorr_w[0]])+0.92)
-				"""
 			else:
 
 				p_ref = df['prs1'].iat[0]
@@ -880,3 +859,188 @@ def observation_pres(input_dictionary,use_formation=False):
 	observation_pres=open("../model/it2/observation_pres.dat",'w')
 	observation_pres.write(string)
 	observation_pres.close()
+
+
+
+def observations_to_it2_whp(input_dictionary, dates_format = True):
+	"""It generates the wellhead pressure observation section for the iTOUGH2 file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 'IT2':{'h_DEV':100},
+
+	Returns
+	-------
+	file
+	  observations_whp.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time
+
+	Attention
+	---------
+	The input data comes from sqlite
+
+	Examples
+	--------
+	>>> observations_to_it2_whp(input_dictionary)
+	"""
+
+	#Preparing input data
+	WHP_DEV=input_dictionary['IT2']['WHP_DEV']
+	db_path=input_dictionary['db_path']
+	ref_date=input_dictionary['ref_date']
+	source_txt=input_dictionary['source_txt']
+
+	t2_ver=float(input_dictionary['VERSION'][0:3])
+
+
+	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
+	wells=[]
+	for scheme in types:
+		try:
+			for well in input_dictionary[scheme]:
+				wells.append(well)
+		except KeyError:
+				pass
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	
+	string="	>> WELLHEAD PRESSURE\n"
+
+	for name in sorted(wells):
+
+		data=pd.read_sql_query("SELECT type, flowing_enthalpy, date_time,(steam_flow+liquid_flow) as flow, well_head_pressure FROM mh WHERE well='%s' and substr(date_time,9,2) IN ('15') ORDER BY date_time;"%name,conn)
+
+		dates_func=lambda datesX: datetime.strptime(str(datesX), "%Y-%m-%d_%H:%M:%S")
+
+		dates = list(map(dates_func,data['date_time']))
+
+		data['dates'] = dates
+
+		if t2_ver>7 and dates_format:
+			time_type = '[DATES]'
+		elif t2_ver<7 or not dates_format: 
+			time_type = '[SECONDS]'
+
+		if len(dates)>0 and data[data.type == 'P'].shape[0]>0:
+
+			data_s = pd.read_sql_query("SELECT well, blockcorr, source_nickname FROM t2wellsource WHERE flow_type = 'P' AND well = '%s'"%name, conn)
+
+			string += "		>>> SINK: "
+			for source in data_s['source_nickname'].tolist():
+				string += "%s "%source
+
+			string+="""
+			>>>> ANNOTATION: %s-WHP
+			>>>> FACTOR    : 1E5 [bar] - [Pa]
+			>>>> DEVIATION : %s   [bar]
+			>>>> DATA %s \n"""%(name,WHP_DEV, time_type)
+
+			for n in range(len(dates)):
+				if t2_ver>7 and dates_format:
+					timex=dates[n].strftime("%d-%b-%Y_%H:%M:%S")
+				elif t2_ver<7 or not dates_format: 
+					timex=(dates[n]-ref_date).total_seconds()
+
+				if data['flowing_enthalpy'][n]>0 and data['flow'][n]>0 :
+					string_x="				 %s 	%0.2f\n"%(timex,data['well_head_pressure'][n])
+					string+=string_x
+			string+="			<<<<\n"
+
+	string+="""		<<<\n"""
+
+	observation_file_whp=open("../model/it2/observations_WHP.dat",'w')
+	observation_file_whp.write(string)
+	observation_file_whp.close()
+
+
+def observations_to_it2_quality(input_dictionary, dates_format = True):
+	"""It generates the wellhead steam quality observation section for the iTOUGH2 file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. 'IT2':{'h_DEV':100},
+
+	Returns
+	-------
+	file
+	  observations_whp.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time
+
+	Attention
+	---------
+	The input data comes from sqlite
+
+	Examples
+	--------
+	>>> observations_to_it2_whp(input_dictionary)
+	"""
+
+	#Preparing input data
+	Q_DEV=input_dictionary['IT2']['Q_DEV']
+	db_path=input_dictionary['db_path']
+	ref_date=input_dictionary['ref_date']
+	source_txt=input_dictionary['source_txt']
+
+	t2_ver=float(input_dictionary['VERSION'][0:3])
+
+
+	types=['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']
+	wells=[]
+	for scheme in types:
+		try:
+			for well in input_dictionary[scheme]:
+				wells.append(well)
+		except KeyError:
+				pass
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	
+	string="	>> STEAM QUALITY\n"
+
+	for name in sorted(wells):
+
+		data=pd.read_sql_query("SELECT type, flowing_enthalpy, date_time, steam_flow, liquid_flow, well_head_pressure FROM mh WHERE well='%s' and substr(date_time,9,2) IN ('15') ORDER BY date_time;"%name,conn)
+
+		dates_func=lambda datesX: datetime.strptime(str(datesX), "%Y-%m-%d_%H:%M:%S")
+
+		dates = list(map(dates_func,data['date_time']))
+
+		data['dates'] = dates
+
+		if t2_ver>7 and dates_format:
+			time_type = '[DATES]'
+		elif t2_ver<7 or not dates_format: 
+			time_type = '[SECONDS]'
+
+		if len(dates)>0 and data[data.type == 'P'].shape[0]>0:
+
+			data_s = pd.read_sql_query("SELECT well, blockcorr, source_nickname FROM t2wellsource WHERE flow_type = 'P' AND well = '%s'"%name, conn)
+
+			string += "		>>> SINK: "
+			for source in data_s['source_nickname'].tolist():
+				string += "%s "%source
+
+			string+="""
+			>>>> ANNOTATION: %s-Q
+			>>>> FACTOR    : 100.0 [%s] - [-]
+			>>>> DEVIATION : %s   [%s]
+			>>>> DATA %s \n"""%(name,'%',Q_DEV, '%', time_type)
+
+			for n in range(len(dates)):
+				if t2_ver>7 and dates_format:
+					timex=dates[n].strftime("%d-%b-%Y_%H:%M:%S")
+				elif t2_ver<7 or not dates_format: 
+					timex=(dates[n]-ref_date).total_seconds()
+
+				if data['flowing_enthalpy'][n]>0  :
+					string_x="				 %s 	%0.2f\n"%(timex,data['steam_flow'][n]*100/(data['steam_flow'][n]+data['liquid_flow'][n]))
+					string+=string_x
+			string+="			<<<<\n"
+
+	string+="""		<<<\n"""
+
+	observation_file_Q=open("../model/it2/observations_Q.dat",'w')
+	observation_file_Q.write(string)
+	observation_file_Q.close()
