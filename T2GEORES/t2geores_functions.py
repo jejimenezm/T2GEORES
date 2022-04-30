@@ -851,8 +851,18 @@ def check_in_out(point,borders):
 	return boolean
 
 
-
 def incon_from_steinar():
+	"""It converts an incon file modified or created in steinar into a TOUGH2 format
+
+	Attention
+	---------
+	It reads the file: '../mesh/to_steinar/incon'
+
+	Returns
+	-------
+	file:
+	   STE_INCON: at ../model/t2/sources/
+	"""
 
 	incon_file = '../mesh/to_steinar/incon'
 

@@ -7,6 +7,7 @@ from scipy import interpolate
 import locale
 locale.setlocale(locale.LC_TIME, 'en_US.utf8')
 import matplotlib.pyplot as plt
+plt.style.use('T2GEORES')
 
 def observations_to_it2_PT(input_dictionary):
 	"""It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure
@@ -475,6 +476,7 @@ def observations_to_it2_DD(input_dictionary,obs_info,include_pres=False,p_res_bl
 	#observation_file_dd.write(string)
 	#observation_file_dd.close()
 
+
 def observations_to_it2(input_dictionary,include_pres=False,p_res_block=None):
 	"""It generates the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.
 	
@@ -529,6 +531,11 @@ def observations_to_it2(input_dictionary,include_pres=False,p_res_block=None):
 					outfile.write(line)
 		outfile.write("""	<<\n""")
 	outfile.close()
+
+
+
+
+
 
 def observations_delta_it2_filtered(input_dictionary,obs_info):
 	"""It generates the drawdown observation section for the iTOUGH2 file
@@ -687,8 +694,6 @@ def it2_weighted_h(input_dictionary):
 	weighted_file_h.write(string_r)
 	weighted_file_h.close()
 
-
-
 def observations_to_it2_POWER(input_dictionary, dates_format = True):
 
 	t2_ver=float(input_dictionary['VERSION'][0:3])
@@ -764,7 +769,6 @@ def observations_to_it2_POWER(input_dictionary, dates_format = True):
 	observation_file_power=open("../model/it2/observations_power.dat",'w')
 	observation_file_power.write(string)
 	observation_file_power.close()
-
 
 def observation_pres(input_dictionary,use_formation=False):
 
@@ -860,8 +864,6 @@ def observation_pres(input_dictionary,use_formation=False):
 	observation_pres.write(string)
 	observation_pres.close()
 
-
-
 def observations_to_it2_whp(input_dictionary, dates_format = True):
 	"""It generates the wellhead pressure observation section for the iTOUGH2 file
 
@@ -952,7 +954,6 @@ def observations_to_it2_whp(input_dictionary, dates_format = True):
 	observation_file_whp=open("../model/it2/observations_WHP.dat",'w')
 	observation_file_whp.write(string)
 	observation_file_whp.close()
-
 
 def observations_to_it2_quality(input_dictionary, dates_format = True):
 	"""It generates the wellhead steam quality observation section for the iTOUGH2 file

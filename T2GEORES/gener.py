@@ -787,325 +787,68 @@ def plot_makeup_wells(flow_times):
 	No data is needed from sqlite
 	"""
 
-	fig = plt.figure(figsize=(8, 2))
+	fig = plt.figure(figsize=(10, 6))
 	ax = fig.add_subplot(111)
 
 	cnt=1
 	y_positions=[]
 	well_tick=[]
 	for well in flow_times:
-		if well[0]=='P':
+		if flow_times[well][5]=='12':
 			color='r'
-		elif well[0]=='I':
-			color='b'
+		elif flow_times[well][5]=='3':
+			color='orange'
+
+		total_flow = flow_times[well][1][0]+flow_times[well][2][0]
+
 		data_range=flow_times[well][0]
 		value=[cnt,cnt]
 		y_positions.append(cnt)
-		cnt+=1
-		plt.plot(data_range, value,color,lw=4,alpha=0.5)
+		ax.text(data_range[1]-timedelta(days=365*5),cnt-1,'%.2f kg/s'%total_flow)
+
+
+		cnt+=5
+
+		ax.plot(data_range, value,color,lw=15, alpha=0.5)
+
+
 		well_tick.append(str(well).replace("X","").replace("Z",""))
 
 	ax.set_xlabel("Time")
+	ax.set_ylim([-4,cnt])
 	plt.yticks(y_positions, well_tick)
+	ax.tick_params(axis='y',which='minor',length=0)
 	plt.show()
-	fig.savefig('wells_flow.png')
+	fig.savefig('../output/make_up_wells.png',dpi=600)
 
-
-def raw_to_sqlite(well, type_well = 'injector', savefig = False):
-
-	import matplotlib.dates as mdates
-
-
-	dates_x = []
-	years = range(1990,2022,1)
-	months = range(1,13)
-	days = [7, 14, 21, 28]
-
-	for year in years:
-		for month in months:
-			if month<10:
-				month_s='0%s'%month
-			else:
-				month_s=month
-			for day in days:
-				if day<10:
-					day_s='0%s'%day
-				else:
-					day_s=day
-				dates_x.append("%s-%s-%s_00:00:00"%(year,month_s,day_s))
-
-	data_week = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy'])
-	data_week['date_time'] = dates_x
-	data_week['date_time'] = pd.to_datetime(data_week['date_time'] , format="%Y-%m-%d_%H:%M:%S")
-
-	data_week = data_week[data_week['date_time'] < '2021-08-17']
-
-
-	data_f = pd.DataFrame(columns = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy'])
-
-	data = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy'])
-
-	data['date_time'] = pd.to_datetime(data['date_time'] , format="%Y-%m-%d_%H:%M:%S")
-
-	print(well+'*****************************************')
-
-	for index in data_week.index[0:-2]:
-		mask = (data['date_time'] > data_week['date_time'][index]) & (data['date_time'] <= data_week['date_time'][index+1])
-		tmp = data.loc[mask]
-		tmp.reset_index(inplace=True)
-		no_data = False
-
-		#Case one, no zeros
-		if tmp.empty and data_week['date_time'][index] < data['date_time'][0]:
-			#print(data_week['date_time'][index]+pd.Timedelta(hours=1),data_week['date_time'][index+1]-pd.Timedelta(hours=1))
-			print("No data")
-			no_data = True
-
-		elif tmp.empty and (data_week['date_time'][index] >=  data['date_time'][0] or data_week['date_time'][index+1] >=  data['date_time'][0] ):
-			t1 = data_week['date_time'][index]+pd.Timedelta(hours=1)
-			t2 = data_week['date_time'][index+1]-pd.Timedelta(hours=1)
-			ml = 0.0
-			data_i = {'date_time' : [t1, t2],\
-			          'liquid' : [ml, ml],
-			          'enthalpy':[0.0,0.0],
-			          'WHPabs':[0.0,0.0]}
-
-			if type_well == 'producer':
-				ms = 0.0
-				steam_flow = {'steam' : [ms, ms]}
-			else:
-				steam_flow = {'steam' : [0.0, 0.0]}
-			
-			data_i.update(steam_flow)
-
-		elif (tmp['steam']+tmp['liquid'] > 0).all() and (data_week['date_time'][index] >=  data['date_time'][0] or data_week['date_time'][index+1] >=  data['date_time'][0] ):
-			print("data")
-			print(tmp.empty)
-			t1 = tmp['date_time'][0]+pd.Timedelta(hours=1)
-			t2 = tmp['date_time'][len(tmp)-1]-pd.Timedelta(hours=1)
-			ml = tmp['liquid'].mean()
-			data_i = {'date_time' : [t1, t2],\
-			          'liquid' : [ml, ml],
-			          'enthalpy':[tmp['enthalpy'].mean(),tmp['enthalpy'].mean()],
-					  'WHPabs':[tmp['WHPabs'].mean(),tmp['WHPabs'].mean()]}
-
-			if type_well == 'producer':
-				ms = tmp['steam'].mean()
-				steam_flow = {'steam' : [ms, ms]}
-			else:
-				steam_flow = {'steam' : [0.0, 0.0]}
-
-			data_i.update(steam_flow)
-
-		elif (tmp['steam']+tmp['liquid'] == 0).all() and (data_week['date_time'][index] >=  data['date_time'][0] or data_week['date_time'][index+1] >=  data['date_time'][0] ):
-			print("all zero")
-			t1 = tmp['date_time'][0]+pd.Timedelta(hours=1)
-			t2 = tmp['date_time'][len(tmp)-1]-pd.Timedelta(hours=1)
-			data_i = {'date_time' : [t1, t2],\
-			          'liquid' : [0.0, 0.0],
-			          'enthalpy':[tmp['enthalpy'].mean(),tmp['enthalpy'].mean()],
-					  'WHPabs':[tmp['WHPabs'].mean(),tmp['WHPabs'].mean()]}
-
-			ms = 0.0
-			steam_flow = {'steam' : [ms, ms]}
-			data_i.update(steam_flow)
-
-		else:
-			mask_flow = (tmp['steam'] == 0) & (tmp['liquid'] == 0)
-			zero_index = mask_flow[mask_flow].index
-
-			not_mask_flow = ~mask_flow
-			not_zero_index = not_mask_flow[not_mask_flow].index
-
-			if 0 in zero_index and len(tmp)-1 not in zero_index:
-				print("case1")
-				t0 = tmp['date_time'][zero_index[0]]
-				t1 = tmp['date_time'][zero_index[-1]]+pd.Timedelta(hours=1)
-				t2 = tmp['date_time'][zero_index[-1]+1]-pd.Timedelta(hours=1)
-				t3 = tmp['date_time'][not_zero_index[-1]]
-				m2_l = tmp[not_mask_flow]['liquid'].mean()
-				whp2 = tmp[not_mask_flow]['WHPabs'].mean()
-				h2 = tmp[not_mask_flow]['enthalpy'].mean()
-
-				data_i = {'date_time' : [t0, t1, t2, t3],\
-				          'liquid' : [0.0, 0.0, m2_l, m2_l],\
-				          'WHPabs' : [0.0, 0.0, whp2, whp2],\
-				          'enthalpy' : [0.0, 0.0, h2, h2]}
-
-				if type_well == 'producer':
-					m2_s = tmp[not_mask_flow]['steam'].mean()
-					steam_flow = {'steam' : [0.0, 0.0, m2_s, m2_s]}
-				else:
-					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0]}
-				
-				data_i.update(steam_flow)
-
-			elif len(tmp)-1  in zero_index and 0 not in zero_index:
-				print("case 2")
-				t0 = tmp['date_time'][not_zero_index[0]]
-				t1 = tmp['date_time'][zero_index[0]-1]+pd.Timedelta(hours=1)
-				t2 = tmp['date_time'][zero_index[0]]-pd.Timedelta(hours=1)
-				t3 = tmp['date_time'][zero_index[-1]]
-
-				m1_l = tmp[not_mask_flow]['liquid'].mean()
-				whp1 = tmp[not_mask_flow]['WHPabs'].mean()
-				h1 = tmp[not_mask_flow]['enthalpy'].mean()
-
-				data_i = {'date_time' : [t0, t1, t2, t3],\
-				          'liquid' : [m1_l, m1_l, 0.0, 0.0],
-				          'enthalpy' : [h1, h1, 0.0, 0.0],
-				          'WHPabs' : [whp1, whp1, 0.0, 0.0]}
-
-				if type_well == 'producer':
-					m1_s = tmp[not_mask_flow]['steam'].mean()
-					steam_flow = {'steam' : [m1_s, m1_s, 0.0, 0.0]}
-				else:
-					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0]}
-				
-				data_i.update(steam_flow)
-
-			elif len(tmp)-1 in zero_index and 0 in zero_index:
-				print("case 3")
-				t0 = tmp['date_time'][zero_index[0]]
-				t1 = tmp['date_time'][not_zero_index[0]-1]+pd.Timedelta(hours=1)
-				t2 = tmp['date_time'][not_zero_index[0]]-pd.Timedelta(hours=1)
-				t3 = tmp['date_time'][not_zero_index[-1]]+pd.Timedelta(hours=1)
-				t4 = tmp['date_time'][not_zero_index[-1]+1]-pd.Timedelta(hours=1)
-				t5 = tmp['date_time'][zero_index[-1]]
-				
-				m2_l = tmp[not_mask_flow]['liquid'].mean()
-				whp2 = tmp[not_mask_flow]['WHPabs'].mean()
-				h2 = tmp[not_mask_flow]['enthalpy'].mean()
-
-				data_i = {'date_time' : [t0, t1, t2, t3, t4, t5],\
-				          'liquid' : [0.0, 0.0, m2_l, m2_l, 0.0, 0.0],
-				          'enthalpy' : [0.0, 0.0, h2, h2, 0.0, 0.0],
-				          'WHPabs' : [0.0, 0.0, whp2, whp2, 0.0, 0.0]}
-
-				if type_well == 'producer': 
-					m2_s = tmp[not_mask_flow]['steam'].mean()
-					steam_flow = {'steam' : [0.0, 0.0, m2_s, m2_s, 0.0, 0.0]}
-				else:
-					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}
-
-				data_i.update(steam_flow)
-
-			elif len(tmp)-1 not in zero_index and 0 not in zero_index:
-				print("case 4")
-				t0 = tmp['date_time'][not_zero_index[0]]
-				t1 = tmp['date_time'][zero_index[0]-1]+pd.Timedelta(hours=1)
-				t2 = tmp['date_time'][zero_index[0]]-pd.Timedelta(hours=1)
-				t3 = tmp['date_time'][zero_index[-1]]+pd.Timedelta(hours=1)
-				t4 = tmp['date_time'][zero_index[-1]+1]-pd.Timedelta(hours=1)
-				t5 = tmp['date_time'][not_zero_index[-1]]
-				
-				m1_i = [i for i in range(not_zero_index[0],zero_index[0],1)]
-				m3_i = [i for i in range(zero_index[-1]+1,not_zero_index[-1]+1,1)]
-
-				m1_l = tmp['liquid'][m1_i].mean()
-				whp1 = tmp['WHPabs'][m1_i].mean()
-				h1 = tmp['enthalpy'][m1_i].mean()
-
-				m3_l = tmp['liquid'][m3_i].mean()
-				whp3 = tmp['WHPabs'][m3_i].mean()
-				h3 = tmp['enthalpy'][m3_i].mean()
-
-				data_i = {'date_time' : [t0, t1, t2, t3, t4, t5],\
-				          'liquid' : [m1_l, m1_l, 0.0, 0.0, m3_l, m3_l],
-				          'WHPabs' : [whp1, whp1, 0.0, 0.0, whp3, whp3],
-				          'enthalpy' : [h1, h1, 0.0, 0.0, h3, h3]}
-
-				if type_well == 'producer':
-					m1_s = tmp['steam'][m1_i].mean()
-					m3_s = tmp['steam'][m3_i].mean()
-					steam_flow = {'steam' : [m1_s, m1_s, 0.0, 0.0, m3_s, m3_s]}
-				else:
-					steam_flow = {'steam' : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}
-
-				data_i.update(steam_flow)
-			
-
-		if not no_data:
-			df = pd.DataFrame(data_i)
-			df['date_time'] = pd.to_datetime(df['date_time'] , format="%Y-%m-%d %H:%M:%S")
-			data_f = data_f.append(df, ignore_index = True)
-
-	if type_well == 'injector':
-		identifier = 'R'
-	elif type_well == 'producer':
-		identifier = 'P'
-
-	data_f['type'] = identifier
-
-	data_f.to_csv('../input/mh/filtered/%s_week_avg.csv'%well, index = False)
-
-	#Setting plot
-
-	gs = gridspec.GridSpec(4, 1)
-	fig, ax = plt.subplots(figsize=(16,9))
-	ax_s=plt.subplot(gs[0,0])
-	ax_l=plt.subplot(gs[1,0])
-	ax_WHP=plt.subplot(gs[2,0])
-	ax_h=plt.subplot(gs[3,0])
-
-	fontsize_ylabel=8
-	fontsize_title=9
-
-	#Flow plot
-	ax_s.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-	ax_l.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-	ax_WHP.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-	ax_h.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-
-	ln1 = ax_s.plot(data['date_time'],data['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='steam',alpha=0.6)
-	ln2 = ax_l.plot(data['date_time'],data['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='liquid',alpha=0.6)
-	ln3 = ax_WHP.plot(data['date_time'],data['WHPabs'],linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='WHP',alpha=0.6)
-	ln4 = ax_h.plot(data['date_time'],data['enthalpy'],linestyle='-',color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.6)
-
-	ln5 = ax_s.plot(data_f['date_time'],data_f['steam'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='steam_w',alpha=0.25)
-	ln6 = ax_l.plot(data_f['date_time'],data_f['liquid'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='liquid_w',alpha=0.25)
-	ln7 = ax_WHP.plot(data_f['date_time'],data_f['WHPabs'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='WHP',alpha=0.25)
-	ln8 = ax_h.plot(data_f['date_time'],data_f['enthalpy'],linestyle='-',color='black',marker='+',linewidth=1,ms=2,label='Enthalpy',alpha=0.25)
-
-
-	years = mdates.YearLocator()
-	years_fmt = mdates.DateFormatter('%Y')
-	ax_s.xaxis.set_major_formatter(years_fmt)
-	ax_l.xaxis.set_major_formatter(years_fmt)
-	ax_WHP.xaxis.set_major_formatter(years_fmt)
-	ax_h.xaxis.set_major_formatter(years_fmt)
-
-	ax_s.legend(loc="upper left")
-	ax_s.set_ylabel('Steam flow rate[kg/s]',fontsize = fontsize_ylabel)
-	ax_s.set_title('Weekly flow %s'%well, fontsize=fontsize_title)
-
-	ax_l.legend(loc="upper left")
-	ax_l.set_ylabel('Liquid flow rate [kg/s]',fontsize = fontsize_ylabel)
-
-
-	ax_WHP.legend(loc="upper left")
-	ax_WHP.set_ylabel('Pressure [bara]',fontsize = fontsize_ylabel)
-	ax_WHP.set_xlabel('Time ',fontsize = fontsize_ylabel)
-
-	ax_h.legend(loc="upper left")
-	ax_h.set_ylabel('Enthalpy [kJ/kg]',fontsize = fontsize_ylabel)
-	ax_h.set_xlabel('Time ',fontsize = fontsize_ylabel)
-
-	if savefig:
-		fig.savefig("../input/mh/filtered/images/%s_avg.png"%well, format='png',dpi=300)
-	else:
-		plt.show()
-
-
-
-def check_gener_D(input_dictionary):
+def splitting_gener(input_dictionary,info,source_i):
 	"""
-	It plots the listed wells on an input dictionary from the T2 input file.
+	It splits and prints the GENER definition of a given SOURCE
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Contains the name of the TOUGH2 input file
+	info : dictionary
+	  Contains as a key the source name and an array with the period ranges as datetimes, e.g.:
+	  	'SRC69':{1: [datetime(1970,1,1,0,0,0),datetime(2010,1,1,0,0,0)],2: [datetime(2010,1,1,0,0,0),datetime(2100,1,1,0,0,0)],}
+	source_i: str
+	  Source name to be split
+
+	Returns
+	-------
+	str
+	  A printout of the splited gener over time
+	  
+	Attention
+	---------
+	It has to be manually updated to the gener section
+
 	"""
 
+	t2_file_name = input_dictionary['TOUGH2_file']
 
-
-	input_fi_file="../model/t2/t2"
+	input_fi_file="../model/t2/%s"%t2_file_name
 
 	keywords = ['MASS','MASSi']
 	not_allowed = ['DELV']
@@ -1117,8 +860,8 @@ def check_gener_D(input_dictionary):
 				 'h':[],
 				 'type':[]}
 
-	ref_date_string = input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00")
-	ref_date_inf_string = datetime.now().strftime("%Y-%m-%d_00:00:00")
+	ref_date_string = datetime(1970,1,1,0,0,0).strftime("%Y-%m-%d_00:00:00")
+	ref_date_inf_string = datetime(2099,1,1,0,0,0).strftime("%Y-%m-%d_00:00:00")
 
 	sources = 0
 	record = False
@@ -1148,64 +891,46 @@ def check_gener_D(input_dictionary):
 				flowrate = float(t2_line[20:31].strip())
 				h = t2_line[30:41].strip()
 
-
 				if date == '-infinity':
 					date = ref_date_string
 				if date == 'infinity':
 					date = ref_date_inf_string
 
-
 				data_dict['source'].append(source)
 				data_dict['block'].append(block)
 				data_dict['type'].append(type_i)
 				data_dict['datetime'].append(date)
-				data_dict['m'].append(flowrate)
+				data_dict['m'].append(float(flowrate))
 				data_dict['h'].append(h)
 
 	data = pd.DataFrame.from_dict(data_dict)
 
 	data['datetime'] = pd.to_datetime(data['datetime'] , format="%Y-%m-%d_%H:%M:%S")
 	
-	sources = data['source'].unique()
+	data_i = data.loc[data['source']==source_i]
 
-	sources_part = np.array_split(sources, 5)
+	io = {1:'A',2:'B',3:'C',4:'D'} 
 
-	for sources in sources_part:
+	cnt = 0
+	for ix, n in enumerate(info[source_i]):
+		data_n = data_i.loc[ (info[source_i][n][0]<=data_i['datetime']) & (info[source_i][n][1]>data_i['datetime'])]
+		source_x = source_i.replace('C',io[n])
 
-		fig = plt.figure()
-		gs = fig.add_gridspec(len(sources), hspace=0)
-		ax = gs.subplots(sharex=True, sharey=True)
-		
-		fig.suptitle('GENERD data')
+		print(block+source_x)
+		if ix > 0:
+			print(format('-infinity','>20s'),format(0.0,'>10.3E'))
+			print(format(data_i['datetime'][index].strftime("%Y-%m-%d_00:00:00"),'>20s'),format(0.0,'>10.3E'))
 
-		for i, source in enumerate(sources):
+		for index, row in data_n.iterrows():
+			if  datetime(1970,1,1,0,0,0) == row['datetime']:
+				print(format('-infinity','>20s'),format(float(row['m']),'>10.3E'))
+			elif datetime(2099,1,1,0,0,0) == row['datetime']:
+				print(format('infinity','>20s'),format(row['m'],'>10.3E'))
+			else:
+				print(format(row['datetime'].strftime("%Y-%m-%d_00:00:00"),'>20s'),format(row['m'],'>10.3E'))
+			cnt+=1
 
-			data_i = data.loc[data['source'] == source, ['datetime', 'm', 'block', 'type']]
+		if cnt < len(data_i['source'].values):
+			print(format(data_i['datetime'][index+1].strftime("%Y-%m-%d_00:00:00"),'>20s'),format(0.0,'>10.3E'))
+			print(format('infinity','>20s'),format(0.0,'>10.3E'))
 
-			type_i = data_i['type'].unique()[0]
-
-			if 'i' in type_i:
-				color_i = 'b'
-			elif 'i' not in type_i:
-				color_i = 'r'
-
-			y_limits = [0,119]
-			y_ticks = [0,30,60,90,120]
-
-			ax[i].plot(data_i.datetime, abs(data_i.m), color = color_i)
-
-			ax[i].format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-			years = mdates.YearLocator()
-			years_fmt = mdates.DateFormatter('%Y')
-			ax[i].xaxis.set_major_formatter(years_fmt)
-
-			ax[i].set_yticks(y_ticks)
-			ax[i].set_ylim(y_limits)
-			ax[i].set_ylabel(source+'\n'+data_i['block'].unique()[0],fontsize = 6)
-
-
-		# Hide x labels and tick labels for all but bottom plot.
-		for axis in ax:
-		    axis.label_outer()
-
-		plt.show()

@@ -503,8 +503,10 @@ def insert_raw_mh_to_sqlite(input_dictionary):
 	--------
 	>>>  insert_mh_to_sqlite(input_dictionary)
 	"""
+
 	db_path=input_dictionary['db_path']
 	source_txt=input_dictionary['source_txt']
+
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	for f in os.listdir(source_txt+'mh'):
@@ -512,10 +514,8 @@ def insert_raw_mh_to_sqlite(input_dictionary):
 		well_name=f.replace("'","").replace("_mh.dat","")
 		if os.path.isfile(source_txt+'mh/'+f):
 			mh=pd.read_csv(source_txt+'mh/'+f)
-			mh['well'] = well_name
 			mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status': 'type'}, inplace=True)
-			mh.to_sql('mh',if_exists='append',con=conn,index=False)
-			conn.close()
+	conn.close()
 
 def insert_filtered_mh_to_sqlite(input_dictionary, single_well = None):
 	"""It stores all the data contain on the subfolder mh from the input file folder.
@@ -837,6 +837,13 @@ def insert_layers_to_sqlite(input_dictionary):
 #Not documented
 
 def src_rocktype(input_dictionary):
+	"""It sets the rocktype for each source on the table t2wellsource, based on the data on ELEME.json
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database
+	"""
 
 	elem_file='../mesh/ELEME.json'
 

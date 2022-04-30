@@ -49,6 +49,233 @@ def vertical_layers(input_dictionary):
 
 	return layers_info
 
+
+def iter_TVD(input_dictionary,well):
+
+
+	def_values = {
+				  'casing': {'f':4.5E-5, 'void':0.12},
+				  'liner':{'f':1E-5, 'void':0.12,'PI':2E-12}
+				  }
+
+
+	tubes_data=pd.read_csv('../input/tubes/%s_tubes.dat'%well)
+
+	if isinstance(tubes_data['tr_ranurada_d'][0], str):
+		if '/' in tubes_data['tr_ranurada_d'][0]:
+			s = tubes_data['tr_ranurada_d'][0]
+			num,den = s.split( '/' )
+			wh, num = num.split()
+			tr_ranurada_d = float(wh) + (float(num)/float(den))
+	else:
+		tr_ranurada_d = tubes_data['tr_ranurada_d'][0]
+
+	if isinstance(tubes_data['tr_lisa_d'][0], str):
+		if '/' in tubes_data['tr_lisa_d'][0]:
+			s = tubes_data['tr_lisa_d'][0]
+			num,den = s.split( '/' )
+			wh, num = num.split()
+			tr_lisa_d = float(wh) + (float(num)/float(den))
+	else:
+		tr_lisa_d = tubes_data['tr_lisa_d'][0]
+
+	TVD_min_casing = MD_to_TVD(well,tubes_data['tr_lisa_fin'])[2]
+
+	layers_info=vertical_layers(input_dictionary)
+
+	layer_tb={layers_info['name'][n]:[layers_info['bottom'][n],layers_info['top'][n]] for n in range(len(layers_info['name']))}
+
+	positions = np.arange(min(layers_info['bottom']),max(layers_info['top']),100)
+
+	print(well)
+
+	data_d = {}
+
+	"""
+	for point in positions:
+		md = TVD_to_MD(well,point)
+		if not math.isnan(md):
+			x,y,z=MD_to_TVD(well,md)
+			data_d[point]={'md':md,'x':x,'y':y,'z':z,'source':'layer'}
+	"""
+
+
+	db_path=input_dictionary['db_path']
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	data = pd.read_sql_query("SELECT well, blockcorr, source_nickname FROM t2wellsource WHERE flow_type = 'P' AND well = '%s'"%well, conn)
+
+	#Finding MD for top and bottom on corresponding source as well as x,y position
+	for i, blockcorr in enumerate(data['blockcorr'].tolist()):
+		for point in layer_tb[blockcorr[0]]:
+			md = TVD_to_MD(well,point)
+			if not math.isnan(md):
+				x,y,z=MD_to_TVD(well,md)
+				data_d[point]={'md':md,'x':x,'y':y,'z':z,'source':data['blockcorr'][i]+data['source_nickname'][i]}
+
+	#Adding 0 MD
+	x,y,z=MD_to_TVD(well,0)
+	data_d[float(z)]={'md':0,'x':x,'y':y,'z':z,'source':'layer'}
+
+
+	dict_keys = sorted(list(data_d.keys()))
+
+	#Generating points in between layers
+	for i, key in enumerate(sorted(data_d.keys())):
+		if i < len(dict_keys) -1 :
+			if data_d[key]['source']!=data_d[dict_keys[i+1]]['source']:
+
+				if (data_d[dict_keys[i+1]]['z']-data_d[key]['z']) < 200:
+					num = int((-data_d[key]['z']+data_d[dict_keys[i+1]]['z'])/4)
+				else:
+					num = 100
+
+				for n in  np.arange(data_d[key]['z'],data_d[dict_keys[i+1]]['z'],num):
+					if  (n > data_d[key]['z']+10) and (data_d[dict_keys[i+1]]['z']-10 > n):
+						md = TVD_to_MD(well,n)
+						x,y,z=MD_to_TVD(well,md)
+						data_d[n]={'md':md,'x':x,'y':y,'z':z,'source':'layer'}
+
+	max_md = max([data_d[n]['md'] for n in data_d])
+	lz = min([n for n in data_d])
+	target = data_d[lz]['source']
+	segments = {}
+
+	cnt = {} 
+	cnt[target] = 1
+
+	for i, key in enumerate(sorted(data_d.keys())):
+
+		L = max_md - data_d[key]['md']
+		max_md = data_d[key]['md']
+		if L !=0 :
+			diff_x = (data_d[key]['x'] - data_d[lz]['x'])/L
+			diff_y = (data_d[key]['y'] - data_d[lz]['y'])/L
+			diff_z = (data_d[key]['z'] - data_d[lz]['z'])/L
+			cos = diff_z
+
+			section_type= ''
+
+			if data_d[key]['source'] != 'layer' and data_d[key]['source']  not in cnt.keys():
+				target = data_d[key]['source']
+				cnt[target] = 1
+				save = True
+			elif data_d[key]['source'] == target and cnt[target]==1:
+				save = True
+				cnt[target] += 1
+				section_type = data_d[key]['source'] 
+
+			if data_d[key]['source'] == 'layer' and cnt[target] == 2:
+				save = True
+			elif data_d[key]['source'] == 'layer' and cnt[target] < 2:
+				save = False
+
+			if save:
+				
+				if data_d[key]['z']>TVD_min_casing:
+					f = def_values['casing']['f']
+					void = def_values['casing']['void']
+					d = tr_lisa_d*25.4/1000
+				else:
+					f = def_values['liner']['f']
+					void = def_values['liner']['void']
+					d =tr_ranurada_d*25.4/1000
+
+				if section_type != '':
+					PI = def_values['liner']['PI']
+					PI_f = '>10.2E'
+				else:
+					PI = ''
+					PI_f = '>10s'
+
+				segments[key]={'L':L,'cos':cos,'TVD':data_d[key]['z'],'d':d,'f':f,'void':void}
+
+
+				string = format(section_type,'>10s')
+				string += format(PI,PI_f)
+				string += format(L,'>10.2f')
+				string += format(d,'>10.4f')
+				string += format(f,'>10.2E')
+				string += format('','>10s')
+				string += format(void,'>10.2f')
+				string += format(cos,'>10.2f')
+				#string += '\n'
+
+				print(string)
+				
+				#print('%.2f'%L,'%.2f'%cos,section_type,data_d[key]['z'] )
+
+			lz = key
+
+
+	"""
+
+	cnt = {} 
+	cnt[target] = 1
+	for key in sorted(data_d.keys()):
+		L = max_md - data_d[key]['md']
+		max_md = data_d[key]['md']
+		if L !=0 :
+			diff_x = (data_d[key]['x'] - data_d[lz]['x'])/L
+			diff_y = (data_d[key]['y'] - data_d[lz]['y'])/L
+			diff_z = (data_d[key]['z'] - data_d[lz]['z'])/L
+			cos = diff_z
+
+			section_type= ''
+
+			if data_d[key]['source'] != 'layer' and data_d[key]['source']  not in cnt.keys():
+				target = data_d[key]['source']
+				cnt[target] = 1
+				save = True
+			elif data_d[key]['source'] == target and cnt[target]==1:
+				save = True
+				cnt[target] += 1
+				section_type = data_d[key]['source'] 
+
+			if data_d[key]['source'] == 'layer' and cnt[target] == 2:
+				save = True
+			elif data_d[key]['source'] == 'layer' and cnt[target] < 2:
+				save = False
+
+			if save:
+				
+				if data_d[key]['z']>TVD_min_casing:
+					f = def_values['casing']['f']
+					void = def_values['casing']['void']
+					d = tr_lisa_d*25.4/1000
+				else:
+					f = def_values['liner']['f']
+					void = def_values['liner']['void']
+					d =tr_ranurada_d*25.4/1000
+
+				if section_type != '':
+					PI = def_values['liner']['PI']
+					PI_f = '>10.2E'
+				else:
+					PI = ''
+					PI_f = '>10s'
+
+				segments[key]={'L':L,'cos':cos,'TVD':data_d[key]['z'],'d':d,'f':f,'void':void}
+
+
+				string = format(section_type,'>10s')
+				string += format(PI,PI_f)
+				string += format(L,'>10.2f')
+				string += format(d,'>10.4f')
+				string += format(f,'>10.2E')
+				string += format('','>10s')
+				string += format(void,'>10.2f')
+				string += format(cos,'>10.2f')
+				#string += '\n'
+
+				print(string)
+				
+				#print('%.2f'%L,'%.2f'%cos,section_type,data_d[key]['z'] )
+
+			lz = key
+	"""
+
+	
 def MD_to_TVD(well,depth):
 	"""It returns the coordinates X,Y and Z at a desired depth.
 
@@ -219,7 +446,7 @@ def MD_to_TVD_one_var_array(well,var_array,MD_array):
 	return x_V,y_V,z_V,var_V
 
 def TVD_to_MD(well,TVD):
-	"""It returns the measure depth position for a well based on a true vertical depth
+	"""It returns the measured depth position for a well based on a true vertical depth
 
 	Parameters
 	----------

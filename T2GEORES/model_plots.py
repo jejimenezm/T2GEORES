@@ -14,6 +14,8 @@ from statsmodels.nonparametric.smoothers_lowess import lowess
 
 import sqlite3
 
+plt.style.use('T2GEORES')
+
 def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
 	"""It plots the layers defined for the mesh
 
@@ -102,9 +104,9 @@ def permeability_plot(input_dictionary,show_fig,sav_fig):
 	>>> permeability_plot(input_dictionary,show_fig=True,sav_fig=True)
 	"""
 
-	IRP=input_dictionary['IRP']
-	slr=input_dictionary['RP1']
-	sgr=input_dictionary['RP2']
+	IRP=input_dictionary['RPCAP']['IRP']
+	slr=input_dictionary['RPCAP']['RP1']
+	sgr=input_dictionary['RPCAP']['RP2']
 
 	fontsize_=26
 	if IRP==3:
@@ -137,7 +139,7 @@ def permeability_plot(input_dictionary,show_fig,sav_fig):
 		ax1=fig.add_subplot(111)
 		ax1.plot(saturation,krl,'--k',label='Liquid')
 		ax1.plot(saturation,krg,'-k',label='Vapor')
-		ax1.set_title("Corey RPF",fontsize=fontsize_)
+		#ax1.set_title("Corey RPF",fontsize=fontsize_)
 		ax1.set_xlabel("Water saturation",fontsize=fontsize_)
 		ax1.set_ylabel('Relative permeabilty',fontsize=fontsize_)
 		ax1.set_ylim([0,1])
@@ -192,6 +194,24 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 	data_p = pd.read_csv("../input/mh/filtered/total_p.csv", usecols = ['date_time', 'steam', 'liquid'])
 	data_p['date_time'] = pd.to_datetime(data_p['date_time'] , format="%Y-%m-%d")
 
+
+	input_file = "../input/field_data.csv"
+	data_field=pd.read_csv(input_file)
+
+	data_field.dropna(inplace = True)
+
+	data_field['fecha'] = pd.to_datetime(data_field['fecha'] , format="%Y%m%d")
+	data_field=data_field.set_index(['fecha'])
+	data_field.index = pd.to_datetime(data_field.index)
+
+	data_field['extraction'] = data_field['agua']+data_field['vapor']
+	data_field['net'] = data_field['agua']+data_field['vapor']-data_field['inyeccion']
+
+	extraction = data_field['extraction'].rolling(window = 180).mean()
+	injection = data_field['inyeccion'].rolling(window = 180).mean()
+	net = data_field['net'].rolling(window = 180).mean()
+
+
 	if len(data.loc[data['TVD']==depth]['datetime'])>1:
 
 		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d %H:%M:%S")
@@ -200,7 +220,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 		#Plotting
 
 		fig, ax = plt.subplots(figsize=(10,4))
-		ln1 = ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='drawdown')
+		ln1 = ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='Drawdown')
 		ax.set_title("Drawdown at well: %s at %s masl"%(well,depth) ,fontsize=fontsize_layout)
 		ax.set_xlabel("Time",fontsize = fontsize_layout)
 		ax.set_ylabel('Pressure [bar]',fontsize = fontsize_layout)
@@ -221,7 +241,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 
 
 		ax2 = ax.twinx()
-		ln2 = ax2.plot(data_inj['date_time'],data_p['steam']+data_p['liquid']-data_inj['liquid'],linestyle='-',color='m',linewidth=1,ms=1,label='Net flow rate',alpha=0.15)
+		ln2 = ax2.plot(net,linestyle='-',color='m',linewidth=1,ms=1,label='Net flow rate',alpha=0.25)
 		ax2.set_ylim([0,1000])
 		ax2.set_yticks([50,100,150,200,250,300])
 		ax2.set_ylabel('Flow rate [kg/s]',fontsize = fontsize_layout)
@@ -239,7 +259,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 		ax.xaxis.grid(True, which='major',linestyle='--', color='grey', alpha=0.6)
 		ax.grid(True)
 		if savefig:
-			fig.savefig("../input/drawdown/images/%s_%.2f.png"%(well,depth), idp=300)
+			fig.savefig("../input/drawdown/images/%s_%.2f.png"%(well,depth), idp=600)
 		plt.show()
 
 	else:
@@ -768,21 +788,20 @@ def plot_init_conditions(input_dictionary,m,b,use_boiling=True,use_equation=Fals
 
 	plt.show()
 
-
-#not documented
-
 def plot_liquid_vs_WHP(well,savefig=False):
-	"""Creates a plot using the flow and enthalpy measurements
+	"""Creates a scatter plots using liquid flow rate and wellhead pressure
 
 	Parameters
 	----------
 	well : str
 	  Selected well
+	savefig: bool
+	  If true saves a figure in input/mh/images/{well}_scatter_WHP_lflow.png
 
 	Returns
 	-------
 	plot
-	  Enthalpy (yaxis1), flow (yaxis2) vs time 
+	  WHP versus liquid flow
 	  
 	Attention
 	---------
@@ -791,7 +810,7 @@ def plot_liquid_vs_WHP(well,savefig=False):
 
 	Examples
 	--------
-	>>> plot_one_mh_from_txt('WELL-1')
+	>>> plot_liquid_vs_WHP('WELL-1')
 	"""
 
 
@@ -801,7 +820,6 @@ def plot_liquid_vs_WHP(well,savefig=False):
 	#Read file cooling
 	data=pd.read_csv("../input/mh/%s_mh.dat"%well)
 	max_liq=max(data['liquid'])
-	max_st=max(data['steam'])
 	data = data.replace(0,np.nan)
 
 	#Setting plot
@@ -818,22 +836,24 @@ def plot_liquid_vs_WHP(well,savefig=False):
 	fig.suptitle('%s'%well,fontsize=fontsize_title)
 
 	if savefig:
-		fig.savefig("../input/mh/images/%s_injector.png"%well, format='png',dpi=300) 
+		fig.savefig("../input/mh/images/%s_scatter_WHP_lflow.png.png"%well, format='png',dpi=300) 
 
 	plt.show()
 
 def plot_total_vs_WHP(well,savefig=False):
-	"""Creates a plot using the flow and enthalpy measurements
+	"""Creates a plot using total flow and WHP
 
 	Parameters
 	----------
 	well : str
 	  Selected well
+	savefig: bool
+	  If true saves a figure in input/mh/images/{well}_producer.png
 
 	Returns
 	-------
 	plot
-	  Enthalpy (yaxis1), flow (yaxis2) vs time 
+	  Total fluid versus WHP
 	  
 	Attention
 	---------
@@ -842,13 +862,10 @@ def plot_total_vs_WHP(well,savefig=False):
 
 	Examples
 	--------
-	>>> plot_one_mh_from_txt('WELL-1')
+	>>> plot_total_vs_WHP('WELL-1')
 	"""
 
-	fontsize_ylabel=8
-	fontsize_title=9
-
-	#Read file cooling
+	#Reading input file
 	data=pd.read_csv("../input/mh/%s_mh.dat"%well)
 	max_liq=max(data['liquid'])
 	max_st=max(data['steam'])
@@ -857,7 +874,7 @@ def plot_total_vs_WHP(well,savefig=False):
 	#Setting plot
 	fig, ax = plt.subplots(figsize=(10,10))
 
-	#Flow plot
+	#Plotting flow
 	ax=plt.subplot(111)
 	ln1=ax.plot(data['WHPabs']+0.92,data['liquid']+data['steam'],linestyle='None',color=formats.plot_conf_color['m'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Total',alpha=0.75)
 	ln2=ax.plot(data['WHPabs']+0.92,data['steam'],linestyle='None',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
@@ -870,17 +887,39 @@ def plot_total_vs_WHP(well,savefig=False):
 
 	ax.set_ylim([0,max((data['liquid']+data['steam']).fillna(0))])
 	ax.set_xlim([0,max(data['WHPabs'].fillna(0))])
-	ax.set_ylabel('Flow [kg/s]',fontsize = fontsize_ylabel)
-	ax.set_xlabel('Pressure [bara]',fontsize = fontsize_ylabel)
-	fig.suptitle('%s'%well,fontsize=fontsize_title)
+	ax.set_ylabel('Flow [kg/s]')
+	ax.set_xlabel('Pressure [bara]')
+	fig.suptitle('%s'%well)
 
 	if savefig:
 		fig.savefig("../input/mh/images/%s_producer.png"%well, format='png',dpi=300) 
 
 	plt.show()
 
-def total_flow(wells, savefig = None, ffill = False):
+def total_flow(wells, savefig = False, ffill = False, inspect = []):
+	"""Creates a plot using total flow and WHP
 
+	Parameters
+	----------
+	wells : list
+	  List of wells to evalute
+	savefig: bool
+	  If true saves a figure in input/mh/images/total_flow.png
+	ffill: bool
+	  If True, it does a forward fill for every well
+	inspect: list
+	  Wells to be plotted individually
+
+	Returns
+	-------
+	plot
+	  Plot a time series including: Total, Steam, Liquid, and Injection from the weekly average, and Steam real and Liquid real from the raw data
+	  
+	Attention
+	---------
+	The file input/mh/{well}_mh.dat and input/mhfiltered/%s_week_avg.csv must exist
+
+	"""
 
 	years = range(1990,2022,1)
 	months = range(1,13)
@@ -920,10 +959,7 @@ def total_flow(wells, savefig = None, ffill = False):
 	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
 	ax = plt.subplot(111)
 
-	#inspect = ['TR-5', 'TR-5A', 'TR-5B', 'TR-5C', 'TR-5D']
-	#inspect = ['TR-18', 'TR-18A', 'TR-18B', 'TR-18C']
-	#inspect = ['TR-2', 'TR-9']
-	inspect = []
+
 
 	for well in wells:
 		
@@ -967,12 +1003,8 @@ def total_flow(wells, savefig = None, ffill = False):
 	ln2 = ax.plot(data_p['steam'].index,data_p['steam'],linestyle='-',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Steam',alpha=0.75)
 	ln3 = ax.plot(data_p['liquid'].index,data_p['liquid'],linestyle='-',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Liquid',alpha=0.75)
 	ln4 = ax.plot(data_inj['liquid'].index,data_inj['liquid'],linestyle='--',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=4,label='Injection',alpha=0.75)
-
 	ln6 = ax.plot(data_p_r['steam'].index,data_p_r['steam'],linestyle='-',color='y',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam real',alpha=0.5)
 	ln7 = ax.plot(data_p_r['liquid'].index,data_p_r['liquid'],linestyle='-',color='m',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid real',alpha=0.5)
-
-	#ln5 = ax.plot(data_inj['liquid'].index,data_p['steam']+data_p['liquid']-data_inj['liquid'],linestyle='-',color='k',marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Net',alpha=0.75)
-
 
 	data_inj.to_csv('../input/mh/filtered/total_inj.csv' , index = True)
 	data_p.to_csv('../input/mh/filtered/total_p.csv' , index = True)
@@ -991,8 +1023,204 @@ def total_flow(wells, savefig = None, ffill = False):
 	if savefig:
 		fig.savefig("../input/mh/images/total_flow.png", format='png',dpi=300) 
 
-def resample(well, type_well, save_fig = True):
+def check_gener_D(input_dictionary):
+	"""
+	It plots the listed wells on an input dictionary from the T2 input file.
 
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		It specifies the reference date
+
+	Returns
+	-------
+	plot
+	  Individual plots for each source.
+	"""
+	t2_file_name = input_dictionary['TOUGH2_file']
+	
+	input_fi_file="../model/t2/%s"%t2_file_name
+
+	keywords = ['MASS','MASSi']
+	not_allowed = ['DELV']
+
+	data_dict = {'source':[],
+				 'block':[],
+				 'datetime':[],
+				 'm':[],
+				 'h':[],
+				 'type':[]}
+
+	ref_date_string = input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00")
+	ref_date_inf_string = datetime.now().strftime("%Y-%m-%d_00:00:00")
+
+	sources = 0
+	record = False
+	if os.path.isfile(input_fi_file):
+		t2_file=open(input_fi_file, "r")
+		for t2_line in t2_file:
+
+			if any (x in t2_line for x in keywords):
+				try:
+					data_lines = float(t2_line[20:31])
+					sources += 1
+					record = True
+					block= t2_line[0:5]
+					source = t2_line[5:10]
+					type_i = t2_line[30:41]
+					continue
+				except ValueError:
+					data_lines = 0
+					pass
+
+			if record and any (x not in t2_line for x in not_allowed) and data_lines > 0:
+
+				if t2_line == '\n':
+					break
+
+				date = t2_line[0:21].strip()
+				flowrate = float(t2_line[20:31].strip())
+				h = t2_line[30:41].strip()
+
+
+				if date == '-infinity':
+					date = ref_date_string
+				if date == 'infinity':
+					date = ref_date_inf_string
+
+
+				data_dict['source'].append(source)
+				data_dict['block'].append(block)
+				data_dict['type'].append(type_i)
+				data_dict['datetime'].append(date)
+				data_dict['m'].append(flowrate)
+				data_dict['h'].append(h)
+
+	data = pd.DataFrame.from_dict(data_dict)
+
+	data['datetime'] = pd.to_datetime(data['datetime'] , format="%Y-%m-%d_%H:%M:%S")
+	
+	sources = data['source'].unique()
+
+	sources_part = np.array_split(sources, 5)
+
+	for sources in sources_part:
+
+		fig = plt.figure()
+		gs = fig.add_gridspec(len(sources), hspace=0)
+		ax = gs.subplots(sharex=True, sharey=True)
+		
+		fig.suptitle('GENERD data')
+
+		for i, source in enumerate(sources):
+
+			data_i = data.loc[data['source'] == source, ['datetime', 'm', 'block', 'type']]
+
+			type_i = data_i['type'].unique()[0]
+
+			if 'i' in type_i:
+				color_i = 'b'
+			elif 'i' not in type_i:
+				color_i = 'r'
+
+			y_limits = [0,119]
+			y_ticks = [0,30,60,90,120]
+
+			ax[i].plot(data_i.datetime, abs(data_i.m), color = color_i)
+
+			ax[i].format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+			years = mdates.YearLocator()
+			years_fmt = mdates.DateFormatter('%Y')
+			ax[i].xaxis.set_major_formatter(years_fmt)
+
+			ax[i].set_yticks(y_ticks)
+			ax[i].set_ylim(y_limits)
+			ax[i].set_ylabel(source+'\n'+data_i['block'].unique()[0],fontsize = 6)
+
+
+		# Hide x labels and tick labels for all but bottom plot.
+		for axis in ax:
+		    axis.label_outer()
+
+		plt.show()
+
+def mh_duplicates(input_dictionary, inspect_well):
+	"""
+	It plots over time the dates where there is mass flow and flowing enthalpy information
+
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		It lists all the wells includes under the key: 'WELLS'
+	inspect_well: str
+		It is a well in particular to be plotted with a different marker size
+
+	Returns
+	-------
+	plot
+	  Individual plots for each source.
+	"""
+
+	db_path=input_dictionary['db_path']
+
+	conn=sqlite3.connect(db_path)
+
+	types='WELLS'
+	wells=[]
+	try:
+		for well in input_dictionary[types]:
+			wells.append(well)
+	except KeyError:
+			pass
+
+	#Setting the plot
+	fig= plt.figure(figsize=(12,7))
+
+	ax = fig.add_subplot(111)
+	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
+
+	colormap = plt.cm.nipy_spectral
+	colors = [colormap(i) for i in np.linspace(0, 1,len(wells))]
+	ax.set_prop_cycle('color', colors)
+
+	for i, well in enumerate(sorted(wells)):
+		data=pd.read_sql_query("SELECT type,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure FROM mh_f WHERE well='%s';"%well,conn)
+		data['date_time'] = pd.to_datetime(data['date_time'] , format="%Y-%m-%d %H:%M:%S")
+
+		i_s = [i for n in range(len(data['m_total']))]
+
+		if well == inspect_well:
+			for index,row in data.iterrows():
+				ax.plot([row['date_time'],row['date_time']],[0,37], '-k', lw = 0.15, alpha = 0.5)
+
+		ax.plot(data['date_time'],i_s, marker = 'o', ms = 2, linestyle = 'None' ,label = well)
+
+	ax.legend(loc = 'upper right', fontsize = 6)
+	plt.show()
+
+def resample(well, type_well, save_fig = True, approach = 'ffill'):
+	"""
+	It resamples a well, based on two approches: forward filling or cummulative sum
+
+
+	Parameters
+	----------
+	type_well : str
+		Either injector or prducer
+	well: str
+		Well to be resample
+	save_fig: bool
+		If True it saves some images in input/mh/filtered showing comparisons and time series
+	approach: str
+		Either ffill or acc
+
+	Returns
+	-------
+	File
+	  Values every 15th of every month in input/mh/filtered/{well}_week_avg.csv
+	"""
 	#Reading files
 
 	data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'steam', 'liquid', 'WHPabs', 'enthalpy', 'status'])
@@ -1192,7 +1420,10 @@ def resample(well, type_well, save_fig = True):
 	data_2_c = data_2.cumsum()
 
 
-	data_f.to_csv('../input/mh/filtered/%s_week_avg.csv'%well, index = True)
+	if approach == 'ffill':
+		data_f.to_csv('../input/mh/filtered/%s_week_avg.csv'%well, index = True)
+	elif approach == 'acc':
+		data_f_i.to_csv('../input/mh/filtered/%s_week_avg.csv'%well, index = True)
 
 	#Setting the plot
 	figs = plt.figure(figsize=(12,7))
@@ -1323,165 +1554,3 @@ def resample(well, type_well, save_fig = True):
 		plt.close()
 	else:
 		plt.show()
-
-def mh_duplicates(input_dictionary):
-
-	db_path=input_dictionary['db_path']
-
-	conn=sqlite3.connect(db_path)
-
-	types='WELLS'
-	wells=[]
-	try:
-		for well in input_dictionary[types]:
-			wells.append(well)
-	except KeyError:
-			pass
-
-	#Setting the plot
-	fig= plt.figure(figsize=(12,7))
-
-	ax = fig.add_subplot(111)
-	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
-
-	colormap = plt.cm.nipy_spectral
-	colors = [colormap(i) for i in np.linspace(0, 1,len(wells))]
-	ax.set_prop_cycle('color', colors)
-
-
-	for i, well in enumerate(sorted(wells)):
-		data=pd.read_sql_query("SELECT type,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure FROM mh_f WHERE well='%s';"%well,conn)
-		data['date_time'] = pd.to_datetime(data['date_time'] , format="%Y-%m-%d %H:%M:%S")
-
-		i_s = [i for n in range(len(data['m_total']))]
-
-		if well == 'TR-9':
-			for  index,row in data.iterrows():
-				ax.plot([row['date_time'],row['date_time']],[0,37], '-k', lw = 0.15, alpha = 0.5)
-
-		ax.plot(data['date_time'],i_s, marker = 'o', ms = 2, linestyle = 'None' ,label = well)
-
-	ax.legend(loc = 'upper right', fontsize = 6)
-	plt.show()
-
-
-def field(input_dictionary):
-	input_file = "../input/field_data.csv"
-	if os.path.isfile(input_file):
-		data=pd.read_csv(input_file)
-
-		data.dropna(inplace = True)
-
-		data['fecha'] = pd.to_datetime(data['fecha'] , format="%Y%m%d")
-		data=data.set_index(['fecha'])
-		data.index = pd.to_datetime(data.index)
-
-		fig=plt.figure()
-
-		ax=fig.add_subplot(111)
-
-		data['extraction'] = data['agua']+data['vapor']
-		data['net'] = data['agua']+data['vapor']-data['inyeccion']
-
-		extraction = data['extraction'].rolling(window = 180).mean()
-		injection = data['inyeccion'].rolling(window = 180).mean()
-		net = data['net'].rolling(window = 180).mean()
-
-
-		#ax.plot(extraction, lw = 1, label = 'Total extraction')
-		#ax.plot(injection, lw = 1, label = 'Injection')
-		ax.plot(net, lw = 1, label = 'Net extraction', color = '#4575b4')
-		ax.set_ylim([0, 300])
-		ax.set_ylabel('Mass flow rate [kg/s]')
-		ax.set_xlabel('Year')
-
-		axt = ax.twinx()
-		axt.set_ylabel('Pressure [bar]')
-		axt.set_ylim([-max(data['prs1']), 1])
-
-		drawdown = data.loc[data['prs1'] > 0,['prs1']]
-		drawdown = drawdown['prs1'].resample('60D').mean()
-		drawdown = pd.DataFrame({'dates':drawdown.index, 'prs1':drawdown.values})
-
-		#smooth = data.loc[data['prs1'] > 0,['prs1']]
-		#df_loess_5 = pd.DataFrame(lowess(smooth['prs1'],  np.arange(len(smooth['prs1'])), frac=0.05)[:, 1], index=smooth.index, columns=['prs1'])
-		#axt.plot(df_loess_5,linestyle = '-', marker = 'o', ms= 2)
-
-		axt.plot(drawdown['dates'], drawdown['prs1'] - drawdown['prs1'].iloc[0], linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#d73027')
-		
-		plt.legend([ax.get_lines()[0],axt.get_lines()[0]],\
-				                   ['Net flow rate extraction ','Pressure drawdown'],\
-				                    loc=1, fancybox=True, shadow=True)
-
-		plt.savefig('../output/net_flow_vs_pressure_dw.png', dpi = 600)
-
-		plt.show()
-
-
-def enthalpies_field(input_dictionary):
-
-	input_file_1 = "../input/mh/unit12_mh.csv"
-	input_file_2 = "../input/mh/unit3_17_mh.csv"
-	input_file_3 = "../input/mh/unit3_18_mh.csv"
-
-	if os.path.isfile(input_file_1) and os.path.isfile(input_file_2):
-
-		data_12=pd.read_csv(input_file_1)
-		data_12.dropna(inplace = True)
-		data_12['date_time'] = pd.to_datetime(data_12['date_time'] , format="%Y-%m-%d")
-		data_12=data_12.set_index(['date_time'])
-		data_12.index = pd.to_datetime(data_12.index)
-
-		h12 = data_12.loc[data_12['h'] > 0,['h','m']]
-		h12_out = h12['h'].resample('120D').mean()
-		h12_out_m = h12['m'].resample('120D').mean()
-		
-
-		data_3_17=pd.read_csv(input_file_2)
-		data_3_17.dropna(inplace = True)
-		data_3_17['date_time'] = pd.to_datetime(data_3_17['date_time'] , format="%Y-%m-%d")
-		data_3_17=data_3_17.set_index(['date_time'])
-		data_3_17.index = pd.to_datetime(data_3_17.index)
-
-		h3_17 = data_3_17.loc[data_3_17['h'] > 0,['h','m']]
-		h3_17_out = h3_17['h'].resample('120D').mean()
-		h3_17_out_m = h3_17['m'].resample('120D').mean()
-
-		data_3_18=pd.read_csv(input_file_3)
-		data_3_18.dropna(inplace = True)
-		data_3_18['date_time'] = pd.to_datetime(data_3_18['date_time'] , format="%Y-%m-%d")
-		data_3_18=data_3_18.set_index(['date_time'])
-		data_3_18.index = pd.to_datetime(data_3_18.index)
-
-		h3_18 = data_3_18.loc[data_3_18['h'] > 0,['h','m']]
-		h3_18_out = h3_18['h'].resample('120D').mean()
-		h3_18_out_m = h3_18['m'].resample('120D').mean()
-
-
-		fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=False)
-
-		ax1.plot(h12_out, lw = 1, linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#4575b4', label = 'Center')
-		ax1.plot(h3_17_out, lw = 1, linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#fc8d59', label = 'South 17s')
-		ax1.plot(h3_18_out, lw = 1, linestyle = 'None', marker = 'o', ms= 2.5, markerfacecolor='none', color='#d73027', label = 'South 18s')
-
-		ax2.fill_between(h12_out_m.index, h12_out_m.values, alpha=0.6, lw= 3, color = '#4575b4',  edgecolor = '#4575b4')
-		ax2.fill_between(h3_17_out_m.index,h3_17_out_m.values, alpha=0.6, lw=3, color = '#fc8d59', edgecolor = '#fc8d59')
-		ax2.fill_between(h3_18_out_m.index,h3_18_out_m.values, alpha=0.6, lw = 3, color = '#d73027', edgecolor = '#d73027')
-
-
-		ax1.set_ylim([1000, 2000])
-		ax1.set_ylabel('Enthalpy [kJ/kg]')
-		ax2.set_ylabel('Mass flow rate [kg/s]')
-		ax2.set_xlabel('Year')
-		xlims=[min(data_12.index),max(h12_out_m.index)]
-		ax2.set_xlim(xlims)
-		ax2.set_ylim([0,max(h12_out_m)])
-		
-		ax1.legend([ax1.get_lines()[0],ax1.get_lines()[1],ax1.get_lines()[2]],\
-				                   ['Center',"South TR-17's","South TR-18's"],\
-				                    loc=2, fancybox=True, shadow=True)
-
-		plt.savefig('../output/enthalpies_on_diff_areas.png', dpi = 600)
-
-		plt.show()
-		

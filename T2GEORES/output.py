@@ -10,6 +10,7 @@ import json
 import datetime
 import re
 from T2GEORES import formats as formats
+from T2GEORES import geometry as geometry
 from iapws import IAPWS97
 
 def write_PT_from_t2output(input_dictionary):
@@ -764,6 +765,7 @@ def it2DATASET(input_dictionary):
 	#First and last line in between the data
 	compare1="    # OBSERVATION   AT TIME [sec]     MEASURED     COMPUTED     RESIDUAL     WEIGHT C.O.F [%]    STD. DEV.    Yi      Wi    DWi +/-"
 	compare2=" Residual Plots"
+	compare3=" ---"
 
 	data = pd.DataFrame(columns=["NUMBER","OBSERVATION","TIME","MEASURED","COMPUTED","RESIDUAL","WEIGHT","C.O.F","STD.DEV"])
 
@@ -776,7 +778,7 @@ def it2DATASET(input_dictionary):
 		for line_i, line in enumerate(it2_output_array):
 			if compare1 in line.rstrip():
 				save = True
-			elif compare2 in line.rstrip():
+			elif compare2 in line.rstrip() or compare3 in line.rstrip():
 				save = False
 
 			if save and 'ABS.' not in line.rstrip() :
@@ -861,273 +863,40 @@ def it2OBJF(input_dictionary):
 
 	OBJ.to_json(OBJ_file,indent=2)
 
-
-#not documented
-def normal_directions(input_dictionary,block,block2):
-	"""
-	not documented
-	"""
-	conn=sqlite3.connect(input_dictionary['db_path'])
-	points=pd.read_sql_query("SELECT x1,y1,x2,y2,ELEME1,ELEME2 FROM segment WHERE ELEME1='%s' AND ELEME2='%s';"%(block,block2),conn)
-	conn.close()
-	if block[0]!=block2[0]:
-		vectors=[]
-		if (formats.formats_t2['LAYERS'][block[0]]-formats.formats_t2['LAYERS'][block2[0]])>0:
-			duz=-1
-		else:
-			duz=1
-		dux=0
-		duy=0
-		points=pd.DataFrame([[dux,duy,duz]],columns=['dux','duy','duz'])
-	elif block[0]==block2[0]:
-		points['dx']=points['x2']-points['x1']
-		points['dy']=points['y2']-points['y1']
-		points['r']=(points['dx']**2+points['dy']**2)**0.5
-		points['ux']=points['dx']/points['r']
-		points['uy']=points['dy']/points['r']
-		points['dux']=-points['uy']
-		points['duy']=points['ux']
-		points['duz']=0
-	return points
-
-def output_flows(input_dictionary):
-	"""
-	Read the .out file from the standard TOUGH2 file and store the data into a database. It includes the model version and timestamp.
-	"""
-
-	conn=sqlite3.connect(input_dictionary['db_path'])
-	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
-	elements_list=elements['ELEME'].values.tolist()
-	conn.close()
-
-	column_names=['ELEME1', 'ELEME2', 'INDEX','FHEAT','FLOH','FLOF','FLOG','FLOAQ','FLOWTR2','VELG','VELAQ','TURB_COEFF','model_time','model_version','model_output_timestamp']
-
-	time_now=datetime.datetime.now()
-
-	output_t2_file="../model/t2/t2.out"
-
-	bulk_data=[]
-
-	allow=False
-	allowed_line=1E50
-	if os.path.isfile(output_t2_file):
-		t2_file=open(output_t2_file, "r")
-		for n,t2_line in enumerate(t2_file):
-			if "OUTPUT DATA AFTER" in t2_line:
-				time=t2_line.rstrip().split(" ")[-2]
-				fix_data=[time,input_dictionary['model_version'],time_now]
-				allow=True
-
-			if t2_line=="                          (W)        (J/KG)        (KG/S)       (KG/S)       (KG/S)       (KG/S)        (M/S)        (M/S)        (1/M)\n":
-				allowed_line=n+2
-
-			if t2_line==" ELEMENT SOURCE INDEX      GENERATION RATE     ENTHALPY      X1           X2          FF(GAS)      FF(AQ.)         P(WB)\n":
-				allow=False
-				allowed_line=1E50
-
-			if allow and n>=allowed_line:
-				content=t2_line.split()
-				if len(content)==12 and content[0]!='ELEM1':
-					data_list= list(filter(None, content))
-					data_list.extend(fix_data)
-					bulk_data.append(data_list)
-
-			"""
-			Previous logic
-			#if len(t2_line.split())==12 and elements.ELEME.str.count(t2_line.split()[0]).sum()==1 and elements.ELEME.str.count(t2_line.split()[1]).sum()==1:
-			#if len(t2_line.split())==12 and bool(re.match("^[A-Z][A-Z][0-9][0-9][0-9]$",str(t2_line.split()[0]))) and bool(re.match("^[A-Z][A-Z][0-9][0-9][0-9]$",str(t2_line.split()[1]))): #3000s
-			if len(t2_line.split())==12 and len(t2_line.split()[0])==5 and not(any(y in t2_line.split() for y in ['ELEM1','GENER'] )): #2950s #t2_line.split()[0] in elements_list and t2_line.split()[1] in elements_list: #3500s
-				#print(t2_line.split())
-				t2_array=t2_line.rstrip().split(" ")
-				data_list= list(filter(None, t2_array))
-				data_list.extend(fix_data)
-				data_line={}
-
-				for i,name in enumerate(column_names):
-					try:
-						data_line[name]=float(data_list[i])
-					except (ValueError,TypeError):
-						data_line[name]=data_list[i]
-				
-				flows_df=flows_df.append(data_line,ignore_index=True)
-			"""
-		flows_df = pd.DataFrame(bulk_data,columns = column_names)
-		t2_file.close()
-
-		#Writing the dataframe to the database
-
-		conn=sqlite3.connect(input_dictionary['db_path'])
-		flows_df.to_sql('t2FLOWSout',if_exists='append',con=conn,index=False)
-		conn.close()
-
-	else:
-		sys.exit("The file %s or directory do not exist"%output_t2_file)
-
-def flow_direction(input_dictionary):
-	"""
-	not documented
-	"""
-	conn=sqlite3.connect(input_dictionary['db_path'])
-	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
-	elements_list=elements['ELEME'].values.tolist()
-	
-	flows_dict={}
-
-	for element in elements_list:
-
-		#print("PRE DIRECTIONS",datetime.datetime.now())
-		directions=normal_directions(input_dictionary,element)
-		#print("AFTER DIRECTIONS",datetime.datetime.now())
-		
-		#Direction 1
-		#print("PRE query flow",datetime.datetime.now())
-		flow_data=pd.read_sql_query("SELECT * FROM t2FLOWSout WHERE ELEME1='%s'AND model_time=-3359500000.0"%element,conn)
-		#print("AFTER query flow",datetime.datetime.now())
-
-		flow_data['flow_x']=0
-		flow_data['flow_y']=0
-
-		#print("PRE FIRST LOOP",datetime.datetime.now())
-		for index, row in flow_data.iterrows(): #horizontal
-
-			if row['ELEME2'][0]!=row['ELEME1'][0]:
-				#Establish the direction of the flow
-				if (formats.formats_t2['LAYERS'][row['ELEME1'][0]]-formats.formats_t2['LAYERS'][row['ELEME2'][0]])>0:
-					uy=-1
-				else:
-					uy=1
-
-				#It is necessary to check if the right position of ELEME1 and ELEME2 exists
-				if element==row['ELEME1']:
-					flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*row['FLOF']
-				else:
-					flow_data.loc[(flow_data['ELEME1']==row['ELEME2']) & (flow_data['ELEME2']==row['ELEME1']),"flow_y"]=-uy*row['FLOF']
-
-			else:
-
-				ux=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['dux'])
-				uy=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['duy'])
-				
-				flux=float(flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2'])]['FLOF'])
-				
-				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_x"]=ux*flux
-				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*flux
-		#print("AFTER FIRST LOOP",datetime.datetime.now())
-
-
-		#Direction 2
-		flow_data2=pd.read_sql_query("SELECT * FROM t2FLOWSout WHERE ELEME2='%s' AND model_time=-3359500000.0"%element,conn)
-		flow_data.append(flow_data2)
-
-		#print("PRE SECOND LOOP",datetime.datetime.now())
-
-		for index, row in flow_data.iterrows(): #horizontal
-
-			if row['ELEME2'][0]!=row['ELEME1'][0]:
-				#Establish the direction of the flow
-				if (formats.formats_t2['LAYERS'][row['ELEME1'][0]]-formats.formats_t2['LAYERS'][row['ELEME2'][0]])>0:
-					uy=-1
-				else:
-					uy=1
-
-				#It is necessary to check if the right position of ELEME1 and ELEME2 exists
-				if element==row['ELEME1']:
-					flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*row['FLOF']
-				else:
-					flow_data.loc[(flow_data['ELEME1']==row['ELEME2']) & (flow_data['ELEME2']==row['ELEME1']),"flow_y"]=-uy*row['FLOF']
-
-			else:
-
-				ux=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['dux'])
-				uy=float(directions.loc[ (directions['ELEME1']==row['ELEME1']) & (directions['ELEME2']==row['ELEME2'])]['duy'])
-				
-				flux=float(flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2'])]['FLOF'])
-				
-				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_x"]=ux*flux
-				flow_data.loc[(flow_data['ELEME1']==row['ELEME1']) & (flow_data['ELEME2']==row['ELEME2']),"flow_y"]=uy*flux
-		#print("AFTER SECOND LOOP",datetime.datetime.now())
-
-		#print("PRE CALCS",datetime.datetime.now())
-		sum_flowx=flow_data['flow_x'].sum()
-		sum_flowy=flow_data['flow_y'].sum()
-		flows_dict[element]=[sum_flowx,sum_flowy,(sum_flowx**2+sum_flowy**2)**0.5]
-		#print("AFTER CALCS",datetime.datetime.now())
-		#print(element,flows_dict[element])
-
-	flows=pd.DataFrame.from_dict(flows_dict,orient='index',columns=['flow_x','flow_y','flow_mag'])
-	#left_side=flow_data.loc[flow_data['ELEME1']==element]
-	#right_side=flow_data.loc[flow_data['ELEME2']==element]
-	flows.to_csv('directions.csv')
-	conn.close()
-
-def flow_direction2(input_dictionary):
-	"""
-	not documented
-	"""
-	conn=sqlite3.connect(input_dictionary['db_path'])
-	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
-	elements_list=elements['ELEME'].values.tolist()
-	
-	flows_dict={}
-
-	flow_data=pd.read_sql_query("SELECT * FROM t2FLOWSout WHERE model_time=-3359500000.0",conn)
-
-	flow_data['x_flow']=flow_data.apply(lambda row : normal_directions(input_dictionary,row['ELEME1'],row['ELEME2'])['dux']*row['FLOF'],axis=1)
-	flow_data['y_flow']=flow_data.apply(lambda row : normal_directions(input_dictionary,row['ELEME1'],row['ELEME2'])['duy']*row['FLOF'],axis=1)
-	flow_data['z_flow']=flow_data.apply(lambda row : normal_directions(input_dictionary,row['ELEME1'],row['ELEME2'])['duz']*row['FLOF'],axis=1)
-
-	#[Finished in 905.5s]
-
-	elements=pd.read_sql_query("SELECT DISTINCT ELEME FROM ELEME WHERE model_version=%d;"%(input_dictionary['model_version']),conn)
-	elements_list=elements['ELEME'].values.tolist()
-
-	bulk_data=[]
-	time_now=datetime.datetime.now()
-	time=-3359500000.0
-
-	for element in elements_list:
-		x=flow_data.loc[flow_data['ELEME1']==element,'x_flow'].sum()-flow_data.loc[flow_data['ELEME2']==element,'x_flow'].sum()
-		y=flow_data.loc[flow_data['ELEME1']==element,'y_flow'].sum()-flow_data.loc[flow_data['ELEME2']==element,'y_flow'].sum()
-		z=flow_data.loc[flow_data['ELEME1']==element,'z_flow'].sum()-flow_data.loc[flow_data['ELEME2']==element,'z_flow'].sum()
-		bulk_data.append([element,x,y,z,time,input_dictionary['model_version'],time_now])
-
-
-	column_names=['ELEME','FLOF_x','FLOF_y','FLOF_z','model_time','model_version','model_output_timestamp']
-
-	flows_df = pd.DataFrame(bulk_data,columns = column_names)
-
-	#Writing the dataframe into the database
-
-	conn=sqlite3.connect(input_dictionary['db_path'])
-	flows_df.to_sql('t2FLOWVectors',if_exists='append',con=conn,index=False)
-	conn.close()
-
-
-
-def src_csv(input_dictionary, path = None):
-	"""It generates an output file containing flow and flowing enthalpy for each GEN element from the T2 .csv output file. As a convention the library it is suggested to use GEN for any source/sink that is not a well
+def src_csv(input_dictionary, path = None, type_source = 'SRC'):
+	"""It generates an output file containing flow and flowing enthalpy for each sources listed in the GENER section in the TOUGH2 input file..
+	   It expects to read the TOUGH2_gener.csv file
 
 	Parameters
 	----------
 	input_dictionary : dictionary
-	 Dictionary contaning the path and name of database on keyword 'db_path'.
+		Dictionary contaning the path and name of database on keyword 'db_path' and the TOUGH2 file name.
+	path: str
+		In case a the output file is in a different location. Such as a server.
+	type_source: str
+		Either SRC or GEN
 
 	Returns
 	-------
-	file
-	  {GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt
-
+	files
+	  {SOURCE}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt for every source
 	"""
 
 	db_path=input_dictionary['db_path']
+	t2_file_name = input_dictionary['TOUGH2_file']
 
-	#List the GEN elements
+	if type_source == 'SRC':
+		condition = "NOT LIKE'GEN*'"
+	elif type_source == 'GEN':
+		condition = "LIKE'GEN*'"
+
+	#List the SOURCES elements (feedzones)
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
-	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE source_nickname NOT LIKE'GEN*' ORDER BY source_nickname;",conn)
+	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE source_nickname %s ORDER BY source_nickname;"%condition,conn)
 
 	#It reads the gener.csv output file line by line and store the data from each GEN element
-	poss_names = ["../model/t2/t2_gener.csv"]
+	poss_names = ["../model/t2/%s_gener.csv"%t2_file_name]
 	poss_names.append(path)
 	output_t2_file = None 
 	for file in poss_names:
@@ -1149,6 +918,7 @@ def src_csv(input_dictionary, path = None):
 			t2_file=open(output_t2_file, "r")
 			for i, t2_line in enumerate(t2_file):
 				if i == 0:
+					#Extract the header
 					t2_array = t2_line.rstrip().split(" ")
 					str_list = list(filter(None, t2_array))
 					str_list = [val  for val in str_list if '(' not in val or ')' not in val]
@@ -1159,12 +929,15 @@ def src_csv(input_dictionary, path = None):
 						dictionary_files[source]['file_container']+=','.join(str_list)+'\n'
 
 				if "TIME [sec]" in t2_line:
+					#Extract the time 
 					try:
 						time = t2_line.rstrip().split(" ")[3]
 					except IndexError:
 						time = t2_line.rstrip().split(" ")[2]
 
+
 				for source in dictionary_files:
+					#Splits each line from the output file and storage it in a dictionary
 					if dictionary_files[source]['blockcorr'] in t2_line and dictionary_files[source]['source'] in t2_line:
 						t2_array=t2_line.rstrip().split(" ")
 						str_list = list(filter(None, t2_array))
@@ -1175,9 +948,8 @@ def src_csv(input_dictionary, path = None):
 		else:
 			sys.exit("The file %s or directory do not exist"%output_t2_file)
 
-		print(dictionary_files)
 
-		#Creates a file for every GEN elemen
+		#Writes a file for each key word in the dictionary dictionary_files
 		for source in dictionary_files:
 			t2_file_out=open(dictionary_files[source]['filename'], "w")
 			t2_file_out.write(dictionary_files[source]['file_container'])
@@ -1185,93 +957,51 @@ def src_csv(input_dictionary, path = None):
 
 	conn.close()
 
-def gen_csv(input_dictionary):
-	"""It generates an output file containing flow and flowing enthalpy for each GEN element from the T2 .csv output file. As a convention the library it is suggested to use GEN for any source/sink that is not a well
+def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
+	"""It generates an output file for every element of every well. It is one of the most computationally demanding functions.
+	   It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.
 
 	Parameters
 	----------
 	input_dictionary : dictionary
-	 Dictionary contaning the path and name of database on keyword 'db_path'.
+		Dictionary contaning the path and name of database on keyword 'db_path' and the TOUGH2 file name.
+	path: str
+		In case a the output file is in a different location. Such as a server.
+	cutoff_time: float
+		Max time to storage
 
 	Returns
 	-------
-	file
-	  {GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt
-
+	files
+	  {well}_PT_evol.dat : on  ../output/PT/evol for every well
 	"""
 
 	db_path=input_dictionary['db_path']
+	t2_file_name = input_dictionary['TOUGH2_file']
 
-	#List the GEN elements
+	#List the blocks from each well and file location in the dictionary dictionary_files
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
-	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE source_nickname  LIKE'GEN*' ORDER BY source_nickname;",conn)
-
-	#Initialize a dictionary containing the file path and name.
-	dictionary_files={}
-	for n in range(len(data_source)):
-		well=data_source['well'][n]
-		blockcorr=data_source['blockcorr'][n]
-		source=data_source['source_nickname'][n]
-		dictionary_files[well]={'filename':"../output/mh/txt/%s_%s_%s_evol_mh.dat"%(well,blockcorr,source),'file_container':"",'blockcorr':blockcorr,'source':source}
-		dictionary_files[well]['file_container']+="ELEMENT,SOURCEINDEX,GENERATION RATE,ENTHALPY,FF(GAS),FF(AQ.),P(WB),TIME\n"
-
-	#It reads the gener.csv output file line by line and store the data from each GEN element
-	output_t2_file="../model/t2/t2_gener.csv"
-	if os.path.isfile(output_t2_file):
-		t2_file=open(output_t2_file, "r")
-		for t2_line in t2_file:
-			if "TIME [sec]" in t2_line:
-				try:
-					time = t2_line.rstrip().split(" ")[3]
-				except IndexError:
-					time = t2_line.rstrip().split(" ")[2]
-			for well in dictionary_files:
-				if dictionary_files[well]['blockcorr'] in t2_line and dictionary_files[well]['source'] in t2_line:
-					t2_array=t2_line.rstrip().split(" ")
-					str_list = list(filter(None, t2_array))
-					str_list = [val.replace(',',"") for val in str_list ]
-					str_list = [str_list[1].replace('"',""), str_list[2].replace('"',""), str_list[6], str_list[7], str_list[8], str_list[9], str_list[10]]
-					str_list.append(time.replace('"',""))
-					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
-		t2_file.close()
-	else:
-		sys.exit("The file %s or directory do not exist"%output_t2_file)
-
-	#Creates a file for every GEN elemen
-	for well in dictionary_files:
-		t2_file_out=open(dictionary_files[well]['filename'], "w")
-		t2_file_out.write(dictionary_files[well]['file_container'])
-		t2_file_out.close()	
-
-	conn.close()
-
-
-def eleme_CSV(input_dictionary, path = None):
-
-	db_path=input_dictionary['db_path']
-
-	#List the GEN elements
-	conn=sqlite3.connect(db_path)
-	c=conn.cursor()
-
 	dictionary_files = {}
 	data_block=pd.read_sql_query("SELECT well, blockcorr FROM t2wellblock  ORDER BY blockcorr;",conn)
 	if len(data_block)>0:
 		for n, blockcorr in enumerate(data_block['blockcorr']):
 			dictionary_files[data_block['well'][n]]={'filename':"../output/PT/evol/%s_PT_evol.dat"%(data_block['well'][n]),\
-			                                                'file_container':"",'blockcorr':blockcorr}
+			                                                    'file_container':"",'blockcorr':blockcorr}
 	else:
 		sys.exit("Store data on the table t2wellblock")
+	blocks =  data_block['blockcorr'].tolist()
 
-	#It reads the gener.csv output file line by line and store the data from each GEN element
-	poss_names = ["../model/t2/t2_XYZ.csv", "../model/t2/t2_eleme.csv"]
+
+	#It select the correct output file
+	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_eleme.csv"%t2_file_name]
 	poss_names.append(path)
 	output_t2_file = None 
 	for file in poss_names:
 		if os.path.isfile(file):
 			output_t2_file = file
 
+	#It goes line by line extracting the information and storaging it on the right location at the dictionary_files dictionary
 	if output_t2_file == None :
 		sys.exit("No output file located")
 	else:
@@ -1287,83 +1017,26 @@ def eleme_CSV(input_dictionary, path = None):
 					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
 			if "TIME [sec]" in t2_line:
 				try:
-					time = t2_line.rstrip().split(" ")[3]
+					time = t2_line.rstrip().split(" ")[3].replace('"','')
 				except IndexError:
-					time = t2_line.rstrip().split(" ")[2]
-			for well in dictionary_files:
-				if dictionary_files[well]['blockcorr'] in t2_line:
-					t2_array=t2_line.rstrip().split(" ")
-					str_list = list(filter(None, t2_array))
-					str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
-					str_list.append(time.replace('"',""))
-					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
-		t2_file.close()
+					time = t2_line.rstrip().split(" ")[2].replace('"','')
 
-	#Creates a file for every block elemen
-	for well in dictionary_files:
-		t2_file_out=open(dictionary_files[well]['filename'], "w")
-		t2_file_out.write(dictionary_files[well]['file_container'])
-		t2_file_out.close()	
-
-	conn.close()
-
-
-def eleme_CSV_PT(input_dictionary, path = None, def_time = 300):
-
-	db_path=input_dictionary['db_path']
-
-	#List the GEN elements
-	conn=sqlite3.connect(db_path)
-	c=conn.cursor()
-
-	dictionary_files = {}
-	data_block=pd.read_sql_query("SELECT well, blockcorr FROM t2wellblock  ORDER BY blockcorr;",conn)
-	if len(data_block)>0:
-		for n, blockcorr in enumerate(data_block['blockcorr']):
-			dictionary_files[data_block['well'][n]]={'filename':"../output/PT/txt/%s_PT.dat"%(data_block['well'][n]),\
-			                                                'file_container':"",'blockcorr':blockcorr}
-	else:
-		sys.exit("Store data on the table t2wellblock")
-
-	time = -1E50
-
-	#It reads the gener.csv output file line by line and store the data from each GEN element
-	poss_names = ["../model/t2/t2_XYZ.csv", "../model/t2/t2_eleme.csv"]
-	poss_names.append(path)
-	output_t2_file = None 
-	for file in poss_names:
-		if os.path.isfile(file):
-			output_t2_file = file
-
-	if output_t2_file == None :
-		sys.exit("No output file located")
-	else:
-		t2_file=open(output_t2_file, "r")
-		for i, t2_line in enumerate(t2_file):
-			if i == 0:
+			list_bool = [block in t2_line for block in blocks]
+			if any(list_bool):
 				t2_array=t2_line.rstrip().split(" ")
 				str_list = list(filter(None, t2_array))
-				str_list = [val  for val in str_list if '(' not in val or ')' not in val]
 				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
-				for well in dictionary_files:
-					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
-			if "TIME [sec]" in t2_line:
-				try:
-					time = float(t2_line.rstrip().split(" ")[3].replace('"',""))
-				except IndexError:
-					time = float(t2_line.rstrip().split(" ")[2].replace('"',""))
-			if time == def_time:
-				for well in dictionary_files:
-					if dictionary_files[well]['blockcorr'] in t2_line:
-						t2_array=t2_line.rstrip().split(" ")
-						str_list = list(filter(None, t2_array))
-						str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
-						dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
-			if time > def_time:
+				str_list.append(time.replace('"',""))
+				pos = list_bool.index(True)
+				well = data_block.loc[data_block['blockcorr'] == blocks[pos],'well'].iloc[0]
+				dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
+
+			if i>10 and float(time) > cutoff_time:
 				break
+
 		t2_file.close()
 
-	#Creates a file for every block elemen
+	#Creates a file for every well
 	for well in dictionary_files:
 		t2_file_out=open(dictionary_files[well]['filename'], "w")
 		t2_file_out.write(dictionary_files[well]['file_container'])
@@ -1371,31 +1044,36 @@ def eleme_CSV_PT(input_dictionary, path = None, def_time = 300):
 
 	conn.close()
 
-def t2_CSV_to_json(itime=None, all_times =False, path = None, num = None, last = False):
-	"""It creates a severals or a single json file from the output file from the TOUGH2 run
+def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, num = None, output_times = 220):
+	"""It creates severals or a single json file from the output file from the TOUGH2 run. Each of them for diffent output times.
+	   It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.
 
 	Parameters
 	----------
  	itime: float
 	  It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)
-	save_full: bool
-	  If True it creates a single output json file
+	path: str
+		In case a the output file is in a different location. Such as a server.
+	input_dictionary : dictionary
+		Dictionary contaning the TOUGH2 file name.
+	all_times: bool
+		If True it saves all the output times (It does not consider itime). If False, it considers itime.
+	output_times: int
+		It is an stimation of the number of output times in the TOUGH2 file. Due to its large runtime it has not been implemented, in Linux the command: grep 'TIMES' {T2_output_file.csv} | wl -c, would give the right number
+	num: int
+		Based on a linear spacing it gives the number of output_times that would be store. If None it will store every output time.
 
 	Returns
 	-------
 	files
 	  t2_ouput_{time}.json: on ../output/PT/json/evol/
-	file
-	  t2_output:  on ../output/PT/json/
 
 	Attention
 	---------
-	When t2_output is saved, the large could be too large for the system to handle it
-
-	Examples
-	--------
-	>>> t2_to_json()
+	When t2_output is saved, the large could be too large for the system to handle it. The file mesh/ELEME.json has to be created
 	"""
+
+	t2_file_name = input_dictionary['TOUGH2_file']
 
 	block_json_file='../mesh/ELEME.json'
 
@@ -1405,9 +1083,8 @@ def t2_CSV_to_json(itime=None, all_times =False, path = None, num = None, last =
 	else:
 		sys.exit("The file %s or directory do not exist, run ELEM_to_json from regeo_mesh"%output_t2_file)		  	
 
-
-	#It reads the gener.csv output file line by line and store the data from each GEN element
-	poss_names = ["../model/t2/t2_XYZ.csv", "../model/t2/t2_eleme.csv"]
+	#It select the correct output file
+	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_eleme.csv"%t2_file_name]
 	poss_names.append(path)
 	output_t2_file = None 
 	for file in poss_names:
@@ -1419,29 +1096,23 @@ def t2_CSV_to_json(itime=None, all_times =False, path = None, num = None, last =
 	else:
 		
 		cnt_t = 0
-		"""
-		file =  open(output_t2_file, 'r')
-		data_file = file.read()
-		count = data_file.count("TIME")
-		file.close()
-		"""
-
-		count = 400
 
 		if num != None:
-			positions = np.linspace(0, count, num).astype(int)
+			positions = np.linspace(0, output_times, num).astype(int)
 		else:
-			positions = range(count)
+			positions = range(output_times)
 
 		t2_file=open(output_t2_file, "r")
 		for i, t2_line in enumerate(t2_file):
 
+			#Extract the headers
 			if i == 0:
 				t2_array=t2_line.rstrip().split(" ")
 				param_list = list(filter(None, t2_array))
 				param_list = [val  for val in param_list if '(' not in val or ')' not in val]
 				param_list = [val.replace(',',"").replace('"','') for val in param_list[1:] ]
 
+			#Extracts the time, save the data into json and breaks the function once the time is larger than specified itime
 			if "TIME [sec]" in t2_line:
 				if i >10 and cnt_t in positions: #takes the previous time and save it
 					t2_pd=pd.DataFrame.from_dict(data_dictionary,orient='index')
@@ -1462,10 +1133,12 @@ def t2_CSV_to_json(itime=None, all_times =False, path = None, num = None, last =
 					if time > itime:
 						break
 
+			#It stores every line into a dictionary, skips the first line and save just the ones listed into the array positions
 			if i != 0 and 'TIME' not in t2_line and cnt_t in positions:
 				t2_array=t2_line.rstrip().split(" ")
 				str_list = list(filter(None, t2_array))
 				block = str_list[1].replace('"','').replace(',',"")
+
 				data_dictionary[time][block]={}
 				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
 				for n, param in enumerate(param_list):
@@ -1474,64 +1147,113 @@ def t2_CSV_to_json(itime=None, all_times =False, path = None, num = None, last =
 					except ValueError:
 						data_dictionary[time][block][param] = str_list[n]
 
+def total_enthalpy(wells):
+	"""It creates an output file containing the weighted flowing enthalpy from the producing wells.
 
-def total_enthalpy(input_dictionary, wells, years = 35):
+	Parameters
+	----------
+ 	wells: list
+	  Contains the producer wells included in the calculation.
 
+	Returns
+	-------
+	files
+	  total_prod_mh.csv: in input/mh/
 
-	#data['date_time'] = pd.date_range(start= input_dictionary['ref_date'], end= input_dictionary['ref_date']+datetime.timedelta(days=years*365.25), freq = 'D' )
+	Attention
+	---------
+	Each file has to be previously storage. It does a forward fill, since it is necessary to have one value at least per day for every well.
+	"""
 
+	#Generates empty dataframe
 	data_p = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
 	
-
 	for well in wells:
 
 		data = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
 		
+		#Reads the input file
 		data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'total_flow', 'enthalpy', 'status', 'steam'])
+		#To make sure it does not uses periods of time the well was under injection, it considers just steam flow above zero
 		data_x = data_x.loc[data_x['steam'] > 0]
 		data_x['date_time'] = pd.to_datetime(data_x['date_time'] , format="%Y-%m-%d_%H:%M:%S")
 
-		
+		#It does the forward filling
 		data_ix = data_x.copy()
 		data_ix.index = data_ix['date_time']
 		del data_ix['date_time']
 		data_ii_inter_x = data_ix.resample('D').mean().ffill()
 		data_ii_inter_x['date_time'] = data_ii_inter_x.index
 
-
+		#Stores the product of mass flow rate and enthalpy for each well
 		if wells[well]['type'] == 'producer':
 			data['mh'] = data_ii_inter_x['total_flow']*data_ii_inter_x['enthalpy']
 			data['m'] = data_ii_inter_x['total_flow']
 			data['date_time'] = data_ii_inter_x['date_time']
-
 			data_p = data_p.append(data, ignore_index = True)
 
+	#Group whole datafrime by date_time
 	data_p = data_p.groupby('date_time').sum()
-
+	#Calculates the weighted enthalpy
 	data_p['h'] = data_p['mh']/data_p['m']
 
 	data_p.to_csv('../input/mh/total_prod_mh.csv' , index = True)
 
+def power_i(Px,hx,mx,ESC, atm_p = 0.092):
+	"""It calculates an stimated power output and steam saturation, based on a isoenthalpic expansion
 
+	Parameters
+	----------
+ 	Px: float
+	  Assumed wellhead pressure
+ 	hx: float
+	  Flowing enthalpy pressure
+ 	mx: float
+	  Mass flow rate
+	ESC: float
+	  Assumed specific steam consumption
+	atm_p: float
+	  Atmosphere presure in bar
+
+	Returns
+	-------
+	array
+	  [power, saturation]
+	"""
+	if mx <= 0:
+		try:
+			quality = IAPWS97(P=Px+atm_p,h=hx).x
+			power = -quality*mx/ESC
+		except NotImplementedError:
+			print("Out of bounds, Pressure:", Px,"[bar], Enthalpy: ",hx, "[kJ/kg]")
+			power = 0
+			quality = 0
+	else:
+		power = 0
+		quality = 0
+	return [power, quality]
 
 def power(input_dictionary, WHP):
+	"""When all the well feedzones are declare as MASS type in the TOUGH2 input file, this functions estimates the power generation based on the assumption of an isoenthalpic expansion from the feedzone to the wellhead.
 
-	def power_i(Px,hx,mx,ESC):
-		if mx <= 0:
-			try:
-				quality = IAPWS97(P=Px+0.092,h=hx).x
-				power = -quality*mx/ESC
-			except NotImplementedError:
-				print("Out of bounds, Pressure:", Px,"[bar], Enthalpy: ",hx, "[kJ/kg]")
-				power = 0
-		else:
-			power = 0
-		return power
-		
-	data_12 = pd.DataFrame(columns = ['date_time', 'h', 'm', 'power'])
-	data_3 = pd.DataFrame(columns = ['date_time', 'h', 'm', 'power'])
+	Parameters
+	----------
+ 	input_dictionary: dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path'
+ 	WHP: dictionary
+ 	  Using the structure: 'well':[WHP, ESC, 'unit', 'masstype']. masstype could be either MASS or FLOWELL
+
+	Returns
+	-------
+	File
+	  units_power.csv: in output/
+	"""
 
 	conn=sqlite3.connect(input_dictionary['db_path'])
+
+	#Creating empty dataframes to store power
+	data = pd.DataFrame(columns = ['date_time', 'h', 'm','BWP', 'power','unit'])
+	
 	c=conn.cursor()
 
 	well_sources = pd.read_sql_query("SELECT * FROM t2wellsource WHERE well LIKE 'TR-%'",conn)
@@ -1557,6 +1279,7 @@ def power(input_dictionary, WHP):
 			flow_rate = []
 			pressures = []
 			power = []
+			units = []
 
 			for n in range(len(times)):
 				if float(times[n]) >= 0:
@@ -1565,9 +1288,10 @@ def power(input_dictionary, WHP):
 						enthalpy.append(data_mh['ENTH'][n]/1E3)
 						flow_rate.append(data_mh['GEN'][n])
 						dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+						units.append(WHP[row['well']][2])
 						
 						if str(row['well']) in [*WHP]:
-							power.append(power_i(WHP[row['well']][0]/1E6,data_mh['ENTH'][n]/1E3,data_mh['GEN'][n],WHP[row['well']][1]))
+							power.append(power_i(WHP[row['well']][0]/1E6,data_mh['ENTH'][n]/1E3,data_mh['GEN'][n],WHP[row['well']][1])[0])
 						else:
 							power.append(np.nan)
 
@@ -1578,75 +1302,341 @@ def power(input_dictionary, WHP):
 			                 'h': enthalpy,
 			                 'm': flow_rate,
 			               'BWP': pressures,
+			               'unit': units,
 			               'power':power}
 
 			output = pd.DataFrame.from_dict(input_row)
 
-			if WHP[row['well']][2] == '1_2':
-				data_12 = data_12.append(output, ignore_index = True)
-			elif WHP[row['well']][2] == '3':
-				data_3 = data_3.append(output, ignore_index = True)
-
-	data_12 = data_12.groupby(['date_time']).sum() 
-	data_3 = data_3.groupby(['date_time']).sum() 
+			data = data.append(output, ignore_index = True)
 
 
-	data_12.to_csv('../output/unit_12_power.csv')
-	data_3.to_csv('../output/unit_3_power.csv')
-		
+	data_out = data.groupby(['date_time','unit']).sum()
+	data_out.to_csv('../output/units_power.csv')
+
+def flowell(input_dictionary, init_values = 100000):
+	"""It extracts from the conventional TOUGH2 output file the FLOWELL data for every well.
+
+	Parameters
+	----------
+ 	input_dictionary: dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path', the specified layers and the reference date
+ 	init_values: int
+ 	  Number of possible number initial values for FLOWELL output.
+
+	Returns
+	-------
+	File
+	  flowell.json: at output/
+	"""
+
+	db_path=input_dictionary['db_path']
+	t2_file_name = input_dictionary['TOUGH2_file']
+
+	#Making sure the output file exists
+	t2_output_file="../model/t2/%s.out"%t2_file_name
+	if os.path.isfile(t2_output_file):
+		pass
+	else:
+		return "Theres is not t2.out file on t2/%s.out"%t2_file_name
 
 
-def field_areas_enthalpy(wells):
+	#Extracting information about the layers
+	layers_info=geometry.vertical_layers(input_dictionary)
+	layer_tb={layers_info['name'][n]:[layers_info['bottom'][n],layers_info['top'][n]] for n in range(len(layers_info['name']))}
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
 
 
-	data_p_12 = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
-	data_p_3_17 = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
-	data_p_3_18 = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
-	
-	for well in wells:
+	sources_data = pd.read_sql_query("SELECT well, source_nickname FROM t2wellsource",conn)
 
-		data = pd.DataFrame(columns=['date_time', 'mh', 'm', 'h'])
-		
-		data_x = pd.read_csv("../input/mh/%s_mh.dat"%well, usecols = ['date_time', 'total_flow', 'enthalpy', 'status', 'steam'])
-		data_x = data_x.loc[data_x['steam'] > 0]
-		data_x['date_time'] = pd.to_datetime(data_x['date_time'] , format="%Y-%m-%d_%H:%M:%S")
+	#Extracting the sources from the TOUGH2 file
+	t2_ifile="../model/t2/%s"%t2_file_name
+	if os.path.isfile(t2_ifile):
+		pass
+	else:
+		return "Theres is not t2 file"
 
-		
-		data_ix = data_x.copy()
-		data_ix.index = data_ix['date_time']
-		del data_ix['date_time']
-		data_ii_inter_x = data_ix.resample('D').mean().ffill()
-		data_ii_inter_x['date_time'] = data_ii_inter_x.index
+	sources = []
+
+	#When splitting the SOURCES some of this versions of S{correlative}C could ocurr, the originall is simply SRC
+	options = ['SAC','SBC','SCC','SDC','SBB','SDB','SRC']
+
+	with open(t2_ifile,'r') as t2_ifile:
+		t2_i_array = t2_ifile.readlines()
+		print_io = False
+		for line_i, line in enumerate(t2_i_array):
+			if "FLOWELL" in line.rstrip():
+				print_io = True
+
+			if print_io:
+				if  any(src0 in line.rstrip() for src0 in options):
+					source = line.rstrip()[0:10]
+					sources.append(source)
+
+	cnt_s = {k:0 for k in sources}
+
+	#Initizalizing dictionary
+	data = {}
+	for n in range(init_values):
+		data[n] = {'SOURCE':'',
+		           'TIME':0,
+		           'ITER':0,
+		           'DATA':[]}
+
+	#Extracting information from wellbore simulator from the TOUGH2 output file
+	output_headers=[]
+	with open(t2_output_file,'r') as t2_file:
+		t2_output_array = t2_file.readlines()
+		print_io = False
+		cnt = 0
+		not_include=['=','&',':','*']
+		line_x = 1E50
+		iter_i = 0
+
+		for line_i, line in enumerate(t2_output_array):
+			if line_i > 1:
+				#Extracting the printout time
+				if " WELLBORE SIMULATOR FLOWELL AT TIME" in line.rstrip():
+					time_i = line.rstrip().split('TIME:')[1].split(' SECONDS')[0]
+
+				#Extracting the source
+				if ' ------------------------------------------------' in line.rstrip():
+					source = line.rstrip().split('------------------------------------------------')[1].split('-')[0]
+
+				#Extracting the iteration number
+				if '-----------ITER =' in line.rstrip():
+					iter_i = line.rstrip().split(' -----------ITER = ')[1].split(';')[0]
+					cnt += 1
+
+				#If this line occurs means in the next line the printout is going to happen
+				if '    DEPTH          FLOW ' in line.rstrip():
+					print_io = True
+					line_x = line_i
+
+				#If any of these lines occurs the printout ends
+				if print_io:
+					if ' ------------------------------------------------' in line.rstrip():
+						print_io = False
+					elif '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&' in line.rstrip():
+						print_io = False
 
 
-		data['mh'] = data_ii_inter_x['total_flow']*data_ii_inter_x['enthalpy']
-		data['m'] = data_ii_inter_x['total_flow']
-		data['date_time'] = data_ii_inter_x['date_time']
+				if print_io and line_i > (line_x+1):
+					try:
+						if not any(s in line.rstrip() for s in not_include):
 
-		if wells[well][2] == '1_2':
-			data_p_12 = data_p_12.append(data, ignore_index = True)
-		elif wells[well][2] == '3':
-			if '17' in well:
-				data_p_3_17 = data_p_3_17.append(data, ignore_index = True)
-			elif '18' in well:
-				data_p_3_18 = data_p_3_18.append(data, ignore_index = True)
+							data_i = []
+							add = False
+							for data_in in list(filter(None, line.rstrip().split(' '))):
+								#if the source appears, then some especial treatment is needed
+								if data_in in sources:
+									cnt_s[data_in] = cnt_s[data_in]+1
+									source_i = data_in
 
-	data_p_12 = data_p_12.groupby('date_time').sum()
+									#extracts the MD value
+									if cnt_s[data_in] % 2 == 1:
+										MD = layer_tb[data_in[0]][0]
+									elif cnt_s[data_in] % 2 == 0:
+										MD = layer_tb[data_in[0]][1]
+									
+									well = sources_data.loc[sources_data['source_nickname']==data_in[5:10]].iloc[0]['well']
+									md = float(geometry.TVD_to_MD(well,MD))
+									data_i.append(md)
+								else:
+									data_i.append(float(data_in))
+							
+							#On the second line of every feedzone the productivity index is printout, then it is necessary to fill with nan some spaces
+							if cnt_s[source_i] % 2 == 1:
+								data_i.insert(2,np.nan)
 
-	data_p_12['h'] = data_p_12['mh']/data_p_12['m']
+							#Saves the values into the dictionary
+							if len(data_i)>0:
+								data[cnt]['SOURCE'] = source
+								data[cnt]['TIME'] = (input_dictionary['ref_date']+datetime.timedelta(seconds=float(time_i))).strftime("%Y-%m-%d_%H:%M:%S")
+								data[cnt]['ITER'] = int(iter_i) - 1 
+								data[cnt]['DATA'].append(data_i)
 
-	data_p_12.to_csv('../input/mh/unit12_mh.csv' , index = True)
+					except UnboundLocalError:
+						pass
 
+	df = pd.DataFrame.from_dict(data,orient = 'index')
+	df.to_json('../output/flowell.json',orient="split", indent = 4)
 
-	data_p_3_17 = data_p_3_17.groupby('date_time').sum()
+def power_from_flowell(input_dictionary, WHP, exceptions):
+	"""When all the well feedzones are declare as MASS and FLOWELL type in the TOUGH2 input file, this functions estimates the power generation based on the assumption of an isoenthalpic expansion from the feedzone to the wellhead for the MASS type
+	and takes directly the steam saturation at the wellhead when it comes from FLOWELL.
 
-	data_p_3_17['h'] = data_p_3_17['mh']/data_p_3_17['m']
+	Parameters
+	----------
+ 	input_dictionary: dictionary
+	  Dictionary contaning the path and name of database on keyword 'db_path'
+ 	WHP: dictionary
+ 	  Using the structure: 'well':[WHP, ESC, 'unit', 'masstype']. masstype could be either MASS or FLOWELL
+ 	exceptions: list
+ 	  List of sources listed as FLOWELL than will be treated as MASS. It occurs when just one period from the wells are calibrate with FLOWELL. 
 
-	data_p_3_17.to_csv('../input/mh/unit3_17_mh.csv' , index = True)
+	Returns
+	-------
+	File
+	  units_power_flowell.csv: in output/
 
+	Attention
+	---------
+	Functions src_csv() and eleme_CSV() should be ran before executing this function
+	"""
 
-	data_p_3_18 = data_p_3_18.groupby('date_time').sum()
+	data = pd.DataFrame(columns = ['date_time', 'swh', 'm', 'power', 'unit'])
 
-	data_p_3_18['h'] = data_p_3_18['mh']/data_p_3_18['m']
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	c=conn.cursor()
 
-	data_p_3_18.to_csv('../input/mh/unit3_18_mh.csv' , index = True)
+	well_sources = pd.read_sql_query("SELECT * FROM t2wellsource WHERE well LIKE 'TR-%' OR well LIKE 'Mk%' ",conn)
+
+	for index, row in well_sources.iterrows(): 
+		if str(row['well']) in [*WHP]:
+			evol_file = '../output/mh/txt/%s_%s_%s_evol_mh.dat'%(row['well'],row['blockcorr'],row['source_nickname'])
+			Pevol = '../output/PT/evol/%s_PT_evol.dat'%row['well']
+
+			if os.path.isfile(evol_file):
+				if WHP[row['well']][3] == 'FLOWELL':
+						
+					if os.path.isfile(evol_file):
+						data_i = pd.read_csv(evol_file)
+
+						temp_i = data_i.loc[ data_i['TIME'] >=0 , ['FWH','SWH', 'TIME']]
+
+						if row['source_nickname'] in exceptions:
+
+							if  os.path.isfile(Pevol): 
+								print('******************************************************')
+								print(row['well'], 'FLOWELL, exception',row['source_nickname'])
+
+								data_i = pd.read_csv(Pevol)
+
+								temp_i = data_i.loc[ (data_i['ELEM'] == row ['blockcorr']) & (data_i['TIME'] >=0 ), ['PRES_VAP','TIME']]
+								temp_i.reset_index(inplace = True)
+
+								data_mh = pd.read_csv(evol_file)
+
+								times = data_mh['TIME']
+
+								dates=[]
+								flow_rate = []
+								swh = []
+								power = []
+								units = []
+
+								for n in range(len(times)):
+									if float(times[n]) >= 0:
+										try:
+											flow_rate.append(data_mh['GEN'][n])
+											dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+											
+											if str(row['well']) in [*WHP]:
+												t = power_i(WHP[row['well']][0]/1E6,data_mh['ENTH'][n]/1E3,data_mh['GEN'][n],WHP[row['well']][1])
+												power.append(t[0])
+												swh.append(t[1])
+												units.append(WHP[row['well']][2] )
+											else:
+												power.append(np.nan)
+
+										except (OverflowError, KeyError):
+											print(times[n],"plus",str(times[n]),"wont be plot")
+
+								input_row = {'date_time': dates,
+								                 'm': flow_rate,
+								               'swh': swh,
+								               'power':power,
+								               'unit':units}
+
+								output = pd.DataFrame.from_dict(input_row)
+								data = data.append(output, ignore_index = True)
+								print(row['well'], 'FLOWELL, exception',row['source_nickname'])
+						else:
+
+							print(row['well'], 'FLOWELL',row['source_nickname'])
+
+							temp_i.reset_index(inplace = True)
+
+							times = temp_i['TIME']
+
+							dates=[]
+							swh = []
+							flow_rate = []
+							power = []
+							units = []
+
+							for n in range(len(times)):
+								if float(times[n]) >= 0:
+									try:
+										flow_rate.append(temp_i['FWH'][n])
+										dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+										swh.append(temp_i['SWH'][n])
+										power.append(temp_i['SWH'][n]*temp_i['FWH'][n]/WHP[row['well']][1])
+										units.append(WHP[row['well']][2])
+
+									except (OverflowError, KeyError):
+										print(times[n],"plus",str(times[n]),"wont be plot")
+
+							input_row = {'date_time': dates,
+							                 'swh': swh,
+							                 'm': flow_rate,
+							               'power':power,
+							               'unit':units}
+
+							output = pd.DataFrame.from_dict(input_row)
+							data = data.append(output, ignore_index = True)
+							print(row['well'], 'FLOWELL',row['source_nickname'])
+				elif WHP[row['well']][3] == 'MASS':
+
+					if  os.path.isfile(Pevol):
+
+						print(row['well'], 'MASS',row['source_nickname'])
+
+						data_i = pd.read_csv(Pevol)
+
+						temp_i = data_i.loc[ (data_i['ELEM'] == row ['blockcorr']) & (data_i['TIME'] >=0 ), ['PRES_VAP','TIME']]
+						temp_i.reset_index(inplace = True)
+
+						data_mh = pd.read_csv(evol_file)
+
+						times = data_mh['TIME']
+
+						dates=[]
+						flow_rate = []
+						swh = []
+						power = []
+						units = []
+
+						for n in range(len(times)):
+							if float(times[n]) >= 0:
+								try:
+									flow_rate.append(data_mh['GEN'][n])
+									dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+									
+									if str(row['well']) in [*WHP]:
+										t = power_i(WHP[row['well']][0]/1E6,data_mh['ENTH'][n]/1E3,data_mh['GEN'][n],WHP[row['well']][1])
+										power.append(t[0])
+										swh.append(t[1])
+										units.append(WHP[row['well']][2])
+									else:
+										power.append(np.nan)
+
+								except (OverflowError, KeyError):
+									print(times[n],"plus",str(times[n]),"wont be plot")
+
+						input_row = {'date_time': dates,
+						                 'm': flow_rate,
+						               'swh': swh,
+						               'power':power}
+
+						output = pd.DataFrame.from_dict(input_row)
+
+						data = data.append(output, ignore_index = True)
+
+						print(row['well'], 'MASS',row['source_nickname'])
+
+	data_out = data.groupby(['date_time','unit']).sum()
+	data_out.to_csv('../output/units_power_flowell.csv')
+

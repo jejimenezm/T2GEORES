@@ -158,7 +158,7 @@ class py2amesh:
 		x_from_boarder,y_from_boarder,\
 		x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,\
 		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog,line_file,fault_distance,with_polygon,polygon_shape,set_inac_from_poly,set_inac_from_inner,rotate,angle,inner_mesh_type,\
-		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well,outer_polygon):
+		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well, outer_polygon):
 
 		self.filename=filename
 		self.filepath=filepath
@@ -214,6 +214,7 @@ class py2amesh:
 		self.points_around_well=points_around_well
 
 		self.distance_points_around_well=distance_points_around_well
+
 		self.outer_polygon = outer_polygon
 
 
@@ -1023,7 +1024,7 @@ class py2amesh:
 	
 
 		#Read border to clip write into in file
-		borders=gpd.read_file(self.outer_polygon)
+		borders=gpd.read_file(	self.outer_polygon)
 
 		border_points=[]
 		for line in borders.iterrows():
@@ -2269,9 +2270,21 @@ def clip_steinar_data():
 	rock_file.close()
 
 
-
 def reasig_feedzone(input_dictionary):
+	"""It reassing the block related with a well feedzone
 
+	Attention
+	---------
+	Files: '../input/well_feedzone_xyz.csv' and '../mesh/ELEME.json' need to be updated
+
+	Returns
+	-------
+	file:
+	   well_dict.txt: at ../mesh/
+	file:
+	   wells_correlative.txt: at ../mesh/
+	"""
+	
 	layers_info=geometry.vertical_layers(input_dictionary)
 
 	layer_middle={layers_info['name'][n]:layers_info['middle'][n] for n in range(len(layers_info['name']))}
@@ -2321,9 +2334,7 @@ def reasig_feedzone(input_dictionary):
 	json.dump(well_corr, open("../mesh/well_dict.txt",'w'),sort_keys=True, indent=4)
 	json.dump(wells_dictionary, open("../mesh/wells_correlative.txt",'w'),sort_keys=True, indent=4)
 
-
 def set_layer_inactive(layers = []):
-
 	"""It sets innactive one layer from the mesh on the ELEME file
 
 	Parameters
@@ -2364,3 +2375,164 @@ def set_layer_inactive(layers = []):
 
 	else:
 		sys.exit("The file %s or directory do not exist"%source_file)
+
+def tracks_to_paraview(input_dictionary):
+	"""It generates a line for each well track as vtu
+
+	Parameters
+	----------
+ 	input_dictionary: dictionary
+	  List of well to be included
+
+	Returns
+	-------
+	file
+	  tracks_{well}.vtu in input/survey/vtu/
+	"""
+
+	from vtkmodules.vtkCommonDataModel import (
+	    vtkCellArray,
+	    vtkPolyData,
+	    vtkPolyLine
+	)
+	from vtkmodules.vtkCommonCore import vtkPoints
+
+	wells=[]
+
+	for key in ['WELLS','MAKE_UP_WELLS','NOT_PRODUCING_WELL']:
+		try:
+			for well in input_dictionary[key]:
+				wells.append(well)
+		except KeyError:
+			pass
+
+	conn=sqlite3.connect(input_dictionary['db_path'])
+	c=conn.cursor()
+
+	for well in wells:
+
+		data=pd.read_sql_query("SELECT MeasuredDepth FROM survey WHERE well='%s' ORDER BY MeasuredDepth;"%well,conn)
+
+		x_real=[]
+		y_real=[]
+		z_real=[]
+		well_proj=[]
+
+		data_xyz = {'x':[],
+					'y':[],
+					'z':[]}
+
+		for v in range(len(data['MeasuredDepth'])):
+			xf,yf,zf=geometry.MD_to_TVD(well,data['MeasuredDepth'][v])
+			data_xyz['x'].append(float(xf))
+			data_xyz['y'].append(float(yf))
+			data_xyz['z'].append(float(zf))
+
+
+		# Create a vtkPoints object and store the points in it
+		points = vtkPoints()
+		# Create a cell array to store the lines in and add the lines to it
+		cells = vtkCellArray()
+
+		# Create a polydata to store everything in
+		polyData = vtkPolyData()
+
+		for i, k in enumerate(data_xyz['x']):
+			p = [data_xyz['x'][i],data_xyz['y'][i],data_xyz['z'][i]]
+			points.InsertNextPoint(p)
+
+		n_point = len(data_xyz['x'])
+
+		polyLine = vtkPolyLine()
+		polyLine.GetPointIds().SetNumberOfIds(n_point)
+		
+		for i in range(0, n_point):
+			polyLine.GetPointIds().SetId(i, i)
+
+
+		cells.InsertNextCell(polyLine)
+
+		# Add the points to the dataset
+		polyData.SetPoints(points)
+
+		# Add the lines to the dataset
+		polyData.SetLines(cells)
+
+
+		ugrid=vtk.vtkUnstructuredGrid()
+		ugrid.SetCells(vtk.VTK_POLY_LINE,cells)
+		ugrid.SetPoints(points)
+
+		writer=vtk.vtkXMLUnstructuredGridWriter()
+		writer.SetInputData(ugrid)
+		writer.SetFileName('../input/survey/vtu/tracks_%s.vtu'%well)
+		writer.SetDataModeToAscii()
+		writer.Update()
+		writer.Write()
+
+def feedpoints_to_vtu():
+	"""It generates a cube (Hexahedron) for each feedzone
+
+	Returns
+	-------
+	file
+	  {index}_{well}.vtu in output/vtu/feedzones/
+
+	Attention
+	---------
+	The file input/well_feedzone_xyz.csv has to be created prior the execution of this function
+	"""
+	from vtkmodules.vtkCommonDataModel import (
+	    vtkCellArray,
+		vtkHexahedron
+	)
+	from vtkmodules.vtkCommonCore import vtkPoints
+
+	feedzones=pd.read_csv('../input/well_feedzone_xyz.csv',delimiter=",")	
+
+	for index,row in feedzones.iterrows():
+
+		x = row['x']
+		y = row['y']
+		z = row['z']
+		well = row['well']
+
+		r = 25
+		xs = r*2**0.5
+		zs = r
+
+		points = vtkPoints()
+		numberOfVertices = 8
+
+		points = vtkPoints()
+		block_name=vtk.vtkStringArray()
+		block_name.SetName('block')
+		block_name.InsertNextValue('%s_%s'%(well,index))
+
+		points.InsertNextPoint(x-xs, y-xs, z-zs)  # Face 1
+		points.InsertNextPoint(x+xs, y-xs, z-zs)
+		points.InsertNextPoint(x+xs, y+xs, z-zs)
+		points.InsertNextPoint(x-xs, y+xs, z-zs)
+		points.InsertNextPoint(x-xs, y-xs, z+zs)  # Face 1
+		points.InsertNextPoint(x+xs, y-xs, z+zs)
+		points.InsertNextPoint(x+xs, y+xs, z+zs)
+		points.InsertNextPoint(x-xs, y+xs, z+zs)
+
+		# Create a hexahedron from the points
+		hexhedr = vtkHexahedron()
+		for i in range(0, numberOfVertices):
+		    hexhedr.GetPointIds().SetId(i, i)
+
+		# Add the points and hexahedron to an unstructured grid
+		uGrid = vtk.vtkUnstructuredGrid()
+		uGrid.SetPoints(points)
+		uGrid.InsertNextCell(hexhedr.GetCellType(), hexhedr.GetPointIds())
+		uGrid.GetCellData().AddArray(block_name)
+
+		writer=vtk.vtkXMLUnstructuredGridWriter()
+		writer.SetInputData(uGrid)
+		writer.SetFileName('../output/vtu/feedzones/%s_%s.vtu'%(well,index))
+		writer.SetDataModeToAscii()
+		writer.Update()
+		writer.Write()
+

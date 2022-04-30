@@ -456,6 +456,7 @@ def run(input_dictionary):
 def rock_update(input_dictionary):
 	"""
 	It updates the rock type on the TOUGH2 file
+	
 	Parameters
 	----------
 	input_dictionary : dictionary
