@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -78,7 +80,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
@@ -206,6 +208,233 @@
 
 	<span class="k">return</span> <span class="n">layers_info</span></div>
 
+
+<div class="viewcode-block" id="iter_TVD"><a class="viewcode-back" href="../modules/geometry.html#geometry.iter_TVD">[docs]</a><span class="k">def</span> <span class="nf">iter_TVD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">well</span><span class="p">):</span>
+
+
+	<span class="n">def_values</span> <span class="o">=</span> <span class="p">{</span>
+				  <span class="s1">&#39;casing&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span><span class="mf">4.5E-5</span><span class="p">,</span> <span class="s1">&#39;void&#39;</span><span class="p">:</span><span class="mf">0.12</span><span class="p">},</span>
+				  <span class="s1">&#39;liner&#39;</span><span class="p">:{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span><span class="mf">1E-5</span><span class="p">,</span> <span class="s1">&#39;void&#39;</span><span class="p">:</span><span class="mf">0.12</span><span class="p">,</span><span class="s1">&#39;PI&#39;</span><span class="p">:</span><span class="mf">2E-12</span><span class="p">}</span>
+				  <span class="p">}</span>
+
+
+	<span class="n">tubes_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../input/tubes/</span><span class="si">%s</span><span class="s1">_tubes.dat&#39;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_ranurada_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_ranurada_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="n">s</span> <span class="o">=</span> <span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_ranurada_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">num</span><span class="p">,</span><span class="n">den</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s1">&#39;/&#39;</span> <span class="p">)</span>
+			<span class="n">wh</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">num</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+			<span class="n">tr_ranurada_d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">wh</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">den</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">tr_ranurada_d</span> <span class="o">=</span> <span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_ranurada_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_lisa_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+		<span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_lisa_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="n">s</span> <span class="o">=</span> <span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_lisa_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">num</span><span class="p">,</span><span class="n">den</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span> <span class="s1">&#39;/&#39;</span> <span class="p">)</span>
+			<span class="n">wh</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">num</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+			<span class="n">tr_lisa_d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">wh</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">den</span><span class="p">))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">tr_lisa_d</span> <span class="o">=</span> <span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_lisa_d&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="n">TVD_min_casing</span> <span class="o">=</span> <span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">tubes_data</span><span class="p">[</span><span class="s1">&#39;tr_lisa_fin&#39;</span><span class="p">])[</span><span class="mi">2</span><span class="p">]</span>
+
+	<span class="n">layers_info</span><span class="o">=</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+
+	<span class="n">layer_tb</span><span class="o">=</span><span class="p">{</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]:[</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">],</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))}</span>
+
+	<span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]),</span><span class="mi">100</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+
+	<span class="n">data_d</span> <span class="o">=</span> <span class="p">{}</span>
+
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	for point in positions:</span>
+<span class="sd">		md = TVD_to_MD(well,point)</span>
+<span class="sd">		if not math.isnan(md):</span>
+<span class="sd">			x,y,z=MD_to_TVD(well,md)</span>
+<span class="sd">			data_d[point]={&#39;md&#39;:md,&#39;x&#39;:x,&#39;y&#39;:y,&#39;z&#39;:z,&#39;source&#39;:&#39;layer&#39;}</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT well, blockcorr, source_nickname FROM t2wellsource WHERE flow_type = &#39;P&#39; AND well = &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+
+	<span class="c1">#Finding MD for top and bottom on corresponding source as well as x,y position</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">blockcorr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;blockcorr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()):</span>
+		<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">layer_tb</span><span class="p">[</span><span class="n">blockcorr</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+			<span class="n">md</span> <span class="o">=</span> <span class="n">TVD_to_MD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">point</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">md</span><span class="p">):</span>
+				<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">md</span><span class="p">)</span>
+				<span class="n">data_d</span><span class="p">[</span><span class="n">point</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;md&#39;</span><span class="p">:</span><span class="n">md</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">:</span><span class="n">z</span><span class="p">,</span><span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;blockcorr&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;source_nickname&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]}</span>
+
+	<span class="c1">#Adding 0 MD</span>
+	<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+	<span class="n">data_d</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">)]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;md&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">:</span><span class="n">z</span><span class="p">,</span><span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="s1">&#39;layer&#39;</span><span class="p">}</span>
+
+
+	<span class="n">dict_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data_d</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+	<span class="c1">#Generating points in between layers</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">data_d</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+		<span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict_keys</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span> <span class="p">:</span>
+			<span class="k">if</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="o">!=</span><span class="n">data_d</span><span class="p">[</span><span class="n">dict_keys</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;source&#39;</span><span class="p">]:</span>
+
+				<span class="k">if</span> <span class="p">(</span><span class="n">data_d</span><span class="p">[</span><span class="n">dict_keys</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
+					<span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="o">-</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_d</span><span class="p">[</span><span class="n">dict_keys</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;z&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">num</span> <span class="o">=</span> <span class="mi">100</span>
+
+				<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span>  <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">],</span><span class="n">data_d</span><span class="p">[</span><span class="n">dict_keys</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;z&#39;</span><span class="p">],</span><span class="n">num</span><span class="p">):</span>
+					<span class="k">if</span>  <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">10</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">data_d</span><span class="p">[</span><span class="n">dict_keys</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">-</span><span class="mi">10</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">):</span>
+						<span class="n">md</span> <span class="o">=</span> <span class="n">TVD_to_MD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+						<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">md</span><span class="p">)</span>
+						<span class="n">data_d</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;md&#39;</span><span class="p">:</span><span class="n">md</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">:</span><span class="n">z</span><span class="p">,</span><span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="s1">&#39;layer&#39;</span><span class="p">}</span>
+
+	<span class="n">max_md</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">data_d</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;md&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data_d</span><span class="p">])</span>
+	<span class="n">lz</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data_d</span><span class="p">])</span>
+	<span class="n">target</span> <span class="o">=</span> <span class="n">data_d</span><span class="p">[</span><span class="n">lz</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
+	<span class="n">segments</span> <span class="o">=</span> <span class="p">{}</span>
+
+	<span class="n">cnt</span> <span class="o">=</span> <span class="p">{}</span> 
+	<span class="n">cnt</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">data_d</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+
+		<span class="n">L</span> <span class="o">=</span> <span class="n">max_md</span> <span class="o">-</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;md&#39;</span><span class="p">]</span>
+		<span class="n">max_md</span> <span class="o">=</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;md&#39;</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">L</span> <span class="o">!=</span><span class="mi">0</span> <span class="p">:</span>
+			<span class="n">diff_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_d</span><span class="p">[</span><span class="n">lz</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">L</span>
+			<span class="n">diff_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_d</span><span class="p">[</span><span class="n">lz</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">L</span>
+			<span class="n">diff_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_d</span><span class="p">[</span><span class="n">lz</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">])</span><span class="o">/</span><span class="n">L</span>
+			<span class="n">cos</span> <span class="o">=</span> <span class="n">diff_z</span>
+
+			<span class="n">section_type</span><span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+			<span class="k">if</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;layer&#39;</span> <span class="ow">and</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>  <span class="ow">not</span> <span class="ow">in</span> <span class="n">cnt</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="n">target</span> <span class="o">=</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
+				<span class="n">cnt</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="k">elif</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span> <span class="ow">and</span> <span class="n">cnt</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+				<span class="n">cnt</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="n">section_type</span> <span class="o">=</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> 
+
+			<span class="k">if</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;layer&#39;</span> <span class="ow">and</span> <span class="n">cnt</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">True</span>
+			<span class="k">elif</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;layer&#39;</span> <span class="ow">and</span> <span class="n">cnt</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+				<span class="n">save</span> <span class="o">=</span> <span class="kc">False</span>
+
+			<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+				
+				<span class="k">if</span> <span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">TVD_min_casing</span><span class="p">:</span>
+					<span class="n">f</span> <span class="o">=</span> <span class="n">def_values</span><span class="p">[</span><span class="s1">&#39;casing&#39;</span><span class="p">][</span><span class="s1">&#39;f&#39;</span><span class="p">]</span>
+					<span class="n">void</span> <span class="o">=</span> <span class="n">def_values</span><span class="p">[</span><span class="s1">&#39;casing&#39;</span><span class="p">][</span><span class="s1">&#39;void&#39;</span><span class="p">]</span>
+					<span class="n">d</span> <span class="o">=</span> <span class="n">tr_lisa_d</span><span class="o">*</span><span class="mf">25.4</span><span class="o">/</span><span class="mi">1000</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">f</span> <span class="o">=</span> <span class="n">def_values</span><span class="p">[</span><span class="s1">&#39;liner&#39;</span><span class="p">][</span><span class="s1">&#39;f&#39;</span><span class="p">]</span>
+					<span class="n">void</span> <span class="o">=</span> <span class="n">def_values</span><span class="p">[</span><span class="s1">&#39;liner&#39;</span><span class="p">][</span><span class="s1">&#39;void&#39;</span><span class="p">]</span>
+					<span class="n">d</span> <span class="o">=</span><span class="n">tr_ranurada_d</span><span class="o">*</span><span class="mf">25.4</span><span class="o">/</span><span class="mi">1000</span>
+
+				<span class="k">if</span> <span class="n">section_type</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+					<span class="n">PI</span> <span class="o">=</span> <span class="n">def_values</span><span class="p">[</span><span class="s1">&#39;liner&#39;</span><span class="p">][</span><span class="s1">&#39;PI&#39;</span><span class="p">]</span>
+					<span class="n">PI_f</span> <span class="o">=</span> <span class="s1">&#39;&gt;10.2E&#39;</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">PI</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+					<span class="n">PI_f</span> <span class="o">=</span> <span class="s1">&#39;&gt;10s&#39;</span>
+
+				<span class="n">segments</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;L&#39;</span><span class="p">:</span><span class="n">L</span><span class="p">,</span><span class="s1">&#39;cos&#39;</span><span class="p">:</span><span class="n">cos</span><span class="p">,</span><span class="s1">&#39;TVD&#39;</span><span class="p">:</span><span class="n">data_d</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">],</span><span class="s1">&#39;d&#39;</span><span class="p">:</span><span class="n">d</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">:</span><span class="n">f</span><span class="p">,</span><span class="s1">&#39;void&#39;</span><span class="p">:</span><span class="n">void</span><span class="p">}</span>
+
+
+				<span class="n">string</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">section_type</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="n">PI</span><span class="p">,</span><span class="n">PI_f</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="s1">&#39;&gt;10.2f&#39;</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="s1">&#39;&gt;10.4f&#39;</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="s1">&#39;&gt;10.2E&#39;</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&gt;10s&#39;</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="n">void</span><span class="p">,</span><span class="s1">&#39;&gt;10.2f&#39;</span><span class="p">)</span>
+				<span class="n">string</span> <span class="o">+=</span> <span class="nb">format</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span><span class="s1">&#39;&gt;10.2f&#39;</span><span class="p">)</span>
+				<span class="c1">#string += &#39;\n&#39;</span>
+
+				<span class="nb">print</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+				
+				<span class="c1">#print(&#39;%.2f&#39;%L,&#39;%.2f&#39;%cos,section_type,data_d[key][&#39;z&#39;] )</span>
+
+			<span class="n">lz</span> <span class="o">=</span> <span class="n">key</span>
+
+
+	<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">	cnt = {} </span>
+<span class="sd">	cnt[target] = 1</span>
+<span class="sd">	for key in sorted(data_d.keys()):</span>
+<span class="sd">		L = max_md - data_d[key][&#39;md&#39;]</span>
+<span class="sd">		max_md = data_d[key][&#39;md&#39;]</span>
+<span class="sd">		if L !=0 :</span>
+<span class="sd">			diff_x = (data_d[key][&#39;x&#39;] - data_d[lz][&#39;x&#39;])/L</span>
+<span class="sd">			diff_y = (data_d[key][&#39;y&#39;] - data_d[lz][&#39;y&#39;])/L</span>
+<span class="sd">			diff_z = (data_d[key][&#39;z&#39;] - data_d[lz][&#39;z&#39;])/L</span>
+<span class="sd">			cos = diff_z</span>
+
+<span class="sd">			section_type= &#39;&#39;</span>
+
+<span class="sd">			if data_d[key][&#39;source&#39;] != &#39;layer&#39; and data_d[key][&#39;source&#39;]  not in cnt.keys():</span>
+<span class="sd">				target = data_d[key][&#39;source&#39;]</span>
+<span class="sd">				cnt[target] = 1</span>
+<span class="sd">				save = True</span>
+<span class="sd">			elif data_d[key][&#39;source&#39;] == target and cnt[target]==1:</span>
+<span class="sd">				save = True</span>
+<span class="sd">				cnt[target] += 1</span>
+<span class="sd">				section_type = data_d[key][&#39;source&#39;] </span>
+
+<span class="sd">			if data_d[key][&#39;source&#39;] == &#39;layer&#39; and cnt[target] == 2:</span>
+<span class="sd">				save = True</span>
+<span class="sd">			elif data_d[key][&#39;source&#39;] == &#39;layer&#39; and cnt[target] &lt; 2:</span>
+<span class="sd">				save = False</span>
+
+<span class="sd">			if save:</span>
+<span class="sd">				</span>
+<span class="sd">				if data_d[key][&#39;z&#39;]&gt;TVD_min_casing:</span>
+<span class="sd">					f = def_values[&#39;casing&#39;][&#39;f&#39;]</span>
+<span class="sd">					void = def_values[&#39;casing&#39;][&#39;void&#39;]</span>
+<span class="sd">					d = tr_lisa_d*25.4/1000</span>
+<span class="sd">				else:</span>
+<span class="sd">					f = def_values[&#39;liner&#39;][&#39;f&#39;]</span>
+<span class="sd">					void = def_values[&#39;liner&#39;][&#39;void&#39;]</span>
+<span class="sd">					d =tr_ranurada_d*25.4/1000</span>
+
+<span class="sd">				if section_type != &#39;&#39;:</span>
+<span class="sd">					PI = def_values[&#39;liner&#39;][&#39;PI&#39;]</span>
+<span class="sd">					PI_f = &#39;&gt;10.2E&#39;</span>
+<span class="sd">				else:</span>
+<span class="sd">					PI = &#39;&#39;</span>
+<span class="sd">					PI_f = &#39;&gt;10s&#39;</span>
+
+<span class="sd">				segments[key]={&#39;L&#39;:L,&#39;cos&#39;:cos,&#39;TVD&#39;:data_d[key][&#39;z&#39;],&#39;d&#39;:d,&#39;f&#39;:f,&#39;void&#39;:void}</span>
+
+
+<span class="sd">				string = format(section_type,&#39;&gt;10s&#39;)</span>
+<span class="sd">				string += format(PI,PI_f)</span>
+<span class="sd">				string += format(L,&#39;&gt;10.2f&#39;)</span>
+<span class="sd">				string += format(d,&#39;&gt;10.4f&#39;)</span>
+<span class="sd">				string += format(f,&#39;&gt;10.2E&#39;)</span>
+<span class="sd">				string += format(&#39;&#39;,&#39;&gt;10s&#39;)</span>
+<span class="sd">				string += format(void,&#39;&gt;10.2f&#39;)</span>
+<span class="sd">				string += format(cos,&#39;&gt;10.2f&#39;)</span>
+<span class="sd">				#string += &#39;\n&#39;</span>
+
+<span class="sd">				print(string)</span>
+<span class="sd">				</span>
+<span class="sd">				#print(&#39;%.2f&#39;%L,&#39;%.2f&#39;%cos,section_type,data_d[key][&#39;z&#39;] )</span>
+
+<span class="sd">			lz = key</span>
+<span class="sd">	&quot;&quot;&quot;</span></div>
+
+	
 <div class="viewcode-block" id="MD_to_TVD"><a class="viewcode-back" href="../modules/geometry.html#geometry.MD_to_TVD">[docs]</a><span class="k">def</span> <span class="nf">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">depth</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;It returns the coordinates X,Y and Z at a desired depth.</span>
 
@@ -376,7 +605,7 @@
 	<span class="k">return</span> <span class="n">x_V</span><span class="p">,</span><span class="n">y_V</span><span class="p">,</span><span class="n">z_V</span><span class="p">,</span><span class="n">var_V</span></div>
 
 <div class="viewcode-block" id="TVD_to_MD"><a class="viewcode-back" href="../modules/geometry.html#geometry.TVD_to_MD">[docs]</a><span class="k">def</span> <span class="nf">TVD_to_MD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">TVD</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;It returns the measure depth position for a well based on a true vertical depth</span>
+	<span class="sd">&quot;&quot;&quot;It returns the measured depth position for a well based on a true vertical depth</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
@@ -959,7 +1188,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -78,7 +80,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
@@ -371,6 +373,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">points_around_well</span><span class="o">=</span><span class="n">points_around_well</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">distance_points_around_well</span><span class="o">=</span><span class="n">distance_points_around_well</span>
+
 		<span class="bp">self</span><span class="o">.</span><span class="n">outer_polygon</span> <span class="o">=</span> <span class="n">outer_polygon</span>
 
 
@@ -1180,7 +1183,7 @@
 	
 
 		<span class="c1">#Read border to clip write into in file</span>
-		<span class="n">borders</span><span class="o">=</span><span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_polygon</span><span class="p">)</span>
+		<span class="n">borders</span><span class="o">=</span><span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span>	<span class="bp">self</span><span class="o">.</span><span class="n">outer_polygon</span><span class="p">)</span>
 
 		<span class="n">border_points</span><span class="o">=</span><span class="p">[]</span>
 		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">borders</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
@@ -2426,9 +2429,21 @@
 	<span class="n">rock_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-
 <div class="viewcode-block" id="reasig_feedzone"><a class="viewcode-back" href="../modules/regeo_mesh.html#regeo_mesh.reasig_feedzone">[docs]</a><span class="k">def</span> <span class="nf">reasig_feedzone</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It reassing the block related with a well feedzone</span>
 
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	Files: &#39;../input/well_feedzone_xyz.csv&#39; and &#39;../mesh/ELEME.json&#39; need to be updated</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file:</span>
+<span class="sd">	   well_dict.txt: at ../mesh/</span>
+<span class="sd">	file:</span>
+<span class="sd">	   wells_correlative.txt: at ../mesh/</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
 	<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 
 	<span class="n">layer_middle</span><span class="o">=</span><span class="p">{</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]:</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">][</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))}</span>
@@ -2478,9 +2493,7 @@
 	<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">well_corr</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../mesh/well_dict.txt&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">),</span><span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 	<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">wells_dictionary</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../mesh/wells_correlative.txt&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">),</span><span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="set_layer_inactive"><a class="viewcode-back" href="../modules/regeo_mesh.html#regeo_mesh.set_layer_inactive">[docs]</a><span class="k">def</span> <span class="nf">set_layer_inactive</span><span class="p">(</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[]):</span>
-
 	<span class="sd">&quot;&quot;&quot;It sets innactive one layer from the mesh on the ELEME file</span>
 
 <span class="sd">	Parameters</span>
@@ -2521,6 +2534,167 @@
 
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;The file </span><span class="si">%s</span><span class="s2"> or directory do not exist&quot;</span><span class="o">%</span><span class="n">source_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="tracks_to_paraview"><a class="viewcode-back" href="../modules/regeo_mesh.html#regeo_mesh.tracks_to_paraview">[docs]</a><span class="k">def</span> <span class="nf">tracks_to_paraview</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;It generates a line for each well track as vtu</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd"> 	input_dictionary: dictionary</span>
+<span class="sd">	  List of well to be included</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  tracks_{well}.vtu in input/survey/vtu/</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="kn">from</span> <span class="nn">vtkmodules.vtkCommonDataModel</span> <span class="kn">import</span> <span class="p">(</span>
+	    <span class="n">vtkCellArray</span><span class="p">,</span>
+	    <span class="n">vtkPolyData</span><span class="p">,</span>
+	    <span class="n">vtkPolyLine</span>
+	<span class="p">)</span>
+	<span class="kn">from</span> <span class="nn">vtkmodules.vtkCommonCore</span> <span class="kn">import</span> <span class="n">vtkPoints</span>
+
+	<span class="n">wells</span><span class="o">=</span><span class="p">[]</span>
+
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;MAKE_UP_WELLS&#39;</span><span class="p">,</span><span class="s1">&#39;NOT_PRODUCING_WELL&#39;</span><span class="p">]:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">input_dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+				<span class="n">wells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">])</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">wells</span><span class="p">:</span>
+
+		<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT MeasuredDepth FROM survey WHERE well=&#39;</span><span class="si">%s</span><span class="s2">&#39; ORDER BY MeasuredDepth;&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+
+		<span class="n">x_real</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">y_real</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">z_real</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">well_proj</span><span class="o">=</span><span class="p">[]</span>
+
+		<span class="n">data_xyz</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:[],</span>
+					<span class="s1">&#39;y&#39;</span><span class="p">:[],</span>
+					<span class="s1">&#39;z&#39;</span><span class="p">:[]}</span>
+
+		<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">])):</span>
+			<span class="n">xf</span><span class="p">,</span><span class="n">yf</span><span class="p">,</span><span class="n">zf</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;MeasuredDepth&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">])</span>
+			<span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xf</span><span class="p">))</span>
+			<span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">yf</span><span class="p">))</span>
+			<span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">zf</span><span class="p">))</span>
+
+
+		<span class="c1"># Create a vtkPoints object and store the points in it</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="n">vtkPoints</span><span class="p">()</span>
+		<span class="c1"># Create a cell array to store the lines in and add the lines to it</span>
+		<span class="n">cells</span> <span class="o">=</span> <span class="n">vtkCellArray</span><span class="p">()</span>
+
+		<span class="c1"># Create a polydata to store everything in</span>
+		<span class="n">polyData</span> <span class="o">=</span> <span class="n">vtkPolyData</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]):</span>
+			<span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span><span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span><span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]]</span>
+			<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+		<span class="n">n_point</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_xyz</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+
+		<span class="n">polyLine</span> <span class="o">=</span> <span class="n">vtkPolyLine</span><span class="p">()</span>
+		<span class="n">polyLine</span><span class="o">.</span><span class="n">GetPointIds</span><span class="p">()</span><span class="o">.</span><span class="n">SetNumberOfIds</span><span class="p">(</span><span class="n">n_point</span><span class="p">)</span>
+		
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_point</span><span class="p">):</span>
+			<span class="n">polyLine</span><span class="o">.</span><span class="n">GetPointIds</span><span class="p">()</span><span class="o">.</span><span class="n">SetId</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+
+		<span class="n">cells</span><span class="o">.</span><span class="n">InsertNextCell</span><span class="p">(</span><span class="n">polyLine</span><span class="p">)</span>
+
+		<span class="c1"># Add the points to the dataset</span>
+		<span class="n">polyData</span><span class="o">.</span><span class="n">SetPoints</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+		<span class="c1"># Add the lines to the dataset</span>
+		<span class="n">polyData</span><span class="o">.</span><span class="n">SetLines</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+
+
+		<span class="n">ugrid</span><span class="o">=</span><span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGrid</span><span class="p">()</span>
+		<span class="n">ugrid</span><span class="o">.</span><span class="n">SetCells</span><span class="p">(</span><span class="n">vtk</span><span class="o">.</span><span class="n">VTK_POLY_LINE</span><span class="p">,</span><span class="n">cells</span><span class="p">)</span>
+		<span class="n">ugrid</span><span class="o">.</span><span class="n">SetPoints</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+
+		<span class="n">writer</span><span class="o">=</span><span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLUnstructuredGridWriter</span><span class="p">()</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">SetInputData</span><span class="p">(</span><span class="n">ugrid</span><span class="p">)</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="s1">&#39;../input/survey/vtu/tracks_</span><span class="si">%s</span><span class="s1">.vtu&#39;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">SetDataModeToAscii</span><span class="p">()</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">Update</span><span class="p">()</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">Write</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="feedpoints_to_vtu"><a class="viewcode-back" href="../modules/regeo_mesh.html#regeo_mesh.feedpoints_to_vtu">[docs]</a><span class="k">def</span> <span class="nf">feedpoints_to_vtu</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;It generates a cube (Hexahedron) for each feedzone</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	file</span>
+<span class="sd">	  {index}_{well}.vtu in output/vtu/feedzones/</span>
+
+<span class="sd">	Attention</span>
+<span class="sd">	---------</span>
+<span class="sd">	The file input/well_feedzone_xyz.csv has to be created prior the execution of this function</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="kn">from</span> <span class="nn">vtkmodules.vtkCommonDataModel</span> <span class="kn">import</span> <span class="p">(</span>
+	    <span class="n">vtkCellArray</span><span class="p">,</span>
+		<span class="n">vtkHexahedron</span>
+	<span class="p">)</span>
+	<span class="kn">from</span> <span class="nn">vtkmodules.vtkCommonCore</span> <span class="kn">import</span> <span class="n">vtkPoints</span>
+
+	<span class="n">feedzones</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../input/well_feedzone_xyz.csv&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>	
+
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">feedzones</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+		<span class="n">x</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+		<span class="n">y</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+		<span class="n">z</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span>
+		<span class="n">well</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span>
+
+		<span class="n">r</span> <span class="o">=</span> <span class="mi">25</span>
+		<span class="n">xs</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span>
+		<span class="n">zs</span> <span class="o">=</span> <span class="n">r</span>
+
+		<span class="n">points</span> <span class="o">=</span> <span class="n">vtkPoints</span><span class="p">()</span>
+		<span class="n">numberOfVertices</span> <span class="o">=</span> <span class="mi">8</span>
+
+		<span class="n">points</span> <span class="o">=</span> <span class="n">vtkPoints</span><span class="p">()</span>
+		<span class="n">block_name</span><span class="o">=</span><span class="n">vtk</span><span class="o">.</span><span class="n">vtkStringArray</span><span class="p">()</span>
+		<span class="n">block_name</span><span class="o">.</span><span class="n">SetName</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">)</span>
+		<span class="n">block_name</span><span class="o">.</span><span class="n">InsertNextValue</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">index</span><span class="p">))</span>
+
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">-</span><span class="n">zs</span><span class="p">)</span>  <span class="c1"># Face 1</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">-</span><span class="n">zs</span><span class="p">)</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">-</span><span class="n">zs</span><span class="p">)</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">-</span><span class="n">zs</span><span class="p">)</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">zs</span><span class="p">)</span>  <span class="c1"># Face 1</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">zs</span><span class="p">)</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">zs</span><span class="p">)</span>
+		<span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="n">xs</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">zs</span><span class="p">)</span>
+
+		<span class="c1"># Create a hexahedron from the points</span>
+		<span class="n">hexhedr</span> <span class="o">=</span> <span class="n">vtkHexahedron</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numberOfVertices</span><span class="p">):</span>
+		    <span class="n">hexhedr</span><span class="o">.</span><span class="n">GetPointIds</span><span class="p">()</span><span class="o">.</span><span class="n">SetId</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+		<span class="c1"># Add the points and hexahedron to an unstructured grid</span>
+		<span class="n">uGrid</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGrid</span><span class="p">()</span>
+		<span class="n">uGrid</span><span class="o">.</span><span class="n">SetPoints</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+		<span class="n">uGrid</span><span class="o">.</span><span class="n">InsertNextCell</span><span class="p">(</span><span class="n">hexhedr</span><span class="o">.</span><span class="n">GetCellType</span><span class="p">(),</span> <span class="n">hexhedr</span><span class="o">.</span><span class="n">GetPointIds</span><span class="p">())</span>
+		<span class="n">uGrid</span><span class="o">.</span><span class="n">GetCellData</span><span class="p">()</span><span class="o">.</span><span class="n">AddArray</span><span class="p">(</span><span class="n">block_name</span><span class="p">)</span>
+
+		<span class="n">writer</span><span class="o">=</span><span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLUnstructuredGridWriter</span><span class="p">()</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">SetInputData</span><span class="p">(</span><span class="n">uGrid</span><span class="p">)</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="s1">&#39;../output/vtu/feedzones/</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.vtu&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">index</span><span class="p">))</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">SetDataModeToAscii</span><span class="p">()</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">Update</span><span class="p">()</span>
+		<span class="n">writer</span><span class="o">.</span><span class="n">Write</span><span class="p">()</span></div>
+
 </pre></div>
 
            </div>
@@ -2533,7 +2707,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

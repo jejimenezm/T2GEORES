@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="formats" href="formats.html" /> 
@@ -79,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -159,442 +161,465 @@
             
   <div class="section" id="module-report">
 <span id="report"></span><h1>report<a class="headerlink" href="#module-report" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="report.compare_runs_PT">
-<code class="descclassname">report.</code><code class="descname">compare_runs_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>comment=''</em>, <em>compare_wells=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#compare_runs_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.compare_runs_PT" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.WB_scatter">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">WB_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#WB_scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.WB_scatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="report.compare_runs_PT">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">compare_runs_PT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compare_wells</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#compare_runs_PT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.compare_runs_PT" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates a pdf for calibration pourposes, comparing current and previous data set</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dict</em>) – Contains well names, model version, db path and layers information.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">run_{date_time}.pdf: on ‘../calib/PT/run</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pdf</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dict</em>) – Contains well names, model version, db path and layers information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>run_{date_time}.pdf: on ‘../calib/PT/run</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pdf</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Some other files such as ELEME.json, OBJ.json and COF_PT.json must be ready.</p>
+<p class="admonition-title">Note</p>
+<p>Some other files such as ELEME.json, OBJ.json and COF_PT.json must be ready.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.cross_section">
-<code class="descclassname">report.</code><code class="descname">cross_section</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>variable</em>, <em>layer</em>, <em>time</em>, <em>plot_mesh=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#cross_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.cross_section" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.cross_section">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">cross_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_mesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#cross_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.cross_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.cross_section_real_data">
-<code class="descclassname">report.</code><code class="descname">cross_section_real_data</code><span class="sig-paren">(</span><em>wells</em>, <em>ngrid</em>, <em>masl</em>, <em>PT</em>, <em>save_img</em>, <em>model_version</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#cross_section_real_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.cross_section_real_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.cross_section_real_data">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">cross_section_real_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#cross_section_real_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.cross_section_real_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>It Generates a vertical cross section for a specified parameter on a defined path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ngrid</strong> (<em>int</em>) – Number of element on the horizontal/vertical direction</li>
-<li><strong>wells</strong> (<em>dict</em>) – Wells names</li>
-<li><strong>masl</strong> (<em>float</em>) – Desire depth for cross section</li>
-<li><strong>PT</strong> (<em>string</em>) – ‘T’ or ‘P’</li>
-<li><strong>save_img</strong> (<em>bool</em>) – Selects weather the plot is save as image or not</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ngrid</strong> (<em>int</em>) – Number of element on the horizontal/vertical direction</p></li>
+<li><p><strong>wells</strong> (<em>dict</em>) – Wells names</p></li>
+<li><p><strong>masl</strong> (<em>float</em>) – Desire depth for cross section</p></li>
+<li><p><strong>PT</strong> (<em>string</em>) – ‘T’ or ‘P’</p></li>
+<li><p><strong>save_img</strong> (<em>bool</em>) – Selects weather the plot is save as image or not</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">vertical_section_{varible_to_plot}.png: on ‘../output/PT/images/</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>vertical_section_{varible_to_plot}.png: on ‘../output/PT/images/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The data comes from the text file. The function is meant to be use at the early stages of the model to check natural state</p>
+<p class="admonition-title">Note</p>
+<p>The data comes from the text file. The function is meant to be use at the early stages of the model to check natural state</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.image_save_all_plots">
-<code class="descclassname">report.</code><code class="descname">image_save_all_plots</code><span class="sig-paren">(</span><em>typePT</em>, <em>input_dictionary</em>, <em>width=3</em>, <em>height=6</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#image_save_all_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.image_save_all_plots" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.flowell_dates">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">flowell_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#flowell_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.flowell_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="report.image_save_all_plots">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">image_save_all_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typePT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#image_save_all_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.image_save_all_plots" title="Permalink to this definition">¶</a></dt>
 <dd><p>It plots all the wells defined on input_dictionay and compare real data with model output</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>db_path</strong> (<em>str</em>) – Direccion de base de datos sqlite, tomado de model_conf</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’. Lastly, it contains the information of the top level of the mesh on under the key ‘z_ref’</li>
-<li><strong>typePT</strong> (<em>str</em>) – ‘T’ for temperature or ‘P’ for pressure</li>
-<li><strong>height</strong> (<em>float</em>) – Defines the ratio height/width</li>
-<li><strong>width</strong> (<em>float</em>) – By dividing the number of wells defines the number of rows on the chart</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_path</strong> (<em>str</em>) – Direccion de base de datos sqlite, tomado de model_conf</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’. Lastly, it contains the information of the top level of the mesh on under the key ‘z_ref’</p></li>
+<li><p><strong>typePT</strong> (<em>str</em>) – ‘T’ for temperature or ‘P’ for pressure</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – Defines the ratio height/width</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – By dividing the number of wells defines the number of rows on the chart</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{typePT}_all.png: on path ../output/PT/images/logging/</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{typePT}_all.png: on path ../output/PT/images/logging/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The real data is taken from the the sqlite database. Depending on the number of wells defined the default values for width and height migth be changed</p>
+<p class="admonition-title">Note</p>
+<p>The real data is taken from the the sqlite database. Depending on the number of wells defined the default values for width and height migth be changed</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image_save_all_plots</span><span class="p">(</span><span class="n">typePT</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image_save_all_plots</span><span class="p">(</span><span class="n">typePT</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_PT">
-<code class="descclassname">report.</code><code class="descname">plot_compare_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em>, <em>block</em>, <em>save</em>, <em>show</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_PT" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.mh_indivual">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">mh_indivual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">production_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#mh_indivual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.mh_indivual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>well</strong> (<em>str</em>) – Nombre de pozo</li>
-<li><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</li>
-<li><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</li>
-<li><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
-<li><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Nombre de pozo</p></li>
+<li><p><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+<p class="admonition-title">Note</p>
+<p>El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_PT_curr_prev">
-<code class="descclassname">report.</code><code class="descname">plot_compare_PT_curr_prev</code><span class="sig-paren">(</span><em>db_path</em>, <em>name</em>, <em>ELEME</em>, <em>layers</em>, <em>inpath='../output/PT/txt'</em>, <em>previnpath='../output/PT/txt/prev'</em>, <em>show=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT_curr_prev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_PT_curr_prev" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.multiple_PI">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">multiple_PI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#multiple_PI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.multiple_PI" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates a single plot from a well that has been divided into many periods</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_PT_vertical">
-<code class="descclassname">report.</code><code class="descname">plot_compare_PT_vertical</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em>, <em>block</em>, <em>save</em>, <em>show</em>, <em>years=35</em>, <em>p_res_block=None</em>, <em>delta=False</em>, <em>var_name='P'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT_vertical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_PT_vertical" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_PT">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_PT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_PT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>well</strong> (<em>str</em>) – Nombre de pozo</li>
-<li><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</li>
-<li><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</li>
-<li><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
-<li><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Nombre de pozo</p></li>
+<li><p><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+<p class="admonition-title">Note</p>
+<p>El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_mh">
-<code class="descclassname">report.</code><code class="descname">plot_compare_mh</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em>, <em>block</em>, <em>source</em>, <em>save</em>, <em>show</em>, <em>production_dictionary</em>, <em>years=35</em>, <em>variables=[]</em>, <em>plot_feedzones=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_mh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_mh" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_PT_curr_prev">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_PT_curr_prev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ELEME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'../output/PT/txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">previnpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'../output/PT/txt/prev'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT_curr_prev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_PT_curr_prev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_PT_vertical">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_PT_vertical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_res_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'P'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_PT_vertical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_PT_vertical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>well</strong> (<em>str</em>) – Nombre de pozo</li>
-<li><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</li>
-<li><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</li>
-<li><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
-<li><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Nombre de pozo</p></li>
+<li><p><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+<p class="admonition-title">Note</p>
+<p>El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_mh_filtered">
-<code class="descclassname">report.</code><code class="descname">plot_compare_mh_filtered</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>well</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_mh_filtered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_mh_filtered" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_mh">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_mh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">production_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_feedzones</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_mh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_mh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Nombre de pozo</p></li>
+<li><p><strong>block</strong> (<em>str</em>) – Nombre de bloque, en general donde se ubica zona de alimentacion</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – Nombre de fuente asociada a pozo</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
+<li><p><strong>show</strong> (<em>bool</em>) – Almacaena la grafica generada</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plot_compare_mh</span><span class="p">(</span><span class="s1">&#39;AH-1&#39;</span><span class="p">,</span><span class="s1">&#39;DA110&#39;</span><span class="p">,</span><span class="s1">&#39;SRC1&#39;</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_one">
-<code class="descclassname">report.</code><code class="descname">plot_compare_one</code><span class="sig-paren">(</span><em>well</em>, <em>savefig</em>, <em>no_real_data</em>, <em>data</em>, <em>TVD_elem</em>, <em>TVD_elem_top</em>, <em>axT</em>, <em>axP</em>, <em>PT_real_dictionary</em>, <em>layer_bottom</em>, <em>limit_layer</em>, <em>input_dictionary</em>, <em>label=None</em>, <em>def_colors=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_one" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_mh_filtered">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_mh_filtered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_mh_filtered"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_mh_filtered" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_one">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_one</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_real_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TVD_elem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TVD_elem_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PT_real_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_bottom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">def_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_one" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates two plots, they compare real downhole temperature and pressure measurements with model output</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>well</strong> (<em>str</em>) – Selected well</li>
-<li><strong>savefig</strong> (<em>bool</em>) – If true the plot is saved on ../output/PT/images/logging/</li>
-<li><strong>PT_real_dictionary</strong> (<em>dictionary</em>) – Contains real  measurements on temperature, pressure and measure depth</li>
-<li><strong>no_real_data</strong> (<em>bool</em>) – If True, no real measurements are provides</li>
-<li><strong>data</strong> (<em>pandas dataframe</em>) – Contains model output information for each element assigned to a well</li>
-<li><strong>TVD_elem</strong> (<em>array</em>) – Contains the masl data at the middle for each element assigned to a well</li>
-<li><strong>TVD_elem_top</strong> (<em>array</em>) – Contains the masl data at the top  for each element assigned to a well</li>
-<li><strong>axT</strong> (<em>matplotlib_axis</em>) – Framework where temperature data is plotted</li>
-<li><strong>axP</strong> (<em>matplotlib_axis</em>) – Framework where temperature data is plotted</li>
-<li><strong>layer_bottom</strong> (<em>array</em>) – Contains the masl data at the bottom for each element assigned to a well</li>
-<li><strong>limit_layer</strong> (<em>str</em>) – Layer correlative at which plotting stops</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the information of the top level of the mesh on under the key ‘z_ref’</li>
-<li><strong>label</strong> (<em>str</em>) – Contains the legend of the plotted line</li>
-<li><strong>def_colors</strong> (<em>True</em>) – If True uses the colors defined on formats</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Selected well</p></li>
+<li><p><strong>savefig</strong> (<em>bool</em>) – If true the plot is saved on ../output/PT/images/logging/</p></li>
+<li><p><strong>PT_real_dictionary</strong> (<em>dictionary</em>) – Contains real  measurements on temperature, pressure and measure depth</p></li>
+<li><p><strong>no_real_data</strong> (<em>bool</em>) – If True, no real measurements are provides</p></li>
+<li><p><strong>data</strong> (<em>pandas dataframe</em>) – Contains model output information for each element assigned to a well</p></li>
+<li><p><strong>TVD_elem</strong> (<em>array</em>) – Contains the masl data at the middle for each element assigned to a well</p></li>
+<li><p><strong>TVD_elem_top</strong> (<em>array</em>) – Contains the masl data at the top  for each element assigned to a well</p></li>
+<li><p><strong>axT</strong> (<em>matplotlib_axis</em>) – Framework where temperature data is plotted</p></li>
+<li><p><strong>axP</strong> (<em>matplotlib_axis</em>) – Framework where temperature data is plotted</p></li>
+<li><p><strong>layer_bottom</strong> (<em>array</em>) – Contains the masl data at the bottom for each element assigned to a well</p></li>
+<li><p><strong>limit_layer</strong> (<em>str</em>) – Layer correlative at which plotting stops</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the information of the top level of the mesh on under the key ‘z_ref’</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – Contains the legend of the plotted line</p></li>
+<li><p><strong>def_colors</strong> (<em>True</em>) – If True uses the colors defined on formats</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>image</em> – PT_{well}.png: on the path../output/PT/images/logging</li>
-<li><em>matplotlib_axis</em> – axT: contains real and simulated downhole temperature data</li>
-<li><em>matplotlib_axis</em> – axP: contains real and simulated downhole pressure data</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>image</em> – PT_{well}.png: on the path../output/PT/images/logging</p></li>
+<li><p><em>matplotlib_axis</em> – axT: contains real and simulated downhole temperature data</p></li>
+<li><p><em>matplotlib_axis</em> – axP: contains real and simulated downhole pressure data</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It is used in combination of the function plot_compare_one_data</p>
+<p class="admonition-title">Note</p>
+<p>It is used in combination of the function plot_compare_one_data</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_one_data">
-<code class="descclassname">report.</code><code class="descname">plot_compare_one_data</code><span class="sig-paren">(</span><em>well</em>, <em>input_dictionary</em>, <em>inpath='../output/PT/txt'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_one_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_one_data">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_one_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'../output/PT/txt'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_one_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_one_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compiles real and output for temperature and pressure data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>well</strong> (<em>str</em>) – Selected well</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’</li>
-<li><strong>inpath</strong> (<em>str</em>) – Constains path for input files. Default value is “../output/PT/txt”</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Selected well</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’</p></li>
+<li><p><strong>inpath</strong> (<em>str</em>) – Constains path for input files. Default value is “../output/PT/txt”</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>PT_real_dictionary</strong> (<em>dictionary</em>) – Contains real  measurements on temperature, pressure and measure depth</li>
-<li><strong>no_real_data</strong> (<em>bool</em>) – If True, no real measurements are provides</li>
-<li><strong>data</strong> (<em>pandas dataframe</em>) – Contains model output information for each element assigned to a well</li>
-<li><strong>TVD_elem</strong> (<em>array</em>) – Contains the masl data at the middle for each element assigned to a well</li>
-<li><strong>TVD_elem_top</strong> (<em>array</em>) – Contains the masl data at the top  for each element assigned to a well</li>
-<li><strong>layer_bottom</strong> (<em>array</em>) – Contains the masl data at the bottom for each element assigned to a well</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>PT_real_dictionary</strong> (<em>dictionary</em>) – Contains real  measurements on temperature, pressure and measure depth</p></li>
+<li><p><strong>no_real_data</strong> (<em>bool</em>) – If True, no real measurements are provides</p></li>
+<li><p><strong>data</strong> (<em>pandas dataframe</em>) – Contains model output information for each element assigned to a well</p></li>
+<li><p><strong>TVD_elem</strong> (<em>array</em>) – Contains the masl data at the middle for each element assigned to a well</p></li>
+<li><p><strong>TVD_elem_top</strong> (<em>array</em>) – Contains the masl data at the top  for each element assigned to a well</p></li>
+<li><p><strong>layer_bottom</strong> (<em>array</em>) – Contains the masl data at the bottom for each element assigned to a well</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The real data is taken from the the sqlite database</p>
+<p class="admonition-title">Note</p>
+<p>The real data is taken from the the sqlite database</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_compare_producers">
-<code class="descclassname">report.</code><code class="descname">plot_compare_producers</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>years=35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_producers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_compare_producers" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_compare_producers">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_compare_producers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_compare_producers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_compare_producers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.plot_evol_well_data">
-<code class="descclassname">report.</code><code class="descname">plot_evol_well_data</code><span class="sig-paren">(</span><em>well</em>, <em>layer</em>, <em>parameter</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_evol_well_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_evol_well_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_evol_well_data">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_evol_well_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_evol_well_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_evol_well_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>well</strong> (<em>str</em>) – Well name</li>
-<li><strong>layer</strong> (<em>str</em>) – Layer (level) at which the data will be extracted</li>
-<li><strong>parameter</strong> (<em>str</em>) – Variable to plot: “P”,”T”,”SG”,”SW”,”X1”,”X2”,”PCAP,””DG” y “DW”</li>
-<li><strong>input_dictionary</strong> (<em>dict</em>) – Dictionary with the keywords ‘ref_date’ (datetime type value) and ‘db_path’ (database path)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well</strong> (<em>str</em>) – Well name</p></li>
+<li><p><strong>layer</strong> (<em>str</em>) – Layer (level) at which the data will be extracted</p></li>
+<li><p><strong>parameter</strong> (<em>str</em>) – Variable to plot: “P”,”T”,”SG”,”SW”,”X1”,”X2”,”PCAP,””DG” y “DW”</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dict</em>) – Dictionary with the keywords ‘ref_date’ (datetime type value) and ‘db_path’ (database path)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>dictionary</em> – calculated: output data from model</li>
-<li><em>pandas.dataframe</em> – data_real: Real data (if exist)</li>
-<li><em>float</em> – depth: masl</li>
-<li><em>string</em> – header: Parameter keyword</li>
-<li><em>string</em> – parameter_label: parameter label</li>
-<li><em>string</em> – parameter_unit: Parameter unit</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>dictionary</em> – calculated: output data from model</p></li>
+<li><p><em>pandas.dataframe</em> – data_real: Real data (if exist)</p></li>
+<li><p><em>float</em> – depth: masl</p></li>
+<li><p><em>string</em> – header: Parameter keyword</p></li>
+<li><p><em>string</em> – parameter_label: parameter label</p></li>
+<li><p><em>string</em> – parameter_unit: Parameter unit</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">it generates the input data for the function plot_evol_well_lines</p>
+<p class="admonition-title">Note</p>
+<p>it generates the input data for the function plot_evol_well_lines</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_evol_well_lines">
-<code class="descclassname">report.</code><code class="descname">plot_evol_well_lines</code><span class="sig-paren">(</span><em>calculated</em>, <em>real_data</em>, <em>parameter</em>, <em>depth</em>, <em>header</em>, <em>well</em>, <em>layer</em>, <em>parameter_unit</em>, <em>parameter_label</em>, <em>label</em>, <em>ax</em>, <em>input_dictionary</em>, <em>years=15</em>, <em>color_def=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_evol_well_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_evol_well_lines" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_evol_well_lines">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_evol_well_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calculated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_def</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_evol_well_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_evol_well_lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the input data for a line type plot data, from model and real , for one parameter along the time from a reference date define on input_dictionary</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>calculated</strong> (<em>dict</em>) – Output data from model</li>
-<li><strong>pandas.dataframe</strong> – data_real: Real data (if exist)</li>
-<li><strong>float</strong> – depth: masl</li>
-<li><strong>header</strong> (<em>str</em>) – Parameter keyword</li>
-<li><strong>parameter_label</strong> (<em>str</em>) – parameter label</li>
-<li><strong>parameter_unit</strong> (<em>str</em>) – parameter_unit: Parameter unit</li>
-<li><strong>well</strong> (<em>str</em>) – Well name</li>
-<li><strong>layer</strong> (<em>str</em>) – Layer (level) at which the data will be extracted</li>
-<li><strong>parameter</strong> (<em>str</em>) – Variable to plot: “P”,”T”,”SG”,”SW”,”X1”,”X2”,”PCAP,””DG” y “DW”</li>
-<li><strong>input_dictionary</strong> (<em>dict</em>) – Dictionary with the keywords ‘ref_date’ (datetime type value) and ‘db_path’ (database path)</li>
-<li><strong>years</strong> (<em>float</em>) – Number of years after the ref_date to be plotted on the chart</li>
-<li><strong>color_def</strong> (<em>bool</em>) – If true default colors are use from the formats module</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>calculated</strong> (<em>dict</em>) – Output data from model</p></li>
+<li><p><strong>pandas.dataframe</strong> – data_real: Real data (if exist)</p></li>
+<li><p><strong>float</strong> – depth: masl</p></li>
+<li><p><strong>header</strong> (<em>str</em>) – Parameter keyword</p></li>
+<li><p><strong>parameter_label</strong> (<em>str</em>) – parameter label</p></li>
+<li><p><strong>parameter_unit</strong> (<em>str</em>) – parameter_unit: Parameter unit</p></li>
+<li><p><strong>well</strong> (<em>str</em>) – Well name</p></li>
+<li><p><strong>layer</strong> (<em>str</em>) – Layer (level) at which the data will be extracted</p></li>
+<li><p><strong>parameter</strong> (<em>str</em>) – Variable to plot: “P”,”T”,”SG”,”SW”,”X1”,”X2”,”PCAP,””DG” y “DW”</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dict</em>) – Dictionary with the keywords ‘ref_date’ (datetime type value) and ‘db_path’ (database path)</p></li>
+<li><p><strong>years</strong> (<em>float</em>) – Number of years after the ref_date to be plotted on the chart</p></li>
+<li><p><strong>color_def</strong> (<em>bool</em>) – If true default colors are use from the formats module</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ax: contains real and simulated for the selected paramter along the time</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib_axis</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ax: contains real and simulated for the selected paramter along the time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib_axis</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It is use in combination with the function plot_evol_well_data</p>
+<p class="admonition-title">Note</p>
+<p>It is use in combination with the function plot_evol_well_data</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.plot_power">
-<code class="descclassname">report.</code><code class="descname">plot_power</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>save=True</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_power" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_power">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.plot_power_it2">
-<code class="descclassname">report.</code><code class="descname">plot_power_it2</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>save=True</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power_it2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.plot_power_it2" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_power_flowell">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_power_flowell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power_flowell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_power_flowell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.pres">
-<code class="descclassname">report.</code><code class="descname">pres</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#pres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.pres" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.plot_power_it2">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">plot_power_it2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#plot_power_it2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.plot_power_it2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
 
-<dl class="function">
-<dt id="report.to_paraview">
-<code class="descclassname">report.</code><code class="descname">to_paraview</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>itime=None</em>, <em>num=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#to_paraview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.to_paraview" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.pres">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">pres</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incon_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#pres"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.pres" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="report.sources_plots">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">sources_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#sources_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.sources_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="report.to_paraview">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">to_paraview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#to_paraview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.to_paraview" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates a vtu file to be read on Paraview for different time output including all the parameters from each block.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the information of the layers on the model</li>
-<li><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the information of the layers on the model</p></li>
+<li><p><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">to_paraview.vtu: on ../mesh</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>to_paraview.vtu: on ../mesh</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="report.vertical_cross_section">
-<code class="descclassname">report.</code><code class="descname">vertical_cross_section</code><span class="sig-paren">(</span><em>method</em>, <em>ngridx</em>, <em>ngridy</em>, <em>variable_to_plot</em>, <em>source</em>, <em>show_wells_3D</em>, <em>print_point</em>, <em>savefig</em>, <em>plots_conf</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#vertical_cross_section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#report.vertical_cross_section" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="report.vertical_cross_section">
+<span class="sig-prename descclassname"><span class="pre">report.</span></span><span class="sig-name descname"><span class="pre">vertical_cross_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngridx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngridy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_to_plot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_wells_3D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots_conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/report.html#vertical_cross_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#report.vertical_cross_section" title="Permalink to this definition">¶</a></dt>
 <dd><p>It Generates a vertical cross section for a specified parameter on a defined path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ngridx</strong> (<em>int</em>) – Number of element on the horizontal direction</li>
-<li><strong>ngridy</strong> (<em>int</em>) – Number of element on the vertical direction</li>
-<li><strong>show_wells_3D</strong> (<em>bool</em>) – If true the wells are shown on 3D</li>
-<li><strong>print_point</strong> (<em>bool</em>) – If true prints the points where the interpolation has taken place.</li>
-<li><strong>variable_to_plot</strong> (<em>str</em>) – Variable to plot: “P”,”T”,”SG”,”SW”,”X1”,”X2”,”PCAP,””DG” y “DW” for ‘t2’ source; “P” and “T” for ‘sav’ source</li>
-<li><strong>source</strong> (<em>str</em>) – ‘t2’ or ‘sav’</li>
-<li><strong>savefig</strong> (<em>bool</em>) – If true the plot is saved</li>
-<li><strong>plots_conf</strong> (<em>dictionary</em>) – With key words ‘cross_section’ defines the points of a lines for the vertical section. ‘variables_level’ defines the variable values to plot</li>
-<li><strong>input_dictionary</strong> (<em>dictioanary</em>) – Contains the ‘LAYERS’ keyword</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ngridx</strong> (<em>int</em>) – Number of element on the horizontal direction</p></li>
+<li><p><strong>ngridy</strong> (<em>int</em>) – Number of element on the vertical direction</p></li>
+<li><p><strong>show_wells_3D</strong> (<em>bool</em>) – If true the wells are shown on 3D</p></li>
+<li><p><strong>print_point</strong> (<em>bool</em>) – If true prints the points where the interpolation has taken place.</p></li>
+<li><p><strong>variable_to_plot</strong> (<em>str</em>) – Variable to plot: “P”,”T”,”SG”,”SW”,”X1”,”X2”,”PCAP,””DG” y “DW” for ‘t2’ source; “P” and “T” for ‘sav’ source</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – ‘t2’ or ‘sav’</p></li>
+<li><p><strong>savefig</strong> (<em>bool</em>) – If true the plot is saved</p></li>
+<li><p><strong>plots_conf</strong> (<em>dictionary</em>) – With key words ‘cross_section’ defines the points of a lines for the vertical section. ‘variables_level’ defines the variable values to plot</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictioanary</em>) – Contains the ‘LAYERS’ keyword</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">vertical_section_{varible_to_plot}.png: on ‘../output/PT/images/</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">image</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>vertical_section_{varible_to_plot}.png: on ‘../output/PT/images/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>image</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The point should not be defined on a well coordinate.</p>
+<p class="admonition-title">Note</p>
+<p>The point should not be defined on a well coordinate.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plots_conf</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cross_section&#39;</span><span class="p">:{</span><span class="s1">&#39;x&#39;</span><span class="p">:[</span><span class="mi">5000</span><span class="p">,</span><span class="mi">5000</span><span class="p">,</span><span class="mi">7500</span><span class="p">],</span><span class="s1">&#39;y&#39;</span><span class="p">:[</span><span class="mi">3000</span><span class="p">,</span><span class="mi">7250</span><span class="p">,</span><span class="mi">7250</span><span class="p">]},</span><span class="s1">&#39;variable_levels&#39;</span><span class="p">:[</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">220</span><span class="p">,</span><span class="mi">230</span><span class="p">,</span><span class="mi">250</span><span class="p">,</span><span class="mi">260</span><span class="p">]}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plots_conf</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cross_section&#39;</span><span class="p">:{</span><span class="s1">&#39;x&#39;</span><span class="p">:[</span><span class="mi">5000</span><span class="p">,</span><span class="mi">5000</span><span class="p">,</span><span class="mi">7500</span><span class="p">],</span><span class="s1">&#39;y&#39;</span><span class="p">:[</span><span class="mi">3000</span><span class="p">,</span><span class="mi">7250</span><span class="p">,</span><span class="mi">7250</span><span class="p">]},</span><span class="s1">&#39;variable_levels&#39;</span><span class="p">:[</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">220</span><span class="p">,</span><span class="mi">230</span><span class="p">,</span><span class="mi">250</span><span class="p">,</span><span class="mi">260</span><span class="p">]}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">input_dictionary</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;LAYERS&#39;</span><span class="p">:{</span><span class="mi">1</span><span class="p">:[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span><span class="mi">2</span><span class="p">:[</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span><span class="mi">3</span><span class="p">:[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="mi">125</span><span class="p">]}}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vertical_cross_section</span><span class="p">(</span><span class="n">ngridx</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ngridy</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">variable_to_plot</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;t2&quot;</span><span class="p">,</span><span class="n">show_wells_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -621,7 +646,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

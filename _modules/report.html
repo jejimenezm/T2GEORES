@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -78,7 +80,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/geometry.html">geometry</a></li>
@@ -182,6 +184,7 @@
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">from</span> <span class="nn">iapws</span> <span class="kn">import</span> <span class="n">IAPWS97</span>
+
 
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;T2GEORES&#39;</span><span class="p">)</span>
 
@@ -1420,10 +1423,12 @@
 	<span class="k">if</span> <span class="n">save_img</span><span class="p">:</span>
 		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../input/PT/selection_PT/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_masl.png&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">PT</span><span class="p">,</span><span class="n">masl</span><span class="p">))</span> </div>
 
-
+<span class="c1">#Now well documented</span>
 
 <div class="viewcode-block" id="plot_compare_PT_curr_prev"><a class="viewcode-back" href="../modules/report.html#report.plot_compare_PT_curr_prev">[docs]</a><span class="k">def</span> <span class="nf">plot_compare_PT_curr_prev</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">ELEME</span><span class="p">,</span><span class="n">layers</span><span class="p">,</span><span class="n">inpath</span><span class="o">=</span><span class="s2">&quot;../output/PT/txt&quot;</span><span class="p">,</span><span class="n">previnpath</span><span class="o">=</span><span class="s2">&quot;../output/PT/txt/prev&quot;</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -2082,7 +2087,6 @@
 
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-			<span class="c1">#data.replace(0,np.nan, inplace=True)</span>
 
 			<span class="c1">#Setting the time to plot</span>
 			
@@ -2101,6 +2105,7 @@
 				
 				<span class="n">enthalpy</span><span class="o">=</span><span class="p">[]</span>
 				<span class="n">flow_rate</span><span class="o">=</span><span class="p">[]</span>
+				<span class="n">WHP</span><span class="o">=</span><span class="p">[]</span>
 
 				<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
 					<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
@@ -2116,6 +2121,7 @@
 								<span class="n">m_colum</span> <span class="o">=</span> <span class="s1">&#39;GENERATION RATE&#39;</span>
 							<span class="k">elif</span> <span class="s1">&#39;GEN&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
 								<span class="n">m_colum</span> <span class="o">=</span> <span class="s1">&#39;GEN&#39;</span>
+
 
 							<span class="n">enthalpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">H_colum</span><span class="p">][</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="mf">1E3</span><span class="p">)</span>
 							<span class="n">flow_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">m_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
@@ -2141,12 +2147,11 @@
 				<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">enthalpy</span><span class="p">,</span>\
 					<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated enthalpy&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
 
-				
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
 					<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">TIME</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">],</span>\
-						<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-
+						<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow rate [kg/s] + variable&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
 		
 
 		<span class="k">try</span><span class="p">:</span>
@@ -2166,7 +2171,11 @@
 
 			<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span>\
 				<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-			
+
+
+			<span class="k">if</span> <span class="s1">&#39;PWH&#39;</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+				<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
 			<span class="n">real_data</span><span class="o">=</span><span class="kc">True</span>
 			
 		<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -2184,7 +2193,17 @@
 				<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">ax</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span><span class="n">ax1</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]],</span>\
 				           <span class="p">[</span><span class="s1">&#39;Computed Flow rate &#39;</span><span class="p">,</span><span class="s1">&#39;Estimated enthalpy&#39;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">real_data</span><span class="p">:</span>
+				<span class="n">variables_lines</span> <span class="o">=</span>  <span class="n">ax</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
+				<span class="n">legends</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">ax1</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">variables_lines</span><span class="p">)</span>
+				<span class="n">labeles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Measured flow rate&#39;</span><span class="p">,</span> <span class="s1">&#39;Estimated enthalpy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+
+				<span class="nb">print</span><span class="p">(</span><span class="n">legends</span><span class="p">,</span><span class="n">labeles</span><span class="p">)</span>
+
+				<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">legends</span><span class="p">],[</span><span class="n">labeles</span><span class="p">],</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		
 		<span class="n">box</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
 		<span class="n">ax</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="n">box</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">y0</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">height</span><span class="o">*</span><span class="mf">0.9</span><span class="p">])</span>
 
@@ -2217,7 +2236,6 @@
 			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There is not a file called </span><span class="si">%s</span><span class="s2">, try running src_evol from output.py&quot;</span><span class="o">%</span><span class="n">file</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="plot_compare_PT"><a class="viewcode-back" href="../modules/report.html#report.plot_compare_PT">[docs]</a><span class="k">def</span> <span class="nf">plot_compare_PT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">save</span><span class="p">,</span><span class="n">show</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</span>
@@ -2314,7 +2332,6 @@
 			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There is not a file called </span><span class="si">%s</span><span class="s2">, try running src_evol from output.py&quot;</span><span class="o">%</span><span class="n">file</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="plot_compare_PT_vertical"><a class="viewcode-back" href="../modules/report.html#report.plot_compare_PT_vertical">[docs]</a><span class="k">def</span> <span class="nf">plot_compare_PT_vertical</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">save</span><span class="p">,</span><span class="n">show</span><span class="p">,</span> <span class="n">years</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="n">p_res_block</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">var_name</span> <span class="o">=</span> <span class="s1">&#39;P&#39;</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</span>
@@ -2461,9 +2478,10 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There is not a file called </span><span class="si">%s</span><span class="s2">, try running src_evol from output.py&quot;</span><span class="o">%</span><span class="n">file</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="plot_compare_producers"><a class="viewcode-back" href="../modules/report.html#report.plot_compare_producers">[docs]</a><span class="k">def</span> <span class="nf">plot_compare_producers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">years</span> <span class="o">=</span> <span class="mi">35</span><span class="p">):</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
 
 	<span class="n">OBJ_file</span> <span class="o">=</span> <span class="s2">&quot;../output/PT/json/it2_PT.json&quot;</span>
@@ -2542,9 +2560,10 @@
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-
 <div class="viewcode-block" id="cross_section"><a class="viewcode-back" href="../modules/report.html#report.cross_section">[docs]</a><span class="k">def</span> <span class="nf">cross_section</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">plot_mesh</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">ngridx</span> <span class="o">=</span> <span class="mi">200</span>
 	<span class="n">ngridy</span> <span class="o">=</span> <span class="mi">200</span>
@@ -2626,10 +2645,10 @@
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-
-
 <div class="viewcode-block" id="plot_power"><a class="viewcode-back" href="../modules/report.html#report.plot_power">[docs]</a><span class="k">def</span> <span class="nf">plot_power</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">real_data</span> <span class="o">=</span> <span class="s2">&quot;../input/generation_data.csv&quot;</span>
 
 	<span class="n">gen_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">real_data</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
@@ -2685,9 +2704,71 @@
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="plot_power_flowell"><a class="viewcode-back" href="../modules/report.html#report.plot_power_flowell">[docs]</a><span class="k">def</span> <span class="nf">plot_power_flowell</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">real_data</span> <span class="o">=</span> <span class="s2">&quot;../input/generation_data.csv&quot;</span>
+
+	<span class="n">gen_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">real_data</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+	<span class="n">gen_data</span> <span class="o">=</span> <span class="n">gen_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span> <span class="o">=</span><span class="s1">&#39;fecha&#39;</span> <span class="p">)</span>
+	<span class="n">gen_data</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">gen_data</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+
+	<span class="n">gen_data_u12</span> <span class="o">=</span> <span class="n">gen_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="p">((</span><span class="n">gen_data</span><span class="o">.</span><span class="n">unidad</span> <span class="o">==</span> <span class="s1">&#39;u1&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">gen_data</span><span class="o">.</span><span class="n">unidad</span> <span class="o">==</span> <span class="s1">&#39;u2&#39;</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gen_data</span><span class="o">.</span><span class="n">generation</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;generation&#39;</span><span class="p">,</span><span class="s1">&#39;fecha&#39;</span><span class="p">,</span><span class="s1">&#39;unidad&#39;</span><span class="p">]]</span>
+	<span class="n">gen_data_u12</span> <span class="o">=</span> <span class="n">gen_data_u12</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;fecha&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+	<span class="n">gen_data_u12</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_data_u12</span><span class="o">.</span><span class="n">index</span>
+	<span class="n">gen_data_u12</span> <span class="o">=</span> <span class="n">gen_data_u12</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">gen_data_u3</span> <span class="o">=</span> <span class="n">gen_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span> <span class="p">(</span><span class="n">gen_data</span><span class="o">.</span><span class="n">unidad</span> <span class="o">==</span> <span class="s1">&#39;u3&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gen_data</span><span class="o">.</span><span class="n">generation</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;generation&#39;</span><span class="p">,</span><span class="s1">&#39;fecha&#39;</span><span class="p">,</span><span class="s1">&#39;unidad&#39;</span><span class="p">]]</span>
+	<span class="n">gen_data_u3</span> <span class="o">=</span> <span class="n">gen_data_u3</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">file_12</span> <span class="o">=</span> <span class="s2">&quot;../output/unit_12_power_flowell.csv&quot;</span>
+	<span class="n">file_3</span> <span class="o">=</span> <span class="s2">&quot;../output/unit_3_power_flowell.csv&quot;</span>
+
+	<span class="n">data_12</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_12</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+	<span class="n">data_12</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_12</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+	<span class="n">data_3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_3</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+	<span class="n">data_3</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_3</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+	<span class="n">fig12</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
+
+	<span class="n">ax12</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+	<span class="n">ax12</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Power Generation, Units 1 and 2, flowell&quot;</span> <span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+	<span class="n">ax12</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Generation [MW]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+	<span class="n">ax12</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+	<span class="n">fig3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
+
+	<span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Power Generation, Units 3, flowell&quot;</span> <span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Generation [MW]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+
+	<span class="n">ax12</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_12</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">],</span><span class="n">data_12</span><span class="p">[</span><span class="s1">&#39;power&#39;</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>\
+		<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Computed power&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+	<span class="n">ax12</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gen_data_u12</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">],</span><span class="n">gen_data_u12</span><span class="p">[</span><span class="s1">&#39;generation&#39;</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>\
+		<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real power&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+	<span class="n">ax12</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+	<span class="n">ax12</span><span class="o">.</span><span class="n">fill_between</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">gen_data_u12</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">data_12</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">])],</span><span class="mi">56</span><span class="p">,</span><span class="mi">53</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+
+	<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_3</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">],</span><span class="n">data_3</span><span class="p">[</span><span class="s1">&#39;power&#39;</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>\
+		<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Computed power&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gen_data_u3</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">],</span><span class="n">gen_data_u3</span><span class="p">[</span><span class="s1">&#39;generation&#39;</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>\
+		<span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real power&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">fill_between</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">gen_data_u3</span><span class="p">[</span><span class="s1">&#39;fecha&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">data_3</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">])],</span><span class="mi">44</span><span class="p">,</span><span class="mi">42</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+		<span class="n">fig12</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/power_12_flowell.png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span> 
+		<span class="n">fig3</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/power_3_flowell.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span> <span class="mi">300</span><span class="p">)</span> 
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="plot_power_it2"><a class="viewcode-back" href="../modules/report.html#report.plot_power_it2">[docs]</a><span class="k">def</span> <span class="nf">plot_power_it2</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1">#Read file, current calculated</span>
 	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../input/generation_data.csv&quot;</span>
 	<span class="n">OBJ_file</span> <span class="o">=</span> <span class="s2">&quot;../output/PT/json/it2_PT.json&quot;</span>
@@ -2784,10 +2865,10 @@
 			<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
 				<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/power_3.png&#39;</span><span class="p">)</span> </div>
 
-
-
 <div class="viewcode-block" id="plot_compare_mh_filtered"><a class="viewcode-back" href="../modules/report.html#report.plot_compare_mh_filtered">[docs]</a><span class="k">def</span> <span class="nf">plot_compare_mh_filtered</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">):</span>
-
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">years</span> <span class="o">=</span> <span class="mi">35</span>
 
 	<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
@@ -2859,8 +2940,10 @@
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="pres"><a class="viewcode-back" href="../modules/report.html#report.pres">[docs]</a><span class="k">def</span> <span class="nf">pres</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">):</span>
+<div class="viewcode-block" id="pres"><a class="viewcode-back" href="../modules/report.html#report.pres">[docs]</a><span class="k">def</span> <span class="nf">pres</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">incon_init</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">years</span> <span class="o">=</span> <span class="mi">35</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	wells = {&#39;TR-4&#39;:[</span>
@@ -2927,6 +3010,12 @@
 					<span class="s1">&#39;TR-12A&#39;</span><span class="p">:</span><span class="s1">&#39;OA135&#39;</span><span class="p">,</span>
 					<span class="s1">&#39;TR-4A&#39;</span><span class="p">:</span><span class="s1">&#39;NA170&#39;</span><span class="p">}</span>
 
+	<span class="n">model_init</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TR-4&#39;</span><span class="p">:</span><span class="mf">0.123524648502E8</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span>
+					<span class="s1">&#39;TR-3&#39;</span><span class="p">:</span><span class="mf">0.104568567423E8</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span>
+					<span class="s1">&#39;TR-12A&#39;</span><span class="p">:</span><span class="mf">0.13246656868E8</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span>
+					<span class="s1">&#39;TR-4A&#39;</span><span class="p">:</span><span class="mf">0.124001354238E8</span><span class="o">/</span><span class="mf">1E5</span><span class="p">}</span>
+
+
 	<span class="n">pres_data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../input/field_data.csv&quot;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 	<span class="n">pres_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 	<span class="n">pres_data</span> <span class="o">=</span> <span class="n">pres_data</span><span class="p">[</span><span class="n">pres_data</span><span class="p">[</span><span class="s1">&#39;prs1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()]</span>
@@ -2968,7 +3057,12 @@
 
 		<span class="n">var</span> <span class="o">=</span> <span class="s1">&#39;delta&#39;</span>
 		<span class="n">pos</span> <span class="o">=</span> <span class="n">data_var</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s1">&#39;PRES_VAP&#39;</span><span class="p">)</span>
-		<span class="n">data_var</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">data_var</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_var</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">pos</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">incon_init</span><span class="p">:</span>
+			<span class="n">data_var</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">data_var</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_var</span><span class="o">.</span><span class="n">iat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">pos</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">data_var</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">data_var</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">pos</span><span class="p">]</span> <span class="o">-</span> <span class="n">model_init</span><span class="p">[</span><span class="n">well</span><span class="p">]</span>
+
 		<span class="n">data_var</span><span class="p">[</span><span class="s1">&#39;dates&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dates</span>
 
 		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_var</span><span class="p">[</span><span class="s1">&#39;dates&#39;</span><span class="p">],</span><span class="n">data_var</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="n">lw</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="n">color</span> <span class="o">=</span> <span class="n">colors_wells</span><span class="p">[</span><span class="n">well</span><span class="p">]</span> <span class="p">)</span>
@@ -3009,6 +3103,631 @@
 	<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/res_pressure.png&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span> 
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WB_scatter"><a class="viewcode-back" href="../modules/report.html#report.WB_scatter">[docs]</a><span class="k">def</span> <span class="nf">WB_scatter</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../output/mh/txt/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_evol_mh.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;FWH&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
+
+		<span class="n">dates</span><span class="o">=</span><span class="p">[]</span>
+		<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]:</span>
+			<span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
+
+		<span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
+
+		<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+		<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+		
+		<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;PWB&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;PWH&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="s1">&#39;og&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;PWB vs PWH&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;PWB&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;FWH&#39;</span><span class="p">],</span><span class="s1">&#39;ob&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;PWB vs FWH&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bar]&#39;</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bar]&#39;</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow rate [kg/s]&#39;</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span>
+
+		<span class="n">legends</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax2</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+		<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PWH&#39;</span><span class="p">,</span> <span class="s1">&#39;FWH&#39;</span><span class="p">]</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legends</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+		<span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
+
+		<span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+		<span class="n">ax4</span> <span class="o">=</span> <span class="n">ax3</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+		
+		<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TWB&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TWH&#39;</span><span class="p">],</span><span class="s1">&#39;or&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;PWB vs PWH&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TWB&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;FWH&#39;</span><span class="p">],</span><span class="s1">&#39;om&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;PWB vs FWH&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+		<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature [C]&#39;</span><span class="p">)</span>
+		<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Temperature [C]&#39;</span><span class="p">)</span>
+		<span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow rate [kg/s]&#39;</span><span class="p">)</span>
+
+		<span class="n">ax3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span>
+
+		<span class="n">legends</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax3</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax4</span><span class="o">.</span><span class="n">get_lines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+		<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TWH&#39;</span><span class="p">,</span> <span class="s1">&#39;FWH&#39;</span><span class="p">]</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">legends</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.15</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="sources_plots"><a class="viewcode-back" href="../modules/report.html#report.sources_plots">[docs]</a><span class="k">def</span> <span class="nf">sources_plots</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">,</span> <span class="n">variables</span> <span class="o">=</span> <span class="p">[]):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;../output/mh/txt/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_evol_mh.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+	<span class="n">file2</span> <span class="o">=</span> <span class="s2">&quot;../output/PT/evol/</span><span class="si">%s</span><span class="s2">_PT_evol.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span>
+
+		<span class="n">dates</span><span class="o">=</span><span class="p">[]</span>
+		<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]:</span>
+			<span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
+
+		<span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">dates</span>
+
+		<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.5</span><span class="p">))</span>
+
+		<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+		
+			<span class="k">if</span> <span class="n">variable</span> <span class="o">==</span> <span class="s1">&#39;PWH&#39;</span><span class="p">:</span>
+				<span class="n">divisor</span> <span class="o">=</span> <span class="mf">1E5</span>
+				<span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span>
+			<span class="k">elif</span> <span class="n">variable</span> <span class="o">==</span> <span class="s1">&#39;ENTH&#39;</span><span class="p">:</span>
+				<span class="n">divisor</span> <span class="o">=</span> <span class="mf">1E3</span>
+				<span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
+			<span class="k">elif</span> <span class="n">variable</span> <span class="o">==</span> <span class="s1">&#39;EWH&#39;</span><span class="p">:</span>
+				<span class="n">divisor</span> <span class="o">=</span> <span class="mf">1E3</span>
+				<span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span>
+			<span class="k">elif</span> <span class="n">variable</span> <span class="o">==</span> <span class="s1">&#39;PWB&#39;</span><span class="p">:</span>
+				<span class="n">divisor</span> <span class="o">=</span> <span class="mf">1E5</span>
+				<span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;^&#39;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">divisor</span> <span class="o">=</span> <span class="mi">1</span>
+				<span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;d&#39;</span>
+
+			<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span><span class="o">/</span><span class="n">divisor</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">variable</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file2</span><span class="p">):</span>
+			<span class="n">data2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file2</span><span class="p">)</span>
+
+			<span class="n">data2</span> <span class="o">=</span> <span class="n">data2</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">data2</span><span class="p">[</span><span class="s1">&#39;ELEM&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">block</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data2</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
+
+			<span class="n">dates2</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">data2</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]:</span>
+				<span class="n">dates2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span>
+			<span class="n">data2</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">dates2</span>
+
+			<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data2</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">],</span><span class="n">data2</span><span class="p">[</span><span class="s1">&#39;PRES_VAP&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;PRES_VAP&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Variable&#39;</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span>
+
+		<span class="c1">#legends = [ax.get_lines()[n] for n in range(len(variables))]</span>
+		<span class="c1">#labels = variables.extend(&#39;PRES_VAP&#39;)</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.78</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.18</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/PT/images/evol/</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_evol_plots.png&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span> 
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> does not exist&quot;</span><span class="o">%</span><span class="n">file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="mh_indivual"><a class="viewcode-back" href="../modules/report.html#report.mh_indivual">[docs]</a><span class="k">def</span> <span class="nf">mh_indivual</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">,</span><span class="n">save</span><span class="p">,</span><span class="n">show</span><span class="p">,</span> <span class="n">production_dictionary</span><span class="p">,</span> <span class="n">years</span> <span class="o">=</span> <span class="mi">35</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------	  </span>
+<span class="sd">	well : str</span>
+<span class="sd">	  Nombre de pozo</span>
+<span class="sd">	block : str</span>
+<span class="sd">	  Nombre de bloque, en general donde se ubica zona de alimentacion</span>
+<span class="sd">	source : str</span>
+<span class="sd">	  Nombre de fuente asociada a pozo</span>
+<span class="sd">	save : bool</span>
+<span class="sd">	  Almacaena la grafica generada</span>
+<span class="sd">	show : bool</span>
+<span class="sd">	  Almacaena la grafica generada</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	image</span>
+<span class="sd">		{well}_{block}_{source}_evol.png: archivo con direccion ../output/mh/images/</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	El archivo correspondiente en la carpeta  ../output/mh/txt debe existir</span>
+
+<span class="sd">	Examples</span>
+<span class="sd">	--------</span>
+<span class="sd">	&gt;&gt;&gt; plot_compare_mh(&#39;AH-1&#39;,&#39;DA110&#39;,&#39;SRC1&#39;,save=True,show=False)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#Read file, current calculated</span>
+	<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../output/mh/txt/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_evol_mh.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+	<span class="n">OBJ_file</span> <span class="o">=</span> <span class="s2">&quot;../output/PT/json/it2_PT.json&quot;</span>
+	<span class="n">OBJ_file_prev</span> <span class="o">=</span> <span class="s2">&quot;../output/PT/json/prev/it2_PT.json&quot;</span>
+	<span class="n">file_real</span> <span class="o">=</span> <span class="s2">&quot;../input/mh/</span><span class="si">%s</span><span class="s2">_mh.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+
+		<span class="c1">#fig = plt.figure(figsize=(10,4.5))</span>
+		<span class="c1">#ax = plt.subplot(111)</span>
+		<span class="c1">#ax1 = ax.twinx()</span>
+
+
+		<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+		<span class="c1">#Setting the time to plot</span>
+		
+		<span class="n">times</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span>
+
+		<span class="n">dates</span><span class="o">=</span><span class="p">[]</span>
+		<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+			<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])))</span>
+				<span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s2">&quot;plus&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">]),</span><span class="s2">&quot;wont be plot&quot;</span><span class="p">)</span>
+				
+		<span class="n">enthalpy</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">flow_rate</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">WHP</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">shw</span><span class="o">=</span><span class="p">[]</span>
+
+		<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+			<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;ENTHALPY&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+						<span class="n">H_colum</span> <span class="o">=</span> <span class="s1">&#39;ENTHALPY&#39;</span>
+					<span class="k">elif</span> <span class="s1">&#39;ENTH&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+						<span class="n">H_colum</span> <span class="o">=</span> <span class="s1">&#39;ENTH&#39;</span>
+
+					<span class="k">if</span> <span class="s1">&#39;GENERATION RATE&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+						<span class="n">m_colum</span> <span class="o">=</span> <span class="s1">&#39;GENERATION RATE&#39;</span>
+					<span class="k">elif</span> <span class="s1">&#39;GEN&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+						<span class="n">m_colum</span> <span class="o">=</span> <span class="s1">&#39;GEN&#39;</span>
+
+					<span class="k">if</span> <span class="s1">&#39;PWH&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+						<span class="n">whp_colum</span> <span class="o">=</span> <span class="s1">&#39;PWH&#39;</span>
+
+					<span class="k">if</span> <span class="s1">&#39;SWH&#39;</span><span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+						<span class="n">swh_colum</span> <span class="o">=</span> <span class="s1">&#39;SWH&#39;</span>
+
+					<span class="n">enthalpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">H_colum</span><span class="p">][</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="mf">1E3</span><span class="p">)</span>
+					<span class="n">flow_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">m_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+					<span class="n">WHP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">whp_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+					<span class="n">shw</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">swh_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+				<span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s2">&quot;plus&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">]),</span><span class="s2">&quot;wont be plot&quot;</span><span class="p">)</span>
+
+
+
+		<span class="c1">#ax.set_title(&quot;Well: %s, block %s, source %s&quot;%(well,block,source) ,fontsize=8)</span>
+		<span class="c1">#ax.set_ylabel(&#39;Flow rate [kg/s]&#39;,fontsize = 8)</span>
+		<span class="c1">#ax.set_xlabel(&quot;Time&quot;,fontsize = 8)</span>
+
+		<span class="c1">#ax1.set_ylabel(&#39;Enthalpy [kJ/kg]&#39;,fontsize = 8)</span>
+		<span class="c1">#ax1.set_ylim([500,2700])</span>
+		
+
+		<span class="c1">#ax.plot(dates,np.absolute(flow_rate),color=formats.plot_conf_color[&#39;m&#39;][1],\</span>
+		<span class="c1">#	linestyle=&#39;--&#39;,ms=5,label=&#39;Calculated flow&#39;,marker=formats.plot_conf_marker[&#39;current&#39;][0],alpha=formats.plot_conf_marker[&#39;current&#39;][1])</span>
+
+		<span class="c1">#ax.plot(dates,np.absolute(WHP)/1E5,color=formats.plot_conf_color[&#39;P&#39;][1],\</span>
+		<span class="c1">#	linestyle=&#39;--&#39;,ms=5,label=&#39;Calculated WHP&#39;,marker=formats.plot_conf_marker[&#39;current&#39;][0],alpha=formats.plot_conf_marker[&#39;current&#39;][1])</span>
+
+		<span class="c1">#ax1.plot(dates,enthalpy,\</span>
+		<span class="c1">#	linestyle=&#39;--&#39;,color=formats.plot_conf_color[&#39;h&#39;][1],ms=5,label=&#39;Calculated enthalpy&#39;,marker=formats.plot_conf_marker[&#39;current&#39;][0],alpha=formats.plot_conf_marker[&#39;current&#39;][1])</span>
+
+		<span class="n">fontsize_ylabel</span> <span class="o">=</span> <span class="mi">8</span>
+
+		<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+
+		<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span>
+
+		<span class="c1">#Flow plot</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">ln1</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">flow_rate</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated flow&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow s[kg/s]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+
+		<span class="c1">#Enthalpy plot</span>
+		<span class="n">ax2</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span> <span class="o">=</span> <span class="n">ax</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">enthalpy</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated enthalpy&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Enthalpy [kJ/kg]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+
+		<span class="c1">#WHPressure plot</span>
+		<span class="n">ax3</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span> <span class="o">=</span> <span class="n">ax</span><span class="p">)</span>
+		<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">WHP</span><span class="p">)</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated WHP&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">ax3</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+		<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bara]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+		<span class="c1">#Quality</span>
+		<span class="n">ax4</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span> <span class="o">=</span> <span class="n">ax</span><span class="p">)</span>
+		<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">shw</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;SG&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated Quality&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">ax4</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+		<span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Quality&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+
+		<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+		<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax2</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax4</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+		<span class="n">ax3</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+		<span class="n">ax4</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">data_real</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_real</span><span class="p">)</span>
+			<span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H:%M:%S&quot;</span><span class="p">)</span>
+			<span class="n">data_real</span><span class="o">=</span><span class="n">data_real</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date_time&#39;</span><span class="p">])</span>
+			<span class="n">data_real</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+			<span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;total_flow&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">]</span>
+
+			<span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">])</span>
+
+			<span class="n">ln2</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured flow rate &#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+			<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured enthalpy&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+			<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured WHP&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+			<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;SG&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured Quality&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+
+
+			<span class="c1">#ax.plot(data_real.index,data_real[&#39;steam&#39;]+data_real[&#39;liquid&#39;],\</span>
+				<span class="c1">#linestyle=&#39;None&#39;,color=formats.plot_conf_color[&#39;m&#39;][0],ms=3,label=&#39;Measured flow rate &#39;,marker=formats.plot_conf_marker[&#39;real&#39;][0],alpha=formats.plot_conf_marker[&#39;real&#39;][1])</span>
+
+			<span class="c1">#ax1.plot(data_real.index,data_real[&#39;enthalpy&#39;],\</span>
+				<span class="c1">#linestyle=&#39;None&#39;,color=formats.plot_conf_color[&#39;h&#39;][0],ms=3,label=&#39;Measured enthalpy&#39;,marker=formats.plot_conf_marker[&#39;real&#39;][0],alpha=formats.plot_conf_marker[&#39;real&#39;][1])</span>
+
+			<span class="c1">#ax.plot(data_real.index,data_real[&#39;WHPabs&#39;],linestyle=&#39;None&#39;,color=formats.plot_conf_color[&#39;P&#39;][0],ms=3,label=&#39;Measured WHP&#39;,marker=formats.plot_conf_marker[&#39;real&#39;][0],alpha=formats.plot_conf_marker[&#39;real&#39;][1])</span>
+
+			<span class="n">real_data</span><span class="o">=</span><span class="kc">True</span>
+
+		<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+			<span class="n">real_data</span><span class="o">=</span><span class="kc">False</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No real data for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+			<span class="k">pass</span>
+
+		<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+			<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/mh/images/</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_evol_whp.png&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span> 
+		<span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+		<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">		plt.legend([ax.get_lines()[0],ax.get_lines()[2],</span>
+<span class="sd">			        ax.get_lines()[1],ax.get_lines()[3],</span>
+<span class="sd">			        ax1.get_lines()[0],ax1.get_lines()[1]],\</span>
+<span class="sd">				   [&#39;Computed flow rate &#39;,&#39;Measured flow rate&#39;,\</span>
+<span class="sd">				    &#39;Computed WHP&#39;, &#39;Measured WHP&#39;,</span>
+<span class="sd">				    &#39;Computed flowing enthalpy&#39;, &#39;Measured flowing enthalpy&#39;],loc=&quot;lower center&quot;, bbox_to_anchor=(0.5, -0.3), ncol=4, fancybox=True, shadow=True)</span>
+<span class="sd">		</span>
+<span class="sd">		box = ax.get_position()</span>
+<span class="sd">		ax.set_position([box.x0, box.y0+0.1, box.width, box.height*0.9])</span>
+<span class="sd">		ax.format_xdata = mdates.DateFormatter(&#39;%Y%-m-%d %H:%M:%S&#39;)</span>
+<span class="sd">		xlims=[input_dictionary[&#39;ref_date&#39;]-datetime.timedelta(days=365),input_dictionary[&#39;ref_date&#39;]+datetime.timedelta(days=years*365.25)]</span>
+
+<span class="sd">		ax.set_xlim(xlims)</span>
+<span class="sd">		years = mdates.YearLocator()</span>
+<span class="sd">		years_fmt = mdates.DateFormatter(&#39;%Y&#39;)</span>
+<span class="sd">		ax.xaxis.set_major_formatter(years_fmt)</span>
+
+
+<span class="sd">		#Grid style</span>
+<span class="sd">		ax.yaxis.grid(True, which=&#39;major&#39;,linestyle=&#39;--&#39;, color=&#39;grey&#39;, alpha=0.6)</span>
+<span class="sd">		ax.xaxis.grid(True, which=&#39;major&#39;,linestyle=&#39;--&#39;, color=&#39;grey&#39;, alpha=0.6)</span>
+<span class="sd">		ax.grid(True)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There is not a file called </span><span class="si">%s</span><span class="s2">, try running src_evol from output.py&quot;</span><span class="o">%</span><span class="n">file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="flowell_dates"><a class="viewcode-back" href="../modules/report.html#report.flowell_dates">[docs]</a><span class="k">def</span> <span class="nf">flowell_dates</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">d1</span><span class="p">,</span><span class="n">d2</span><span class="p">,</span><span class="n">well</span><span class="p">,</span> <span class="n">position</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Not documented</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">db_path</span><span class="o">=</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;db_path&#39;</span><span class="p">]</span>
+	<span class="n">conn</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">sources_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT well, source_nickname, blockcorr FROM t2wellsource WHERE flow_type = &#39;P&#39; &quot;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+		<span class="n">source</span> <span class="o">=</span> <span class="n">sources_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sources_data</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">well</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;source_nickname&#39;</span><span class="p">]</span>
+		<span class="n">blockcorr</span> <span class="o">=</span> <span class="n">sources_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sources_data</span><span class="p">[</span><span class="s1">&#39;well&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">well</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;blockcorr&#39;</span><span class="p">]</span>
+		<span class="n">id_n</span> <span class="o">=</span> <span class="n">blockcorr</span> <span class="o">+</span> <span class="n">source</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">id_n</span> <span class="o">=</span> <span class="n">source</span>
+
+	<span class="n">flowell_file</span> <span class="o">=</span> <span class="s1">&#39;../output/flowell.json&#39;</span>
+
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">flowell_file</span><span class="p">):</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">flowell_file</span><span class="p">,</span> <span class="n">orient</span> <span class="o">=</span> <span class="s1">&#39;split&#39;</span><span class="p">)</span>
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span>
+
+		<span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H:%M:%S&quot;</span><span class="p">)</span>
+
+
+
+		<span class="nb">print</span><span class="p">(</span><span class="n">id_n</span><span class="p">)</span>
+
+		<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">d1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="n">d2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;SOURCE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">id_n</span><span class="p">),[</span><span class="s1">&#39;date_time&#39;</span><span class="p">,</span><span class="s1">&#39;DATA&#39;</span><span class="p">,</span><span class="s1">&#39;ITER&#39;</span><span class="p">]]</span>
+
+		<span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+		<span class="n">positions</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="s1">&#39;DEPTH&#39;</span><span class="p">,</span>
+					 <span class="mi">1</span> <span class="p">:</span> <span class="s1">&#39;FLOW&#39;</span><span class="p">,</span>
+					 <span class="mi">2</span> <span class="p">:</span> <span class="s1">&#39;VELOCITY&#39;</span><span class="p">,</span>
+					 <span class="mi">3</span> <span class="p">:</span> <span class="s1">&#39;PRESSURE&#39;</span><span class="p">,</span>
+					 <span class="mi">4</span> <span class="p">:</span> <span class="s1">&#39;ENTHALPY&#39;</span><span class="p">,</span>
+					 <span class="mi">5</span> <span class="p">:</span> <span class="s1">&#39;TEMPERATURE&#39;</span><span class="p">,</span>
+					 <span class="mi">6</span> <span class="p">:</span> <span class="s1">&#39;QUALITY&#39;</span><span class="p">,</span>
+					 <span class="mi">7</span> <span class="p">:</span> <span class="s1">&#39;PROD. IND&#39;</span><span class="p">,</span>
+					 <span class="mi">8</span> <span class="p">:</span> <span class="s1">&#39;PRODUCT&#39;</span><span class="p">}</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		max_iter = 4</span>
+<span class="sd">		colors = {}</span>
+<span class="sd">		color_m = cm.get_cmap(&#39;viridis&#39;, max_iter)</span>
+<span class="sd">		for i, n in enumerate(np.linspace(0,1,max_iter)):</span>
+<span class="sd">			colors[i]=color_m(n)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">colors</span> <span class="o">=</span> <span class="p">{</span>  <span class="mi">0</span> <span class="p">:</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+					<span class="mi">1</span><span class="p">:</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span>
+					<span class="mi">2</span><span class="p">:</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
+					<span class="mi">3</span><span class="p">:</span><span class="s1">&#39;b&#39;</span><span class="p">,</span>
+					<span class="mi">4</span><span class="p">:</span><span class="s1">&#39;g&#39;</span><span class="p">,</span>
+					<span class="mi">5</span><span class="p">:</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+					<span class="mi">6</span><span class="p">:</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+					<span class="mi">7</span><span class="p">:</span><span class="s1">&#39;c&#39;</span><span class="p">,</span>
+					<span class="mi">8</span><span class="p">:</span><span class="s1">&#39;lime&#39;</span><span class="p">,</span>
+					<span class="mi">9</span><span class="p">:</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span>
+					<span class="mi">10</span><span class="p">:</span><span class="s1">&#39;crimson&#39;</span><span class="p">,</span>
+					<span class="mi">11</span><span class="p">:</span><span class="s1">&#39;green&#39;</span><span class="p">,</span>
+					<span class="mi">12</span><span class="p">:</span><span class="s1">&#39;olive&#39;</span><span class="p">,</span>
+					<span class="mi">13</span><span class="p">:</span><span class="s1">&#39;mediumblue&#39;</span><span class="p">,</span>
+					<span class="mi">14</span><span class="p">:</span><span class="s1">&#39;indigo&#39;</span><span class="p">,</span>
+					<span class="mi">15</span><span class="p">:</span><span class="s1">&#39;violet&#39;</span><span class="p">,</span>
+					<span class="mi">16</span><span class="p">:</span><span class="s1">&#39;orangered&#39;</span><span class="p">,</span>
+					<span class="mi">17</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span>
+					<span class="mi">18</span><span class="p">:</span><span class="s1">&#39;darkred&#39;</span><span class="p">,</span>
+					<span class="mi">19</span><span class="p">:</span><span class="s1">&#39;navy&#39;</span><span class="p">,</span>
+					<span class="mi">20</span><span class="p">:</span><span class="s1">&#39;darkorange&#39;</span><span class="p">,</span>
+					<span class="mi">21</span><span class="p">:</span><span class="s1">&#39;teal&#39;</span><span class="p">,</span>
+					<span class="mi">22</span><span class="p">:</span><span class="s1">&#39;darkturquoise&#39;</span><span class="p">,</span>
+					<span class="mi">23</span><span class="p">:</span><span class="s1">&#39;cadetblue&#39;</span><span class="p">,</span>
+					<span class="mi">24</span><span class="p">:</span><span class="s1">&#39;deepskyblue&#39;</span><span class="p">,</span>
+					<span class="mi">25</span><span class="p">:</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span>
+					<span class="mi">26</span><span class="p">:</span><span class="s1">&#39;slateblue&#39;</span><span class="p">,</span>
+					<span class="mi">27</span><span class="p">:</span><span class="s1">&#39;blueviolet&#39;</span><span class="p">,</span>
+					<span class="mi">28</span><span class="p">:</span><span class="s1">&#39;darkorchid&#39;</span><span class="p">,</span>
+					<span class="mi">29</span><span class="p">:</span><span class="s1">&#39;plum&#39;</span><span class="p">,</span>
+					<span class="mi">30</span><span class="p">:</span><span class="s1">&#39;hotpink&#39;</span><span class="p">}</span>
+
+		<span class="n">dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+		<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+		<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
+
+		<span class="n">clr</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+		<span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clr</span><span class="p">]</span>
+		<span class="n">labels</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+		<span class="c1">#ax = fig.add_subplot(111)</span>
+
+		<span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">:</span>
+			<span class="n">ix</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">date</span><span class="p">,</span><span class="s1">&#39;ITER&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ix</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">date</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ITER&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">i</span><span class="p">),</span><span class="s1">&#39;DATA&#39;</span><span class="p">]:</span>
+					<span class="n">data_n</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="n">depths</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+						<span class="n">data_n</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="n">position</span><span class="p">]</span><span class="o">/</span><span class="mf">1E5</span><span class="p">)</span>
+						<span class="n">depths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">MD_to_TVD</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">2</span><span class="p">])</span>
+					<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_n</span><span class="p">,</span><span class="n">depths</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ms</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">date</span><span class="p">,</span> <span class="n">lw</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;masl&quot;</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_coords</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1.07</span><span class="p">)</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+		<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">positions</span><span class="p">[</span><span class="n">position</span><span class="p">])</span>
+
+		<span class="c1">#Set layers</span>
+		<span class="n">layers_info</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">vertical_layers</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+		<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>            
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span> <span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;middle&#39;</span><span class="p">],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">layers_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Layers&#39;</span><span class="p">)</span>
+		<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+		
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">labelspacing</span> <span class="o">=</span> <span class="mf">0.075</span><span class="p">)</span>
+
+		<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">d1</span><span class="p">,</span><span class="n">d2</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/flowell/</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">well</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;Theres is not flowell output file&quot;</span></div>
+	
+<div class="viewcode-block" id="multiple_PI"><a class="viewcode-back" href="../modules/report.html#report.multiple_PI">[docs]</a><span class="k">def</span> <span class="nf">multiple_PI</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span> <span class="n">well</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">well_collection</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">show</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	It generates a single plot from a well that has been divided into many periods</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">format_xdata</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y%-m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">ax2</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span> <span class="o">=</span> <span class="n">ax</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span> <span class="o">=</span> <span class="n">ax</span><span class="p">)</span>
+	<span class="n">ax4</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span> <span class="o">=</span> <span class="n">ax</span><span class="p">)</span>
+
+	<span class="n">real_data</span><span class="o">=</span><span class="kc">True</span>
+	<span class="n">fontsize_ylabel</span> <span class="o">=</span> <span class="mi">8</span>
+
+
+	<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="s1">&#39;multiple_PI&#39;</span><span class="p">))</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flow s[kg/s]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+	<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Enthalpy [kJ/kg]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+	<span class="n">ax3</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pressure [bara]&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+	<span class="n">ax4</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+	<span class="n">ax4</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Quality&#39;</span><span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">fontsize_ylabel</span><span class="p">)</span>
+
+	<span class="n">years</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">YearLocator</span><span class="p">()</span>
+	<span class="n">years_fmt</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax2</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax4</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+	<span class="n">ax2</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+	<span class="n">ax3</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+	<span class="n">ax4</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">years_fmt</span><span class="p">)</span>
+
+
+	<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">well_collection</span><span class="p">[</span><span class="n">well</span><span class="p">]:</span>
+
+		<span class="c1">#Read file, current calculated</span>
+		<span class="n">file</span><span class="o">=</span><span class="s2">&quot;../output/mh/txt/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_evol_mh.dat&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+		<span class="n">file_real</span> <span class="o">=</span> <span class="s2">&quot;../input/mh/</span><span class="si">%s</span><span class="s2">_mh.dat&quot;</span><span class="o">%</span><span class="n">well</span>
+
+		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_real</span><span class="p">):</span>
+
+			<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+			<span class="c1">#Setting the time to plot</span>
+			
+			<span class="n">times</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TIME&#39;</span><span class="p">]</span>
+
+			<span class="n">dates</span><span class="o">=</span><span class="p">[]</span>
+			<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+				<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+					<span class="k">try</span><span class="p">:</span>
+						<span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">[</span><span class="s1">&#39;ref_date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])))</span>
+					<span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s2">&quot;plus&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">]),</span><span class="s2">&quot;wont be plot&quot;</span><span class="p">)</span>
+					
+			<span class="n">enthalpy</span><span class="o">=</span><span class="p">[]</span>
+			<span class="n">flow_rate</span><span class="o">=</span><span class="p">[]</span>
+			<span class="n">WHP</span><span class="o">=</span><span class="p">[]</span>
+			<span class="n">shw</span><span class="o">=</span><span class="p">[]</span>
+
+			<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)):</span>
+				<span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+					<span class="k">try</span><span class="p">:</span>
+						<span class="k">if</span> <span class="s1">&#39;ENTHALPY&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+							<span class="n">H_colum</span> <span class="o">=</span> <span class="s1">&#39;ENTHALPY&#39;</span>
+						<span class="k">elif</span> <span class="s1">&#39;ENTH&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+							<span class="n">H_colum</span> <span class="o">=</span> <span class="s1">&#39;ENTH&#39;</span>
+
+						<span class="k">if</span> <span class="s1">&#39;GENERATION RATE&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+							<span class="n">m_colum</span> <span class="o">=</span> <span class="s1">&#39;GENERATION RATE&#39;</span>
+						<span class="k">elif</span> <span class="s1">&#39;GEN&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+							<span class="n">m_colum</span> <span class="o">=</span> <span class="s1">&#39;GEN&#39;</span>
+
+						<span class="k">if</span> <span class="s1">&#39;PWH&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+							<span class="n">whp_colum</span> <span class="o">=</span> <span class="s1">&#39;PWH&#39;</span>
+
+						<span class="k">if</span> <span class="s1">&#39;SWH&#39;</span><span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+							<span class="n">swh_colum</span> <span class="o">=</span> <span class="s1">&#39;SWH&#39;</span>
+
+						<span class="n">enthalpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">H_colum</span><span class="p">][</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="mf">1E3</span><span class="p">)</span>
+						<span class="n">flow_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">m_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+						<span class="n">WHP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">whp_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+						<span class="n">shw</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">swh_colum</span><span class="p">][</span><span class="n">n</span><span class="p">])</span>
+					<span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="s2">&quot;plus&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="n">n</span><span class="p">]),</span><span class="s2">&quot;wont be plot&quot;</span><span class="p">)</span>
+
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">data_real</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_real</span><span class="p">)</span>
+				<span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;date_time&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H:%M:%S&quot;</span><span class="p">)</span>
+				<span class="n">data_real</span><span class="o">=</span><span class="n">data_real</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date_time&#39;</span><span class="p">])</span>
+				<span class="n">data_real</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+				<span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;total_flow&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">]</span>
+
+				<span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">])</span>
+
+				<span class="c1">#Flow plot</span>
+				<span class="n">ln1</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">flow_rate</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated flow&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">ln2</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;steam&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;liquid&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured flow rate &#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+				<span class="c1">#Enthalpy plot</span>
+				<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">enthalpy</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated enthalpy&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;enthalpy&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured enthalpy&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+				<span class="c1">#WHPressure plot</span>
+				<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">WHP</span><span class="p">)</span><span class="o">/</span><span class="mf">1E5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated WHP&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;WHPabs&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured WHP&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+				<span class="c1">#Quality</span>
+				<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">shw</span><span class="p">),</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;SG&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Calculated Quality&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;current&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_real</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">data_real</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">],</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_color</span><span class="p">[</span><span class="s1">&#39;SG&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured Quality&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">formats</span><span class="o">.</span><span class="n">plot_conf_marker</span><span class="p">[</span><span class="s1">&#39;real&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+			<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+				<span class="n">real_data</span><span class="o">=</span><span class="kc">False</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No real data for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">well</span><span class="p">)</span>
+				<span class="k">pass</span>
+	<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+		<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;../output/mh/images/</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_evol_whp_multi_PI.png&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">well</span><span class="p">,</span><span class="n">block</span><span class="p">,</span><span class="n">source</span><span class="p">))</span> 
+	<span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
@@ -3021,7 +3740,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

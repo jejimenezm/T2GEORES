@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="txt2sqlite" href="txt2sqlite.html" />
@@ -80,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -160,253 +162,235 @@
             
   <div class="section" id="module-t2geores_functions">
 <span id="t2geores-functions"></span><h1>t2geores_functions<a class="headerlink" href="#module-t2geores_functions" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="t2geores_functions.bottom_layer_incons">
-<code class="descclassname">t2geores_functions.</code><code class="descname">bottom_layer_incons</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>input_mesh_dictionary</em>, <em>m</em>, <em>b</em>, <em>use_boiling=True</em>, <em>use_equation=False</em>, <em>cut_off_T=150</em>, <em>cut_off_P=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#bottom_layer_incons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.bottom_layer_incons" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.bottom_layer_incons">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">bottom_layer_incons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_mesh_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_boiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_equation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_off_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_off_P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#bottom_layer_incons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.bottom_layer_incons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modifies the incon file base on real data a the bottom or last known elevation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – List the well names, define the INCONS_PARAM and source_txt file.</li>
-<li><strong>input_mesh_dictionary</strong> (<em>dictionary</em>) – Specify the polygon border defiding path</li>
-<li><strong>cut_off_T</strong> (<em>float</em>) – The heighest value of temperature a the bottom layer</li>
-<li><strong>cut_off_P</strong> (<em>float</em>) – The heighest value of pressure a the bottom layer</li>
-<li><strong>use_equation</strong> (<em>bool</em>) – If true the variables m and b will be use to extrapolate the values to the bottom layer</li>
-<li><strong>use_boiling</strong> (<em>bool</em>) – If true the boiling conditions will be use for calculating the bottom conditions</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – List the well names, define the INCONS_PARAM and source_txt file.</p></li>
+<li><p><strong>input_mesh_dictionary</strong> (<em>dictionary</em>) – Specify the polygon border defiding path</p></li>
+<li><p><strong>cut_off_T</strong> (<em>float</em>) – The heighest value of temperature a the bottom layer</p></li>
+<li><p><strong>cut_off_P</strong> (<em>float</em>) – The heighest value of pressure a the bottom layer</p></li>
+<li><p><strong>use_equation</strong> (<em>bool</em>) – If true the variables m and b will be use to extrapolate the values to the bottom layer</p></li>
+<li><p><strong>use_boiling</strong> (<em>bool</em>) – If true the boiling conditions will be use for calculating the bottom conditions</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">A file called INCON_MOD will be modified on t2/sources.Thus, it has to be used after top_layer_incons</p>
+<p class="admonition-title">Note</p>
+<p>A file called INCON_MOD will be modified on t2/sources.Thus, it has to be used after top_layer_incons</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.check_in_out">
-<code class="descclassname">t2geores_functions.</code><code class="descname">check_in_out</code><span class="sig-paren">(</span><em>point</em>, <em>borders</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#check_in_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.check_in_out" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.check_in_out">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">check_in_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#check_in_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.check_in_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>It checks if a point is outside or inside of a given area</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>point</strong> (<em>array</em>) – x and y position</li>
-<li><strong>borders</strong> (<em>array</em>) – Contains the array defining a close polygon</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<em>array</em>) – x and y position</p></li>
+<li><p><strong>borders</strong> (<em>array</em>) – Contains the array defining a close polygon</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.create_structure">
-<code class="descclassname">t2geores_functions.</code><code class="descname">create_structure</code><span class="sig-paren">(</span><em>structure</em>, <em>current_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#create_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.create_structure" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.create_structure">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">create_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#create_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.create_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>It creates the necessary structure for T2GEORES to work</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>structure</strong> (<em>dictionary</em>) – It is an internal structure dictionary defined on formats.py</li>
-<li><strong>current_path</strong> (<em>str</em>) – It specifies the path where the structure will be constructed</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>dictionary</em>) – It is an internal structure dictionary defined on formats.py</p></li>
+<li><p><strong>current_path</strong> (<em>str</em>) – It specifies the path where the structure will be constructed</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">A good practice is to create a folder for the whole model</p>
+<p class="admonition-title">Note</p>
+<p>A good practice is to create a folder for the whole model</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.empty_model">
-<code class="descclassname">t2geores_functions.</code><code class="descname">empty_model</code><span class="sig-paren">(</span><em>structure</em>, <em>current_path='../'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#empty_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.empty_model" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.empty_model">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">empty_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'../'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#empty_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.empty_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>It erases all the file on the  T2GEORES structure except the input and scripts folders</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>structure</strong> (<em>dictionary</em>) – It is an internal structure dictionary defined on formats.py</li>
-<li><strong>current_path</strong> (<em>str</em>) – It specifies the top folder of the structure, if the function is executed from scripts current_path is ‘../’</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>dictionary</em>) – It is an internal structure dictionary defined on formats.py</p></li>
+<li><p><strong>current_path</strong> (<em>str</em>) – It specifies the top folder of the structure, if the function is executed from scripts current_path is ‘../’</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">It will erase all the output data, mesh and images on the model.</p>
+<p class="admonition-title">Attention</p>
+<p>It will erase all the output data, mesh and images on the model.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">empty_model</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">empty_model</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.incon_from_steinar">
-<code class="descclassname">t2geores_functions.</code><code class="descname">incon_from_steinar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#incon_from_steinar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.incon_from_steinar" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.incon_from_steinar">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">incon_from_steinar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#incon_from_steinar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.incon_from_steinar" title="Permalink to this definition">¶</a></dt>
+<dd><p>It converts an incon file modified or created in steinar into a TOUGH2 format</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>It reads the file: ‘../mesh/to_steinar/incon’</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>STE_INCON: at ../model/t2/sources/</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>file</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.incon_to_steinar">
-<code class="descclassname">t2geores_functions.</code><code class="descname">incon_to_steinar</code><span class="sig-paren">(</span><em>sav=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#incon_to_steinar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.incon_to_steinar" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.incon_to_steinar">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">incon_to_steinar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#incon_to_steinar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.incon_to_steinar" title="Permalink to this definition">¶</a></dt>
 <dd><p>It converts the modified INCON file (INCON_MOD) to steinar input</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It will write a file called incon_to_steinar on the sources file</p>
+<p class="admonition-title">Note</p>
+<p>It will write a file called incon_to_steinar on the sources file</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">create_structure</span><span class="p">(</span><span class="n">current_path</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.incons">
-<code class="descclassname">t2geores_functions.</code><code class="descname">incons</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>m</em>, <em>b</em>, <em>use_boiling=True</em>, <em>use_equation=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#incons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.incons" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.incons">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">incons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_boiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_equation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#incons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.incons" title="Permalink to this definition">¶</a></dt>
 <dd><p>It returns the coordinates X,Y and Z at a desired depth.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the infomation of the layer under the keyword ‘LAYER’ and ‘z_ref’. Also it contains the keyword ‘INCONS_PARAM’ with the specified initial conditions, i.e.:’INCONS_PARAM’:{‘To’:30,’GRADTZ’:0.08,’DEPTH_TO_SURF’:100,’DELTAZ’:20}</li>
-<li><strong>m</strong> (<em>float</em>) – Pressure slope on a TVD vs P plot</li>
-<li><strong>b</strong> (<em>float</em>) – Pressure intercept on a TVD vs P plot</li>
-<li><strong>use_equation</strong> (<em>bool</em>) – If true the variables m and b will be use to extrapolate the values to the bottom layer</li>
-<li><strong>use_boiling</strong> (<em>bool</em>) – If true the boiling conditions will be use for calculating the bottom conditions</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the infomation of the layer under the keyword ‘LAYER’ and ‘z_ref’. Also it contains the keyword ‘INCONS_PARAM’ with the specified initial conditions, i.e.:’INCONS_PARAM’:{‘To’:30,’GRADTZ’:0.08,’DEPTH_TO_SURF’:100,’DELTAZ’:20}</p></li>
+<li><p><strong>m</strong> (<em>float</em>) – Pressure slope on a TVD vs P plot</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Pressure intercept on a TVD vs P plot</p></li>
+<li><p><strong>use_equation</strong> (<em>bool</em>) – If true the variables m and b will be use to extrapolate the values to the bottom layer</p></li>
+<li><p><strong>use_boiling</strong> (<em>bool</em>) – If true the boiling conditions will be use for calculating the bottom conditions</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">INCON : on model/t2/sources</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>INCON : on model/t2/sources</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">It requires an updated ELEME.json</p>
+<p class="admonition-title">Attention</p>
+<p>It requires an updated ELEME.json</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Boiling conditions are assumed</p>
+<p class="admonition-title">Note</p>
+<p>Boiling conditions are assumed</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">incons</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">incons</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="t2geores_functions.initial_conditions">
-<code class="descclassname">t2geores_functions.</code><code class="descname">initial_conditions</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>m</em>, <em>b</em>, <em>use_boiling=True</em>, <em>use_equation=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.initial_conditions">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_boiling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_equation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#initial_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.initial_conditions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates the tempearture and pressure initial conditions assuming boiling from top to bottom layer</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the infomation of the layer under the keyword ‘LAYER’ and ‘z_ref’. Also it contains the keyword ‘INCONS_PARAM’ with the specified initial conditions, i.e.:’INCONS_PARAM’:{‘To’:30,’GRADTZ’:0.08,’DEPTH_TO_SURF’:100,’DELTAZ’:20}</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><em>list</em> – T: initial list of temperature</li>
-<li><em>list</em> – P: initial list of pressure</li>
-<li><em>list</em> – depth: range of depth coming from layers</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="t2geores_functions.patmfromelev">
-<code class="descclassname">t2geores_functions.</code><code class="descname">patmfromelev</code><span class="sig-paren">(</span><em>elev</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#patmfromelev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.patmfromelev" title="Permalink to this definition">¶</a></dt>
-<dd><p>It fines the atmospheric pressure base on an approximate formula</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>elev</strong> – masl where the pressure is needed</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Atmospheric pressure in bar</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">patmfromelev</span><span class="p">(</span><span class="mi">750</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="t2geores_functions.top_layer_incons">
-<code class="descclassname">t2geores_functions.</code><code class="descname">top_layer_incons</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>input_mesh_dictionary</em>, <em>cut_off_T=150</em>, <em>cut_off_P=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#top_layer_incons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.top_layer_incons" title="Permalink to this definition">¶</a></dt>
-<dd><p>Modifies the incon file base on real data a the top elevation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – List the well names, define the INCONS_PARAM and source_txt file.</li>
-<li><strong>input_mesh_dictionary</strong> (<em>dictionary</em>) – Specify the polygon border defiding path</li>
-<li><strong>cut_off_T</strong> (<em>float</em>) – The heighest value of temperature a the top layer</li>
-<li><strong>cut_off_P</strong> (<em>float</em>) – The heighest value of pressure a the top layer</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">A file called INCON_MOD will be created on t2/sources</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="t2geores_functions.water_level_projection">
-<code class="descclassname">t2geores_functions.</code><code class="descname">water_level_projection</code><span class="sig-paren">(</span><em>MD</em>, <em>P</em>, <em>Tmin</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#water_level_projection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#t2geores_functions.water_level_projection" title="Permalink to this definition">¶</a></dt>
-<dd><p>It projects the water level based on a pressure log</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>MD</strong> (<em>array</em>) – Measure depth array</li>
-<li><strong>P</strong> (<em>array</em>) – Pressure array</li>
-<li><strong>Tmin</strong> (<em>float</em>) – Minimun temperature allowed</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>float</em> – D2: water leverl projection</li>
-<li><em>float</em> – Pmin: pressure at water level</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the infomation of the layer under the keyword ‘LAYER’ and ‘z_ref’. Also it contains the keyword ‘INCONS_PARAM’ with the specified initial conditions, i.e.:’INCONS_PARAM’:{‘To’:30,’GRADTZ’:0.08,’DEPTH_TO_SURF’:100,’DELTAZ’:20}</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>list</em> – T: initial list of temperature</p></li>
+<li><p><em>list</em> – P: initial list of pressure</p></li>
+<li><p><em>list</em> – depth: range of depth coming from layers</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.patmfromelev">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">patmfromelev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#patmfromelev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.patmfromelev" title="Permalink to this definition">¶</a></dt>
+<dd><p>It fines the atmospheric pressure base on an approximate formula</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>elev</strong> – masl where the pressure is needed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Atmospheric pressure in bar</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">water_level_projection</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="mi">120</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">patmfromelev</span><span class="p">(</span><span class="mi">750</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.top_layer_incons">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">top_layer_incons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_mesh_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_off_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_off_P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#top_layer_incons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.top_layer_incons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies the incon file base on real data a the top elevation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – List the well names, define the INCONS_PARAM and source_txt file.</p></li>
+<li><p><strong>input_mesh_dictionary</strong> (<em>dictionary</em>) – Specify the polygon border defiding path</p></li>
+<li><p><strong>cut_off_T</strong> (<em>float</em>) – The heighest value of temperature a the top layer</p></li>
+<li><p><strong>cut_off_P</strong> (<em>float</em>) – The heighest value of pressure a the top layer</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A file called INCON_MOD will be created on t2/sources</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="t2geores_functions.water_level_projection">
+<span class="sig-prename descclassname"><span class="pre">t2geores_functions.</span></span><span class="sig-name descname"><span class="pre">water_level_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/t2geores_functions.html#water_level_projection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#t2geores_functions.water_level_projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>It projects the water level based on a pressure log</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MD</strong> (<em>array</em>) – Measure depth array</p></li>
+<li><p><strong>P</strong> (<em>array</em>) – Pressure array</p></li>
+<li><p><strong>Tmin</strong> (<em>float</em>) – Minimun temperature allowed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>float</em> – D2: water leverl projection</p></li>
+<li><p><em>float</em> – Pmin: pressure at water level</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">water_level_projection</span><span class="p">(</span><span class="n">MD</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="mi">120</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -433,7 +417,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

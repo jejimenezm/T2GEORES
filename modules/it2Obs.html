@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="model_plots" href="model_plots.html" />
@@ -80,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -160,176 +162,212 @@
             
   <div class="section" id="module-it2Obs">
 <span id="it2obs"></span><h1>it2Obs<a class="headerlink" href="#module-it2Obs" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="it2Obs.it2_weighted_h">
-<code class="descclassname">it2Obs.</code><code class="descname">it2_weighted_h</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#it2_weighted_h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.it2_weighted_h" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.it2_weighted_h">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">it2_weighted_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#it2_weighted_h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.it2_weighted_h" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observation_pres">
-<code class="descclassname">it2Obs.</code><code class="descname">observation_pres</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>use_formation=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observation_pres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observation_pres" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observation_pres">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observation_pres</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_formation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observation_pres"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observation_pres" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observations_delta_it2_filtered">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_delta_it2_filtered</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>obs_info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_delta_it2_filtered"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_delta_it2_filtered" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_delta_it2_filtered">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_delta_it2_filtered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_delta_it2_filtered"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_delta_it2_filtered" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the drawdown observation section for the iTOUGH2 file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</li>
-<li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
-<li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</p></li>
+<li><p><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</p></li>
+<li><p><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The input data comes from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_DD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_DD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observations_to_it2">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>include_pres=False</em>, <em>p_res_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_res_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the section OBSERVATION from iTOUGH2 input file with pressure, temperature, flowing enthalpy and drawdown data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing:the standard deviation allowed for the temperature (in C), pressure (in bar) and flowing enthalpy (in kJ/kg).
-The name and path of the database a list of the wells for calibration and finally the type of run (‘natural’ or ‘production’) e.g. input_dictionary={‘TYPE_RUN’:’production’,’IT2’:{‘T_DEV’:5,’P_DEV’:10,’h_DEV’:100}}</li>
-<li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
-<li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing:the standard deviation allowed for the temperature (in C), pressure (in bar) and flowing enthalpy (in kJ/kg).
+The name and path of the database a list of the wells for calibration and finally the type of run (‘natural’ or ‘production’) e.g. input_dictionary={‘TYPE_RUN’:’production’,’IT2’:{‘T_DEV’:5,’P_DEV’:10,’h_DEV’:100}}</p></li>
+<li><p><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</p></li>
+<li><p><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>file</em> – observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.</li>
-<li><em>file</em> – observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</li>
-<li><em>file</em> – observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</li>
-<li><em>file</em> – it2_ob_prod.dat : it compiles the information during the transient stage. This is when time is higher than zero</li>
-<li><em>file</em> – it2_ob_nat.dat : it compiles the information at time zero.</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>file</em> – observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.</p></li>
+<li><p><em>file</em> – observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</p></li>
+<li><p><em>file</em> – observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p></li>
+<li><p><em>file</em> – it2_ob_prod.dat : it compiles the information during the transient stage. This is when time is higher than zero</p></li>
+<li><p><em>file</em> – it2_ob_nat.dat : it compiles the information at time zero.</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The input data comes from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observations_to_it2_DD">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_DD</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>obs_info</em>, <em>include_pres=False</em>, <em>p_res_block=None</em>, <em>include_wells=True</em>, <em>dates_format=True</em>, <em>show_plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_DD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_DD" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2_DD">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2_DD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_res_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_wells</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_DD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2_DD" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the drawdown observation section for the iTOUGH2 file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</li>
-<li><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</li>
-<li><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</li>
-<li><strong>obs_info</strong> (<em>dictionary</em>) – Includes well name as keyword and an array with [TVD, layer_correlative]</li>
-<li><strong>include_wells</strong> (<em>bool</em>) – If True includes well drawdown include on obs_info, default : True</li>
-<li><strong>dates_format</strong> (<em>bool</em>) – In case SECONDS are prefered on the DATA section, default : True</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{P_DEV’:5}</p></li>
+<li><p><strong>include_pres</strong> (<em>bool</em>) – If True a special file is read: ‘../input/drawdown/p_res.csv’ which contains the long history of pressure fluctuation.</p></li>
+<li><p><strong>p_res_block</strong> (<em>str</em>) – Block name at which monitoring pressure data is recorded</p></li>
+<li><p><strong>obs_info</strong> (<em>dictionary</em>) – Includes well name as keyword and an array with [TVD, layer_correlative]</p></li>
+<li><p><strong>include_wells</strong> (<em>bool</em>) – If True includes well drawdown include on obs_info, default : True</p></li>
+<li><p><strong>dates_format</strong> (<em>bool</em>) – In case SECONDS are prefered on the DATA section, default : True</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observations_dd.dat: on ../model/it2 , the time for every observation is calculated by finding the difference in seconds from a defined reference time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The input data comes from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_DD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_DD</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observations_to_it2_POWER">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_POWER</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>dates_format=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_POWER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_POWER" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2_POWER">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2_POWER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_POWER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2_POWER" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observations_to_it2_PT">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_PT</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_PT" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2_PT">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2_PT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_PT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2_PT" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the observation section for the iTOUGH2 file, coming from formation temperature and pressure</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database and a list of the wells for calibration. e.g. ‘IT2’:{‘T_DEV’:5,’P_DEV’:10}</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the temperature (in C) and pressure (in bar). The name and path of the database and a list of the wells for calibration. e.g. ‘IT2’:{‘T_DEV’:5,’P_DEV’:10}</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observations_PT.dat: on ../model/it2 , assuming the model is run for on a steady state and transient starts on time 0, the observation are stablished at time zero.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The input data comes from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_PT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_PT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="it2Obs.observations_to_it2_h">
-<code class="descclassname">it2Obs.</code><code class="descname">observations_to_it2_h</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>dates_format=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#it2Obs.observations_to_it2_h" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2_h">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2_h" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the flowing enthalpy observation section for the iTOUGH2 file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{‘h_DEV’:100},</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{‘h_DEV’:100},</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observations_h.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The input data comes from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_h</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_h</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2_quality">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_quality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the wellhead steam quality observation section for the iTOUGH2 file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{‘h_DEV’:100},</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observations_whp.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_whp</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="it2Obs.observations_to_it2_whp">
+<span class="sig-prename descclassname"><span class="pre">it2Obs.</span></span><span class="sig-name descname"><span class="pre">observations_to_it2_whp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/it2Obs.html#observations_to_it2_whp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#it2Obs.observations_to_it2_whp" title="Permalink to this definition">¶</a></dt>
+<dd><p>It generates the wellhead pressure observation section for the iTOUGH2 file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the standard deviation allowed for the flowing enthalpy in kJ/kg, a reference date on datetime format and the name and path of the database a list of the wells for calibration. e.g. ‘IT2’:{‘h_DEV’:100},</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observations_whp.dat: on ../model/it2 , the time for every observation is calculated by finding the difference  in seconds from a defined reference time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The input data comes from sqlite</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observations_to_it2_whp</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -356,7 +394,7 @@ The name and path of the database a list of the wells for calibration and finall
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -22,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -34,6 +33,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -79,7 +80,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/geometry.html">geometry</a></li>
@@ -169,7 +170,6 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -201,7 +201,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.change_ref_elevation">change_ref_elevation() (in module regeo_mesh)</a>
 </li>
-      <li><a href="modules/gener.html#gener.check_gener_D">check_gener_D() (in module gener)</a>
+      <li><a href="modules/model_plots.html#model_plots.check_gener_D">check_gener_D() (in module model_plots)</a>
 </li>
       <li><a href="modules/t2geores_functions.html#t2geores_functions.check_in_out">check_in_out() (in module t2geores_functions)</a>
 
@@ -275,15 +275,11 @@
 </li>
       <li><a href="modules/output.html#output.eleme_CSV">eleme_CSV() (in module output)</a>
 </li>
-      <li><a href="modules/output.html#output.eleme_CSV_PT">eleme_CSV_PT() (in module output)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.empty_mesh">empty_mesh() (in module regeo_mesh)</a>
 </li>
       <li><a href="modules/t2geores_functions.html#t2geores_functions.empty_model">empty_model() (in module t2geores_functions)</a>
-</li>
-      <li><a href="modules/model_plots.html#model_plots.enthalpies_field">enthalpies_field() (in module model_plots)</a>
 </li>
       <li><a href="modules/output.html#output.extract_csv_from_t2out">extract_csv_from_t2out() (in module output)</a>
 </li>
@@ -295,22 +291,25 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/writer.html#writer.FCG_file_checker">FCG_file_checker() (in module writer)</a>
 </li>
+      <li><a href="modules/regeo_mesh.html#regeo_mesh.feedpoints_to_vtu">feedpoints_to_vtu() (in module regeo_mesh)</a>
+</li>
       <li><a href="modules/geometry.html#geometry.feedzone_to_GIS">feedzone_to_GIS() (in module geometry)</a>
 </li>
-      <li><a href="modules/model_plots.html#model_plots.field">field() (in module model_plots)</a>
+      <li><a href="modules/output.html#output.flowell">flowell() (in module output)</a>
 </li>
-      <li><a href="modules/output.html#output.field_areas_enthalpy">field_areas_enthalpy() (in module output)</a>
-</li>
-      <li><a href="modules/output.html#output.flow_direction">flow_direction() (in module output)</a>
+      <li><a href="modules/report.html#report.flowell_dates">flowell_dates() (in module report)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/output.html#output.flow_direction2">flow_direction2() (in module output)</a>
-</li>
       <li><a href="modules/writer.html#writer.FOFT_writer">FOFT_writer() (in module writer)</a>
 </li>
-      <li><a href="modules/formats.html#module-formats">formats (module)</a>
+      <li>
+    formats
+
+      <ul>
+        <li><a href="modules/formats.html#module-formats">module</a>
 </li>
+      </ul></li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.from_leapfrog_mesh">from_leapfrog_mesh() (regeo_mesh.py2amesh method)</a>
 </li>
       <li><a href="modules/output.html#output.from_sav_to_json">from_sav_to_json() (in module output)</a>
@@ -321,18 +320,26 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/output.html#output.gen_csv">gen_csv() (in module output)</a>
-</li>
       <li><a href="modules/output.html#output.gen_evol">gen_evol() (in module output)</a>
 </li>
-      <li><a href="modules/gener.html#module-gener">gener (module)</a>
+      <li>
+    gener
+
+      <ul>
+        <li><a href="modules/gener.html#module-gener">module</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/writer.html#writer.GENER_adder">GENER_adder() (in module writer)</a>
 </li>
-      <li><a href="modules/geometry.html#module-geometry">geometry (module)</a>
+      <li>
+    geometry
+
+      <ul>
+        <li><a href="modules/geometry.html#module-geometry">module</a>
 </li>
+      </ul></li>
       <li><a href="modules/writer.html#writer.GOFT_writer">GOFT_writer() (in module writer)</a>
 </li>
   </ul></td>
@@ -365,10 +372,10 @@
 </li>
       <li><a href="modules/txt2sqlite.html#txt2sqlite.insert_drawdown_to_sqlite">insert_drawdown_to_sqlite() (in module txt2sqlite)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/txt2sqlite.html#txt2sqlite.insert_feedzone_to_sqlite">insert_feedzone_to_sqlite() (in module txt2sqlite)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/txt2sqlite.html#txt2sqlite.insert_filtered_mh_to_sqlite">insert_filtered_mh_to_sqlite() (in module txt2sqlite)</a>
 </li>
       <li><a href="modules/txt2sqlite.html#txt2sqlite.insert_layers_to_sqlite">insert_layers_to_sqlite() (in module txt2sqlite)</a>
@@ -391,7 +398,14 @@
 </li>
       <li><a href="modules/output.html#output.it2OBJF">it2OBJF() (in module output)</a>
 </li>
-      <li><a href="modules/it2Obs.html#module-it2Obs">it2Obs (module)</a>
+      <li>
+    it2Obs
+
+      <ul>
+        <li><a href="modules/it2Obs.html#module-it2Obs">module</a>
+</li>
+      </ul></li>
+      <li><a href="modules/geometry.html#geometry.iter_TVD">iter_TVD() (in module geometry)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -415,25 +429,55 @@
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.mesh_creation_func">mesh_creation_func() (in module regeo_mesh)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.mesh_to_paraview">mesh_to_paraview() (in module regeo_mesh)</a>
 </li>
       <li><a href="modules/model_plots.html#model_plots.mh_duplicates">mh_duplicates() (in module model_plots)</a>
 </li>
-      <li><a href="modules/model_plots.html#module-model_plots">model_plots (module)</a>
+      <li><a href="modules/report.html#report.mh_indivual">mh_indivual() (in module report)</a>
 </li>
+      <li>
+    model_plots
+
+      <ul>
+        <li><a href="modules/model_plots.html#module-model_plots">module</a>
+</li>
+      </ul></li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="modules/formats.html#module-formats">formats</a>
+</li>
+        <li><a href="modules/gener.html#module-gener">gener</a>
+</li>
+        <li><a href="modules/geometry.html#module-geometry">geometry</a>
+</li>
+        <li><a href="modules/it2Obs.html#module-it2Obs">it2Obs</a>
+</li>
+        <li><a href="modules/model_plots.html#module-model_plots">model_plots</a>
+</li>
+        <li><a href="modules/output.html#module-output">output</a>
+</li>
+        <li><a href="modules/regeo_mesh.html#module-regeo_mesh">regeo_mesh</a>
+</li>
+        <li><a href="modules/report.html#module-report">report</a>
+</li>
+        <li><a href="modules/run.html#module-run">run</a>
+</li>
+        <li><a href="modules/t2geores_functions.html#module-t2geores_functions">t2geores_functions</a>
+</li>
+        <li><a href="modules/txt2sqlite.html#module-txt2sqlite">txt2sqlite</a>
+</li>
+        <li><a href="modules/writer.html#module-writer">writer</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/writer.html#writer.MOMOP_writer">MOMOP_writer() (in module writer)</a>
 </li>
       <li><a href="modules/writer.html#writer.MULTI_writer">MULTI_writer() (in module writer)</a>
 </li>
-  </ul></td>
-</tr></table>
-
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/output.html#output.normal_directions">normal_directions() (in module output)</a>
+      <li><a href="modules/report.html#report.multiple_PI">multiple_PI() (in module report)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -451,20 +495,27 @@
 </li>
       <li><a href="modules/it2Obs.html#it2Obs.observations_to_it2_h">observations_to_it2_h() (in module it2Obs)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/it2Obs.html#it2Obs.observations_to_it2_POWER">observations_to_it2_POWER() (in module it2Obs)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/it2Obs.html#it2Obs.observations_to_it2_PT">observations_to_it2_PT() (in module it2Obs)</a>
+</li>
+      <li><a href="modules/it2Obs.html#it2Obs.observations_to_it2_quality">observations_to_it2_quality() (in module it2Obs)</a>
+</li>
+      <li><a href="modules/it2Obs.html#it2Obs.observations_to_it2_whp">observations_to_it2_whp() (in module it2Obs)</a>
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.outer_polygon">outer_polygon (regeo_mesh.py2amesh attribute)</a>
 </li>
       <li><a href="modules/writer.html#writer.OUTPU_writer">OUTPU_writer() (in module writer)</a>
 </li>
-      <li><a href="modules/output.html#module-output">output (module)</a>
+      <li>
+    output
+
+      <ul>
+        <li><a href="modules/output.html#module-output">module</a>
 </li>
-      <li><a href="modules/output.html#output.output_flows">output_flows() (in module output)</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -503,12 +554,12 @@
 </li>
       <li><a href="modules/model_plots.html#model_plots.plot_liquid_vs_WHP">plot_liquid_vs_WHP() (in module model_plots)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/gener.html#gener.plot_makeup_wells">plot_makeup_wells() (in module gener)</a>
 </li>
       <li><a href="modules/model_plots.html#model_plots.plot_one_cooling_and_drawdown_from_txt">plot_one_cooling_and_drawdown_from_txt() (in module model_plots)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/model_plots.html#model_plots.plot_one_cooling_from_txt">plot_one_cooling_from_txt() (in module model_plots)</a>
 </li>
       <li><a href="modules/model_plots.html#model_plots.plot_one_drawdown_from_txt">plot_one_drawdown_from_txt() (in module model_plots)</a>
@@ -516,6 +567,8 @@
       <li><a href="modules/model_plots.html#model_plots.plot_one_mh_from_txt">plot_one_mh_from_txt() (in module model_plots)</a>
 </li>
       <li><a href="modules/report.html#report.plot_power">plot_power() (in module report)</a>
+</li>
+      <li><a href="modules/report.html#report.plot_power_flowell">plot_power_flowell() (in module report)</a>
 </li>
       <li><a href="modules/report.html#report.plot_power_it2">plot_power_it2() (in module report)</a>
 </li>
@@ -530,6 +583,10 @@
 </li>
       </ul></li>
       <li><a href="modules/output.html#output.power">power() (in module output)</a>
+</li>
+      <li><a href="modules/output.html#output.power_from_flowell">power_from_flowell() (in module output)</a>
+</li>
+      <li><a href="modules/output.html#output.power_i">power_i() (in module output)</a>
 </li>
       <li><a href="modules/report.html#report.pres">pres() (in module report)</a>
 </li>
@@ -549,26 +606,34 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.radius_select">radius_select() (regeo_mesh.py2amesh method)</a>
 </li>
-      <li><a href="modules/gener.html#gener.raw_to_sqlite">raw_to_sqlite() (in module gener)</a>
-</li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.reasig_feedzone">reasig_feedzone() (in module regeo_mesh)</a>
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.reg_pol_mesh">reg_pol_mesh() (regeo_mesh.py2amesh method)</a>
 </li>
-      <li><a href="modules/regeo_mesh.html#module-regeo_mesh">regeo_mesh (module)</a>
+      <li>
+    regeo_mesh
+
+      <ul>
+        <li><a href="modules/regeo_mesh.html#module-regeo_mesh">module</a>
 </li>
+      </ul></li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.regular_mesh">regular_mesh() (regeo_mesh.py2amesh method)</a>
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.relaxation">relaxation() (regeo_mesh.py2amesh method)</a>
 </li>
       <li><a href="modules/geometry.html#geometry.remap">remap() (in module geometry)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/txt2sqlite.html#txt2sqlite.replace_mh">replace_mh() (in module txt2sqlite)</a>
 </li>
-      <li><a href="modules/report.html#module-report">report (module)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    report
+
+      <ul>
+        <li><a href="modules/report.html#module-report">module</a>
 </li>
+      </ul></li>
       <li><a href="modules/model_plots.html#model_plots.resample">resample() (in module model_plots)</a>
 </li>
       <li><a href="modules/run.html#run.rock_update">rock_update() (in module run)</a>
@@ -577,8 +642,13 @@
 </li>
       <li><a href="modules/writer.html#writer.RPCAP_writer">RPCAP_writer() (in module writer)</a>
 </li>
-      <li><a href="modules/run.html#module-run">run (module)</a>
+      <li>
+    run
+
+      <ul>
+        <li><a href="modules/run.html#module-run">module</a>
 </li>
+      </ul></li>
       <li><a href="modules/run.html#run.run">run() (in module run)</a>
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.run_amesh_from_relaxation">run_amesh_from_relaxation() (regeo_mesh.py2amesh method)</a>
@@ -597,10 +667,14 @@
 </li>
       <li><a href="modules/writer.html#writer.source_to_GOFT">source_to_GOFT() (in module writer)</a>
 </li>
-      <li><a href="modules/txt2sqlite.html#txt2sqlite.sqlite_to_json">sqlite_to_json() (in module txt2sqlite)</a>
+      <li><a href="modules/report.html#report.sources_plots">sources_plots() (in module report)</a>
+</li>
+      <li><a href="modules/gener.html#gener.splitting_gener">splitting_gener() (in module gener)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/txt2sqlite.html#txt2sqlite.sqlite_to_json">sqlite_to_json() (in module txt2sqlite)</a>
+</li>
       <li><a href="modules/output.html#output.src_csv">src_csv() (in module output)</a>
 </li>
       <li><a href="modules/output.html#output.src_evol">src_evol() (in module output)</a>
@@ -623,8 +697,13 @@
 </li>
       <li><a href="modules/output.html#output.t2_to_json">t2_to_json() (in module output)</a>
 </li>
-      <li><a href="modules/t2geores_functions.html#module-t2geores_functions">t2geores_functions (module)</a>
+      <li>
+    t2geores_functions
+
+      <ul>
+        <li><a href="modules/t2geores_functions.html#module-t2geores_functions">module</a>
 </li>
+      </ul></li>
       <li><a href="modules/writer.html#writer.TIMES_writer">TIMES_writer() (in module writer)</a>
 </li>
       <li><a href="modules/writer.html#writer.TITLE_writer">TITLE_writer() (in module writer)</a>
@@ -635,10 +714,10 @@
         <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.to_GIS">(regeo_mesh.py2amesh method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/report.html#report.to_paraview">to_paraview() (in module report)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.to_steinar">to_steinar() (regeo_mesh.py2amesh method)</a>
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.to_translate">to_translate() (regeo_mesh.py2amesh method)</a>
@@ -649,12 +728,19 @@
 </li>
       <li><a href="modules/model_plots.html#model_plots.total_flow">total_flow() (in module model_plots)</a>
 </li>
+      <li><a href="modules/regeo_mesh.html#regeo_mesh.tracks_to_paraview">tracks_to_paraview() (in module regeo_mesh)</a>
+</li>
       <li><a href="modules/geometry.html#geometry.TVD_to_MD">TVD_to_MD() (in module geometry)</a>
 </li>
       <li><a href="modules/geometry.html#geometry.TVD_to_MD_array">TVD_to_MD_array() (in module geometry)</a>
 </li>
-      <li><a href="modules/txt2sqlite.html#module-txt2sqlite">txt2sqlite (module)</a>
+      <li>
+    txt2sqlite
+
+      <ul>
+        <li><a href="modules/txt2sqlite.html#module-txt2sqlite">module</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -686,6 +772,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/t2geores_functions.html#t2geores_functions.water_level_projection">water_level_projection() (in module t2geores_functions)</a>
+</li>
+      <li><a href="modules/report.html#report.WB_scatter">WB_scatter() (in module report)</a>
 </li>
       <li><a href="modules/regeo_mesh.html#regeo_mesh.py2amesh.well_blk_assign">well_blk_assign() (regeo_mesh.py2amesh method)</a>
 </li>
@@ -719,8 +807,13 @@
 </li>
       <li><a href="modules/geometry.html#geometry.write_well_track">write_well_track() (in module geometry)</a>
 </li>
-      <li><a href="modules/writer.html#module-writer">writer (module)</a>
+      <li>
+    writer
+
+      <ul>
+        <li><a href="modules/writer.html#module-writer">module</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -736,7 +829,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

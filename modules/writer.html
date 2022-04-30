@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="formats" href="formats.html" />
@@ -80,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -160,253 +162,229 @@
             
   <div class="section" id="module-writer">
 <span id="writer"></span><h1>writer<a class="headerlink" href="#module-writer" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="writer.ATM_data">
-<code class="descclassname">writer.</code><code class="descname">ATM_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ATM_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.ATM_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.ATM_data">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">ATM_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ATM_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.ATM_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="writer.COFT_writer">
-<code class="descclassname">writer.</code><code class="descname">COFT_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#COFT_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.COFT_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.COFT_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">COFT_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#COFT_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.COFT_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section COFT</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output: contains the COFT section</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>output: contains the COFT section</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.CONNE_adder">
-<code class="descclassname">writer.</code><code class="descname">CONNE_adder</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#CONNE_adder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.CONNE_adder" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.CONNE_adder">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">CONNE_adder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#CONNE_adder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.CONNE_adder" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It takes the CONNE file from ../model/t2/sources and print it as a string</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string : string containing the CONNE section</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string : string containing the CONNE section</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.CONNE_from_steinar_to_t2">
-<code class="descclassname">writer.</code><code class="descname">CONNE_from_steinar_to_t2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#CONNE_from_steinar_to_t2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.CONNE_from_steinar_to_t2" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.CONNE_from_steinar_to_t2">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">CONNE_from_steinar_to_t2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#CONNE_from_steinar_to_t2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.CONNE_from_steinar_to_t2" title="Permalink to this definition">¶</a></dt>
 <dd><p>It takes the CONNE file from steinar and convertir into a CONNE TOUGH2 section (the vertical connections are affected by -1)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">CONNE: on ../model/t2/sources/</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>CONNE: on ../model/t2/sources/</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">Comparing with steinar CONNE format the column width changes with the standard TOUGH2 input file</p>
+<p class="admonition-title">Attention</p>
+<p>Comparing with steinar CONNE format the column width changes with the standard TOUGH2 input file</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CONNE_from_steinar_to_t2</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CONNE_from_steinar_to_t2</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.ELEME_adder">
-<code class="descclassname">writer.</code><code class="descname">ELEME_adder</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ELEME_adder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.ELEME_adder" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.ELEME_adder">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">ELEME_adder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ELEME_adder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.ELEME_adder" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It takes the ELEME file from ../model/t2/sources and print it as a string</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string : string containing the ELEME section</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string : string containing the ELEME section</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.FCG_file_checker">
-<code class="descclassname">writer.</code><code class="descname">FCG_file_checker</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#FCG_file_checker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.FCG_file_checker" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.FCG_file_checker">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">FCG_file_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#FCG_file_checker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.FCG_file_checker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate if the the file defining the FOFT, COFT or GOFT section exits or if it contains more than 100 lines</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – Name of the file to check</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the file to check</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Print messages are expected</p>
+<p class="admonition-title">Note</p>
+<p>Print messages are expected</p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><em>str</em> – string : string containing 100 lines of the selected file</li>
-<li><em>bool</em> – isfile : True if the file exits</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>str</em> – string : string containing 100 lines of the selected file</p></li>
+<li><p><em>bool</em> – isfile : True if the file exits</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.FOFT_writer">
-<code class="descclassname">writer.</code><code class="descname">FOFT_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#FOFT_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.FOFT_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.FOFT_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">FOFT_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#FOFT_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.FOFT_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section FOFT</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output: contains the FOFT section</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>output: contains the FOFT section</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.GENER_adder">
-<code class="descclassname">writer.</code><code class="descname">GENER_adder</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#GENER_adder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.GENER_adder" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.GENER_adder">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">GENER_adder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#GENER_adder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.GENER_adder" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It takes all the GENER section created depending on the type of run production or natural defined on the input dictionary</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary specficing the type of run</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing the GENER section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary specficing the type of run</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string : string containing the GENER section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.GOFT_writer">
-<code class="descclassname">writer.</code><code class="descname">GOFT_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#GOFT_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.GOFT_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.GOFT_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">GOFT_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#GOFT_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.GOFT_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section COFT</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output: contains the COFT section</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>output: contains the COFT section</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.MOMOP_writer">
-<code class="descclassname">writer.</code><code class="descname">MOMOP_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#MOMOP_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.MOMOP_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.MOMOP_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">MOMOP_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#MOMOP_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.MOMOP_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the MOMOP section</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined MOMOP information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing MOMOP section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined MOMOP information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string : string containing MOMOP section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.MULTI_writer">
-<code class="descclassname">writer.</code><code class="descname">MULTI_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#MULTI_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.MULTI_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.MULTI_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">MULTI_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#MULTI_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.MULTI_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section MULTI</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the MULTI information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output: contains the MULTI section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the MULTI information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output: contains the MULTI section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.OUTPU_writer">
-<code class="descclassname">writer.</code><code class="descname">OUTPU_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#OUTPU_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.OUTPU_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.OUTPU_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">OUTPU_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#OUTPU_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.OUTPU_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It writes the OUTPU of TOUGH2 file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the OUTPU information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output: contains the OUTPU section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the OUTPU information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output: contains the OUTPU section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>‘OUTPU’:{‘FORMAT’:[‘CSV’],’ELEMENT_RELATED’:{‘ENTHALPY’:[1],’SECONDARY’:[1,5]},’CONNECTION_RELATED’:{‘FLOW’:[1,2],},’GENER_RELATED’:{‘GENERATION’:[None],’FRACTIONAL FLOW’:[1]}}</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.PARAM_writer">
-<code class="descclassname">writer.</code><code class="descname">PARAM_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#PARAM_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.PARAM_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.PARAM_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">PARAM_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#PARAM_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.PARAM_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the PARAM section</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined parameter information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing PARAM section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined parameter information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string : string containing PARAM section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.ROCKS_writer">
-<code class="descclassname">writer.</code><code class="descname">ROCKS_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ROCKS_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.ROCKS_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.ROCKS_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">ROCKS_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#ROCKS_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.ROCKS_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the ROCKS section</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined parameter information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing ROCKS section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined parameter information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string : string containing ROCKS section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>Dictionary example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">input_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ROCKS&#39;</span><span class="p">:{</span>
@@ -426,281 +404,249 @@
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.RPCAP_writer">
-<code class="descclassname">writer.</code><code class="descname">RPCAP_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#RPCAP_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.RPCAP_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.RPCAP_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">RPCAP_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#RPCAP_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.RPCAP_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section RPCAP</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the RPCAP information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output: contains the RPCAP section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the RPCAP information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output: contains the RPCAP section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.SOLVR_writer">
-<code class="descclassname">writer.</code><code class="descname">SOLVR_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#SOLVR_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.SOLVR_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.SOLVR_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">SOLVR_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#SOLVR_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.SOLVR_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It wraps up the section SOLVR</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output: contains the SOLVR section</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>output: contains the SOLVR section</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.TIMES_writer">
-<code class="descclassname">writer.</code><code class="descname">TIMES_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#TIMES_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.TIMES_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.TIMES_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">TIMES_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#TIMES_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.TIMES_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the TIMES section</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined TIMES information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string : string containing the TIMES section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined TIMES information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string : string containing the TIMES section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.TITLE_writer">
-<code class="descclassname">writer.</code><code class="descname">TITLE_writer</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#TITLE_writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.TITLE_writer" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.TITLE_writer">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">TITLE_writer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#TITLE_writer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.TITLE_writer" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It writes the TITLE of TOUGH2 file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the TITLE information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">output: contains the TITLE section</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the TITLE information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>output: contains the TITLE section</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.converter">
-<code class="descclassname">writer.</code><code class="descname">converter</code><span class="sig-paren">(</span><em>value</em>, <em>format_t2</em>, <em>def_value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.converter" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.converter">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_t2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">def_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#converter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.converter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the input value on the specified format</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>value</strong> (<em>float-str</em>) – Parameter to be written</li>
-<li><strong>format_t2</strong> (<em>dictionary</em>) – Contains the format and default values for every variable</li>
-<li><strong>def_value</strong> (<em>bool</em>) – True in case the default values is used</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>float-str</em>) – Parameter to be written</p></li>
+<li><p><strong>format_t2</strong> (<em>dictionary</em>) – Contains the format and default values for every variable</p></li>
+<li><p><strong>def_value</strong> (<em>bool</em>) – True in case the default values is used</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">format_t2 comes from the file formats.py. In case a new type of section is included, the variable name needs to be specified on the file</p>
+<p class="admonition-title">Note</p>
+<p>format_t2 comes from the file formats.py. In case a new type of section is included, the variable name needs to be specified on the file</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.def_value_selector">
-<code class="descclassname">writer.</code><code class="descname">def_value_selector</code><span class="sig-paren">(</span><em>section</em>, <em>key</em>, <em>input_dictionary</em>, <em>rocks=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#def_value_selector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.def_value_selector" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.def_value_selector">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">def_value_selector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#def_value_selector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.def_value_selector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate if the necessary parameter has been defined on the input file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>section</strong> (<em>str</em>) – Section from TOUGH2 file such as PARAMETER, RPCAP, etc.</li>
-<li><strong>key</strong> (<em>str</em>) – Parameter to evaluate</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined input information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong> (<em>str</em>) – Section from TOUGH2 file such as PARAMETER, RPCAP, etc.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – Parameter to evaluate</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the defined input information</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.diff_seconds">
-<code class="descclassname">writer.</code><code class="descname">diff_seconds</code><span class="sig-paren">(</span><em>ref</em>, <em>date</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#diff_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.diff_seconds" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.diff_seconds">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">diff_seconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#diff_seconds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.diff_seconds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the difference in seconds</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ref</strong> (<em>datetime</em>) – Model’s reference time</li>
-<li><strong>date</strong> (<em>datetime</em>) – An arbitrary time</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref</strong> (<em>datetime</em>) – Model’s reference time</p></li>
+<li><p><strong>date</strong> (<em>datetime</em>) – An arbitrary time</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">diff_seconds : difference in seconds</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>diff_seconds : difference in seconds</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.merge_ELEME_and_in_to_t2">
-<code class="descclassname">writer.</code><code class="descname">merge_ELEME_and_in_to_t2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#merge_ELEME_and_in_to_t2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.merge_ELEME_and_in_to_t2" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.merge_ELEME_and_in_to_t2">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">merge_ELEME_and_in_to_t2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#merge_ELEME_and_in_to_t2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.merge_ELEME_and_in_to_t2" title="Permalink to this definition">¶</a></dt>
 <dd><p>It takes the ELEME file from the steinar directory and convert it into a TOUGH2 format with coordinates</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ELEME: section from TOUGH2 file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>ELEME: section from TOUGH2 file</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">It adds the head of the section.</p>
+<p class="admonition-title">Attention</p>
+<p>It adds the head of the section.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">merge_ELEME_and_in_to_t2</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">merge_ELEME_and_in_to_t2</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.source_to_GOFT">
-<code class="descclassname">writer.</code><code class="descname">source_to_GOFT</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#source_to_GOFT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.source_to_GOFT" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.source_to_GOFT">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">source_to_GOFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#source_to_GOFT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.source_to_GOFT" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It creates the GOFT section base on the well feedzone position nickname</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the data base location information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">GOFT: on ../model/t2/sources</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the data base location information</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GOFT: on ../model/t2/sources</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_to_GOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_to_GOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.t2_input">
-<code class="descclassname">writer.</code><code class="descname">t2_input</code><span class="sig-paren">(</span><em>include_FOFT</em>, <em>include_SOLVR</em>, <em>include_COFT</em>, <em>include_GOFT</em>, <em>include_RPCAP</em>, <em>include_MULTI</em>, <em>include_START</em>, <em>include_TIMES</em>, <em>include_OUTPU</em>, <em>include_MOMOP</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#t2_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.t2_input" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.t2_input">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">t2_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_FOFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_SOLVR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_COFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_GOFT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_RPCAP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_MULTI</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_START</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_TIMES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_OUTPU</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_MOMOP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#t2_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.t2_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It creates the FOFT section base on the well feedzone position</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with all the necessary information to define a model</li>
-<li><strong>include_FOFT</strong> (<em>bool</em>) – If true includes the FOFT section on the TOUGH2 file</li>
-<li><strong>include_SOLVR</strong> (<em>bool</em>) – If true includes the SOLVR section on the TOUGH2 file</li>
-<li><strong>include_COFT</strong> (<em>bool</em>) – If true includes the COFT section on the TOUGH2 file</li>
-<li><strong>include_GOFT</strong> (<em>bool</em>) – If true includes the GOFT section on the TOUGH2 file</li>
-<li><strong>include_RPCAP</strong> (<em>bool</em>) – If true includes the RPCAP section on the TOUGH2 file</li>
-<li><strong>include_MULTI</strong> (<em>bool</em>) – If true includes the MULTI section on the TOUGH2 file</li>
-<li><strong>include_START</strong> (<em>bool</em>) – If true includes the START sentence is added on the top of PARAM section</li>
-<li><strong>include_OUTPU</strong> (<em>bool</em>) – If true includes the OUTPU section on the TOUGH2 file</li>
-<li><strong>include_TIMES</strong> (<em>bool</em>) – If true includes the TIMES section on the TOUGH2 file</li>
-<li><strong>include_MOMOP</strong> (<em>bool</em>) – If true includes the MOMOP section on the TOUGH2 file</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with all the necessary information to define a model</p></li>
+<li><p><strong>include_FOFT</strong> (<em>bool</em>) – If true includes the FOFT section on the TOUGH2 file</p></li>
+<li><p><strong>include_SOLVR</strong> (<em>bool</em>) – If true includes the SOLVR section on the TOUGH2 file</p></li>
+<li><p><strong>include_COFT</strong> (<em>bool</em>) – If true includes the COFT section on the TOUGH2 file</p></li>
+<li><p><strong>include_GOFT</strong> (<em>bool</em>) – If true includes the GOFT section on the TOUGH2 file</p></li>
+<li><p><strong>include_RPCAP</strong> (<em>bool</em>) – If true includes the RPCAP section on the TOUGH2 file</p></li>
+<li><p><strong>include_MULTI</strong> (<em>bool</em>) – If true includes the MULTI section on the TOUGH2 file</p></li>
+<li><p><strong>include_START</strong> (<em>bool</em>) – If true includes the START sentence is added on the top of PARAM section</p></li>
+<li><p><strong>include_OUTPU</strong> (<em>bool</em>) – If true includes the OUTPU section on the TOUGH2 file</p></li>
+<li><p><strong>include_TIMES</strong> (<em>bool</em>) – If true includes the TIMES section on the TOUGH2 file</p></li>
+<li><p><strong>include_MOMOP</strong> (<em>bool</em>) – If true includes the MOMOP section on the TOUGH2 file</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">t2: on ../model/t2/t2</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>t2: on ../model/t2/t2</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_input</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">include_FOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_COFT</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_GOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_MULTI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_START</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_MOMOP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_OUTPU</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_input</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">include_FOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_SOLVR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_COFT</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_GOFT</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_RPCAP</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_MULTI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_START</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_MOMOP</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">include_OUTPU</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.well_sources_to_FOFT">
-<code class="descclassname">writer.</code><code class="descname">well_sources_to_FOFT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>wells</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#well_sources_to_FOFT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.well_sources_to_FOFT" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.well_sources_to_FOFT">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">well_sources_to_FOFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#well_sources_to_FOFT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.well_sources_to_FOFT" title="Permalink to this definition">¶</a></dt>
 <dd><p>“It creates the FOFT section base on the well feedzone position</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the data base location information</li>
-<li><strong>wells</strong> (<em>list</em>) – Wells to include on the FOFT section</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the data base location information</p></li>
+<li><p><strong>wells</strong> (<em>list</em>) – Wells to include on the FOFT section</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FOFT: on ../model/t2/sources</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>FOFT: on ../model/t2/sources</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">well_sources_to_FOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">well_sources_to_FOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="writer.wells_track_blocks_to_FOFT">
-<code class="descclassname">writer.</code><code class="descname">wells_track_blocks_to_FOFT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>wells</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#wells_track_blocks_to_FOFT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#writer.wells_track_blocks_to_FOFT" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="writer.wells_track_blocks_to_FOFT">
+<span class="sig-prename descclassname"><span class="pre">writer.</span></span><span class="sig-name descname"><span class="pre">wells_track_blocks_to_FOFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/writer.html#wells_track_blocks_to_FOFT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#writer.wells_track_blocks_to_FOFT" title="Permalink to this definition">¶</a></dt>
 <dd><p>It creates the FOFT section base on the well track</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the data base location information</li>
-<li><strong>wells</strong> (<em>list</em>) – Wells to include on the FOFT section</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary with the data base location information</p></li>
+<li><p><strong>wells</strong> (<em>list</em>) – Wells to include on the FOFT section</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FOFT: on ../model/t2/sources</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>FOFT: on ../model/t2/sources</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">This function could have more than 100 elements depending on the number of layers and wells defined. For TOUGH2 6.x it is preffereable to use well_sources_to_FOFT</p>
+<p class="admonition-title">Attention</p>
+<p>This function could have more than 100 elements depending on the number of layers and wells defined. For TOUGH2 6.x it is preffereable to use well_sources_to_FOFT</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wells_track_blocks_to_FOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wells_track_blocks_to_FOFT</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -727,7 +673,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

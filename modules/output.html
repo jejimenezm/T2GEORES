@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="regeo_mesh" href="regeo_mesh.html" />
@@ -80,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -160,410 +162,460 @@
             
   <div class="section" id="module-output">
 <span id="output"></span><h1>output<a class="headerlink" href="#module-output" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="output.PTjson_to_sqlite">
-<code class="descclassname">output.</code><code class="descname">PTjson_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>source='t2'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#PTjson_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.PTjson_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.PTjson_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">PTjson_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t2'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#PTjson_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.PTjson_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores the defined json file into the database on the table t2PTout</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>source</strong> (<em>str</em>) – It can be ‘t2’ or ‘sav’</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>str</em>) – It can be ‘t2’ or ‘sav’</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PTjson_to_sqlite</span><span class="p">(</span><span class="s2">&quot;t2&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PTjson_to_sqlite</span><span class="p">(</span><span class="s2">&quot;t2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.eleme_CSV">
-<code class="descclassname">output.</code><code class="descname">eleme_CSV</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#eleme_CSV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.eleme_CSV" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.eleme_CSV">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">eleme_CSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#eleme_CSV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.eleme_CSV" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>It generates an output file for every element of every well. It is one of the most computationally demanding functions.</dt><dd><p>It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’ and the TOUGH2 file name.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – In case a the output file is in a different location. Such as a server.</p></li>
+<li><p><strong>cutoff_time</strong> (<em>float</em>) – Max time to storage</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well}_PT_evol.dat : on  ../output/PT/evol for every well</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>files</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="function">
-<dt id="output.eleme_CSV_PT">
-<code class="descclassname">output.</code><code class="descname">eleme_CSV_PT</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>path=None</em>, <em>def_time=300</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#eleme_CSV_PT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.eleme_CSV_PT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="output.extract_csv_from_t2out">
-<code class="descclassname">output.</code><code class="descname">extract_csv_from_t2out</code><span class="sig-paren">(</span><em>json_output=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#extract_csv_from_t2out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.extract_csv_from_t2out" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.extract_csv_from_t2out">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">extract_csv_from_t2out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#extract_csv_from_t2out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.extract_csv_from_t2out" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes the parameter for every block from the last output file of TOUGH2 simulation on csv or json</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>json_output</strong> (<em>bool</em>) – If True a json file is save on ../output/PT/json/</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">PT.csv: on ../output/PT/csv/</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>json_output</strong> (<em>bool</em>) – If True a json file is save on ../output/PT/json/</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PT.csv: on ../output/PT/csv/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The file ELEME.json needs to be updated</p>
+<p class="admonition-title">Attention</p>
+<p>The file ELEME.json needs to be updated</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.field_areas_enthalpy">
-<code class="descclassname">output.</code><code class="descname">field_areas_enthalpy</code><span class="sig-paren">(</span><em>wells</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#field_areas_enthalpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.field_areas_enthalpy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="output.flow_direction">
-<code class="descclassname">output.</code><code class="descname">flow_direction</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#flow_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.flow_direction" title="Permalink to this definition">¶</a></dt>
-<dd><p>not documented</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.flowell">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">flowell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#flowell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.flowell" title="Permalink to this definition">¶</a></dt>
+<dd><p>It extracts from the conventional TOUGH2 output file the FLOWELL data for every well.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, the specified layers and the reference date</p></li>
+<li><p><strong>init_values</strong> (<em>int</em>) – Number of possible number initial values for FLOWELL output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>flowell.json: at output/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>File</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.flow_direction2">
-<code class="descclassname">output.</code><code class="descname">flow_direction2</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#flow_direction2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.flow_direction2" title="Permalink to this definition">¶</a></dt>
-<dd><p>not documented</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="output.from_sav_to_json">
-<code class="descclassname">output.</code><code class="descname">from_sav_to_json</code><span class="sig-paren">(</span><em>sav_version='sav1'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#from_sav_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.from_sav_to_json" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.from_sav_to_json">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">from_sav_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sav_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sav1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#from_sav_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.from_sav_to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes a json file with temperature and pressure data from the specified .sav for every block including coordinates</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sav_version</strong> (<em>str</em>) – Extension of sav file, i.e. sav, sav1, sav2, etc.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">PT_json_from_sav.txt : on  ../output/PT/json/</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sav_version</strong> (<em>str</em>) – Extension of sav file, i.e. sav, sav1, sav2, etc.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PT_json_from_sav.txt : on  ../output/PT/json/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The ELEME.json file needs to be updated</p>
+<p class="admonition-title">Attention</p>
+<p>The ELEME.json file needs to be updated</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">from_sav_to_json</span><span class="p">(</span><span class="n">sav_version</span><span class="o">=</span><span class="s1">&#39;sav1&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">from_sav_to_json</span><span class="p">(</span><span class="n">sav_version</span><span class="o">=</span><span class="s1">&#39;sav1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.gen_csv">
-<code class="descclassname">output.</code><code class="descname">gen_csv</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#gen_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.gen_csv" title="Permalink to this definition">¶</a></dt>
-<dd><p>It generates an output file containing flow and flowing enthalpy for each GEN element from the T2 .csv output file. As a convention the library it is suggested to use GEN for any source/sink that is not a well</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="output.gen_evol">
-<code class="descclassname">output.</code><code class="descname">gen_evol</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#gen_evol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.gen_evol" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.gen_evol">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">gen_evol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#gen_evol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.gen_evol" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates an output file containing flow and flowing enthalpy for each GEN element. As a convention the library it is suggested to use GEN for any source/sink that is not a well</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.it2COF">
-<code class="descclassname">output.</code><code class="descname">it2COF</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2COF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.it2COF" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.it2COF">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">it2COF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2COF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.it2COF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts the COF value for each block on the OBSERVATION section of the inverse file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">COF_PT.json: on the output/PT/json/ folder</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>COF_PT.json: on the output/PT/json/ folder</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">It might changed based on the iTOUGH2 version</p>
+<p class="admonition-title">Attention</p>
+<p>It might changed based on the iTOUGH2 version</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2COF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2COF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.it2DATASET">
-<code class="descclassname">output.</code><code class="descname">it2DATASET</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2DATASET"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.it2DATASET" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.it2DATASET">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">it2DATASET</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2DATASET"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.it2DATASET" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts the OBSERVATION dataset on the the inverse file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">it2_PT.json: on the output/PT/json/ folder</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>it2_PT.json: on the output/PT/json/ folder</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">It might changed based on the iTOUGH2 version</p>
+<p class="admonition-title">Attention</p>
+<p>It might changed based on the iTOUGH2 version</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2DATASET</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2DATASET</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.it2OBJF">
-<code class="descclassname">output.</code><code class="descname">it2OBJF</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2OBJF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.it2OBJF" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.it2OBJF">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">it2OBJF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#it2OBJF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.it2OBJF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts the value of the objective function from the output inverse file and append it with the current time</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">OBJ.json: on the output/PT/json/ folder</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the iTOUGH2 file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>OBJ.json: on the output/PT/json/ folder</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">It might changed based on the iTOUGH2 version</p>
+<p class="admonition-title">Attention</p>
+<p>It might changed based on the iTOUGH2 version</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2OBJF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it2OBJF</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.normal_directions">
-<code class="descclassname">output.</code><code class="descname">normal_directions</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>block</em>, <em>block2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#normal_directions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.normal_directions" title="Permalink to this definition">¶</a></dt>
-<dd><p>not documented</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.power">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WHP</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.power" title="Permalink to this definition">¶</a></dt>
+<dd><p>When all the well feedzones are declare as MASS type in the TOUGH2 input file, this functions estimates the power generation based on the assumption of an isoenthalpic expansion from the feedzone to the wellhead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’</p></li>
+<li><p><strong>WHP</strong> (<em>dictionary</em>) – Using the structure: ‘well’:[WHP, ESC, ‘unit’, ‘masstype’]. masstype could be either MASS or FLOWELL</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>units_power.csv: in output/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>File</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.output_flows">
-<code class="descclassname">output.</code><code class="descname">output_flows</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#output_flows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.output_flows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read the .out file from the standard TOUGH2 file and store the data into a database. It includes the model version and timestamp.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.power_from_flowell">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">power_from_flowell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WHP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exceptions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#power_from_flowell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.power_from_flowell" title="Permalink to this definition">¶</a></dt>
+<dd><p>When all the well feedzones are declare as MASS and FLOWELL type in the TOUGH2 input file, this functions estimates the power generation based on the assumption of an isoenthalpic expansion from the feedzone to the wellhead for the MASS type
+and takes directly the steam saturation at the wellhead when it comes from FLOWELL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’</p></li>
+<li><p><strong>WHP</strong> (<em>dictionary</em>) – Using the structure: ‘well’:[WHP, ESC, ‘unit’, ‘masstype’]. masstype could be either MASS or FLOWELL</p></li>
+<li><p><strong>exceptions</strong> (<em>list</em>) – List of sources listed as FLOWELL than will be treated as MASS. It occurs when just one period from the wells are calibrate with FLOWELL.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>units_power_flowell.csv: in output/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>File</p>
+</dd>
+</dl>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Functions src_csv() and eleme_CSV() should be ran before executing this function</p>
+</div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.power">
-<code class="descclassname">output.</code><code class="descname">power</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>WHP</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.power" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="output.src_csv">
-<code class="descclassname">output.</code><code class="descname">src_csv</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#src_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.src_csv" title="Permalink to this definition">¶</a></dt>
-<dd><p>It generates an output file containing flow and flowing enthalpy for each GEN element from the T2 .csv output file. As a convention the library it is suggested to use GEN for any source/sink that is not a well</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.power_i">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">power_i</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Px</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ESC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atm_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.092</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#power_i"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.power_i" title="Permalink to this definition">¶</a></dt>
+<dd><p>It calculates an stimated power output and steam saturation, based on a isoenthalpic expansion</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Px</strong> (<em>float</em>) – Assumed wellhead pressure</p></li>
+<li><p><strong>hx</strong> (<em>float</em>) – Flowing enthalpy pressure</p></li>
+<li><p><strong>mx</strong> (<em>float</em>) – Mass flow rate</p></li>
+<li><p><strong>ESC</strong> (<em>float</em>) – Assumed specific steam consumption</p></li>
+<li><p><strong>atm_p</strong> (<em>float</em>) – Atmosphere presure in bar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[power, saturation]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.src_evol">
-<code class="descclassname">output.</code><code class="descname">src_evol</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#src_evol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.src_evol" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.src_csv">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">src_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SRC'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#src_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.src_csv" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>It generates an output file containing flow and flowing enthalpy for each sources listed in the GENER section in the TOUGH2 input file..</dt><dd><p>It expects to read the TOUGH2_gener.csv file</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’ and the TOUGH2 file name.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – In case a the output file is in a different location. Such as a server.</p></li>
+<li><p><strong>type_source</strong> (<em>str</em>) – Either SRC or GEN</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{SOURCE}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt for every source</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>files</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="output.src_evol">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">src_evol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#src_evol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.src_evol" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates an output file containing flow and flowing enthalpy for each SRC element. As a convention the library it is suggested to use SRC for any source/sink that is a well</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{GEN}_{BLOCK}_{NICKNAME}.txt : on  ../output/mh/txt</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.t2_CSV_to_json">
-<code class="descclassname">output.</code><code class="descname">t2_CSV_to_json</code><span class="sig-paren">(</span><em>itime=None</em>, <em>all_times=False</em>, <em>path=None</em>, <em>num=None</em>, <em>last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#t2_CSV_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.t2_CSV_to_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>It creates a severals or a single json file from the output file from the TOUGH2 run</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</li>
-<li><strong>save_full</strong> (<em>bool</em>) – If True it creates a single output json file</li>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.t2_CSV_to_json">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">t2_CSV_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_times</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">220</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#t2_CSV_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.t2_CSV_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>It creates severals or a single json file from the output file from the TOUGH2 run. Each of them for diffent output times.</dt><dd><p>It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – In case a the output file is in a different location. Such as a server.</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the TOUGH2 file name.</p></li>
+<li><p><strong>all_times</strong> (<em>bool</em>) – If True it saves all the output times (It does not consider itime). If False, it considers itime.</p></li>
+<li><p><strong>output_times</strong> (<em>int</em>) – It is an stimation of the number of output times in the TOUGH2 file. Due to its large runtime it has not been implemented, in Linux the command: grep ‘TIMES’ {T2_output_file.csv} | wl -c, would give the right number</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – Based on a linear spacing it gives the number of output_times that would be store. If None it will store every output time.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>files</em> – t2_ouput_{time}.json: on ../output/PT/json/evol/</li>
-<li><em>file</em> – t2_output:  on ../output/PT/json/</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>t2_ouput_{time}.json: on ../output/PT/json/evol/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>files</p>
+</dd>
+</dl>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>When t2_output is saved, the large could be too large for the system to handle it. The file mesh/ELEME.json has to be created</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="output.t2_to_json">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">t2_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#t2_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.t2_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>It creates a severals or a single json file from the output file from the TOUGH2 run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</p></li>
+<li><p><strong>save_full</strong> (<em>bool</em>) – If True it creates a single output json file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>files</em> – t2_ouput_{time}.json: on ../output/PT/json/evol/</p></li>
+<li><p><em>file</em> – t2_output:  on ../output/PT/json/</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">When t2_output is saved, the large could be too large for the system to handle it</p>
+<p class="admonition-title">Attention</p>
+<p>When t2_output is saved, the large could be too large for the system to handle it</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_to_json</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_to_json</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.t2_to_json">
-<code class="descclassname">output.</code><code class="descname">t2_to_json</code><span class="sig-paren">(</span><em>itime=None</em>, <em>save_full=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#t2_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.t2_to_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>It creates a severals or a single json file from the output file from the TOUGH2 run</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>itime</strong> (<em>float</em>) – It defines a time at which a the parameters from the blocks are extracted into json file. Must be on the same units as the TOUGH2 output files (days, seconds, etc.)</li>
-<li><strong>save_full</strong> (<em>bool</em>) – If True it creates a single output json file</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>files</em> – t2_ouput_{time}.json: on ../output/PT/json/evol/</li>
-<li><em>file</em> – t2_output:  on ../output/PT/json/</li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.total_enthalpy">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">total_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#total_enthalpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.total_enthalpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>It creates an output file containing the weighted flowing enthalpy from the producing wells.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wells</strong> (<em>list</em>) – Contains the producer wells included in the calculation.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>total_prod_mh.csv: in input/mh/</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>files</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">When t2_output is saved, the large could be too large for the system to handle it</p>
-</div>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t2_to_json</span><span class="p">()</span>
-</pre></div>
+<p class="admonition-title">Attention</p>
+<p>Each file has to be previously storage. It does a forward fill, since it is necessary to have one value at least per day for every well.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.total_enthalpy">
-<code class="descclassname">output.</code><code class="descname">total_enthalpy</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>wells</em>, <em>years=35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#total_enthalpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.total_enthalpy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="output.write_PT_from_t2output">
-<code class="descclassname">output.</code><code class="descname">write_PT_from_t2output</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#write_PT_from_t2output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.write_PT_from_t2output" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.write_PT_from_t2output">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">write_PT_from_t2output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#write_PT_from_t2output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.write_PT_from_t2output" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes the parameter for every block from every well from the last output file of TOUGH2 simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{well_name}_PT.txt: file containing the information for every block from every well</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well_name}_PT.txt: file containing the information for every block from every well</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The layers and well block need  to be on the databse</p>
+<p class="admonition-title">Attention</p>
+<p>The layers and well block need  to be on the databse</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_PT_from_t2output</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_PT_from_t2output</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.write_PT_from_t2output_from_prod">
-<code class="descclassname">output.</code><code class="descname">write_PT_from_t2output_from_prod</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>sav_version='sav1'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#write_PT_from_t2output_from_prod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.write_PT_from_t2output_from_prod" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.write_PT_from_t2output_from_prod">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">write_PT_from_t2output_from_prod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sav_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sav1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#write_PT_from_t2output_from_prod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.write_PT_from_t2output_from_prod" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes a pressure and temperature comming from block on every well in the specified .sav file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</li>
-<li><strong>sav_version</strong> (<em>str</em>) – Extension of sav file, i.e. sav, sav1, sav2, etc.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’.</p></li>
+<li><p><strong>sav_version</strong> (<em>str</em>) – Extension of sav file, i.e. sav, sav1, sav2, etc.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{well_name}_PT.txt: it contains the pressure and temperature information for every well</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well_name}_PT.txt: it contains the pressure and temperature information for every well</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="output.write_PT_of_wells_from_t2output_in_time">
-<code class="descclassname">output.</code><code class="descname">write_PT_of_wells_from_t2output_in_time</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#write_PT_of_wells_from_t2output_in_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#output.write_PT_of_wells_from_t2output_in_time" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="output.write_PT_of_wells_from_t2output_in_time">
+<span class="sig-prename descclassname"><span class="pre">output.</span></span><span class="sig-name descname"><span class="pre">write_PT_of_wells_from_t2output_in_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/output.html#write_PT_of_wells_from_t2output_in_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#output.write_PT_of_wells_from_t2output_in_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates file containing the evolution of every block on every well</p>
 <p>Extrae la evolucion de los bloques relacionados de todos los pozos en la direccion “../output/PT/evol”</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{well}_PT_{layer}.txt : on  ../output/PT/evol</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, list of wells under the keywords ‘WELLS’, ‘MAKE_UP_WELLS’ and ‘NOT_PRODUCING_WELL’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{well}_PT_{layer}.txt : on  ../output/PT/evol</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_PT_of_wells_from_t2output_in_time</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_PT_of_wells_from_t2output_in_time</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -590,7 +642,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="writer" href="writer.html" />
@@ -80,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gener.html">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -160,341 +162,301 @@
             
   <div class="section" id="module-txt2sqlite">
 <span id="txt2sqlite"></span><h1>txt2sqlite<a class="headerlink" href="#module-txt2sqlite" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="txt2sqlite.checktable">
-<code class="descclassname">txt2sqlite.</code><code class="descname">checktable</code><span class="sig-paren">(</span><em>table_name</em>, <em>c</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#checktable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.checktable" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.checktable">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">checktable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#checktable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.checktable" title="Permalink to this definition">¶</a></dt>
 <dd><p>It verifies the existance of a table on the sqlite database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>table_name</strong> (<em>str</em>) – Table name</li>
-<li><strong>c</strong> (<em>cursor</em>) – Conection to the database</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<em>str</em>) – Table name</p></li>
+<li><p><strong>c</strong> (<em>cursor</em>) – Conection to the database</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">check: if table exists returns 1</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>check: if table exists returns 1</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">checktable</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">checktable</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.db_creation">
-<code class="descclassname">txt2sqlite.</code><code class="descname">db_creation</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#db_creation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.db_creation" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.db_creation">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">db_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#db_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.db_creation" title="Permalink to this definition">¶</a></dt>
 <dd><p>It creates a sqlite databa base</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, usually on ‘../input/’</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">name: database on desire path</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">database</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary contaning the path and name of database on keyword ‘db_path’, usually on ‘../input/’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>name: database on desire path</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>database</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The tables: wells, survey, PT, mh, drawdown, cooling, wellfeedzone, t2wellblock, t2wellsource, layers and t2PTout are generated</p>
+<p class="admonition-title">Note</p>
+<p>The tables: wells, survey, PT, mh, drawdown, cooling, wellfeedzone, t2wellblock, t2wellsource, layers and t2PTout are generated</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">db_creation</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">db_creation</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_PT_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_PT_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_PT_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_PT_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_PT_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_PT_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_PT_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_PT_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder PT from the input file folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The PT for every well must have the next headers MD,P,T. The file name must be well_MDPT.dat</p>
+<p class="admonition-title">Note</p>
+<p>The PT for every well must have the next headers MD,P,T. The file name must be well_MDPT.dat</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_PT_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_PT_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_cooling_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_cooling_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_cooling_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_cooling_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_cooling_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_cooling_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_cooling_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_cooling_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder cooling from the input file folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The cooling register on every well must have the next headers datetime,TVD,temperature. The file name must be well_C.dat</p>
+<p class="admonition-title">Note</p>
+<p>The cooling register on every well must have the next headers datetime,TVD,temperature. The file name must be well_C.dat</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_cooling_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_cooling_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_drawdown_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_drawdown_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_drawdown_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_drawdown_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_drawdown_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_drawdown_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_drawdown_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_drawdown_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder drawdown from the input file folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The drawdown register on every well must have the next headers datetime,TVD,pressure. The file name must be well_DD.dat</p>
+<p class="admonition-title">Note</p>
+<p>The drawdown register on every well must have the next headers datetime,TVD,pressure. The file name must be well_DD.dat</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_drawdown_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_drawdown_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_feedzone_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_feedzone_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_feedzone_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_feedzone_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_feedzone_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_feedzone_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_feedzone_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_feedzone_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores the data contain on the ubication.csv file and stores it on the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_feedzone_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_feedzone_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_filtered_mh_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_filtered_mh_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>single_well=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_filtered_mh_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_filtered_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_filtered_mh_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_filtered_mh_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_well</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_filtered_mh_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_filtered_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder mh from the input file folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+<p class="admonition-title">Note</p>
+<p>Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
 type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_layers_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_layers_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_layers_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_layers_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_layers_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_layers_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_layers_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_layers_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores layers and elevations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The data information comes from the input_dictionary which must have a keyword layer with a similar structure as following: ‘LAYERS’:{1:[‘A’,100],2:[‘B’, 100]}. Some print output are expected.</p>
+<p class="admonition-title">Note</p>
+<p>The data information comes from the input_dictionary which must have a keyword layer with a similar structure as following: ‘LAYERS’:{1:[‘A’,100],2:[‘B’, 100]}. Some print output are expected.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_layers_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_layers_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_raw_mh_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_raw_mh_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_raw_mh_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_raw_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_raw_mh_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_raw_mh_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_raw_mh_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_raw_mh_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder mh from the input file folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+<p class="admonition-title">Note</p>
+<p>Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
 type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_mh_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_survey_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_survey_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_survey_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_survey_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_survey_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_survey_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_survey_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_survey_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder survey from the input file folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The survey for every well must have the next headers MeasuredDepth,Delta_north,Delta_east</p>
+<p class="admonition-title">Note</p>
+<p>The survey for every well must have the next headers MeasuredDepth,Delta_north,Delta_east</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_survey_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_survey_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_wellblock_to_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_wellblock_to_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_wellblock_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_wellblock_to_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_wellblock_to_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_wellblock_to_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_wellblock_to_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_wellblock_to_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores the file wells_correlative.txt coming from regeo_mesh on the table t2wellblock</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the  name and path of database ans well types WELLS, MAKE_UP_WELLS and NOT_PRODUCING_WELLS</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – A dictionary containing the  name and path of database ans well types WELLS, MAKE_UP_WELLS and NOT_PRODUCING_WELLS</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The correlative from each wells just contains four characthers. Some print output are expected.</p>
+<p class="admonition-title">Note</p>
+<p>The correlative from each wells just contains four characthers. Some print output are expected.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_wellblock_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_wellblock_to_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.insert_wells_sqlite">
-<code class="descclassname">txt2sqlite.</code><code class="descname">insert_wells_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_wells_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.insert_wells_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.insert_wells_sqlite">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">insert_wells_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#insert_wells_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.insert_wells_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores the data contain on the ubication.csv file and stores it on the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The well name is written as primary key. Thus, if the coordinates of the file ubication.csv change, it is better to
+<p class="admonition-title">Note</p>
+<p>The well name is written as primary key. Thus, if the coordinates of the file ubication.csv change, it is better to
 eliminate the records and rerun this function again. Some print are expected.</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_wells_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">insert_wells_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.replace_mh">
-<code class="descclassname">txt2sqlite.</code><code class="descname">replace_mh</code><span class="sig-paren">(</span><em>wells_to_replace</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#replace_mh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.replace_mh" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.replace_mh">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">replace_mh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wells_to_replace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#replace_mh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.replace_mh" title="Permalink to this definition">¶</a></dt>
 <dd><p>It stores all the data contain on the subfolder mh from the input file folder from some selected wells</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</li>
-<li><strong>wells_to_replace</strong> (<em>list</em>) – Contains the data from the wells which flow data will be replace</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p></li>
+<li><p><strong>wells_to_replace</strong> (<em>list</em>) – Contains the data from the wells which flow data will be replace</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+<p class="admonition-title">Note</p>
+<p>Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
 type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">replace_mh</span><span class="p">(</span><span class="n">wells_to_replace</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WELL-1&#39;</span><span class="p">,</span><span class="s1">&#39;WELL-2&#39;</span><span class="p">],</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">replace_mh</span><span class="p">(</span><span class="n">wells_to_replace</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WELL-1&#39;</span><span class="p">,</span><span class="s1">&#39;WELL-2&#39;</span><span class="p">],</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.sqlite_to_json">
-<code class="descclassname">txt2sqlite.</code><code class="descname">sqlite_to_json</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#sqlite_to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.sqlite_to_json" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.sqlite_to_json">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">sqlite_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#sqlite_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.sqlite_to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>It exports the database into a single json file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It creates from the tables wells, survey, PT, mh, drawdown, wellfeedzone, t2wellblock and t2wellsource a  json file, using as ID the field well</p>
+<p class="admonition-title">Note</p>
+<p>It creates from the tables wells, survey, PT, mh, drawdown, wellfeedzone, t2wellblock and t2wellsource a  json file, using as ID the field well</p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><strong>dictionary</strong> – levels : configuration dictionary, indicates the table name, the ID to use and the field to use on each table</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><p><strong>dictionary</strong> – levels : configuration dictionary, indicates the table name, the ID to use and the field to use on each table</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">sqlite_to_json</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span> <span class="n">sqlite_to_json</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="txt2sqlite.src_rocktype">
-<code class="descclassname">txt2sqlite.</code><code class="descname">src_rocktype</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#src_rocktype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#txt2sqlite.src_rocktype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="txt2sqlite.src_rocktype">
+<span class="sig-prename descclassname"><span class="pre">txt2sqlite.</span></span><span class="sig-name descname"><span class="pre">src_rocktype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/txt2sqlite.html#src_rocktype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#txt2sqlite.src_rocktype" title="Permalink to this definition">¶</a></dt>
+<dd><p>It sets the rocktype for each source on the table t2wellsource, based on the data on ELEME.json</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 
@@ -518,7 +480,7 @@ type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>

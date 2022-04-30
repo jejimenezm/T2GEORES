@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="geometry" href="geometry.html" />
@@ -80,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">gener</a></li>
 <li class="toctree-l1"><a class="reference internal" href="geometry.html">geometry</a></li>
@@ -160,246 +162,239 @@
             
   <div class="section" id="module-gener">
 <span id="gener"></span><h1>gener<a class="headerlink" href="#module-gener" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="gener.check_gener_D">
-<code class="descclassname">gener.</code><code class="descname">check_gener_D</code><span class="sig-paren">(</span><em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#check_gener_D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.check_gener_D" title="Permalink to this definition">¶</a></dt>
-<dd><p>It plots the listed wells on an input dictionary from the T2 input file.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="gener.create_well_flow">
-<code class="descclassname">gener.</code><code class="descname">create_well_flow</code><span class="sig-paren">(</span><em>flow_times</em>, <em>input_dictionary</em>, <em>include_gener=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#create_well_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.create_well_flow" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.create_well_flow">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">create_well_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_gener</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#create_well_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.create_well_flow" title="Permalink to this definition">¶</a></dt>
 <dd><p>It creates a mh text file for every well on the input dictionary. These wells need to have been defined on the general input_dictionary before the mesh was created</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>flow_times</strong> (<em>dictionary</em>) – e.g. ‘WELL-1’ : [[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)]  #Initial day of operation , [1.5,1.5]  #Steam value for every time step,   [15,15]#Brine value for every time step, [1100,1100] #Flowing enthalpy value for every time step , [7,7]  #WHP, ‘P’  #P for producer and I for injector],</li>
-<li><strong>include_gener</strong> (<em>bool</em>) – If True it creates a file GENER_MAKEUP, from which the wells define on this section can be included on the TOUGH2 input file and
-the data from newly generated file is added/overwritten to the sqlite databse</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flow_times</strong> (<em>dictionary</em>) – e.g. ‘WELL-1’ : [[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)]  #Initial day of operation , [1.5,1.5]  #Steam value for every time step,   [15,15]#Brine value for every time step, [1100,1100] #Flowing enthalpy value for every time step , [7,7]  #WHP, ‘P’  #P for producer and I for injector],</p></li>
+<li><p><strong>include_gener</strong> (<em>bool</em>) – If True it creates a file GENER_MAKEUP, from which the wells define on this section can be included on the TOUGH2 input file and
+the data from newly generated file is added/overwritten to the sqlite databse</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>file</em> – {well}_mh.dat: it contains the dictionary information on a text file format</li>
-<li><em>file</em> – GENER_MAKEUP: on ../model/t2/t2/SOURCES</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>file</em> – {well}_mh.dat: it contains the dictionary information on a text file format</p></li>
+<li><p><em>file</em> – GENER_MAKEUP: on ../model/t2/t2/SOURCES</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This function can be use to generate production scenarios on a calibrated model</p>
+<p class="admonition-title">Note</p>
+<p>This function can be use to generate production scenarios on a calibrated model</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="gener.def_gener_selector">
-<code class="descclassname">gener.</code><code class="descname">def_gener_selector</code><span class="sig-paren">(</span><em>block</em>, <em>key</em>, <em>geners</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#def_gener_selector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.def_gener_selector" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.def_gener_selector">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">def_gener_selector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geners</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#def_gener_selector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.def_gener_selector" title="Permalink to this definition">¶</a></dt>
 <dd><p>If gener block is not completely define, the default value is use</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>block</strong> (<em>str</em>) – Referes to the mesh</li>
-<li><strong>key</strong> (<em>str</em>) – Referes to a GENER parameters</li>
-<li><strong>geners</strong> (<em>dictionary</em>) – Contains the neccesary information to define a sink/source. g.e. ‘DA110’:{‘SL’:’GEN’,’NS’:10,’TYPE’:’MASS’,’GX’:1,’EX’:1.1E6},</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>block</strong> (<em>str</em>) – Referes to the mesh</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – Referes to a GENER parameters</p></li>
+<li><p><strong>geners</strong> (<em>dictionary</em>) – Contains the neccesary information to define a sink/source. g.e. ‘DA110’:{‘SL’:’GEN’,’NS’:10,’TYPE’:’MASS’,’GX’:1,’EX’:1.1E6},</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>value</em> – float: the selecte value for a parameter</li>
-<li><em>def_value</em> – bool: if True the default value is used</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>value</em> – float: the selecte value for a parameter</p></li>
+<li><p><em>def_value</em> – bool: if True the default value is used</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">No data is needed from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>No data is needed from sqlite</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="gener.plot_makeup_wells">
-<code class="descclassname">gener.</code><code class="descname">plot_makeup_wells</code><span class="sig-paren">(</span><em>flow_times</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#plot_makeup_wells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.plot_makeup_wells" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.plot_makeup_wells">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">plot_makeup_wells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#plot_makeup_wells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.plot_makeup_wells" title="Permalink to this definition">¶</a></dt>
 <dd><p>It plots a defined scenario of production including injector wells</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>flow_times</strong> (<em>dictionary</em>) – e.g. ‘WELL-1’ : [[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)]  #Initial day of operation , [1.5,1.5]  #Steam value for every time step,   [15,15]#Brine value for every time step, [1100,1100] #Flowing enthalpy value for every time step , [7,7]  #WHP, ‘P’  #P for producer and I for injector],</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">wells_flow: horizontal histogram</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">plot</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flow_times</strong> (<em>dictionary</em>) – e.g. ‘WELL-1’ : [[datetime(2029,1,1,0,0,0),datetime(2080,1,1,0,0,0)]  #Initial day of operation , [1.5,1.5]  #Steam value for every time step,   [15,15]#Brine value for every time step, [1100,1100] #Flowing enthalpy value for every time step , [7,7]  #WHP, ‘P’  #P for producer and I for injector],</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wells_flow: horizontal histogram</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>plot</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">No data is needed from sqlite</p>
+<p class="admonition-title">Attention</p>
+<p>No data is needed from sqlite</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="gener.raw_to_sqlite">
-<code class="descclassname">gener.</code><code class="descname">raw_to_sqlite</code><span class="sig-paren">(</span><em>well</em>, <em>type_well='injector'</em>, <em>savefig=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#raw_to_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.raw_to_sqlite" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="gener.write_gener_from_sqlite">
-<code class="descclassname">gener.</code><code class="descname">write_gener_from_sqlite</code><span class="sig-paren">(</span><em>type_flow</em>, <em>input_dictionary</em>, <em>make_up=False</em>, <em>def_inj_T=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
-<dd><p>It is the main function on this module, it writes the GENER section from the mh input files</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</li>
-<li><strong>wells</strong> (<em>array</em>) – Wells to be included</li>
-<li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
-‘invariable’ writes the GENER section for every well as it is written on the input file</li>
-<li><strong>make_up</strong> (<em>bool</em>) – If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</li>
-<li><strong>def_inj_T</strong> (<em>dictionary</em>) – Defines the default temperature for the injector wells when there is no flowing enthalpy provided.</li>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.splitting_gener">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">splitting_gener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#splitting_gener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.splitting_gener" title="Permalink to this definition">¶</a></dt>
+<dd><p>It splits and prints the GENER definition of a given SOURCE</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Contains the name of the TOUGH2 input file</p></li>
+<li><p><strong>info</strong> (<em>dictionary</em>) – <dl class="simple">
+<dt>Contains as a key the source name and an array with the period ranges as datetimes, e.g.:</dt><dd><p>’SRC69’:{1: [datetime(1970,1,1,0,0,0),datetime(2010,1,1,0,0,0)],2: [datetime(2010,1,1,0,0,0),datetime(2100,1,1,0,0,0)],}</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>source_i</strong> (<em>str</em>) – Source name to be split</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">GENER_PROD:  a text file on ‘../model/t2/sources/’</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A printout of the splited gener over time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">All the information comes from the sqlite databse. If there are some other sources or sinks define with the prefix SRC, they should be written first on the database
+<p class="admonition-title">Attention</p>
+<p>It has to be manually updated to the gener section</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.write_gener_from_sqlite">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">write_gener_from_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_flow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">def_inj_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_months</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_gener_from_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.write_gener_from_sqlite" title="Permalink to this definition">¶</a></dt>
+<dd><p>It is the main function on this module, it writes the GENER section from the mh input files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database, the reference date on datime format and  TOUGH2 version under the key t2_ver, if lower than 7, conventional 4 columns for GENER is used. For 7 or higher, DATES are used.</p></li>
+<li><p><strong>wells</strong> (<em>array</em>) – Wells to be included</p></li>
+<li><p><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
+‘invariable’ writes the GENER section for every well as it is written on the input file</p></li>
+<li><p><strong>make_up</strong> (<em>bool</em>) – If True the output file is written on GENER_MAKEUP. Otherwise, on GENER_PROD</p></li>
+<li><p><strong>def_inj_T</strong> (<em>dictionary</em>) – Defines the default temperature for the injector wells when there is no flowing enthalpy provided.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GENER_PROD:  a text file on ‘../model/t2/sources/’</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>All the information comes from the sqlite databse. If there are some other sources or sinks define with the prefix SRC, they should be written first on the database
 by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will be +1 for the first well</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_gener_from_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">type_flow</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="gener.write_geners_to_txt_and_sqlite">
-<code class="descclassname">gener.</code><code class="descname">write_geners_to_txt_and_sqlite</code><span class="sig-paren">(</span><em>input_dictionary</em>, <em>geners</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_geners_to_txt_and_sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_geners_to_txt_and_sqlite" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.write_geners_to_txt_and_sqlite">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">write_geners_to_txt_and_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geners</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_geners_to_txt_and_sqlite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.write_geners_to_txt_and_sqlite" title="Permalink to this definition">¶</a></dt>
 <dd><p>It writes the GENER section for the constant sink/sources from the model  on a text file and at the sqlite database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</li>
-<li><strong>geners</strong> (<em>dictionary</em>) – Contains the neccesary information to define every constant sink/source on the model. g.e.’DA110’:{‘SL’:’GEN’,’NS’:10,’TYPE’:’MASS’,’GX’:1,’EX’:1.1E6}</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – Dictionary containing the path and name of database and the path of the input file</p></li>
+<li><p><strong>geners</strong> (<em>dictionary</em>) – Contains the neccesary information to define every constant sink/source on the model. g.e.’DA110’:{‘SL’:’GEN’,’NS’:10,’TYPE’:’MASS’,’GX’:1,’EX’:1.1E6}</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">GENER_SOURCES: text file on  ‘../model/t2/sources/GENER_SOURCES’</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">file</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GENER_SOURCES: text file on  ‘../model/t2/sources/GENER_SOURCES’</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">Every time the function is executed it overwrites the file</p>
+<p class="admonition-title">Attention</p>
+<p>Every time the function is executed it overwrites the file</p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_geners_to_txt_and_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">geners</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">write_geners_to_txt_and_sqlite</span><span class="p">(</span><span class="n">input_dictionary</span><span class="p">,</span><span class="n">geners</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="gener.write_t2_format_gener">
-<code class="descclassname">gener.</code><code class="descname">write_t2_format_gener</code><span class="sig-paren">(</span><em>var_array</em>, <em>time_array</em>, <em>var_type</em>, <em>var_enthalpy</em>, <em>type_flow</em>, <em>input_dictionary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_t2_format_gener" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.write_t2_format_gener">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">write_t2_format_gener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_flow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.write_t2_format_gener" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the block of time, flow and enthalpy for each flow</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>var_array</strong> (<em>array</em>) – Contains the flow data</li>
-<li><strong>time_array</strong> (<em>array</em>) – Contains the time data on datetime format</li>
-<li><strong>input_dictionary</strong> (<em>dictionary</em>) – It contains the reference date on datatime format</li>
-<li><strong>var_type</strong> (<em>str</em>) – It indicates the type of well producer ‘R’ or injector ‘R’</li>
-<li><strong>var_enthalpy</strong> (<em>array</em>) – Contains the flowing enthalpy data</li>
-<li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
-‘invariable’ writes the GENER section for every well as it is written on the input file</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var_array</strong> (<em>array</em>) – Contains the flow data</p></li>
+<li><p><strong>time_array</strong> (<em>array</em>) – Contains the time data on datetime format</p></li>
+<li><p><strong>input_dictionary</strong> (<em>dictionary</em>) – It contains the reference date on datatime format</p></li>
+<li><p><strong>var_type</strong> (<em>str</em>) – It indicates the type of well producer ‘R’ or injector ‘R’</p></li>
+<li><p><strong>var_enthalpy</strong> (<em>array</em>) – Contains the flowing enthalpy data</p></li>
+<li><p><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
+‘invariable’ writes the GENER section for every well as it is written on the input file</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>str</em> – string_P: contains the defined format for the GENER section for a particular producer well.</li>
-<li><em>str</em> – string_R : contains the defined format for the GENER section for a particular injector well.</li>
-<li><em>int</em> – cnt_P : defines the number of flows records on every string_P for each producer well</li>
-<li><em>int</em> – cnt_R : defines the number of flows records on every string_R for each injector well</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>str</em> – string_P: contains the defined format for the GENER section for a particular producer well.</p></li>
+<li><p><em>str</em> – string_R : contains the defined format for the GENER section for a particular injector well.</p></li>
+<li><p><em>int</em> – cnt_P : defines the number of flows records on every string_P for each producer well</p></li>
+<li><p><em>int</em> – cnt_R : defines the number of flows records on every string_R for each injector well</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The legth of  var_array, time_array and var_enthalpy must be the same</p>
+<p class="admonition-title">Attention</p>
+<p>The legth of  var_array, time_array and var_enthalpy must be the same</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">For every well a value of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</p>
+<p class="admonition-title">Note</p>
+<p>For every well a value of flow zero is set on time -1E50 and before the first record. This function is used by write_gener_from_sqlite() as it does not produce any output file by itself.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="gener.write_t2_format_gener_dates">
-<code class="descclassname">gener.</code><code class="descname">write_t2_format_gener_dates</code><span class="sig-paren">(</span><em>var_array</em>, <em>time_array</em>, <em>var_type</em>, <em>var_enthalpy</em>, <em>type_flow</em>, <em>def_T</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gener.write_t2_format_gener_dates" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="gener.write_t2_format_gener_dates">
+<span class="sig-prename descclassname"><span class="pre">gener.</span></span><span class="sig-name descname"><span class="pre">write_t2_format_gener_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_flow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">def_T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_months</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gener.html#write_t2_format_gener_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gener.write_t2_format_gener_dates" title="Permalink to this definition">¶</a></dt>
 <dd><p>It generates the block of time, flow and enthalpy for each flow on datetime format</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>var_array</strong> (<em>array</em>) – Contains the flow data</li>
-<li><strong>time_array</strong> (<em>array</em>) – Contains the time data on datetime format</li>
-<li><strong>var_type</strong> (<em>str</em>) – It indicates the type of well producer ‘R’ or injector ‘R’</li>
-<li><strong>var_enthalpy</strong> (<em>array</em>) – Contains the flowing enthalpy data</li>
-<li><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
-‘invariable’ writes the GENER section for every well as it is written on the input file</li>
-<li><strong>def_T</strong> (<em>flot</em>) – Default temperature value for injector wells with no flowing enthalpy provided.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var_array</strong> (<em>array</em>) – Contains the flow data</p></li>
+<li><p><strong>time_array</strong> (<em>array</em>) – Contains the time data on datetime format</p></li>
+<li><p><strong>var_type</strong> (<em>str</em>) – It indicates the type of well producer ‘R’ or injector ‘R’</p></li>
+<li><p><strong>var_enthalpy</strong> (<em>array</em>) – Contains the flowing enthalpy data</p></li>
+<li><p><strong>type_flow</strong> (<em>str</em>) – It defines the type of flow on the well. ‘constant’ adds a zero flow before the start of well production at -infinity and keeps the value of the flow to the infinity, ‘shutdown’ closes the well after the last record, ‘invariable’
+‘invariable’ writes the GENER section for every well as it is written on the input file</p></li>
+<li><p><strong>def_T</strong> (<em>flot</em>) – Default temperature value for injector wells with no flowing enthalpy provided.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>str</em> – string_P: contains the defined format for the GENER section for a particular producer well.</li>
-<li><em>str</em> – string_R : contains the defined format for the GENER section for a particular injector well.</li>
-<li><em>int</em> – cnt_P : defines the number of flows records on every string_P for each producer well</li>
-<li><em>int</em> – cnt_R : defines the number of flows records on every string_R for each injector well</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>str</em> – string_P: contains the defined format for the GENER section for a particular producer well.</p></li>
+<li><p><em>str</em> – string_R : contains the defined format for the GENER section for a particular injector well.</p></li>
+<li><p><em>int</em> – cnt_P : defines the number of flows records on every string_P for each producer well</p></li>
+<li><p><em>int</em> – cnt_R : defines the number of flows records on every string_R for each injector well</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">The legth of  var_array, time_array and var_enthalpy must be the same</p>
+<p class="admonition-title">Attention</p>
+<p>The legth of  var_array, time_array and var_enthalpy must be the same</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">For every well a value of flow zero is set on time -infinity and before the first record. This function is used by the function write_gener_from_sqlite() as it does not produce any output file by itself.</p>
+<p class="admonition-title">Note</p>
+<p>For every well a value of flow zero is set on time -infinity and before the first record. This function is used by the function write_gener_from_sqlite() as it does not produce any output file by itself.</p>
 </div>
 </dd></dl>
 
@@ -425,7 +420,7 @@ by executing write_geners_to_txt_and_sqlite(). Thus, the next correlatative will
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Erick Jimenez
+        &copy; Copyright 2022, Erick Jimenez
 
     </p>
   </div>
