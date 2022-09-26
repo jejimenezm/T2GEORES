@@ -317,7 +317,6 @@ def gen_evol(input_dictionary):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE  source_nickname LIKE'GEN*' ORDER BY source_nickname;",conn)
-
 	final_t2=""
 	output_fi_file="../model/t2/t2.out"
 
@@ -765,7 +764,7 @@ def it2DATASET(input_dictionary):
 	#First and last line in between the data
 	compare1="    # OBSERVATION   AT TIME [sec]     MEASURED     COMPUTED     RESIDUAL     WEIGHT C.O.F [%]    STD. DEV.    Yi      Wi    DWi +/-"
 	compare2=" Residual Plots"
-	compare3=" ---"
+	compare3=":)"
 
 	data = pd.DataFrame(columns=["NUMBER","OBSERVATION","TIME","MEASURED","COMPUTED","RESIDUAL","WEIGHT","C.O.F","STD.DEV"])
 
@@ -776,6 +775,7 @@ def it2DATASET(input_dictionary):
 		it2_output_array = t2_file.readlines()
 		save = False
 		for line_i, line in enumerate(it2_output_array):
+
 			if compare1 in line.rstrip():
 				save = True
 			elif compare2 in line.rstrip() or compare3 in line.rstrip():
@@ -785,7 +785,6 @@ def it2DATASET(input_dictionary):
 				output_headers.append(it2_output_array[line_i+1])
 
 	#Stores the date into the corresponding column
-
 	output_headers=output_headers[2:-3] #[::2]
 
 	for values in output_headers:
@@ -886,18 +885,23 @@ def src_csv(input_dictionary, path = None, type_source = 'SRC'):
 	t2_file_name = input_dictionary['TOUGH2_file']
 
 	if type_source == 'SRC':
-		condition = "NOT LIKE'GEN*'"
-	elif type_source == 'GEN':
-		condition = "LIKE'GEN*'"
+		condition = "NOT LIKE'GEN%%'"
+	elif type_source == 'GEN%%':
+		condition = "LIKE'GEN%%'"
+	else:
+		condition = "LIKE '%s%%'"%type_source
 
 	#List the SOURCES elements (feedzones)
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE source_nickname %s ORDER BY source_nickname;"%condition,conn)
+	print(data_source)
 
 	#It reads the gener.csv output file line by line and store the data from each GEN element
 	poss_names = ["../model/t2/%s_gener.csv"%t2_file_name]
-	poss_names.append(path)
+	if path != None:
+		poss_names.append(path)
+
 	output_t2_file = None 
 	for file in poss_names:
 		if os.path.isfile(file):
@@ -995,9 +999,11 @@ def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
 
 	#It select the correct output file
 	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_eleme.csv"%t2_file_name]
-	poss_names.append(path)
+	if path != None:
+		poss_names.append(path)
 	output_t2_file = None 
 	for file in poss_names:
+		print(file)
 		if os.path.isfile(file):
 			output_t2_file = file
 
@@ -1044,7 +1050,7 @@ def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
 
 	conn.close()
 
-def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, num = None, output_times = 220):
+def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, num = None, output_times = 220, tmin=0, tmax=1E50):
 	"""It creates severals or a single json file from the output file from the TOUGH2 run. Each of them for diffent output times.
 	   It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.
 
@@ -1114,7 +1120,7 @@ def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, 
 
 			#Extracts the time, save the data into json and breaks the function once the time is larger than specified itime
 			if "TIME [sec]" in t2_line:
-				if i >10 and cnt_t in positions: #takes the previous time and save it
+				if i >10 and cnt_t in positions and time > tmin and time< tmax: #takes the previous time and save it
 					t2_pd=pd.DataFrame.from_dict(data_dictionary,orient='index')
 					print(time)
 					t2_pd.to_json('../output/PT/json/evol/t2_output_%.0f.json'%float(time),orient="index",indent=2)
@@ -1125,7 +1131,7 @@ def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, 
 				except IndexError:
 					time = float(t2_line.rstrip().split(" ")[2].replace('"',""))
 					cnt_t += 1
-
+				print(time)
 				data_dictionary= {}	
 				data_dictionary[time] = {}
 
@@ -1134,7 +1140,7 @@ def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, 
 						break
 
 			#It stores every line into a dictionary, skips the first line and save just the ones listed into the array positions
-			if i != 0 and 'TIME' not in t2_line and cnt_t in positions:
+			if i != 0 and 'TIME' not in t2_line and cnt_t in positions and time > tmin and time< tmax:
 				t2_array=t2_line.rstrip().split(" ")
 				str_list = list(filter(None, t2_array))
 				block = str_list[1].replace('"','').replace(',',"")

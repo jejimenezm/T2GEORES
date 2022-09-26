@@ -3,6 +3,8 @@ from T2GEORES import gener as t2g
 import os
 import subprocess
 import shutil
+import sys
+import re
 
 def incon_replace(incon_file,blocks,incon_file_len):
 	"""It rewrite the incon file without the porosity, depending if it comes from .sav file or INCON generated with T2GEORES
@@ -178,24 +180,31 @@ def update_gen(input_dictionary):
 	"""
 
 	type_run=input_dictionary['TYPE_RUN']
+	dummy_element=input_dictionary['dummy_element']
 
 	final_t2=""
 	incon_section=False
+
 	input_fi_file="../model/t2/t2"
+
 	sources_file='../model/t2/sources/GENER_SOURCES'
 	well_sources_file='../model/t2/sources/GENER_PROD'
 	makeup_well_sources_file='../model/t2/sources/GENER_MAKEUP'
+
 	t2_ver=float(input_dictionary['VERSION'][0:3])
 
-	if os.path.isfile(input_fi_file):
-		if os.path.isfile(sources_file):
-			if 'GENER' not in open(input_fi_file).read():
+	if input_dictionary['TYPE_RUN'] in ['natural','production','forecasting'] and os.path.isfile(input_fi_file):
+
+		if os.path.isfile(input_fi_file):
+			
+			if not re.search(r'\b' + 'GENER' + r'\b', open(input_fi_file).read()):
 
 				t2_string=""
 				t2_file=open(input_fi_file, "r")
 				for t2_line in t2_file:
 					if 'ENDCY' not in t2_line:
-						t2_string+=t2_line
+						t2_string += t2_line
+						print(t2_line)
 					else:
 						pass
 
@@ -204,13 +213,18 @@ def update_gen(input_dictionary):
 				else:
 					t2_string+='GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
 
+					t2_string+="%sDUM00                   3     MASS                      10.e5\n"%dummy_element
+					t2_string+="           -infinity       0.0\n"
+					t2_string+="%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00"),'>20s'))
+					t2_string+="            infinity       0.0\n"
 				
 				gener_source_file=open(sources_file, "r")
 				for sources in gener_source_file:
 					t2_string+=sources
 				gener_source_file.close()
 			
-				if type_run=='production':
+				if input_dictionary['TYPE_RUN']=='production':
+
 					if os.path.isfile(well_sources_file):
 						well_source_file=open(well_sources_file, "r")
 						for sources in well_source_file:
@@ -220,13 +234,15 @@ def update_gen(input_dictionary):
 					else:
 						print("The file %s or directory do not exist"%well_sources_file)
 
-					if os.path.isfile(makeup_well_sources_file):
-						well_makeup_source_file=open(makeup_well_sources_file, "r")
-						for sources in well_makeup_source_file:
-							t2_string+=sources
-						well_makeup_source_file.close()
-					else:
-						print("The file %s or directory do not exist"%well_sources_file)
+					if input_dictionary['TYPE_RUN']=='forecasting':
+
+						if os.path.isfile(makeup_well_sources_file):
+							well_makeup_source_file=open(makeup_well_sources_file, "r")
+							for sources in well_makeup_source_file:
+								t2_string+=sources
+							well_makeup_source_file.close()
+						else:
+							print("The file %s or directory do not exist"%well_sources_file)
 
 				t2_string+='\n'
 				t2_string+='ENDCY----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
@@ -238,28 +254,29 @@ def update_gen(input_dictionary):
 				t2_file_out.close()	
 
 			else:
+
 				t2_string=""
 				t2_file=open(input_fi_file, "r")
 				for t2_line in t2_file:
 					if 'GENER' not in t2_line:
-						t2_string+=t2_line
+						t2_string += t2_line
 					else:
 
 						if t2_ver<7:
-							t2_string+='GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
+							t2_string += 'GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
 						else:
-							t2_string+='GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
+							t2_string += 'GENER D--1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n'
 
-							t2_string+="AA110DUM00                   3     MASS                      10.e5\n"
-							t2_string+="           -infinity       0.0\n"
-							t2_string+="%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00"),'>20s'))
-							t2_string+="            infinity       0.0\n"
+							t2_string += "%sDUM00                   3     MASS                      10.e5\n"%dummy_element
+							t2_string += "           -infinity       0.0\n"
+							t2_string += "%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00"),'>20s'))
+							t2_string += "            infinity       0.0\n"
 
 						gener_source_file=open(sources_file, "r")
 						for sources in gener_source_file:
 							t2_string+=sources
 
-						if type_run=='production':
+						if input_dictionary['TYPE_RUN']=='production':
 							if os.path.isfile(well_sources_file):
 								well_source_file=open(well_sources_file, "r")
 								for sources in well_source_file:
@@ -268,13 +285,14 @@ def update_gen(input_dictionary):
 							else:
 								print("The file %s or directory do not exist"%well_sources_file)
 
-						if os.path.isfile(makeup_well_sources_file):
-							well_makeup_source_file=open(makeup_well_sources_file, "r")
-							for sources in well_makeup_source_file:
-								t2_string+=sources
-							well_makeup_source_file.close()
-						else:
-							print("The file %s or directory do not exist"%well_sources_file)
+						elif input_dictionary['TYPE_RUN']=='forecasting':
+							if os.path.isfile(makeup_well_sources_file):
+								well_makeup_source_file=open(makeup_well_sources_file, "r")
+								for sources in well_makeup_source_file:
+									t2_string+=sources
+								well_makeup_source_file.close()
+							else:
+								print("The file %s or directory do not exist"%well_sources_file)
 
 						break
 					

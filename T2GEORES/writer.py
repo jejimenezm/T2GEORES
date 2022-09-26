@@ -26,7 +26,7 @@ def converter(value,format_t2,def_value):
 	"""
 	if 's' in format_t2:
 		if value==None:
-			eq_str_len=int(format_t2.replace(">","").replace("s",""))
+			eq_str_len=int(format_t2.replace(">","").replace("<","").replace("s",""))
 			value=" "*eq_str_len
 		else:
 			value=str(value)
@@ -44,7 +44,7 @@ def converter(value,format_t2,def_value):
 
 	return output
 
-def def_value_selector(section,key,input_dictionary,rocks=False):
+def def_value_selector(section,key,input_dictionary,rocks=False, mesh = False, mesh_n = None, mesh_section = None):
 	"""Evaluate if the necessary parameter has been defined on the input file
 
 	Parameters
@@ -59,19 +59,26 @@ def def_value_selector(section,key,input_dictionary,rocks=False):
 	"""
 
 	try:
-		if not rocks:
-			value=input_dictionary[section][key]
-			def_value=False
-		else:
+		if rocks:
 			value=input_dictionary['ROCKS'][section][key]
 			def_value=False
-	except KeyError:
-		if not rocks:
-			value=formats.formats_t2[section][key][0]
-			def_value=True
+		elif mesh:
+			value=input_dictionary['MESHMAKER'][section][mesh_n][key]
+			def_value=False
 		else:
+			value=input_dictionary[section][key]
+			def_value=False
+	except KeyError:
+		if rocks:
 			value=formats.formats_t2['ROCKS'][key][0]
 			def_value=True
+		elif mesh:
+			value=formats.formats_t2['MESHMAKER'][section][mesh_section][key][0]
+			def_value=True
+		else:
+			value=formats.formats_t2[section][key][0]
+			def_value=True
+
 	return value,def_value
 
 def FCG_file_checker(name):
@@ -402,13 +409,20 @@ def GENER_adder(input_dictionary):
 
 	"""
 	string="GENER----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
-	if os.path.isfile("../model/t2/sources/GENER_SOURCES") and input_dictionary['TYPE_RUN'] in ['natural','production']:
-		with open("../model/t2/sources/GENER_SOURCES") as gener_source_file:
-			for line in gener_source_file.readlines()[:]:
-				string+="%s"%line
+	if input_dictionary['TYPE_RUN'] in ['natural','production','forecasting']:
+		
 		if input_dictionary['TYPE_RUN']=='natural':
-			string+="\n"
+			if os.path.isfile("../model/t2/sources/GENER_SOURCES"):
+				with open("../model/t2/sources/GENER_SOURCES") as gener_source_file:
+					for line in gener_source_file.readlines()[:]:
+						string+="%s"%line
+				string+="\n"
+			else:
+				sys.exit("""Error message: the GENER_SOURCES file on ..\model\t2\sources\GENER_SOURCES is not prepared\n
+			        you might want to run write_geners_to_txt_and_sqlite on t2gener.py file or the type_run is not correct (natural or production)""")
+
 		elif input_dictionary['TYPE_RUN']=='production':
+
 			if os.path.isfile("../model/t2/sources/GENER_PROD"):
 				with open("../model/t2/sources/GENER_PROD") as gener_prod_file:
 					for line in gener_prod_file.readlines()[:]:
@@ -417,6 +431,8 @@ def GENER_adder(input_dictionary):
 				sys.exit("""Error message: the GENER_PROD file on ../model/t2/sources/GENER_PROD is not prepared\n
 					        you might want to run write_gener_from_sqlite on t2gener.py file""")
 			
+		elif input_dictionary['TYPE_RUN']=='forecasting':
+
 			if os.path.isfile("../model/t2/sources/GENER_MAKEUP"):
 				with open("../model/t2/sources/GENER_MAKEUP") as gener_prod_file:
 					for line in gener_prod_file.readlines()[:]:
@@ -426,8 +442,7 @@ def GENER_adder(input_dictionary):
 				print("""Error message: the GENER_MAKEUP file on ../model/t2/sources/GENER_MAKEUP is not prepared\n
 					        you might want to run write_gener_from_sqlite on t2gener.py file""")
 	else:
-		sys.exit("""Error message: the GENER_SOURCES file on ..\model\t2\sources\GENER_SOURCES is not prepared\n
-			        you might want to run write_geners_to_txt_and_sqlite on t2gener.py file or the type_run is not correct (natural or production)""")
+		sys.exit("""Error message: the TYPE_RUN must be either 'natural', 'production' or 'forecasting'""")
 
 	return string
 
@@ -764,7 +779,7 @@ def MOMOP_writer(input_dictionary):
 	string+="\n"
 	return string
 
-def ROCKS_writer(input_dictionary):
+def ROCKS_writer(input_dictionary, n_levels = 1):
 	"""Return the ROCKS section
 
 	Parameters
@@ -801,27 +816,83 @@ def ROCKS_writer(input_dictionary):
 	pass_valid=False
 	for rock in input_dictionary['ROCKS']:
 		for level in rocks_levels:
-			break_line=False
-			for key in formats.formats_t2['ROCKS']:
-				if formats.formats_t2['ROCKS'][key][2]==level:
-					if level==1:
-						pass_valid=True
-						break_line=True
-					if 'NAD' in input_dictionary['ROCKS'][rock].keys():
-						if input_dictionary['ROCKS'][rock]['NAD']>=1 and level==2:
-							pass_valid=True
-							break_line=True
-						elif input_dictionary['ROCKS'][rock]['NAD']>=2 and level in [3,4]:
-							pass_valid=True
-							break_line=True
-					if pass_valid:
+			if level > n_levels:
+				break
+			else:
+				for key in formats.formats_t2['ROCKS']:
+					if formats.formats_t2['ROCKS'][key][2]==level:
 						value,def_value=def_value_selector(rock,key,input_dictionary,rocks=True)
 						string+=converter(value,formats.formats_t2['ROCKS'][key][1],def_value)
 						pass_valid=False
-			if break_line:
-				string+='\n'
+
+		string+='\n'
 	string+="\n"
 	return string
+
+def write_forward_it2_file():
+
+	string = """
+> COMPUTATION
+  >> OPTION
+     >>> solve FORWARD
+     <<<
+  <<
+<
+	"""
+	input_fi_file="../model/it2/fit2"
+	t2_file_out=open(input_fi_file, "w")
+	t2_file_out.write(string)
+	t2_file_out.close()	
+
+def add_meshmaker(input_dictionary):
+	"""
+
+	"""	
+	string = TITLE_writer(input_dictionary)
+
+	string += "MESHMAKER1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
+
+	mesh_type = input_dictionary['MESHMAKER']['TYPE']
+
+	string += mesh_type + '\n'
+
+
+	"""
+	for key in formats.formats_t2['MESHMAKER'][mesh_type]:
+			value,def_value=def_value_selector(mesh_type,key,input_dictionary,mesh = True,mesh_n = key)
+			string+=converter(value,formats.formats_t2['MESHMAKER'][mesh_type][key][1],def_value)
+	string+='\n'
+	"""
+
+
+	for n, key in  enumerate(input_dictionary['MESHMAKER'][mesh_type]):
+		section =  list(input_dictionary['MESHMAKER'][mesh_type][key].keys())[0]
+		sections = [b[2] for b in list(formats.formats_t2['MESHMAKER'][mesh_type][section].values())]
+
+		for n2, key2 in enumerate(formats.formats_t2['MESHMAKER'][mesh_type][section]):
+			value,def_value=def_value_selector(mesh_type,key2,input_dictionary,mesh = True,mesh_n = key, mesh_section = section)
+
+			if not isinstance(value, list):
+				if isinstance(value, bool):
+					string+='%s'%section
+				else:
+					string+=converter(value,formats.formats_t2['MESHMAKER'][mesh_type][section][key2][1],def_value)
+			else:
+				for value_n in value:
+					string+=converter(value_n,formats.formats_t2['MESHMAKER'][mesh_type][section][key2][1],def_value)
+
+			try:
+				if sections[n2+1] > sections[n2]:
+					string += '\n'
+			except IndexError:
+				pass
+
+		string += '\n'
+
+	input_fi_file="../mesh/meshmaker/grid"
+	t2_file_out=open(input_fi_file, "w")
+	t2_file_out.write(string)
+	t2_file_out.close()
 
 def t2_input(include_FOFT,include_SOLVR,include_COFT,include_GOFT,include_RPCAP,include_MULTI,include_START,include_TIMES,include_OUTPU,include_MOMOP,input_dictionary):
 	""""It creates the FOFT section base on the well feedzone position

@@ -244,6 +244,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	#It when type flow shutdown is used, the well flow is set to zero on after the last record plus this value
 	extra_time=365.25*time_between_months*3600*24/2
 
+
 	if type_flow=="invariable":
 		cnt_P=1
 		cnt_R=1
@@ -258,7 +259,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 				ind = ix
 				break
     
-		string_P+=format((time_array[ind]-timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		string_P+=format((time_array[ind]-timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 		string_P+=format(flow_min,'>10.3E')+'\n'
 
 		string_R+=format(t_min,'>20s')
@@ -271,7 +272,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 				ind = ix
 				break
 
-		string_R+=format((time_array[ind]-timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+		string_R+=format((time_array[ind]-timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 		string_R+=format(flow_min,'>10.3E')
 		string_R+=format(enthalpy_min,'>10.3E')+'\n'
 
@@ -280,22 +281,22 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 	if len(var_array)==len(time_array):
 		for n in range(len(var_type)):
-			if var_type[n]=='P':
+			if 'P' in var_type[n]:
 
 				now_flow_P = var_array[n]
 				now_time_P = time_array[n]
 
 				if n >= 1 and 'last_time_P' in locals():
 					if (now_time_P-last_time_P).total_seconds()>=(extra_time) :
-						string_P += format((last_time_P + timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_P += format((last_time_P + timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 						string_P += format(0.0,'>10.2E')+'\n'
 						cnt_P+=1
 
-						string_P += format((now_time_P - timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_P += format((now_time_P - timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 						string_P += format(0.0,'>10.2E')+'\n'
 						cnt_P+=1
 
-				string_P+=format(now_time_P.strftime("%Y-%m-%d_00:00:00"),'>20s')
+				string_P+=format(now_time_P.strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 				string_P+=format(-now_flow_P,'>10.2E')+'\n'
 				cnt_P+=1
 
@@ -303,7 +304,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 				last_time_P = time_array[n]
 				
 
-			elif var_type[n]=='R':
+			elif 'R' in var_type[n]:
 
 				now_flow_R = var_array[n]
 				now_time_R = time_array[n]
@@ -315,19 +316,19 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 					if (now_time_R-last_time_R).total_seconds()>=(extra_time) :
 
-						string_R += format((last_time_R + timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_R += format((last_time_R + timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 						string_R += format(0.0,'>10.3E')
 						string_R += format(var_enthalpy[n],'>10.3E')+'\n'
 						cnt_R+=1
 
 						print(now_time_R, last_time_R)
 
-						string_R += format((now_time_R - timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+						string_R += format((now_time_R - timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 						string_R += format(0.0,'>10.2E')
 						string_R+=format(var_enthalpy[n],'>10.3E')+'\n'
 						cnt_R+=1
 
-				string_R+=format(time_array[n].strftime("%Y-%m-%d_00:00:00"),'>20s')
+				string_R+=format(time_array[n].strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 				string_R+=format(var_array[n],'>10.3E')
 				string_R+=format(var_enthalpy[n],'>10.3E')+'\n'
 				cnt_R+=1
@@ -344,7 +345,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 			if cnt_R>3:
 				if (now-last_time_R).total_seconds()>=(extra_time):
 					cnt_R+=1
-					string_R+=format((last_time_R+timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					string_R+=format((last_time_R+timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 					last_flow_R = 0
 					string_R += format(last_flow_R,'>10.2E')
 					string_R += format(last_enthalpy,'>10.3E')+'\n'
@@ -358,7 +359,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 				if (now-last_time_P).total_seconds()>=(extra_time):
 					last_flow_P = 0
-					string_P += format((last_time_P+timedelta(days=min_days)).strftime("%Y-%m-%d_00:00:00"),'>20s')
+					string_P += format((last_time_P+timedelta(days=min_days)).strftime("%Y-%m-%d_%H:%M:%S"),'>20s')
 					string_P += format(-last_flow_P,'>10.2E')+'\n'
 					cnt_P += 1
 
@@ -370,7 +371,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 			if cnt_R>3:
 				cnt_R+=2
 
-				string_R+=format((time_array[n]+extra_time).strftime("%d-%b-%Y_00:00:00"),'>20s')
+				string_R+=format((time_array[n]+extra_time).strftime("%d-%b-%Y_%H:%M:%S"),'>20s')
 				string_R+=format(last_flow_R,'>10.3E')
 				string_R+=format(last_enthalpy,'>10.3E')+'\n'
 
@@ -380,7 +381,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 			if cnt_P>3:
 				cnt_P+=2
-				string_P+=format((time_array[n]+extra_time).strftime("%d-%b-%Y_00:00:00"),'>20s')
+				string_P+=format((time_array[n]+extra_time).strftime("%d-%b-%Y_%H:%M:%S"),'>20s')
 				string_P+=format(-last_flow_P,'>10.2E')+'\n'
 
 				string_P+=format(t_max,'>20s')
@@ -394,11 +395,12 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 
 		#string_P+='\n'
 		#string_R+='\n'
+
 		return string_P, string_R, cnt_P, cnt_R
 	else:
 		print("Time and variable array must have the same length")
 
-def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None, min_days = 0.5, time_between_months = 120):
+def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None, min_days = 0.000001, time_between_months = 120):
 	"""It is the main function on this module, it writes the GENER section from the mh input files
 
 	Parameters
@@ -754,15 +756,15 @@ def create_well_flow(flow_times,input_dictionary,include_gener=True):
     	print("New well added %s"%name)
 
     file=open('../input/mh/%s_mh.dat'%name,'w')
-    file.write("type,date-time,steam,liquid,enthalpy,WHPabs\n")
+    file.write("type,well,date_time,steam,liquid,enthalpy,WHPabs\n")
     for n in range(len(flow_times[name][0])):
-      date=(flow_times[name][0][n]).strftime("%Y-%m-%d %H:%M:%S")
+      date=(flow_times[name][0][n]).strftime("%Y-%m-%d_%H:%M:%S")
       steam=flow_times[name][1][n]
       brine=flow_times[name][2][n]
       enthlapy=flow_times[name][3][n]
       pressure=flow_times[name][4][n]
       type_well=flow_times[name][5]
-      string="%s,%s,%s,%s,%s,%s\n"%(type_well,date,steam,brine,enthlapy,pressure)
+      string="%s,%s,%s,%s,%s,%s,%s\n"%(type_well,name,date,steam,brine,enthlapy,pressure)
       file.write(string)
     file.close()
   if include_gener:
@@ -793,6 +795,44 @@ def plot_makeup_wells(flow_times):
 	cnt=1
 	y_positions=[]
 	well_tick=[]
+
+	well_d = {}
+	for well in flow_times:
+		data_range = flow_times[well][0]
+		d = data_range[0].strftime('%Y-%m-%d')+'_'+well
+		well_d[d] = well
+
+	
+
+	for i, dx in enumerate(sorted(well_d)):
+		well = well_d[dx]
+		if flow_times[well][5]=='12':
+			color='r'
+			unit = 'Unit 1&2'
+		elif flow_times[well][5]=='3':
+			color='orange'
+			unit = 'Unit 3'
+
+		total_flow = flow_times[well][1][0]+flow_times[well][2][0]
+
+		data_range=flow_times[well][0]
+		value=[cnt,cnt]
+		y_positions.append(cnt)
+		ax.text(data_range[1]-timedelta(days=365*2.2),cnt-1.5,'%.1f kg/s'%total_flow)
+
+
+		cnt+=5
+
+		ax.plot(data_range, value,color,lw=15, alpha=0.5, label = unit )
+
+
+		well_tick.append('MK-'+str(i+1).replace("X","").replace("Z",""))
+	
+	handles, labels = ax.get_legend_handles_labels()
+	unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+	fig.legend(*zip(*unique), bbox_to_anchor=(0.25,0.85), bbox_transform=fig.transFigure)
+
+	"""
 	for well in flow_times:
 		if flow_times[well][5]=='12':
 			color='r'
@@ -804,7 +844,7 @@ def plot_makeup_wells(flow_times):
 		data_range=flow_times[well][0]
 		value=[cnt,cnt]
 		y_positions.append(cnt)
-		ax.text(data_range[1]-timedelta(days=365*5),cnt-1,'%.2f kg/s'%total_flow)
+		ax.text(data_range[1]-timedelta(days=365*2.3),cnt-1,'%.1f kg/s'%total_flow)
 
 
 		cnt+=5
@@ -813,6 +853,7 @@ def plot_makeup_wells(flow_times):
 
 
 		well_tick.append(str(well).replace("X","").replace("Z",""))
+	"""
 
 	ax.set_xlabel("Time")
 	ax.set_ylim([-4,cnt])

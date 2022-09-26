@@ -240,6 +240,25 @@ formats_t2={'TITLE':['TOUGH2 INPUT FILE','<80s',1],
 									 'FRACTIONAL FLOW':[int,type(None)],
 									 'WELLBORE PRESSURE':[int,type(None)]}
 					},
+				'MESHMAKER':{'RZ2D':{
+									 'RADII':{'RADII':[None,'<5s',1],
+											  'NRAD':[None,'>5s',2],
+											  'RC':[None,'>10.4E',3]},
+									 'EQUID':{'EQUID':[None,'<5s',1],
+										   	  'NEQU':[None,'>5s',2],
+											  'SPACE':[None,'>5s',2],
+											  'DR':[None,'>10.3E',2]},
+									 'LOGAR':{'LOGAR':[None,'<5s',1],
+										      'NLOG':[None,'>5s',2],
+											  'SPACE':[None,'>5s',2],
+											  'RLOG':[None,'>10s',2],
+											  'DR':[None,'>10.3E',2]},
+									 'LAYER':{'LAYER':[None,'<5s',1],
+											  'NLAY':[None,'>5s',2],
+											  'H':[None,'>10.4E',3]}
+									}
+							 }
+					,
 				'LAYERS':{'A':1,
 						  'B':2,
 						  'C':3,
@@ -279,7 +298,17 @@ formats_t2={'TITLE':['TOUGH2 INPUT FILE','<80s',1],
 						  ']':38,
 						  '(':39,
 						  ')':40,
-						  ':':41}
+						  ':':41},
+			'ELEME':{'ELEME':[None,'>5s',1],
+					 'NSEQ':[None,'>5s',1],
+					 'NADD':[None,'>5s',1],
+					 'MA1':[None,'>5s',1],
+					 'VOLX':[None,'>10.4E',1],
+					 'AHTX':[None,'>10.4E',1],
+					 'PMX':[None,'>10.3E',1],
+					 'X':[None,'>10.3E',1],
+					 'Y':[None,'>10.3E',1],
+					 'Z':[None,'>10.3E',1]}
 		}
 
 
@@ -313,6 +342,7 @@ structure={'calib':{'drawdown_cooling':{'images':None},
 			         'tubes':None},
 			'mesh':{'from_amesh':None,
 			        'from_leapfrog':None,
+			        'meshmaker':{'grid':None},
 			        'GIS':None,
 			        'images':None,
 			        'to_steinar':None,

@@ -188,6 +188,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 	data=pd.read_csv("../input/drawdown/%s_DD.dat"%well)
 	fontsize_layout=8
 
+	"""
 	data_inj = pd.read_csv("../input/mh/filtered/total_inj.csv", usecols = ['date_time', 'steam', 'liquid'])
 	data_inj['date_time'] = pd.to_datetime(data_inj['date_time'] , format="%Y-%m-%d")
 
@@ -210,7 +211,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 	extraction = data_field['extraction'].rolling(window = 180).mean()
 	injection = data_field['inyeccion'].rolling(window = 180).mean()
 	net = data_field['net'].rolling(window = 180).mean()
-
+	"""
 
 	if len(data.loc[data['TVD']==depth]['datetime'])>1:
 
@@ -220,7 +221,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 		#Plotting
 
 		fig, ax = plt.subplots(figsize=(10,4))
-		ln1 = ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='Drawdown')
+		ln1 = ax.plot(dates,data.loc[data['TVD']==depth]['pressure'].values,linestyle='-',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=3,label='Drawdown')
 		ax.set_title("Drawdown at well: %s at %s masl"%(well,depth) ,fontsize=fontsize_layout)
 		ax.set_xlabel("Time",fontsize = fontsize_layout)
 		ax.set_ylabel('Pressure [bar]',fontsize = fontsize_layout)
@@ -229,17 +230,17 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 		#Plotting formating
 		#xlims=[min(dates)-timedelta(days=365),max(dates)+timedelta(days=365)]
 
-		xlims=[min(data_inj['date_time']),max(data_inj['date_time'])]
+		#xlims=[min(data_inj['date_time']),max(data_inj['date_time'])]
 
 		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
 
 		years = mdates.YearLocator()
 		years_fmt = mdates.DateFormatter('%Y')
 
-		ax.set_xlim(xlims)
+		#ax.set_xlim(xlims)
 		ax.xaxis.set_major_formatter(years_fmt)
 
-
+		"""
 		ax2 = ax.twinx()
 		ln2 = ax2.plot(net,linestyle='-',color='m',linewidth=1,ms=1,label='Net flow rate',alpha=0.25)
 		ax2.set_ylim([0,1000])
@@ -250,7 +251,7 @@ def plot_one_drawdown_from_txt(well,depth, savefig = False):
 		lns = ln1+ln2
 		labs = [l.get_label() for l in lns]
 		ax.legend(lns, labs, loc="upper right")
-
+		"""
 		#ax.xaxis.set_major_locator(years)
 		#fig.autofmt_xdate()
 
@@ -410,7 +411,7 @@ def plot_one_cooling_and_drawdown_from_txt(well,depth):
 		
 		return plt.show()
 
-def plot_one_mh_from_txt(well,savefig=False):
+def plot_one_mh_from_txt(well,savefig=False, plot_lines = False, replace_zeros = True):
 	"""Creates a plot using the flow and enthalpy measurements
 
 	Parameters
@@ -433,7 +434,6 @@ def plot_one_mh_from_txt(well,savefig=False):
 	>>> plot_one_mh_from_txt('WELL-1')
 	"""
 
-
 	fontsize_ylabel=8
 	fontsize_title=9
 
@@ -444,7 +444,9 @@ def plot_one_mh_from_txt(well,savefig=False):
 	dates=list(map(dates_func,data['date_time'].values))
 	max_liq=max(data['liquid'])
 	max_st=max(data['steam'])
-	data = data.replace(0,np.nan)
+
+	if replace_zeros:
+		data = data.replace(0,np.nan)
 
 	#Quality
 	data['quality']= data['steam']/(data['liquid']+data['steam'])
@@ -455,18 +457,22 @@ def plot_one_mh_from_txt(well,savefig=False):
 	gs = gridspec.GridSpec(4, 1)
 	fig, ax = plt.subplots(figsize=(12,7))
 
+	if plot_lines:
+		linestyle = '-'
+	else:
+		linestyle = 'None'
 
 	#Flow plot
 	ax.format_xdata = mdates.DateFormatter('%Y%-m-%d_%H:%M:%S')
 	ax=plt.subplot(gs[0,0])
-	ln1=ax.plot(dates,data['steam'],linestyle='None',color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
-	ax.set_ylim([0,max(max_liq,max_st)])
+	ln1=ax.plot(dates,data['steam'],linestyle=linestyle,color=formats.plot_conf_color['ms'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Steam',alpha=0.75)
+	ax.set_ylim([-5,max(max_liq,max_st)+5])
 
 	ax1b = ax.twinx()
-	ln2=ax1b.plot(dates,data['liquid'],linestyle='None',color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
+	ln2=ax1b.plot(dates,data['liquid'],linestyle=linestyle,color=formats.plot_conf_color['ml'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Liquid',alpha=0.75)
 	ax.set_ylabel('Flow s[kg/s]',fontsize = fontsize_ylabel)
 	ax1b.set_ylabel('Flow l[kg/s]',fontsize = fontsize_ylabel)
-	ax1b.set_ylim([0,max(max_liq,max_st)])
+	ax1b.set_ylim([-5,max(max_liq,max_st)+5])
 
 	# legend for flow
 	lns = ln1+ln2
@@ -475,21 +481,21 @@ def plot_one_mh_from_txt(well,savefig=False):
 
 	#Enthalpy plot
 	ax2=plt.subplot(gs[1,0], sharex = ax)
-	ax2.plot(dates,data['enthalpy'],linestyle='None',color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.75)
+	ax2.plot(dates,data['enthalpy'],linestyle=linestyle,color=formats.plot_conf_color['h'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Enthalpy',alpha=0.75)
 	ax2.legend(loc="upper right")
 	ax2.set_ylabel('Enthalpy [kJ/kg]',fontsize = fontsize_ylabel)
 
 
 	#WHPressure plot
 	ax3=plt.subplot(gs[3,0], sharex = ax)
-	ax3.plot(dates,data['WHPabs']+0.92,linestyle='None',color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
+	ax3.plot(dates,data['WHPabs']+0.92,linestyle=linestyle,color=formats.plot_conf_color['P'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Pressure',alpha=0.75)
 	ax3.legend(loc="upper right")
 	ax3.set_ylabel('Pressure [bara]',fontsize = fontsize_ylabel)
 
 
 	#Quality
 	ax4=plt.subplot(gs[2,0], sharex = ax)
-	ax4.plot(dates,data['quality'],linestyle='None',color=formats.plot_conf_color['SG'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Quality',alpha=0.75)
+	ax4.plot(dates,data['quality'],linestyle=linestyle,color=formats.plot_conf_color['SG'][0],marker=formats.plot_conf_marker['real'][0],linewidth=1,ms=1,label='Quality',alpha=0.75)
 	ax4.legend(loc="upper right")
 	ax4.set_ylim([0,q_max+0.05])
 	ax4.set_ylabel('Quality',fontsize = fontsize_ylabel)

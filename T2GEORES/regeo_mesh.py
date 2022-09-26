@@ -1,5 +1,6 @@
 from T2GEORES import geometry as geometry
 from T2GEORES import lloyd_relaxation as Field
+from T2GEORES import formats as formats
 
 import numpy as np
 import re as re
@@ -1973,9 +1974,6 @@ def to_GIS(input_mesh_dictionary, layer='A'):
 
 	eleme_json_file='../mesh/ELEME.json'
 
-	wells_corr_json_file='../mesh/wells_correlative.txt'
-
-
 	if os.path.isfile(segmt_json_file):
 		with open(segmt_json_file) as file:
 		  	blocks=json.load(file)
@@ -2536,3 +2534,65 @@ def feedpoints_to_vtu():
 		writer.Update()
 		writer.Write()
 
+
+
+def rock_assign_r_meshmaker(conditions):
+
+	input_file="../mesh/meshmaker/grid.mes"
+
+	ELEME_string = ''
+	CONNE_string = ''
+
+	which = 'ELEME'
+	with open(input_file,'r') as file:
+		for line in file:
+			if 'CONNE' in line:
+				which = 'CONNE'
+
+			if which == 'ELEME':
+				ELEME_string += line
+			else:
+				CONNE_string += line
+
+
+	ELEM_file_path="../mesh/meshmaker/ELEME"
+	ELEM_file=open(ELEM_file_path, "w")
+	ELEM_file.write(ELEME_string)
+	ELEM_file.close()
+
+
+	col_eleme=[(0,5),(5,10),(10,15),(15,20),(20,30),(30,40),(40,50),(50,60),(60,70),(70,80)]
+	data_eleme=pd.read_fwf(ELEM_file_path,colspecs=col_eleme,skiprows=1,header=None,
+			               names=['ELEME','NSEQ','NADD','MA1','VOLX','AHTX','PMX','X','Y','Z'])
+
+	for condition in conditions:
+		data_eleme.loc[data_eleme['X']>conditions[condition]['value'],'MA1'] = conditions[condition]['MA1']
+
+
+	ELEME_string_output = ''
+	for index, row in data_eleme.iterrows():
+		for column in data_eleme.columns:
+			if column in ['MA1','ELEME','NSEQ','NADD']:
+				value = str(row[column]).replace('.0','')
+				if value == 'nan':
+					value = ' '
+			else:
+				value = row[column]
+			
+			to_write = format(value,formats.formats_t2['ELEME'][column][1])
+			if to_write == '       NAN':
+				to_write = format(' ','>10')
+			
+			ELEME_string_output += to_write
+		ELEME_string_output+='\n'
+
+
+	CONNE_file_path="../model/t2/sources/CONNE"
+	CONNE_file=open(CONNE_file_path, "w")
+	CONNE_file.write(CONNE_string)
+	CONNE_file.close()
+
+	ELEME_file_path="../model/t2/sources/ELEME"
+	ELEME_file=open(ELEME_file_path, "w")
+	ELEME_file.write('ELEME\n'+ELEME_string_output)
+	ELEME_file.close()

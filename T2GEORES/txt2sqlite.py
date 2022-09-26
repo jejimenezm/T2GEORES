@@ -515,6 +515,8 @@ def insert_raw_mh_to_sqlite(input_dictionary):
 		if os.path.isfile(source_txt+'mh/'+f):
 			mh=pd.read_csv(source_txt+'mh/'+f)
 			mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status': 'type'}, inplace=True)
+			mh.to_sql('mh',if_exists='append',con=conn,index=False)
+
 	conn.close()
 
 def insert_filtered_mh_to_sqlite(input_dictionary, single_well = None):
@@ -780,7 +782,7 @@ def insert_wellblock_to_sqlite(input_dictionary):
 					wells.append(well)
 			except KeyError:
 					pass
-		print(wells_correlative['P-1'])
+
 		for name in wells:
 			try:
 				blocknumer=wells_correlative[name][0]

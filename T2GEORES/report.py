@@ -637,7 +637,7 @@ def to_paraview(input_dictionary,itime=None, num = None):
 					writer=vtk.vtkXMLUnstructuredGridWriter()
 					writer.SetInputData(ugrid)
 					writer.SetFileName('../output/vtu/model_%.0f.vtu'%float(t))
-					series["files"].append({"name":"mesh_%.0f.vtu"%float(t),"time":float(t)})
+					series["files"].append({"name":"model_%.0f.vtu"%float(t),"time":float(t)})
 					writer.SetDataModeToAscii()
 					writer.Update()
 
@@ -648,34 +648,44 @@ def to_paraview(input_dictionary,itime=None, num = None):
 		else:
 			sys.exit("There are no json files generated, run t2_to_json from output")		
 	else:
-		if not files_dictionary:
-			file_name=src_directory+'/t2_output_%6.5E.json'%itime
-			with open(file_name) as file:
-			  	data_time_n=json.load(file)
+		file_name=src_directory+'/t2_output_%.0f.json'%float(itime)
+		with open(file_name) as file:
+		  	data_time_n=json.load(file)
 
-			temperature=vtk.vtkFloatArray()
-			temperature.SetName('temperature')
+		print(data_time_n.keys())
 
-			pressure=vtk.vtkFloatArray()
-			pressure.SetName('pressure')
+		itime = "%.1f"%float(itime)
 
-			for block in blocks:
-				pressure.InsertNextValue(float(data_time_n[t][block]['P'])/1E5)
-				temperature.InsertNextValue(float(data_time_n[t][block]['T']))
-				ugrid.GetCellData().AddArray(pressure)
-				ugrid.GetCellData().AddArray(temperature)
+		data = {}
+		for head in data_time_n[itime][block]:
+			if head != 'ELEM':
+				data[head] = vtk.vtkFloatArray()
+				data[head].SetName(head)
 
-			writer=vtk.vtkXMLUnstructuredGridWriter()
-			writer.SetInputData(ugrid)
-			writer.SetFileName('../output/vtu/model_%s.vtu'%t)
-			series["files"].append({"name":"mesh_%6.5E.vtu"%itime,"time":float(itime)})
-			writer.SetDataModeToAscii()
-			writer.Update()
+		#temperature=vtk.vtkFloatArray()
+		#temperature.SetName('temperature')
 
-			writer.Write()
+		#pressure=vtk.vtkFloatArray()
+		#pressure.SetName('pressure')
 
-			with open("../output/vtu/model_.vtu.series","w") as f:
-				json.dump(series,f)
+		for block in blocks:
+			for head in data_time_n[itime][block]:
+				if head != 'ELEM':
+					data[head].InsertNextValue(float(data_time_n[itime][block][head]))
+					ugrid.GetCellData().AddArray(data[head])
+
+			#pressure.InsertNextValue(float(data_time_n[t][block]['P'])/1E5)
+			#temperature.InsertNextValue(float(data_time_n[t][block]['T']))
+			#ugrid.GetCellData().AddArray(pressure)
+			#ugrid.GetCellData().AddArray(temperature)
+
+		writer=vtk.vtkXMLUnstructuredGridWriter()
+		writer.SetInputData(ugrid)
+		writer.SetFileName('../output/vtu/model_%.0f.vtu'%float(itime))
+		writer.SetDataModeToAscii()
+		writer.Update()
+
+		writer.Write()
 
 def vertical_cross_section(method,ngridx,ngridy,variable_to_plot,source,show_wells_3D,print_point,savefig,plots_conf,input_dictionary):
 	"""It Generates a vertical cross section for a specified parameter on a defined path.
@@ -2331,6 +2341,8 @@ def plot_compare_producers(input_dictionary, years = 35):
 	data_h = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWH',['TIME','COMPUTED']]
 	data_r = data_t.loc[data_t['OBSERVATION'] == 'PROD_FLOWR',['TIME','COMPUTED']]
 
+	print(data_t)
+
 	times = data_h['TIME']
 
 	dates=[]
@@ -2569,6 +2581,14 @@ def plot_power_flowell(input_dictionary, save = True, show= True):
 	data_12 = pd.read_csv(file_12, delimiter=',')
 	data_12['date_time'] = pd.to_datetime(data_12['date_time'] , format="%Y%m%d %H:%M:%S")
 
+
+	data_12=data_12.set_index(['date_time'])
+	data_12.index = pd.to_datetime(data_12.index)
+
+	power12 = data_12['power']#	.resample('6M').mean()
+	power12 = pd.DataFrame({'date_time':power12.index, 'power':power12.values}) 
+
+
 	data_3 = pd.read_csv(file_3, delimiter=',')
 	data_3['date_time'] = pd.to_datetime(data_3['date_time'] , format="%Y%m%d %H:%M:%S")
 
@@ -2586,19 +2606,19 @@ def plot_power_flowell(input_dictionary, save = True, show= True):
 	ax3.set_ylabel('Generation [MW]',fontsize = 8)
 	ax3.set_xlabel("Time",fontsize = 8)
 
-	ax12.plot(data_12['date_time'],data_12['power'],color=formats.plot_conf_color['m'][1],\
+	ax12.plot(power12['date_time'],power12['power'],color=formats.plot_conf_color['m'][1],\
 		linestyle='--',ms=1,label='Computed power',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
 	ax12.plot(gen_data_u12['fecha'],gen_data_u12['generation'],color='k',\
 		linestyle='None',ms=1,label='Real power',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
 	ax12.legend(loc = 'lower right')
-	ax12.fill_between([min(gen_data_u12['fecha']),max(data_12['date_time'])],56,53,color = 'grey', alpha = 0.5)
+	ax12.fill_between([min(gen_data_u12['fecha']),max(power12['date_time'])],59,53,color = 'grey', alpha = 0.5)
 
 	ax3.plot(data_3['date_time'],data_3['power'],color=formats.plot_conf_color['m'][1],\
 		linestyle='--',ms=1,label='Computed power',marker=formats.plot_conf_marker['current'][0],alpha=0.5)
 	ax3.plot(gen_data_u3['fecha'],gen_data_u3['generation'],color='k',\
 		linestyle='None',ms=1,label='Real power',marker=formats.plot_conf_marker['current'][0],alpha=0.5)
 	ax3.legend(loc = 'lower right')
-	ax3.fill_between([min(gen_data_u3['fecha']),max(data_3['date_time'])],44,42,color = 'grey', alpha = 0.5)
+	ax3.fill_between([min(gen_data_u3['fecha']),max(data_3['date_time'])],45,42,color = 'grey', alpha = 0.5)
 
 	if save:
 		fig12.savefig('../output/power_12_flowell.png',dpi=300) 
