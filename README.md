@@ -50,4 +50,9 @@ Recent changes are listed.
 ### 2021-10-17
 - Severals updates on mesh creation (lloyd relaxation) and incon creation
 
+## [0.2.0]
+
+### 2022-09-26
+- Including MESHMAKER writer, fixing bugs
+
 [0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/tag/T2GEORES-0.1.8
