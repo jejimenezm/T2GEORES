@@ -2536,7 +2536,7 @@ def feedpoints_to_vtu():
 
 
 
-def rock_assign_r_meshmaker(conditions):
+def rock_assign_r_meshmaker(conditions, elements_inact = []):
 
 	input_file="../mesh/meshmaker/grid.mes"
 
@@ -2566,11 +2566,15 @@ def rock_assign_r_meshmaker(conditions):
 			               names=['ELEME','NSEQ','NADD','MA1','VOLX','AHTX','PMX','X','Y','Z'])
 
 	for condition in conditions:
-		data_eleme.loc[data_eleme['X']>conditions[condition]['value'],'MA1'] = conditions[condition]['MA1']
+		data_eleme.loc[data_eleme['X'] > conditions[condition]['value'],'MA1'] = conditions[condition]['MA1']
 
 
 	ELEME_string_output = ''
 	for index, row in data_eleme.iterrows():
+
+		if str(row['ELEME']) in elements_inact:
+			row[ "VOLX"] = 1E50
+
 		for column in data_eleme.columns:
 			if column in ['MA1','ELEME','NSEQ','NADD']:
 				value = str(row[column]).replace('.0','')
@@ -2579,13 +2583,13 @@ def rock_assign_r_meshmaker(conditions):
 			else:
 				value = row[column]
 			
+
 			to_write = format(value,formats.formats_t2['ELEME'][column][1])
 			if to_write == '       NAN':
 				to_write = format(' ','>10')
 			
 			ELEME_string_output += to_write
 		ELEME_string_output+='\n'
-
 
 	CONNE_file_path="../model/t2/sources/CONNE"
 	CONNE_file=open(CONNE_file_path, "w")
@@ -2596,3 +2600,4 @@ def rock_assign_r_meshmaker(conditions):
 	ELEME_file=open(ELEME_file_path, "w")
 	ELEME_file.write('ELEME\n'+ELEME_string_output)
 	ELEME_file.close()
+

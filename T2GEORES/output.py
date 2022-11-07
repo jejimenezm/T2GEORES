@@ -895,7 +895,6 @@ def src_csv(input_dictionary, path = None, type_source = 'SRC'):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	data_source=pd.read_sql_query("SELECT well,blockcorr,source_nickname FROM t2wellsource WHERE source_nickname %s ORDER BY source_nickname;"%condition,conn)
-	print(data_source)
 
 	#It reads the gener.csv output file line by line and store the data from each GEN element
 	poss_names = ["../model/t2/%s_gener.csv"%t2_file_name]
@@ -943,10 +942,16 @@ def src_csv(input_dictionary, path = None, type_source = 'SRC'):
 				for source in dictionary_files:
 					#Splits each line from the output file and storage it in a dictionary
 					if dictionary_files[source]['blockcorr'] in t2_line and dictionary_files[source]['source'] in t2_line:
-						t2_array=t2_line.rstrip().split(" ")
+						
+						block = t2_line[14:19]
+						
+						t2_array = t2_line.rstrip().split(" ")
 						str_list = list(filter(None, t2_array))
 						str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
 						str_list.append(time.replace('"',""))
+
+						str_list[0] = block
+
 						dictionary_files[source]['file_container']+=','.join(str_list)+'\n'
 			t2_file.close()
 		else:
@@ -1003,7 +1008,6 @@ def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
 		poss_names.append(path)
 	output_t2_file = None 
 	for file in poss_names:
-		print(file)
 		if os.path.isfile(file):
 			output_t2_file = file
 
@@ -1029,10 +1033,16 @@ def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
 
 			list_bool = [block in t2_line for block in blocks]
 			if any(list_bool):
+
+				block = t2_line[14:19]
+
 				t2_array=t2_line.rstrip().split(" ")
 				str_list = list(filter(None, t2_array))
 				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
 				str_list.append(time.replace('"',""))
+
+				str_list[0] = block
+
 				pos = list_bool.index(True)
 				well = data_block.loc[data_block['blockcorr'] == blocks[pos],'well'].iloc[0]
 				dictionary_files[well]['file_container']+=','.join(str_list)+'\n'

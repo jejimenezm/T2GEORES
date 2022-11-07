@@ -27,7 +27,7 @@ from scipy.stats import norm
 from iapws import IAPWS97
 
 
-plt.style.use('T2GEORES')
+#plt.style.use('T2GEORES')
 
 def plot_compare_one(well,savefig, no_real_data, data, TVD_elem, TVD_elem_top,axT,axP,PT_real_dictionary,layer_bottom,limit_layer,input_dictionary,label=None,def_colors=True):
 	"""It generates two plots, they compare real downhole temperature and pressure measurements with model output 
@@ -3025,7 +3025,7 @@ def WB_scatter(input_dictionary, well,block,source):
 
 		plt.show()
 
-def sources_plots(input_dictionary, well,block,source, variables = []):
+def sources_plots(input_dictionary, well,block,source, variables = [], derivative = False, II_test = None, log_data = None):
 	"""
 	Not documented
 	"""
@@ -3065,29 +3065,135 @@ def sources_plots(input_dictionary, well,block,source, variables = []):
 				divisor = 1
 				marker = 'd'
 
-			ax.plot(data['date_time'],data[variable]/divisor,marker=marker,linestyle = 'None', label = variable, ms = 3)
+			ax.plot(data['date_time'],data[variable]/divisor,marker=marker,linestyle = '-', label = variable, ms = 3)
 
 		if os.path.isfile(file2):
-			data2 = pd.read_csv(file2)
 
-			data2 = data2.loc[(data2['ELEM'] == block) & (data2['TIME']>0) ]
+			data2 = pd.read_csv(file2, dtype={'ELEM': 'S5'} )
+
+			data2['ELEM'] = data2['ELEM'].str.decode("utf-8")
+
+			delta_t = (input_dictionary['ref_date_PTA'] -  input_dictionary['ref_date']).total_seconds()
+
+			ax2 = ax.twinx()
 
 			dates2 = []
+			dates3 = []
 			for t in data2['TIME']:
 				dates2.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(t)))
-			data2['date_time']=dates2
+				dates3.append(input_dictionary['ref_date']+datetime.timedelta(seconds=(int(t)-delta_t)))
+			
+			data2['date_time'] = dates2
+			data2['date_time_PTA'] = dates3
 
-			ax.plot(data2['date_time'],data2['PRES_VAP']/1E5,marker='o',linestyle = '-', label = 'PRES_VAP', ms = 1)
+			data2 = data2.loc[(data2['ELEM'] == block) & (data2['date_time'] >= input_dictionary['ref_date_PTA']) ]
+
+			if derivative:
+
+				ref_P = data2['PRES_VAP'].iloc[0]
+
+				data2['dts'] = (data2['date_time_PTA'] -  input_dictionary['ref_date_PTA']).dt.total_seconds()
+
+				data2['DP'] = (data2['PRES_VAP'] -  ref_P)/1E5
+
+				data2['derivative'] = np.nan
+
+				data2.set_index('dts', inplace=True)
+
+				pc = 0.5
+				mc = 0.5
+
+				fig2, ax3  = plt.subplots(figsize=(10,4.5))
+
+				for index, row in data2.iterrows():
+
+					delta_t_j = np.e**(pc + np.log(index))
+					delta_t_k = np.e**(-pc + np.log(index))
+
+					dt = index
+					dt_j = delta_t_j
+					dt_k = delta_t_k
+
+					l1 = np.log(dt_j) - np.log(dt)
+					l2 = np.log(dt) - np.log(dt_k)
+
+					if dt_k > 0:
+
+						try:
+							data_j = data2.iloc[data2.index.get_loc(dt_j, method='backfill')]
+							dt_j = data_j['TIME']
+							data_k = data2.iloc[data2.index.get_loc(dt_k, method='ffill')]
+							dt_k = data_k['TIME']
+
+							l1 = np.log(dt_j) - np.log(dt)
+							l2 = np.log(dt) - np.log(dt_k)
+
+							if l1 >= pc and l2 >= pc and dt_k >0:
+
+								term_1 = np.log(dt/dt_k)*(data_j['DP'])/((np.log(dt_j/dt)*np.log(dt_j/dt_k)))
+								term_2 = np.log(dt_j*dt_k/dt**2)*row['DP']/((np.log(dt_j/dt)*np.log(dt/dt_k)))
+								term_3 = np.log(dt_j/dt)*data_k['DP']/((np.log(dt/dt_k)*np.log(dt_j/dt_k)))
+
+								derivative = term_1 + term_2 -term_3
+								data2.loc[index,'derivative'] = derivative
+
+						except (KeyError,pd.errors.InvalidIndexError):
+							pass
+
+				ax3.plot(data2['TIME'],abs(data2['derivative']),linestyle = '-', label = 'Derivative %s'%pc)
+				ax3.plot(data2['TIME'],abs(data2['DP']),linestyle = '-',  label = 'DP') #color = 'blue',
+				ax3.legend()
+				ax3.set_yscale('log')
+				ax3.set_xscale('log')
+
+				ax2.plot(data2['date_time'],data2['PRES_VAP']/1E5,color = 'red', marker='o',linestyle = '-', label = 'PRES_VAP', ms = 1)
+			
+			
+			if II_test != None:
+
+				if 'xls' in II_test:
+				    data3 = pd.read_excel(II_test, usecols = 'A:I', skiprows = 7 )
+				else:
+				    data3 = pd.read_csv(II_test, skiprows = 0, header = 0, encoding = 'utf-8', delimiter = '\t')
+
+
+				try:
+				    data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				                     format='%d-%b-%Y %H:%M:%S')
+				except ValueError:
+				    try:
+				        data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				                         format='%m/%d/%y %H:%M:%S')
+				    except ValueError:
+				        data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				                         format='%m/%d/%Y  %H:%M:%S')
+			
+
+				param_dictionary = {'Temperatura':'Temperature',
+                    'Presion':'Pressure',
+                    'Velocidad':'CS.(m/min)',
+                    'Temp int.':'Internal Temp',
+                    'Profundidad':'Depth(Mtrs)'}
+
+				for i, key in enumerate(log_data):
+					sub_data = data3.loc[log_data[key]['index'][0]:log_data[key]['index'][1]]
+					ax2.plot(sub_data['dates'],sub_data[param_dictionary['Presion']],linestyle = '--' ,color = 'k', label = 'Real Pressure')
+			
+
+			ax2.set_ylabel('Pressure [bar]')
 
 		ax.set_ylabel('Variable')
 		ax.set_xlabel('Time')
 
 		ax.set_title("%s %s %s"%(well,block,source))
 
-		#legends = [ax.get_lines()[n] for n in range(len(variables))]
-		#labels = variables.extend('PRES_VAP')
+		handles, labels = [(a + b) for a, b in zip(ax.get_legend_handles_labels(), ax2.get_legend_handles_labels())]
 
-		plt.legend(loc="lower center", bbox_to_anchor=(0.78, -0.18), ncol=2, fancybox=True, shadow=True)
+		by_label = dict(zip(labels, handles))
+
+		ax.legend(by_label.values(), by_label.keys(), loc=(0.85,0.75), fontsize = 8)
+
+		#fig.legend(loc="lower center", bbox_to_anchor=(0.78, -0.18), ncol=2, fancybox=True, shadow=True)
 
 		fig.savefig('../output/PT/images/evol/%s_%s_%s_evol_plots.png'%(well,block,source)) 
 

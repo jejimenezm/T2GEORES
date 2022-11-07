@@ -674,6 +674,7 @@ def ELEME_adder(input_dictionary):
 		with open(source_file) as eleme_source_file:
 			for line in eleme_source_file.readlines()[:]:
 				string+="%s"%line
+		string += '\n'
 	else:
 		sys.exit("The file %s or directory do not exist"%source_file)
 
@@ -726,7 +727,6 @@ def OUTPU_writer(input_dictionary):
 			string_temp=''	
 		else:
 			for key in input_dictionary['OUTPU'][outpu]:
-				print(key)
 				if outpu=='FORMAT':
 					string+="%s\n"%(key)
 					n_variables=0
@@ -771,15 +771,14 @@ def MOMOP_writer(input_dictionary):
 
 	"""
 	string="MOMOP----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
-	string=''
 	for key in formats.formats_t2['MOMOP']:
 		if formats.formats_t2['MOMOP'][key][2]==1:
 			value,def_value=def_value_selector('MOMOP',key,input_dictionary)
 			string+=converter(value,formats.formats_t2['MOMOP'][key][1],def_value)
-	string+="\n"
+	string+="\n\n"
 	return string
 
-def ROCKS_writer(input_dictionary, n_levels = 1):
+def ROCKS_writer(input_dictionary, n_levels = 2):
 	"""Return the ROCKS section
 
 	Parameters
@@ -813,19 +812,30 @@ def ROCKS_writer(input_dictionary, n_levels = 1):
 	"""
 	string="ROCKS----1----*----2----*----3----*----4----*----5----*----6----*----7----*----8\n"
 	rocks_levels=[1,2,3,4]
-	pass_valid=False
+	
+
 	for rock in input_dictionary['ROCKS']:
+
+		
+
 		for level in rocks_levels:
+			tmp = ''
+			pass_valid=False
+
 			if level > n_levels:
 				break
 			else:
 				for key in formats.formats_t2['ROCKS']:
-					if formats.formats_t2['ROCKS'][key][2]==level:
+					if formats.formats_t2['ROCKS'][key][2] == level:
 						value,def_value=def_value_selector(rock,key,input_dictionary,rocks=True)
-						string+=converter(value,formats.formats_t2['ROCKS'][key][1],def_value)
-						pass_valid=False
+						s = converter(value,formats.formats_t2['ROCKS'][key][1],def_value)
+						tmp += s
 
-		string+='\n'
+			if len(tmp.replace(' ','')) > 0:
+				string += tmp
+				string += '\n'
+
+		#string+='\n'
 	string+="\n"
 	return string
 
@@ -855,14 +865,6 @@ def add_meshmaker(input_dictionary):
 	mesh_type = input_dictionary['MESHMAKER']['TYPE']
 
 	string += mesh_type + '\n'
-
-
-	"""
-	for key in formats.formats_t2['MESHMAKER'][mesh_type]:
-			value,def_value=def_value_selector(mesh_type,key,input_dictionary,mesh = True,mesh_n = key)
-			string+=converter(value,formats.formats_t2['MESHMAKER'][mesh_type][key][1],def_value)
-	string+='\n'
-	"""
 
 
 	for n, key in  enumerate(input_dictionary['MESHMAKER'][mesh_type]):

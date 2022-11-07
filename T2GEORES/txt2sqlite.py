@@ -302,19 +302,21 @@ def insert_wells_sqlite(input_dictionary):
 	>>>  insert_wells_sqlite(input_dictionary)
 	"""
 
-	db_path=input_dictionary['db_path']
-	source_txt=input_dictionary['source_txt']
+	db_path = input_dictionary['db_path']
+	source_txt = input_dictionary['source_txt']
 
-	conn=sqlite3.connect(db_path)
+	conn = sqlite3.connect(db_path)
 	c = conn.cursor()
 
-	wells=pd.read_csv(source_txt+'ubication.csv')
+	wells = pd.read_csv(source_txt+'ubication.csv')
+
+	print(wells['drilldate'])
 
 	wells['drilldate'] = pd.to_datetime(wells['drilldate'],format="%Y%m%d")
 
 	for  index,row in wells.iterrows():
 		try:
-			q="INSERT INTO wells(well,type,east,north,elevation,drilldate) VALUES ('%s','%s',%s,%s,%s,'%s')"%\
+			q = "INSERT INTO wells(well,type,east,north,elevation,drilldate) VALUES ('%s','%s',%s,%s,%s,'%s')"%\
 			(row['well'],row['type'],row['east'],row['north'],row['masl'],row['drilldate'])
 			c.execute(q)
 			conn.commit()
@@ -486,7 +488,7 @@ def insert_cooling_to_sqlite(input_dictionary):
 			
 	conn.close()
 
-def insert_raw_mh_to_sqlite(input_dictionary):
+def insert_raw_mh_to_sqlite(input_dictionary, replace = False):
 	"""It stores all the data contain on the subfolder mh from the input file folder.
 
 	Parameters
@@ -510,11 +512,16 @@ def insert_raw_mh_to_sqlite(input_dictionary):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 	for f in os.listdir(source_txt+'mh'):
-		print(f)
 		well_name=f.replace("'","").replace("_mh.dat","")
 		if os.path.isfile(source_txt+'mh/'+f):
 			mh=pd.read_csv(source_txt+'mh/'+f)
 			mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status': 'type'}, inplace=True)
+			
+			if replace:
+				sql = "DELETE FROM mh WHERE well= '%s'"%well_name
+				c.execute(sql)
+				conn.commit()
+
 			mh.to_sql('mh',if_exists='append',con=conn,index=False)
 
 	conn.close()

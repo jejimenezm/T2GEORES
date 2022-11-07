@@ -204,7 +204,6 @@ def update_gen(input_dictionary):
 				for t2_line in t2_file:
 					if 'ENDCY' not in t2_line:
 						t2_string += t2_line
-						print(t2_line)
 					else:
 						pass
 
@@ -459,17 +458,19 @@ def run(input_dictionary):
 	if not input_dictionary['IT2_alias']:
 		subprocess.run(["itough2",'-v',version,'fit2','t2',str(EOS)])
 	else:
-		subprocess.run([input_dictionary['IT2_alias'],'fit2','t2',str(EOS)])
+		subprocess.run([input_dictionary['IT2_alias'],'-v',version,'fit2','t2',str(EOS)])
 
 	target_dir = current.replace('/scripts','/model/t2')
 	file_names = os.listdir(current)
 
+	
 	for file_name in file_names:
-		if 't2.' in file_name or 'fit2' in file_name:
+		if 't2' in file_name or 'fit2' in file_name:
 			try:
 				shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
 			except shutil.Error:
 				print("File already exist %s"%file_name)
+	
 
 def rock_update(input_dictionary):
 	"""

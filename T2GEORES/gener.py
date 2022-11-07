@@ -400,7 +400,7 @@ def write_t2_format_gener_dates(var_array,time_array,var_type,var_enthalpy,type_
 	else:
 		print("Time and variable array must have the same length")
 
-def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None, min_days = 0.000001, time_between_months = 120):
+def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T = None, min_days = 0.000001, time_between_months = 120, use_corr_layers = True):
 	"""It is the main function on this module, it writes the GENER section from the mh input files
 
 	Parameters
@@ -462,8 +462,6 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T 
 		data=pd.read_sql_query("SELECT type,date_time,steam_flow+liquid_flow as m_total,flowing_enthalpy,well_head_pressure\
 		 FROM mh WHERE well='%s';"%name,conn)
         
-		print(data)
-
 		dates_func=lambda datesX: datetime.strptime(datesX, "%Y-%m-%d_%H:%M:%S")
 		#Read file cooling
 		dates=list(map(dates_func,data['date_time']))
@@ -497,7 +495,10 @@ def write_gener_from_sqlite(type_flow,input_dictionary,make_up=False, def_inj_T 
 			for row in rows:
 				blockcorr=row[0]
 
-			source_block=layer_corr+blockcorr #Block name for feedzone
+			if use_corr_layers:
+				source_block= layer_corr+blockcorr #Block name for feedzone
+			else:
+				source_block= blockcorr 
 
 			#Generates the source nickname
 

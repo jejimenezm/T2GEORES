@@ -14,7 +14,7 @@ from statsmodels.nonparametric.smoothers_lowess import lowess
 
 import sqlite3
 
-plt.style.use('T2GEORES')
+#plt.style.use('T2GEORES')
 
 def plot_vertical_layer_distribution(show_fig,sav_fig,input_dictionary):
 	"""It plots the layers defined for the mesh
