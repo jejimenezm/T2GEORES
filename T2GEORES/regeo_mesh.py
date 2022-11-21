@@ -2536,6 +2536,41 @@ def feedpoints_to_vtu():
 
 
 
+def run_meshaker(input_dictionary):
+	"""It runs the TOUGH2 input file
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+	  A dictionary with the EOS used on the model
+
+	Returns
+	-------
+	files
+	  various: containing the output from modelling 
+	"""
+
+	EOS=input_dictionary['EOS']
+	version=input_dictionary['VERSION']
+
+	current=os.path.abspath(os.getcwd())
+
+	t2_input_file='%s/mesh/meshmaker/grid'%current.replace('/scripts','')
+	shutil.copyfile(t2_input_file, current+'/grid')
+
+	subprocess.run(['tough2','-v',version,'-mesh','grid',str(EOS)])
+
+	target_dir = current.replace('/scripts','/mesh/meshmaker/')
+
+	file_names = os.listdir(current)
+
+	for file_name in file_names:
+		if 'CONNE' in file_name or 'ELEME' in file_name or 'grid' in file_name or 't2' in file_name:
+			try:
+				shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
+			except shutil.Error:
+				print("File already exist %s"%file_name)
+
 def rock_assign_r_meshmaker(conditions, elements_inact = []):
 
 	input_file="../mesh/meshmaker/grid.mes"

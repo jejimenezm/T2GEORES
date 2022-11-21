@@ -36,14 +36,44 @@ def incon_replace(incon_file,blocks,incon_file_len):
 			minus = 2
 		if blocks=='even' and index!=0 and index<=incon_file_len-minus:
 			if index%2==1:
-				string+=incon_line[0:5]+'\n'
+				block_name = incon_line[0:5]+'\n'	
+
+				lt = [ l for l in block_name]
+				print(lt)
+
+				if lt[2] == '0' and lt[3] == '0':
+					lt[2] = ' '
+					lt[3] = ' '
+
+				if lt[2] == '0':
+					lt[2] = ' '
+
+				bi = ''.join(lt)
+
+				string += bi
 			else:
-				string+=incon_line
+				block_name = incon_line
+
+				lt = [ l for l in block_name]
+
+				if lt[2] == '0' and lt[3] == '0':
+					lt[2] = ' '
+					lt[3] = ' '
+
+				if lt[2] == '0':
+					lt[2] = ' '
+
+				bi = ''.join(lt)
+				
+				string += bi
+
 		if blocks=='odd' :
 			if index%2!=1:
-				string+=incon_line
+				block_name = incon_line
+				string += block_name
 			else:
-				string+=incon_line
+				block_name = incon_line
+				string += block_name
 	return string
 
 def incon_delete():
@@ -214,7 +244,7 @@ def update_gen(input_dictionary):
 
 					t2_string+="%sDUM00                   3     MASS                      10.e5\n"%dummy_element
 					t2_string+="           -infinity       0.0\n"
-					t2_string+="%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00"),'>20s'))
+					t2_string+="%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_%H:%M:%S"),'>20s'))
 					t2_string+="            infinity       0.0\n"
 				
 				gener_source_file=open(sources_file, "r")
@@ -268,7 +298,7 @@ def update_gen(input_dictionary):
 
 							t2_string += "%sDUM00                   3     MASS                      10.e5\n"%dummy_element
 							t2_string += "           -infinity       0.0\n"
-							t2_string += "%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_00:00:00"),'>20s'))
+							t2_string += "%s       0.0\n"%(format(input_dictionary['ref_date'].strftime("%Y-%m-%d_%H:%M:%S"),'>20s'))
 							t2_string += "            infinity       0.0\n"
 
 						gener_source_file=open(sources_file, "r")
@@ -434,42 +464,42 @@ def create_prev():
 	copy_folder(src,dest)
 
 def run(input_dictionary):
-	"""It runs the TOUGH2 input file
+    """It runs the TOUGH2 input file
 
-	Parameters
-	----------
-	input_dictionary : dictionary
-	  A dictionary with the EOS used on the model
+    Parameters
+    ----------
+    input_dictionary : dictionary
+      A dictionary with the EOS used on the model
 
-	Returns
-	-------
-	files
-	  various: containing the output from modelling 
-	"""
+    Returns
+    -------
+    files
+      various: containing the output from modelling 
+    """
 
-	EOS=input_dictionary['EOS']
-	version=input_dictionary['VERSION']
-	current=os.path.abspath(os.getcwd())
-	t2_input_file='%s/model/t2/t2'%current.replace('/scripts','')
-	it2_input_file='%s/model/t2/fit2'%current.replace('/scripts','')
-	shutil.copyfile(t2_input_file, current+'/t2')
-	shutil.copyfile(it2_input_file, current+'/fit2')
+    EOS=input_dictionary['EOS']
+    version=input_dictionary['VERSION']
+    current=os.path.abspath(os.getcwd())
+    t2_input_file='%s/model/t2/t2'%current.replace('/scripts','')
+    it2_input_file='%s/model/t2/%s'%(current.replace('/scripts',''),input_dictionary['iTOUGH2_file'])
+    shutil.copyfile(t2_input_file, current+'/t2')
+    shutil.copyfile(it2_input_file, current+'/%s'%input_dictionary['iTOUGH2_file'])
 
-	if not input_dictionary['IT2_alias']:
-		subprocess.run(["itough2",'-v',version,'fit2','t2',str(EOS)])
-	else:
-		subprocess.run([input_dictionary['IT2_alias'],'-v',version,'fit2','t2',str(EOS)])
+    if not input_dictionary['IT2_alias']:
+        subprocess.run(["itough2",'-v',version,input_dictionary['iTOUGH2_file'],'t2',str(EOS)])
+    else:
+        subprocess.run([input_dictionary['IT2_alias'],'-v',version,input_dictionary['iTOUGH2_file'],'t2',str(EOS)])
 
-	target_dir = current.replace('/scripts','/model/t2')
-	file_names = os.listdir(current)
+    target_dir = current.replace('/scripts','/model/t2')
+    file_names = os.listdir(current)
 
-	
-	for file_name in file_names:
-		if 't2' in file_name or 'fit2' in file_name:
-			try:
-				shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
-			except shutil.Error:
-				print("File already exist %s"%file_name)
+    
+    for file_name in file_names:
+        if 't2' in file_name or 'fit2' in file_name:
+            try:
+                shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
+            except shutil.Error:
+                print("File already exist %s"%file_name)
 	
 
 def rock_update(input_dictionary):

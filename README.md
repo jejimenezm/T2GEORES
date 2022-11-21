@@ -55,4 +55,7 @@ Recent changes are listed.
 ### 2022-09-26
 - Including MESHMAKER writer, fixing bugs
 
-[0.1.7]: https://github.com/jejimenezm/T2GEORES/releases/tag/T2GEORES-0.1.8
+## [0.2.3]
+
+### 2022-11-21
+- Adding first version of PTA functionalities

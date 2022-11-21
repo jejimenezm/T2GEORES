@@ -5,13 +5,13 @@ with open("README.md","r",encoding='utf-8') as fh:
 
 setup(
     name='T2GEORES',
-    version='0.2.2',
+    version='0.2.3',
     packages=['T2GEORES',],
     license='MIT',
     author='Erick Jiménez',
     author_email="erick@grogtp.is",
     url ="https://github.com/jejimenezm/T2GEORES",
-    download_url='https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.2.2/T2GEORES-0.2.2.tar.gz',
+    download_url='https://github.com/jejimenezm/T2GEORES/releases/download/T2GEORES-0.2.3/T2GEORES-0.2.3.tar.gz',
     long_description_content_type='text/markdown',
     long_description=long_description,
     classifiers=[
@@ -28,6 +28,7 @@ setup(
 		'scipy>=1.5.3',
         'pyshp>=2.2.0',
         'pyvista>=0.33.3',
-        'geopandas>=0.10.2'
+        'geopandas>=0.10.2',
+        'dca>=0.3.4'
     ],
 )
