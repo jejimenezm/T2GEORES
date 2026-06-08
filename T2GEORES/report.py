@@ -2089,7 +2089,7 @@ def plot_compare_mh(input_dictionary, well,block,source,save,show, production_di
 	else:
 		print("There is not a file called %s, try running src_evol from output.py"%file)
 
-def plot_compare_PT(input_dictionary, well,block,save,show):
+def plot_compare_PT(input_dictionary, well,block,save,show, years = 30):
 	"""Genera una grafica donde compara la evolucion de flujo y entalpia para el bloque asignado a la fuente de un pozo en particular
 
 	Parameters
@@ -2104,6 +2104,8 @@ def plot_compare_PT(input_dictionary, well,block,save,show):
 	  Almacaena la grafica generada
 	show : bool
 	  Almacaena la grafica generada
+	years: int
+	  Number of years to plot
 
 	Returns
 	-------
@@ -2125,14 +2127,21 @@ def plot_compare_PT(input_dictionary, well,block,save,show):
 	if os.path.isfile(file):
 		data=pd.read_csv(file)
 
+		data['ELEM'] = data['ELEM'].astype(str)
+
+
+
 		#Setting the time to plot
 		
 		times = data['TIME'].loc[data['ELEM'] == block]
 		times.reset_index(drop=True)
+
+
 		dates = []
 		for time  in times:
 			try:
-				dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
+				if time>0:
+					dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
 			except OverflowError:
 				print(time, "wont be plot")
 
@@ -2160,7 +2169,7 @@ def plot_compare_PT(input_dictionary, well,block,save,show):
 
 		ax.format_xdata = mdates.DateFormatter('%Y%-m-%d %H:%M:%S')
 
-		xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=35*365.25)]
+		xlims=[input_dictionary['ref_date']-datetime.timedelta(days=365),input_dictionary['ref_date']+datetime.timedelta(days=years*365.25)]
 		#ylims=[0,100]
 		#ax1.set_ylim(ylims)
 
@@ -2243,10 +2252,11 @@ def plot_compare_PT_vertical(input_dictionary, well,block,save,show, years = 35,
 			times.reset_index(drop=True)
 			dates = []
 			for time  in times:
-				try:
-					dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
-				except OverflowError:
-					print(time, "wont be plot")
+				if int(time) >0:
+					try:
+						dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(time)))
+					except OverflowError:
+						print(time, "wont be plot")
 
 
 			if p_res_block != None and block_i == p_res_block:
@@ -2503,7 +2513,9 @@ def plot_power(input_dictionary, save = True, show= True):
 	"""
 	Not documented
 	"""
-	real_data = "../input/generation_data.csv"
+
+	"""
+	real_data = "../input/units_power.csv"
 
 	gen_data = pd.read_csv(real_data,delimiter=',')
 	gen_data = gen_data.sort_values(by ='fecha' )
@@ -2516,7 +2528,8 @@ def plot_power(input_dictionary, save = True, show= True):
 
 	gen_data_u3 = gen_data.loc[ (gen_data.unidad == 'u3') & (gen_data.generation > 0), ['generation','fecha','unidad']]
 	gen_data_u3 = gen_data_u3.reset_index(drop=True)
-
+	"""
+	"""
 	file_12 = "../output/unit_12_power.csv"
 	file_3 = "../output/unit_3_power.csv"
 
@@ -2554,7 +2567,32 @@ def plot_power(input_dictionary, save = True, show= True):
 
 	if save:
 		fig12.savefig('../output/power_12.png',dpi=300) 
-		fig3.savefig('../output/power_3.png', dpi= 300) 
+		fig3.savefig('../output/power_3.png', dpi= 300)
+	"""
+	file_12 = "../output/units_power.csv"
+
+	fig12 = plt.figure(figsize=(10,4.5))
+
+	ax12 = plt.subplot(111)
+
+	data_12 = pd.read_csv(file_12, delimiter=',')
+	data_12['date_time'] = pd.to_datetime(data_12['date_time'] , format="%Y-%m-%d %H:%M:%S")
+
+	ax12.plot(data_12['date_time'],data_12['power'],color='red',\
+		linestyle='--',ms=1,label='Single Flash',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+	ax12.plot(data_12['date_time'],data_12['power_bin'],color='blue',\
+		linestyle='--',ms=1,label='Binary',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+	ax12.plot(data_12['date_time'],data_12['power_bin'] + data_12['power'],color='orange',\
+		linestyle='--',ms=1,label='Total',marker=formats.plot_conf_marker['current'][0],alpha=formats.plot_conf_marker['current'][1])
+
+	ax12.legend(frameon = False, loc = 'upper right')
+	ax12.set_title("Power Generation", fontsize = 10)
+	ax12.set_ylabel('Generation [MW]')
+	ax12.set_xlabel("Time")
+
+	fig12.savefig("../output/power.png", dpi = 300)
 
 	plt.show()
 
@@ -3026,7 +3064,7 @@ def WB_scatter(input_dictionary, well,block,source):
 
 		plt.show()
 
-def sources_plots(input_dictionary, well,block,source, variables = [], derivative = False, II_test = None, log_data = None, use_petbox = True, font_z = 12):
+def sources_plots(input_dictionary, well,block,source, variables = [], lim = {}, derivative = False, II_test = None, log_data = None, use_petbox = True, font_z = 12):
 	"""
 	Not documented
 	"""
@@ -3036,6 +3074,7 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 
 	if os.path.isfile(file):
 		data=pd.read_csv(file)
+
 
 		data=data.loc[(data['TIME']>0)]
 
@@ -3070,22 +3109,27 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 				divisor = 1
 				marker = 'd'
 
+			data[variable] = pd.to_numeric(data[variable])
+
+			#if variable == 'GEN':
+			#	data.loc[data[variable]<-lim[well][1],variable] = -1*lim[well][1]
+
 			ax.plot(data['date_time'],data[variable]/divisor,marker=marker,linestyle = '-', label = 'Flujo', ms = 3)
 
-		if os.path.isfile(file2):
+		if os.path.isfile(file2) and derivative:
 
 			data2 = pd.read_csv(file2, dtype={'ELEM': 'S5'} )
 
 			data2['ELEM'] = data2['ELEM'].str.decode("utf-8")
 
-			data2 = data2.loc[ data2['TIME']>0 ]
+			data2 = data2.loc[ data2['TIME']>=0 ]
 
 			ax2 = ax.twinx()
 
 			dates2 = []
 			#dates3 = []
 			for t in data2['TIME']:
-				dates2.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(t)))
+				dates2.append(input_dictionary['ref_date']+datetime.timedelta(seconds=float(t)))
 			#dates3.append(input_dictionary['ref_date']+datetime.timedelta(seconds=(int(t)-delta_t)))
 
 			data2['date_time'] = dates2
@@ -3109,8 +3153,8 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 
 
 				if len(input_dictionary['PTA_times']) > 1:
-					fig2, axs = plt.subplots(nrows=len(input_dictionary['PTA_times']), ncols=1, sharex = True, figsize = (10,10),subplot_kw=dict(box_aspect=1))
 
+					fig2, axs = plt.subplots(nrows=len(input_dictionary['PTA_times']), ncols=1, sharex = True, figsize = (10,10),subplot_kw=dict(box_aspect=1))
 
 					for k, pair in enumerate(input_dictionary['PTA_times']):
 
@@ -3203,7 +3247,7 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 
 					data_dp.set_index('dts', inplace=True)
 
-					axs.plot(abs(data_dp['DP']),linestyle = '-',  label = 'DP, step: %s'%input_dictionary['PTA_step'] ) #color = 'blue',
+					axs.plot(abs(data_dp['DP'].iloc[1:]),linestyle = '-',  label = 'DP, step: %s'%input_dictionary['PTA_step'] ) #color = 'blue',
 					
 					if use_petbox:
 						pc = 0.2
@@ -3212,8 +3256,8 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 					else:
 						data_dp['derivative'] = np.nan
 
-						pc = 0.5
-						mc = 0.5
+						pc = 0.2
+						mc = 0.2
 
 						for index, row in data_dp.iterrows():
 
@@ -3252,16 +3296,18 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 								except (KeyError,pd.errors.InvalidIndexError):
 									pass
 
-					axs.plot(abs(data_dp['derivative']),linestyle = '-', label = 'Derivativa, ciclo log: %s, paso: %s'%(pc, k ))
+					print(data_dp)
+
+					axs.plot(abs(data_dp['derivative'].iloc[1:]),linestyle = '-', label = 'Derivativa, ciclo log: %s, paso: %s'%(pc, k ))
 					axs.tick_params(axis='both', which='major', labelsize= font_z)
 					axs.legend(loc = 'best', fontsize = font_z-1)
 
 			if II_test != None:
 
-				if 'xls' in II_test:
-				    data3 = pd.read_excel(II_test, usecols = 'A:I', skiprows = 7 )
+				if 'xls' in II_test or 'xlsx' in II_test:
+				    data3 = pd.read_excel(II_test, usecols = 'A:I', skiprows = 11 )
 				else:
-				    data3 = pd.read_csv(II_test, skiprows = 0, header = 0, encoding = 'utf-8', delimiter = '\t')
+				    data3 = pd.read_csv(II_test, skiprows = 0, header = 0, encoding = 'utf-8', delimiter = ';')
 
 
 				try:
@@ -3272,8 +3318,21 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 				        data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
 				                         format='%m/%d/%y %H:%M:%S')
 				    except ValueError:
-				        data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				    	try:
+				    		data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
 				                         format='%m/%d/%Y  %H:%M:%S')
+				    	except ValueError:
+
+				        	try:
+					        	data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+	                             format='%d/%m/%Y  %H:%M:%S')
+					        except ValueError:
+					        	
+					        	try:
+						        	data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+		                             format='%Y-%m-%d  %H:%M:%S')
+						        except ValueError:
+						        	pass
 			
 				param_dictionary = {'Temperatura':'Temperature',
                     'Presion':'Pressure',
@@ -3371,6 +3430,7 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 					k = input_dictionary['PTA_step'] 
 
 					pair = input_dictionary['PTA_times'][0]
+
 					data_dp = data3[(data3['dates'] >= pair[0]) & (data3['dates'] <= pair[1])]
 
 					ref_P = data_dp[param_dictionary['Presion']].iloc[0]
@@ -3383,18 +3443,18 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 
 					data_dp.set_index('dts', inplace=True)
 
-					axs.plot(abs(data_dp['DP']),linestyle = '-',  label = 'DP real, paso: %s'%input_dictionary['PTA_step']) #color = 'blue',
+					axs.plot(abs(data_dp['DP']),linestyle = 'None', marker = 'o', ms = 2 , label = 'DP real, paso: %s'%input_dictionary['PTA_step']) #color = 'blue',
 			
 
 					if use_petbox:
 
-						data_dp['derivative'] = dca.bourdet(y = data_dp['Pressure'], x = data_dp.index, L = 0.2) 
+						data_dp['derivative'] = dca.bourdet(y = data_dp['Pressure'], x = data_dp.index, L = 0.4) 
 					else:
 
 						data_dp['derivative'] = np.nan
 
-						pc = 0.5
-						mc = 0.5
+						pc = 0.2
+						mc = 0.2
 
 
 						for index, row in data_dp.iterrows():
@@ -3434,11 +3494,13 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 								except (KeyError,pd.errors.InvalidIndexError):
 									pass
 
-					axs.plot(abs(data_dp['derivative']),linestyle = '-', label = 'Derivativa real, ciclo log: %s, paso: %s'%(pc, input_dictionary['PTA_step'] ))
+					print(data_dp)
+
+					axs.plot(abs(data_dp['derivative'].iloc[1:]), linestyle = 'None', marker = 'o',  ms = 2 ,label = 'Derivativa real, ciclo log: %s, paso: %s'%(pc, input_dictionary['PTA_step'] ))
 
 					axs.set_yscale('log')
-					axs.set_xlim([1E-3,1E5])
-					axs.set_ylim([1E-3,1E2])
+					axs.set_xlim([1E0,1E4])
+					axs.set_ylim([1E-3,1E1])
 					#axs.set_aspect('equal', adjustable='box')
 					axs.set_xscale('log')
 					axs.set_ylabel('Presion [bar]', fontsize = font_z)
@@ -3451,16 +3513,20 @@ def sources_plots(input_dictionary, well,block,source, variables = [], derivativ
 		#ax.set_xlabel('Tiempo')
 
 		#ax.set_title("%s %s %s"%(well,block,source))
+		if derivative:
 
-		handles, labels = [(a + b) for a, b in zip(ax.get_legend_handles_labels(), ax2.get_legend_handles_labels())]
+			handles, labels = [(a + b) for a, b in zip(ax.get_legend_handles_labels(), ax2.get_legend_handles_labels())]
 
-		by_label = dict(zip(labels, handles))
+			by_label = dict(zip(labels, handles))
 
-		ax.legend(by_label.values(), by_label.keys(), loc='best', fontsize = font_z)
+			ax.legend(by_label.values(), by_label.keys(), loc='best', fontsize = font_z)
+		else:
 
-		#fig.legend(loc="lower center", bbox_to_anchor=(0.78, -0.18), ncol=2, fancybox=True, shadow=True)
+			fig.legend(loc="lower center", bbox_to_anchor=(0.78, -0.18), ncol=2, fancybox=True, shadow=True)
 
-		fig.savefig('../output/PT/images/evol/%s_%s_%s_evol_plots.png'%(well,block,source)) 
+
+		fig.savefig('../output/PT/images/evol/%s_%s_%s_evol_plots.png'%(well,block,source))
+		ax.set_title("%s_%s_%s"%(well,block,source))
 
 		plt.show()
 
@@ -3960,3 +4026,731 @@ def multiple_PI(input_dictionary, well, block, well_collection, save, show):
 		fig.savefig('../output/mh/images/%s_%s_%s_evol_whp_multi_PI.png'%(well,block,source)) 
 	if show:
 		plt.show()
+
+import seaborn as sns
+from matplotlib.gridspec import GridSpec
+
+def sources_plots_wgc(input_dictionary, well,block,source, variables = [], derivative = False, II_test = None, log_data = None, use_petbox = True, font_z = 12):
+	"""
+	Not documented
+	"""
+
+	#nl = 0.2 #ch10 1
+	#nl = 0.15 #step 1 ah35d
+
+	nl = 0.05
+
+	gs=GridSpec(1,3)
+
+	sns.set_style("ticks",{'axes.edgecolor': 'black',
+                        'grid.color': '#000000',
+                        'ytick.left': True,
+                        "grid.linestyle": "--",
+                        "xtick.direction" : 'inout', "ytick.direction" : 'inout',
+                        'font.family': ['Times New Roman'],})
+
+	sns.set_context("paper", font_scale = 1)
+
+	file = "../output/mh/txt/%s_%s_%s_evol_mh.dat"%(well,block,source)
+	file2 = "../output/PT/evol/%s_PT_evol.dat"%(well)
+
+	if os.path.isfile(file):
+		data=pd.read_csv(file)
+
+		data=data.loc[(data['TIME']>0)]
+
+		dates=[]
+		for t in data['TIME']:
+			dates.append(input_dictionary['ref_date'] + datetime.timedelta(seconds=int(t)))
+
+		data['date_time']=dates
+
+		#fig = plt.figure(figsize=(10,4.5))
+
+		fig = plt.figure(figsize=(14,3.5))
+
+		gs.update( wspace = 0.4 ) # set the spacing between axes. 
+
+		axs=fig.add_subplot(gs[0,0]) # First row, first column
+		ax=fig.add_subplot(gs[0,1:]) # First row, first column
+
+
+		#ax = plt.subplot(111)
+
+		ax.tick_params(axis='y', which='major', labelsize= font_z)
+		ax.tick_params(axis='x', which='major', labelsize= font_z-2)
+
+		ax2 = ax.twinx()
+		ax2.tick_params(axis='y', which='major', labelsize = font_z)
+
+		for variable in variables:
+		
+			if variable == 'PWH':
+				divisor = 1E5
+				marker = '+'
+			elif variable == 'ENTH':
+				divisor = 1E3
+				marker = 's'
+			elif variable == 'EWH':
+				divisor = 1E3
+				marker = 'o'
+			elif variable == 'PWB':
+				divisor = 1E5
+				marker = '^'
+			else:
+				divisor = 1
+				marker = 'd'
+
+			ax2.plot(data['date_time'],data[variable]/divisor, color = 'brown',linestyle = '-', label = 'Model flow rate', lw = 1)
+
+		if os.path.isfile(file2):
+
+			data2 = pd.read_csv(file2, dtype={'ELEM': 'S5'} )
+
+			data2['ELEM'] = data2['ELEM'].str.decode("utf-8")
+
+			data2 = data2.loc[ data2['TIME']>=0 ]
+
+			dates2 = []
+			#dates3 = []
+			for t in data2['TIME']:
+				dates2.append(input_dictionary['ref_date']+datetime.timedelta(seconds=float(t)))
+			#dates3.append(input_dictionary['ref_date']+datetime.timedelta(seconds=(int(t)-delta_t)))
+
+			data2['date_time'] = dates2
+			
+			
+			ax.tick_params(axis='x', which='major', labelsize = font_z-2)
+			ax.tick_params(axis='y', which='major', labelsize = font_z)
+
+
+
+			if II_test != None:
+
+
+				if 'xls' in II_test or 'xlsx' in II_test:
+				    data3 = pd.read_excel(II_test, usecols = 'A:I', skiprows = 7 )
+				else:
+
+					data3 = pd.read_csv(II_test, skiprows = 11, header = 0,  sep = ';') #encoding = 'utf-8',
+
+
+
+				try:
+				    data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				                     format='%d-%b-%Y %H:%M:%S')
+				except ValueError:
+				    try:
+				        data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				                         format='%d/%m/%y %H:%M:%S')
+				    except ValueError:
+				    	try:
+				    		data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+				                         format='%d/%m/%Y  %H:%M:%S')
+				    	except ValueError:
+
+				        	try:
+					        	data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+	                             format='%d/%m/%Y  %H:%M:%S')
+					        except ValueError:
+					        	
+					        	try:
+						        	data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+		                             format='%Y-%m-%d  %H:%M:%S')
+						        except ValueError:
+						        	try:
+							        	data3['dates'] =  pd.to_datetime(data3['dd/mm/yyyy'].astype(str)+' '+data3['Time'].astype(str) , \
+			                             format='%m/%d/%Y  %H:%M:%S')
+							        except ValueError:
+							        	print("Error")
+				
+				print(data3)
+
+				param_dictionary = {'Temperatura':'Temperature',
+                    'Presion':'Pressure',
+                    'Velocidad':'CS.(m/min)',
+                    'Temp int.':'Internal Temp',
+                    'Profundidad':'Depth(Mtrs)'}
+
+				for i, key in enumerate(log_data):
+					sub_data = data3.loc[log_data[key]['index'][0]:log_data[key]['index'][1]]
+					ax.plot(sub_data['dates'],sub_data[param_dictionary['Presion']],linestyle = '-' , lw = 1, label = 'Field Pressure', color = 'grey')
+
+					"""
+					# inset axes....
+					axins = ax.inset_axes([0.65, 0.1, 0.3, 0.3])
+					axins.plot(sub_data['dates'],sub_data[param_dictionary['Presion']],linestyle = '-' , lw = 1, label = 'Field Pressure', color = 'grey')
+					# sub region of the original image
+					x1, x2, y1, y2 = datetime.datetime(2013,6,23,10,40,0),datetime.datetime(2013,6,23,10,55,0), 28.44, 28.5
+					axins.set_xlim(x1, x2)
+					axins.set_ylim(y1, y2)
+					axins.set_xticklabels([])
+					#axins.set_yticklabels([])
+					ax.indicate_inset_zoom(axins, edgecolor="black")
+					"""
+					
+					""" AH-35D
+					# inset axes....
+					axins = ax.inset_axes([0.65, 0.1, 0.3, 0.3])
+					axins.plot(sub_data['dates'],sub_data[param_dictionary['Presion']],linestyle = '-' , lw = 1, label = 'Field Pressure', color = 'grey')
+					# sub region of the original image
+					x1, x2, y1, y2 = datetime.datetime(2015,1,9,21,31,0),datetime.datetime(2015,1,9,21,38,0), 54.3, 54.9
+					axins.set_xlim(x1, x2)
+					axins.set_ylim(y1, y2)
+					axins.set_xticklabels([])
+					#axins.set_yticklabels([])
+					ax.indicate_inset_zoom(axins, edgecolor="black")
+					"""
+
+					ax.tick_params(axis='x', which='major', labelsize = font_z-2)
+					ax.tick_params(axis='y', which='major', labelsize = font_z)
+
+
+				if len(input_dictionary['PTA_times']) > 1:
+					for k, pair in enumerate(input_dictionary['PTA_times']):
+
+						data_dp = data3[(data3['dates'] >= pair[0]) & (data3['dates'] <= pair[1])]
+
+						ref_P = data_dp[param_dictionary['Presion']].iloc[0]
+
+						data_dp['dts'] = (data_dp['dates'] -  pair[0]).dt.total_seconds()
+
+						data_dp['dt_r'] = data_dp['dts'] 
+
+						data_dp['DP'] = (data_dp[param_dictionary['Presion']] -  ref_P)
+
+						data_dp.set_index('dts', inplace=True)
+
+						axs[k].plot(abs(data_dp['DP']),linestyle = '-',  label = 'DP real, step: %s'%k) #color = 'blue',
+				
+
+						if use_petbox:
+
+							data_dp['derivative'] = dca.bourdet(y = data_dp['Pressure'], x = data_dp.index, L = 0.2) 
+						else:
+
+							data_dp['derivative'] = np.nan
+
+							pc = 0.5
+							mc = 0.5
+
+
+							for index, row in data_dp.iterrows():
+
+								delta_t_j = np.e**(pc + np.log(index))
+								delta_t_k = np.e**(-pc + np.log(index))
+
+								dt = index
+								dt_j = delta_t_j
+								dt_k = delta_t_k
+
+								l1 = np.log(dt_j) - np.log(dt)
+								l2 = np.log(dt) - np.log(dt_k)
+
+								if dt_k > 0:
+
+									try:
+										data_j = data_dp.iloc[data_dp.index.get_loc(dt_j, method='backfill')]
+										#dt_j = data_j['TIME']
+										dt_j = data_j['dt_r']
+										data_k = data_dp.iloc[data_dp.index.get_loc(dt_k, method='ffill')]
+										#dt_k = data_k['TIME']
+										dt_k = data_k['dt_r']
+
+										l1 = np.log(dt_j) - np.log(dt)
+										l2 = np.log(dt) - np.log(dt_k)
+
+										if l1 >= pc and l2 >= pc and dt_k >0:
+
+											term_1 = np.log(dt/dt_k)*(data_j['DP'])/((np.log(dt_j/dt)*np.log(dt_j/dt_k)))
+											term_2 = np.log(dt_j*dt_k/dt**2)*row['DP']/((np.log(dt_j/dt)*np.log(dt/dt_k)))
+											term_3 = np.log(dt_j/dt)*data_k['DP']/((np.log(dt/dt_k)*np.log(dt_j/dt_k)))
+
+											derivative = term_1 + term_2 -term_3
+											data_dp.loc[index,'derivative'] = derivative
+
+									except (KeyError,pd.errors.InvalidIndexError):
+										pass
+
+						axs[k].plot(abs(data_dp['derivative']), linestyle = 'None', marker = 'o', ms = 5 , markerfacecolor="None", markevery = nl, label = 'Derivativa real, ciclo log: %s %s, paso: %s'%(pc, k ))
+
+						axs[k].legend(loc = 'best', fontsize = font_z-1)
+						axs[k].tick_params(axis='both', which='major', labelsize= font_z)
+
+						axs[k].set_yscale('log')
+						axs[k].set_xlim([1E-3,1E5])
+						axs[k].set_ylim([1E-3,1E2])
+						#axs[k].set_aspect('equal', adjustable='box')
+						axs[k].set_xscale('log')
+						axs[k].set_ylabel('Pressure [bar]', fontsize = font_z)
+						#axs[k].set_xlabel('Time [s]')
+				else:
+
+					k = input_dictionary['PTA_step'] 
+
+					pair = input_dictionary['PTA_times'][0]
+
+					data_dp = data3[(data3['dates'] >= pair[0]) & (data3['dates'] <= pair[1])]
+
+					ref_P = data_dp[param_dictionary['Presion']].iloc[0]
+
+					data_dp['dts'] = (data_dp['dates'] -  pair[0]).dt.total_seconds()
+
+					data_dp['dt_r'] = data_dp['dts'] 
+
+					data_dp['DP'] = (data_dp[param_dictionary['Presion']] -  ref_P)
+
+
+
+					data_dp.set_index('dts', inplace=True)
+
+
+					axs.plot(abs(data_dp['dt_r']), abs(data_dp['DP']),linestyle = 'None', marker = 'o', ms = 5 , markerfacecolor="None", markevery = nl, label = 'Field PD') #color = 'blue',
+
+					if use_petbox:
+
+						data_dp['derivative'] = dca.bourdet(y = data_dp['Pressure'], x = data_dp.index, L = 0.4) 
+					else:
+
+						data_dp['derivative'] = np.nan
+
+						pc = 0.2
+						mc = 0.2
+
+
+						for index, row in data_dp.iterrows():
+
+							delta_t_j = np.e**(pc + np.log(index))
+							delta_t_k = np.e**(-pc + np.log(index))
+
+							dt = index
+							dt_j = delta_t_j
+							dt_k = delta_t_k
+
+							l1 = np.log(dt_j) - np.log(dt)
+							l2 = np.log(dt) - np.log(dt_k)
+
+							if dt_k > 0:
+
+								try:
+									data_j = data_dp.iloc[data_dp.index.get_indexer(dt_j, method='backfill')] #get_loc
+									#dt_j = data_j['TIME']
+									dt_j = data_j['dt_r']
+									data_k = data_dp.iloc[data_dp.index.get_indexer(dt_k, method='ffill')]
+									#dt_k = data_k['TIME']
+									dt_k = data_k['dt_r']
+
+									l1 = np.log(dt_j) - np.log(dt)
+									l2 = np.log(dt) - np.log(dt_k)
+
+									if l1 >= pc and l2 >= pc and dt_k >0:
+
+										term_1 = np.log(dt/dt_k)*(data_j['DP'])/((np.log(dt_j/dt)*np.log(dt_j/dt_k)))
+										term_2 = np.log(dt_j*dt_k/dt**2)*row['DP']/((np.log(dt_j/dt)*np.log(dt/dt_k)))
+										term_3 = np.log(dt_j/dt)*data_k['DP']/((np.log(dt/dt_k)*np.log(dt_j/dt_k)))
+
+										derivative = term_1 + term_2 -term_3
+										data_dp.loc[index,'derivative'] = derivative
+
+								except (KeyError,pd.errors.InvalidIndexError):
+									pass
+
+
+					axs.plot(abs(data_dp['dt_r'].iloc[1:]), abs(data_dp['derivative'].iloc[1:]), linestyle = 'None',  marker = 'o', ms = 5 , markerfacecolor="None", markevery = nl,  label = 'Field P derivative')
+
+					axs.set_yscale('log')
+					axs.set_xlim([1E0,1E5])
+					axs.set_ylim([1E-2,1E2])
+					#axs.set_aspect('equal', adjustable='box')
+					axs.set_xscale('log')
+					axs.set_ylabel('Pressure [bar]', fontsize = font_z)
+					axs.set_xlabel('Time [s]', fontsize = font_z)
+					#axs.legend(loc = 'best', fontsize = font_z-1)
+
+
+			if derivative:
+
+				#delta_t = (input_dictionary['ref_date_PTA'] -  input_dictionary['ref_date']).total_seconds()
+
+				#dates3 = []
+
+				#dates3.append(input_dictionary['ref_date']+datetime.timedelta(seconds=(int(t)-delta_t)))
+				
+
+				#data2['date_time_PTA'] = dates3
+
+				#data2 = data2.loc[(data2['ELEM'] == block) & (data2['date_time'] >= input_dictionary['ref_date_PTA']) ]
+
+
+				if len(input_dictionary['PTA_times']) > 1:
+
+					fig2, axs = plt.subplots(nrows=len(input_dictionary['PTA_times']), ncols=1, sharex = True, figsize = (10,10),subplot_kw=dict(box_aspect=1))
+
+					for k, pair in enumerate(input_dictionary['PTA_times']):
+
+						data_dp = data2[(data2['date_time'] >= pair[0]) & (data2['date_time'] <= pair[1])]
+
+						ref_P = data_dp['PRES_VAP'].iloc[0]
+
+						data_dp['dts'] = (data_dp['date_time'] -  pair[0]).dt.total_seconds()
+
+						data_dp['dt_r'] = data_dp['dts'] 
+
+						data_dp['DP'] = (data_dp['PRES_VAP'] -  ref_P)/1E5
+
+						data_dp.set_index('dts', inplace=True)
+
+						axs[k].plot(abs(data_dp['DP']),linestyle = '-',  label = 'DP, paso: %s'%k) #color = 'blue',
+						
+						if use_petbox:
+
+							pc = 0.2
+							data_dp['derivative'] = dca.bourdet(y = data_dp['PRES_VAP']/1E5, x = data_dp.index, L = pc) 
+
+						else:
+
+							data_dp['derivative'] = np.nan
+
+							pc = 0.5
+							mc = 0.5
+
+
+							for index, row in data_dp.iterrows():
+
+								delta_t_j = np.e**(pc + np.log(index))
+								delta_t_k = np.e**(-pc + np.log(index))
+
+								dt = index
+								dt_j = delta_t_j
+								dt_k = delta_t_k
+
+								l1 = np.log(dt_j) - np.log(dt)
+								l2 = np.log(dt) - np.log(dt_k)
+
+								if dt_k > 0:
+
+									try:
+										data_j = data_dp.iloc[data_dp.index.get_loc(dt_j, method='backfill')]
+										#dt_j = data_j['TIME']
+										dt_j = data_j['dt_r']
+										data_k = data_dp.iloc[data_dp.index.get_loc(dt_k, method='ffill')]
+										#dt_k = data_k['TIME']
+										dt_k = data_k['dt_r']
+
+										l1 = np.log(dt_j) - np.log(dt)
+										l2 = np.log(dt) - np.log(dt_k)
+
+										if l1 >= pc and l2 >= pc and dt_k >0:
+
+											term_1 = np.log(dt/dt_k)*(data_j['DP'])/((np.log(dt_j/dt)*np.log(dt_j/dt_k)))
+											term_2 = np.log(dt_j*dt_k/dt**2)*row['DP']/((np.log(dt_j/dt)*np.log(dt/dt_k)))
+											term_3 = np.log(dt_j/dt)*data_k['DP']/((np.log(dt/dt_k)*np.log(dt_j/dt_k)))
+
+											derivative = term_1 + term_2 -term_3
+											data_dp.loc[index,'derivative'] = derivative
+
+									except (KeyError,pd.errors.InvalidIndexError):
+										pass
+
+						axs[k].plot(abs(data_dp['derivative']),linestyle = '-', label = 'Derivativa %s, paso: %s'%(pc, k ))
+						
+						axs[k].tick_params(axis='x', which='major', labelsize = font_z-2)
+						axs[k].tick_params(axis='y', which='major', labelsize = font_z)
+						axs[k].legend(loc = 'best', fontsize = font_z-1)
+
+				else:
+
+					pair = input_dictionary['PTA_times'][0]
+
+					k = input_dictionary['PTA_step'] 
+
+					data_dp = data2[(data2['date_time'] >= pair[0]) & (data2['date_time'] <= pair[1])]
+
+					ref_P = data_dp['PRES_VAP'].iloc[0]
+
+					data_dp['dts'] = (data_dp['date_time'] -  pair[0]).dt.total_seconds()
+
+					data_dp['dt_r'] = data_dp['dts'] 
+
+					data_dp['DP'] = (data_dp['PRES_VAP'] -  ref_P)/1E5
+
+					data_dp.set_index('dts', inplace=True)
+
+					axs.plot(abs(data_dp['dt_r'].iloc[1:]), abs(data_dp['DP'].iloc[1:]), lw = 1, linestyle = '-',  label = 'Model PD' ) #color = 'blue',
+					
+					if use_petbox:
+						pc = 0.2
+						data_dp['derivative'] = dca.bourdet(y = data_dp['PRES_VAP']/1E5, x = data_dp.index, L = pc) 
+
+					else:
+						data_dp['derivative'] = np.nan
+
+						pc = 0.2
+						mc = 0.2
+
+						for index, row in data_dp.iterrows():
+
+							delta_t_j = np.e**(pc + np.log(index))
+							delta_t_k = np.e**(-pc + np.log(index))
+
+							dt = index
+							dt_j = delta_t_j
+							dt_k = delta_t_k
+
+							l1 = np.log(dt_j) - np.log(dt)
+							l2 = np.log(dt) - np.log(dt_k)
+
+							if dt_k > 0:
+
+								try:
+									data_j = data_dp.iloc[data_dp.index.get_loc(dt_j, method='backfill')]
+									#dt_j = data_j['TIME']
+									dt_j = data_j['dt_r']
+									data_k = data_dp.iloc[data_dp.index.get_loc(dt_k, method='ffill')]
+									#dt_k = data_k['TIME']
+									dt_k = data_k['dt_r']
+
+									l1 = np.log(dt_j) - np.log(dt)
+									l2 = np.log(dt) - np.log(dt_k)
+
+									if l1 >= pc and l2 >= pc and dt_k >0:
+
+										term_1 = np.log(dt/dt_k)*(data_j['DP'])/((np.log(dt_j/dt)*np.log(dt_j/dt_k)))
+										term_2 = np.log(dt_j*dt_k/dt**2)*row['DP']/((np.log(dt_j/dt)*np.log(dt/dt_k)))
+										term_3 = np.log(dt_j/dt)*data_k['DP']/((np.log(dt/dt_k)*np.log(dt_j/dt_k)))
+
+										derivative = term_1 + term_2 -term_3
+										data_dp.loc[index,'derivative'] = derivative
+
+								except (KeyError,pd.errors.InvalidIndexError):
+									pass
+
+
+					axs.plot(abs(data_dp['dt_r'].iloc[1:])[::5], abs(data_dp['derivative'].iloc[1:])[::5],linestyle = '-', lw = 1, label = 'Model derivative')
+
+					axs.tick_params(axis='both', which='major', labelsize= font_z)
+					#axs.legend(loc = 'best', fontsize = font_z-1)
+
+			ax.plot(data2['date_time'], data2['PRES_VAP']/1E5, color = 'green', lw = 1, linestyle = '-', label = 'Model Pressure')
+
+		axs.set_ylabel('Pressure [bar]', fontsize = font_z)
+		ax2.set_ylabel('Flow [kg/s]', fontsize = font_z)
+		#ax.set_ylabel('Pressure [bar]', fontsize = font_z)
+		ax.set_ylabel('Pressure - Temperature \n [bar] - [C]', fontsize = font_z)
+		ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M\n%m-%d'))
+		#ax.set_xlabel('Tiempo')
+
+		#ax.set_title("%s %s %s"%(well,block,source))
+		"""
+		handles, labels = [(a + b) for a, b in zip(ax.get_legend_handles_labels(), ax2.get_legend_handles_labels())]
+
+		by_label = dict(zip(labels, handles))
+
+		ax.legend(by_label.values(), by_label.keys(), loc='best', fontsize = font_z)
+		"""
+		#fig.legend(loc="lower center", bbox_to_anchor=(0.78, -0.18), ncol=2, fancybox=True, shadow=True)
+
+		plt.text(0.05, 0.9, "(a)", transform=plt.gcf().transFigure, fontsize = font_z)
+		plt.text(0.35, 0.9, "(b)", transform=plt.gcf().transFigure, fontsize = font_z)
+
+		handles, labels = [(a + b + c ) for a, b, c in zip(axs.get_legend_handles_labels(), ax.get_legend_handles_labels(), ax2.get_legend_handles_labels())]
+		by_label = dict(zip(labels, handles))
+
+		fig.subplots_adjust(bottom=0.2)
+
+		#axs.legend(by_label.values(), by_label.keys(),loc='upper center', frameon=False, bbox_to_anchor=(1.5, -6.0), ncol=4, fontsize = font_z-2)
+
+
+		fig.savefig('../output/PT/images/evol/%s_%s_%s_evol_plots.png'%(well,block,source)) 
+
+		plt.show()
+
+	else:
+		print("%s does not exist"%file)
+
+def pressure_flow_test(input_dictionary, well,block,source, variables = [], font_z = 12):
+	"""
+	Not documented
+	"""
+
+	#nl = 0.2 #ch10 1
+	#nl = 0.15 #step 1 ah35d
+
+	nl = 0.05
+
+	sns.set_style("ticks",{'axes.edgecolor': 'black',
+                        'grid.color': '#000000',
+                        'ytick.left': True,
+                        "grid.linestyle": "--",
+                        "xtick.direction" : 'inout', "ytick.direction" : 'inout',
+                        'font.family': ['Times New Roman'],})
+
+	sns.set_context("paper", font_scale = 1)
+
+	file = "../output/mh/txt/%s_%s_%s_evol_mh.dat"%(well,block,source)
+	file2 = "../output/PT/evol/%s_PT_evol.dat"%(well)
+
+	if os.path.isfile(file):
+
+		data=pd.read_csv(file)
+
+		data=data.loc[(data['TIME']>0)]
+
+		dates=[]
+		for t in data['TIME']:
+			dates.append(float(t)/(3600))
+			#dates.append(input_dictionary['ref_date'] + datetime.timedelta(seconds=int(t)))
+
+		data['date_time']=dates
+
+		fig, ax  = plt.subplots(figsize=(14,3.5))
+
+		ax.tick_params(axis='y', which='major', labelsize= font_z)
+		ax.tick_params(axis='x', which='major', labelsize= font_z-2)
+
+		#ax2 = ax.twinx()
+		#ax2.tick_params(axis='y', which='major', labelsize = font_z)
+
+		for variable in variables:
+		
+			if variable == 'PWH':
+				divisor = 1E5
+				marker = '+'
+			elif variable == 'ENTH':
+				divisor = 1E3
+				marker = 's'
+			elif variable == 'EWH':
+				divisor = 1E3
+				marker = 'o'
+			elif variable == 'PWB':
+				divisor = 1E5
+				marker = '^'
+			else:
+				divisor = 1
+				marker = 'd'
+
+			ax.plot(data['date_time'],data[variable]/divisor, color = 'brown',linestyle = '-', label = 'Model flow rate', lw = 1)
+
+		if os.path.isfile(file2):
+
+			data2 = pd.read_csv(file2, dtype={'ELEM': 'S5'} )
+
+			data2['ELEM'] = data2['ELEM'].str.decode("utf-8")
+
+			data2 = data2.loc[ data2['TIME']>=0 ]
+
+			dates2 = []
+			#dates3 = []
+			for t in data2['TIME']:
+				dates2.append(float(t)/(3600))
+				#dates2.append(input_dictionary['ref_date']+datetime.timedelta(seconds=float(t)))
+			
+			#data2['date_time'] = (dates2 -   datetime.datetime(2023, 7, 1, 7, 0, 0)).dt.hours
+			
+			data2['date_time'] = dates2 
+			ax.tick_params(axis='x', which='major', labelsize = font_z)
+			ax.tick_params(axis='y', which='major', labelsize = font_z)
+
+
+			#ax.plot(data2['date_time'], data2['PRES_VAP']/1E5, color = 'green', lw = 1, linestyle = '-', label = 'Model Pressure')
+
+		#ax.set_ylabel('Pressure [bar]', fontsize = font_z)
+		ax.set_ylabel('Flow [kg/s]', fontsize = font_z)
+		#ax.set_ylabel('Pressure [bar]', fontsize = font_z)
+		ax.set_xlabel('Horas', fontsize = font_z)
+		#ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M\n%m-%d'))
+
+		#ax.set_title("%s %s %s"%(well,block,source))
+		#fig.legend(loc="lower center", bbox_to_anchor=(0.78, -0.18), ncol=2, fancybox=True, shadow=True)
+
+		#plt.text(0.05, 0.9, "(a)", transform=plt.gcf().transFigure, fontsize = font_z)
+		#plt.text(0.35, 0.9, "(b)", transform=plt.gcf().transFigure, fontsize = font_z)
+
+		#handles, labels = [(a + b) for a, b in zip( ax.get_legend_handles_labels(), ax2.get_legend_handles_labels())]
+		#by_label = dict(zip(labels, handles))
+		#ax.legend(by_label.values(), by_label.keys(),loc='upper right', frameon=False, fontsize = font_z - 2)# bbox_to_anchor=(0.5, 0.1), ncol=4, fontsize = font_z-2)
+
+		ax.legend()
+		fig.subplots_adjust(bottom=0.2)
+
+
+
+		fig.savefig('../output/PT/images/evol/%s_%s_%s_evol_plots.png'%(well,block,source)) 
+
+		plt.show()
+
+	else:
+		print("%s does not exist"%file)
+
+def Tchanges_in_sorrundings(input_dictionary, well,block,source,others,  font_z = 12):
+	"""
+	Not documented
+	"""
+
+	#nl = 0.2 #ch10 1
+	#nl = 0.15 #step 1 ah35d
+
+	nl = 0.05
+
+	sns.set_style("ticks",{'axes.edgecolor': 'black',
+                        'grid.color': '#000000',
+                        'ytick.left': True,
+                        "grid.linestyle": "--",
+                        "xtick.direction" : 'inout', "ytick.direction" : 'inout',
+                        'font.family': ['Times New Roman'],})
+
+	sns.set_context("paper", font_scale = 1)
+
+	fig, ax  = plt.subplots( figsize = (15,5) )
+
+	#ax = plt.subplot(111)
+
+	ax.tick_params(axis='y', which='major', labelsize= font_z)
+	ax.tick_params(axis='x', which='major', labelsize= font_z-2)
+
+	for n in others:
+
+		if isinstance(n,int):
+			file2 = "../output/PT/evol/%s_PT_evol.dat"%("D%dm"%n)
+		else:
+			file2 = "../output/PT/evol/%s_PT_evol.dat"%(n)
+
+		print(file2)
+
+		if os.path.isfile(file2):
+
+			data2 = pd.read_csv(file2, dtype={'ELEM': 'S5'} )
+
+			data2['ELEM'] = data2['ELEM'].str.decode("utf-8")
+
+			data2 = data2.loc[ data2['TIME']>=0 ]
+
+			dates2 = []
+			#dates3 = []
+			for t in data2['TIME']:
+				dates2.append(t/3600)
+				#dates2.append(input_dictionary['ref_date']+datetime.timedelta(seconds=float(t)))
+			#dates3.append(input_dictionary['ref_date']+datetime.timedelta(seconds=(int(t)-delta_t)))
+
+			data2['date_time'] = dates2
+						
+			ax.tick_params(axis='x', which='major', labelsize = font_z-2)
+			ax.tick_params(axis='y', which='major', labelsize = font_z)
+
+			ax.plot(data2['date_time'], data2['TEMP'],  lw = 1, linestyle = '--',  label = "D%dm"%n)
+
+		#ax.set_ylabel('Pressure [bar]', fontsize = font_z)
+		ax.set_ylabel('Temperature [C]', fontsize = font_z)
+		ax.set_xlabel('Horas', fontsize = font_z)
+		#ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M\n%m-%d'))
+
+		ax.legend()
+
+		ax.set_ylim([20,300])
+
+		fig.subplots_adjust(bottom=0.2)
+
+		fig.savefig('../output/PT/images/evol/T_evol_around_well_evol_plots.png') 
+
+
+	plt.show()

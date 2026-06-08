@@ -925,8 +925,9 @@ def src_csv(input_dictionary, path = None, type_source = 'SRC'):
 					t2_array = t2_line.rstrip().split(" ")
 					str_list = list(filter(None, t2_array))
 					str_list = [val  for val in str_list if '(' not in val or ')' not in val]
-					str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
-					str_list.append("TIME")
+					str_list = [val.replace(',',"").replace('"','') for val in str_list[2:] ]
+					str_list[0] = 'TIME'
+					#str_list.append("TIME")
 
 					for source in dictionary_files:
 						dictionary_files[source]['file_container']+=','.join(str_list)+'\n'
@@ -938,21 +939,30 @@ def src_csv(input_dictionary, path = None, type_source = 'SRC'):
 					except IndexError:
 						time = t2_line.rstrip().split(" ")[2]
 
+				#print(time)
 
 				for source in dictionary_files:
 					#Splits each line from the output file and storage it in a dictionary
 					if dictionary_files[source]['blockcorr'] in t2_line and dictionary_files[source]['source'] in t2_line:
 						
-						block = t2_line[14:19]
+						time = t2_line[0:20]
 						
-						t2_array = t2_line.rstrip().split(" ")
-						str_list = list(filter(None, t2_array))
-						str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
-						str_list.append(time.replace('"',""))
+						if float(time)>0:
+							block = t2_line[14:19]
+							
+							t2_array = t2_line.rstrip().split(" ")
 
-						str_list[0] = block
+							time = t2_array[2].replace(',','').replace('"','')
+							str_list = list(filter(None, t2_array))
 
-						dictionary_files[source]['file_container']+=','.join(str_list)+'\n'
+							str_list = [val.replace(',',"").replace('"','') for val in str_list ]
+							#str_list.append(time)
+
+							str_list[0] = time
+
+							dictionary_files[source]['file_container']+=','.join(str_list)+'\n'
+
+
 			t2_file.close()
 		else:
 			sys.exit("The file %s or directory do not exist"%output_t2_file)
@@ -963,6 +973,137 @@ def src_csv(input_dictionary, path = None, type_source = 'SRC'):
 			t2_file_out=open(dictionary_files[source]['filename'], "w")
 			t2_file_out.write(dictionary_files[source]['file_container'])
 			t2_file_out.close()	
+
+	conn.close()
+
+def ELEME_WELL(input_dictionary, distances,  cutoff_time = 1E50,  path = None):
+	"""It generates an output file for every element of every well. It is one of the most computationally demanding functions.
+	   It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		Dictionary contaning the path and name of database on keyword 'db_path' and the TOUGH2 file name.
+	path: str
+		In case a the output file is in a different location. Such as a server.
+	cutoff_time: float
+		Max time to storage
+
+	Returns
+	-------
+	files
+	  {well}_PT_evol.dat : on  ../output/PT/evol for every well
+	"""
+
+	db_path=input_dictionary['db_path']
+	t2_file_name = input_dictionary['TOUGH2_file']
+
+	#List the blocks from each well and file location in the dictionary dictionary_files
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	dictionary_files = {}
+
+	block_json_file='../mesh/ELEME.json'
+
+	if os.path.isfile(block_json_file):
+		with open('../mesh/ELEME.json') as file:
+		  	blocks = pd.read_json(block_json_file,  orient='index')
+	else:
+		sys.exit("The file %s or directory do not exist, run ELEM_to_json from regeo_mesh"%output_t2_file)		
+
+	data_block = {'blockcorr':[],
+	              'well':[]}
+
+
+	for distance in distances:
+		eleme = blocks.iloc[(blocks['X'] - distance).abs().argsort()[0],:]
+
+		if " " == str(eleme["ELEME"][0]):
+			elemex = " " + eleme["ELEME"]
+		else:
+			elemex = eleme["ELEME"]
+
+		elemex = elemex.replace(" ",'0')
+
+		data_block['blockcorr'].append(elemex)
+		data_block['well'].append("D%dm"%distance)
+
+	data_block = pd.DataFrame.from_dict(data_block)
+
+	if len(data_block)>0:
+		for n, blockcorr in enumerate(data_block['blockcorr']):
+			dictionary_files[data_block['well'][n]]={'filename':"../output/PT/evol/%s_PT_evol.dat"%(data_block['well'][n]),\
+			                                                    'file_container':"",'blockcorr':blockcorr}
+	else:
+		sys.exit("Store data on the table t2wellblock")
+
+	blocks =  data_block['blockcorr'].tolist()
+
+	#It select the correct output file
+	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_eleme.csv"%t2_file_name]
+	
+	if path != None:
+		poss_names.append(path)
+	output_t2_file = None 
+	for file in poss_names:
+		if os.path.isfile(file):
+			output_t2_file = file
+
+
+	#It goes line by line extracting the information and storaging it on the right location at the dictionary_files dictionary
+	if output_t2_file == None :
+		sys.exit("No output file located")
+	else:
+		t2_file=open(output_t2_file, "r")
+
+		for i, t2_line in enumerate(t2_file):
+
+			if i == 0:
+
+				t2_array=t2_line.rstrip().split(" ")
+				str_list = list(filter(None, t2_array))
+				str_list = [val  for val in str_list if '(' not in val or ')' not in val]
+				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
+				str_list.append("TIME")
+				for well in dictionary_files:
+					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
+			
+			if "TIME [sec]" in t2_line:
+				try:
+					time = t2_line.rstrip().split(" ")[3].replace('"','')
+				except IndexError:
+					time = t2_line.rstrip().split(" ")[2].replace('"','')
+
+			list_bool = [block in t2_line[14:19] for block in blocks]
+
+			if any(list_bool):
+
+				block = t2_line[14:19]
+
+				t2_array=t2_line.rstrip().split(" ")
+				str_list = list(filter(None, t2_array))
+				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
+				str_list.append(time.replace('"',""))
+
+				str_list[0] = block
+
+				pos = list_bool.index(True)
+				well = data_block.loc[data_block['blockcorr'] == blocks[pos], 'well'].iloc[0]
+				
+				if len(str_list) > 3:
+					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
+
+			if i>10 and float(time) > cutoff_time:
+				break
+
+		t2_file.close()
+
+
+	#Creates a file for every well
+	for well in dictionary_files:
+		t2_file_out=open(dictionary_files[well]['filename'], "w")
+		t2_file_out.write(dictionary_files[well]['file_container'])
+		t2_file_out.close()	
 
 	conn.close()
 
@@ -1023,6 +1164,8 @@ def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
 				str_list = [val  for val in str_list if '(' not in val or ')' not in val]
 				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
 				str_list.append("TIME")
+				str_list = str_list[2:]
+
 				for well in dictionary_files:
 					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
 			if "TIME [sec]" in t2_line:
@@ -1031,21 +1174,28 @@ def eleme_CSV(input_dictionary, path = None, cutoff_time = 1E50):
 				except IndexError:
 					time = t2_line.rstrip().split(" ")[2].replace('"','')
 
+
 			list_bool = [block in t2_line for block in blocks]
+
 			if any(list_bool):
 
-				block = t2_line[14:19]
 
-				t2_array=t2_line.rstrip().split(" ")
-				str_list = list(filter(None, t2_array))
-				str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
-				str_list.append(time.replace('"',""))
+				time = t2_line[0:20]
 
-				str_list[0] = block
+				if float(time)>0:
 
-				pos = list_bool.index(True)
-				well = data_block.loc[data_block['blockcorr'] == blocks[pos],'well'].iloc[0]
-				dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
+					block = t2_line[14:19]
+
+					t2_array=t2_line.rstrip().split(" ")
+					str_list = list(filter(None, t2_array))
+					str_list = [val.replace(',',"").replace('"','') for val in str_list ]
+					str_list.append(time.replace('"',""))
+
+					str_list = str_list[1:]
+
+					pos = list_bool.index(True)
+					well = data_block.loc[data_block['blockcorr'] == blocks[pos],'well'].iloc[0]
+					dictionary_files[well]['file_container']+=','.join(str_list)+'\n'
 
 			if i>10 and float(time) > cutoff_time:
 				break
@@ -1100,13 +1250,15 @@ def t2_CSV_to_json(input_dictionary, itime=None, all_times =False, path = None, 
 		sys.exit("The file %s or directory do not exist, run ELEM_to_json from regeo_mesh"%output_t2_file)		  	
 
 	#It select the correct output file
-	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_eleme.csv"%t2_file_name]
+	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_eleme.csv"%t2_file_name, "../model/t2/t2_eleme.csv"]
 	poss_names.append(path)
 	output_t2_file = None 
 	for file in poss_names:
-		if os.path.isfile(file):
-			output_t2_file = file
-
+		try:
+			if os.path.isfile(file):
+				output_t2_file = file
+		except TypeError:
+			pass
 	if output_t2_file == None :
 		sys.exit("No output file located")
 	else:
@@ -1249,7 +1401,7 @@ def power_i(Px,hx,mx,ESC, atm_p = 0.092):
 		quality = 0
 	return [power, quality]
 
-def power(input_dictionary, WHP):
+def power(input_dictionary, WHP, lim = {}):
 	"""When all the well feedzones are declare as MASS type in the TOUGH2 input file, this functions estimates the power generation based on the assumption of an isoenthalpic expansion from the feedzone to the wellhead.
 
 	Parameters
@@ -1272,7 +1424,7 @@ def power(input_dictionary, WHP):
 	
 	c=conn.cursor()
 
-	well_sources = pd.read_sql_query("SELECT * FROM t2wellsource WHERE well LIKE 'TR-%'",conn)
+	well_sources = pd.read_sql_query("SELECT * FROM t2wellsource WHERE type_flow = 'P' ",conn)
 
 	for index, row in well_sources.iterrows(): 
 		if str(row['well']) in [*WHP]:
@@ -1282,13 +1434,16 @@ def power(input_dictionary, WHP):
 			data_i = pd.read_csv(evol_file)
 
 			temp_i = data_i.loc[ (data_i['ELEM'] == row ['blockcorr']) & (data_i['TIME'] >=0 ), ['PRES_VAP','TIME']]
+
 			temp_i.reset_index(inplace = True)
 
 			file = "../output/mh/txt/%s_%s_%s_evol_mh.dat"%(row['well'],row['blockcorr'],row['source_nickname'])
 
 			data_mh = pd.read_csv(file)
 
-			times = data_mh['TIME']
+			times = data_mh.loc[data_mh['TIME']>0,['TIME','ENTH','GEN']]
+
+			times.reset_index(inplace = True)
 
 			dates=[]
 			enthalpy = []
@@ -1296,37 +1451,57 @@ def power(input_dictionary, WHP):
 			pressures = []
 			power = []
 			units = []
+			mh = []
+			ma = []
+			power_bin = []
 
 			for n in range(len(times)):
-				if float(times[n]) >= 0:
+				datai = times.iloc[n]
+				
+				if float(datai['TIME']) >= 0:
 					try:
-						pressures.append(temp_i['PRES_VAP'][n])
-						enthalpy.append(data_mh['ENTH'][n]/1E3)
-						flow_rate.append(data_mh['GEN'][n])
-						dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(times[n])))
+						print(temp_i.iloc[n]['PRES_VAP'],datai['GEN'])
+						pressures.append(temp_i.iloc[n]['PRES_VAP'])
+						enthalpy.append(float(datai['ENTH']/1E3))
+
+						if float(datai['GEN'])<-lim[row['well']][1]:
+							flow_rate.append(-1*lim[row['well']][1])
+						else:
+							flow_rate.append(float(datai['GEN']))
+
+						dates.append(input_dictionary['ref_date']+datetime.timedelta(seconds=int(datai['TIME'])))
 						units.append(WHP[row['well']][2])
-						
+						mh.append( float(datai['GEN'])* float(datai['ENTH']/1E3)  )
+
 						if str(row['well']) in [*WHP]:
-							power.append(power_i(WHP[row['well']][0]/1E6,data_mh['ENTH'][n]/1E3,data_mh['GEN'][n],WHP[row['well']][1])[0])
+							power.append(power_i(WHP[row['well']][0]/1E6,datai['ENTH']/1E3,flow_rate[-1],WHP[row['well']][1])[0])
+							ma.append((1-power_i(WHP[row['well']][0]/1E6,datai['ENTH']/1E3,flow_rate[-1],WHP[row['well']][1])[1])*-1*flow_rate[-1])
 						else:
 							power.append(np.nan)
+							ma.append(np.nan)
+
+						power_bin.append(ma[-1]/45)
 
 					except (OverflowError, KeyError):
-						print(times[n],"plus",str(times[n]),"wont be plot")
+						print(datai['TIME'],"plus",str(datai['TIME']),"wont be plot")
 
 			input_row = {'date_time': dates,
 			                 'h': enthalpy,
 			                 'm': flow_rate,
+			                 'mh':mh,
+			                 'ma':ma,
+			                 'power_bin':power_bin,
 			               'BWP': pressures,
 			               'unit': units,
 			               'power':power}
 
 			output = pd.DataFrame.from_dict(input_row)
 
-			data = data.append(output, ignore_index = True)
+			data = pd.concat([data,output], ignore_index = True)
 
 
 	data_out = data.groupby(['date_time','unit']).sum()
+	data_out['ht'] = data_out['mh']/data_out['m']
 	data_out.to_csv('../output/units_power.csv')
 
 def flowell(input_dictionary, init_values = 100000):
@@ -1655,4 +1830,149 @@ def power_from_flowell(input_dictionary, WHP, exceptions):
 
 	data_out = data.groupby(['date_time','unit']).sum()
 	data_out.to_csv('../output/units_power_flowell.csv')
+
+def conne_CSV(input_dictionary, path = None, cutoff_time = 1E50):
+	"""It generates an output file for every element of every well. It is one of the most computationally demanding functions.
+	   It expects to read the output from either TOUGH2_eleme.csv or TOUGH2_XYZ.csv files.
+
+	Parameters
+	----------
+	input_dictionary : dictionary
+		Dictionary contaning the path and name of database on keyword 'db_path' and the TOUGH2 file name.
+	path: str
+		In case a the output file is in a different location. Such as a server.
+	cutoff_time: float
+		Max time to storage
+
+	Returns
+	-------
+	files
+	  {well}_PT_evol.dat : on  ../output/PT/evol for every well
+	"""
+
+	t2_file_name = input_dictionary['TOUGH2_file']
+
+	#List the blocks from each well and file location in the dictionary dictionary_files
+
+	block_json_file='../mesh/ELEME.json'
+
+	if os.path.isfile(block_json_file):
+		with open('../mesh/ELEME.json') as file:
+		  	blocksN=json.load(file)
+		  	
+	blocks = []
+	blocks_data = {}
+	for k in blocksN:
+		block = '%s'%blocksN[k]["ELEME"].replace(' ','0')
+		blocks_data[block] = {'X': blocksN[k]["X"], 'TIME' : [], 'FLOW' : []} 
+
+	#It select the correct output file
+	poss_names = ["../model/t2/%s_XYZ.csv"%t2_file_name, "../model/t2/%s_conne.csv"%t2_file_name]
+	if path != None:
+		poss_names.append(path)
+	output_t2_file = None 
+	for file in poss_names:
+		if os.path.isfile(file):
+			output_t2_file = file
+
+	#It goes line by line extracting the information and storaging it on the right location at the dictionary_files dictionary
+	if output_t2_file == None :
+		sys.exit("No output file located")
+	else:
+		t2_file=open(output_t2_file, "r")
+		for i, t2_line in enumerate(t2_file):
+			if i == 0:
+				pass
+			if "TIME [sec]" in t2_line:
+				try:
+					time = t2_line.rstrip().split(" ")[3].replace('"','')
+				except IndexError:
+					time = t2_line.rstrip().split(" ")[2].replace('"','')
+
+				if float(time) > 0.92868235E+03:
+					for block in blocks_data:
+						blocks_data[block]['TIME'].append(float(time)-0.92868235E+03)
+
+			list_bool = [block in t2_line for block in blocks_data]
+			
+			if any(list_bool):
+
+				if float(time) > 0.92868235E+03:
+
+					block = t2_line[15:19]
+					t2_array=t2_line.rstrip().split(" ")
+					str_list = list(filter(None, t2_array))
+					str_list = [val.replace(',',"").replace('"','') for val in str_list[1:] ]
+
+					try:
+						flow = str_list[2]
+						blocks_data[block]['FLOW'].append(float(flow))
+					except IndexError:
+						print("Bad string")
+					
+
+			if i>10 and float(time) > cutoff_time:
+				break
+
+		t2_file.close()
+
+	times = blocks_data['1001']['TIME']
+
+	flows = blocks_data['1001']['FLOW']
+
+	print(len(times), len(flows))
+
+	indexes = np.logspace(0.1, np.log10(len(times)-100), 10)
+
+	print(indexes)
+
+	selected_times = [times[int(i)] for i in indexes]
+
+	import matplotlib.pyplot as plt
+	import seaborn as sns
+
+	sns.set_style("ticks",{'axes.edgecolor': 'black',
+                        'grid.color': '#000000',
+                        'ytick.left': True,
+                        "grid.linestyle": "--",
+                        "xtick.direction" : 'inout', "ytick.direction" : 'inout',
+                        'font.family': ['Times New Roman'],})
+
+	sns.set_context("paper", font_scale = 1.2)
+
+	fig = plt.figure(figsize=(4.5,4.5))
+
+	ax = plt.subplot(111)
+
+	for i in indexes:
+
+		i = int(i)
+
+		data_to_plot = []
+		position_to_plot = []
+
+		for block in blocks_data:
+
+			if block not in ['1150', '1151']:
+				data_to_plot.append(abs(blocks_data[block]['FLOW'][i]))
+				position_to_plot.append(blocks_data[block]['X'])
+
+
+
+		ax.plot(position_to_plot, data_to_plot, label = "%.2f [s]"%times[i])
+
+	plt.text(0.05, 0.9, "(a)", transform=plt.gcf().transFigure, fontsize = 16)
+
+	ax.set_xscale('log')
+
+	ax.set_ylabel('Flow rate [kg/s]', fontsize = 16)
+
+	ax.set_xlabel('Distance [m]',  fontsize = 16)
+
+	ax.legend(frameon=False, fontsize = 10)
+
+	fig.savefig("%s_%s.png"%('AH-35D', input_dictionary['PTA_step']))
+
+	plt.show()
+
 

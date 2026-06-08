@@ -147,7 +147,11 @@ def incon_to_t2(input_dictionary, file_name = None):
 		input_incon="../model/t2/sources/INCON_MOD"
 		blocks='odd'
 		incon_file_len=len(open(input_incon).readlines())
-
+	elif incon_state=='restart_incon':
+		input_incon="../model/t2/%s"%file_name
+		blocks='even'
+		incon_file_len=len(open(input_incon).readlines())
+		
 	input_fi_file="../model/t2/t2"
 
 	if os.path.isfile(input_fi_file):
@@ -495,13 +499,12 @@ def run(input_dictionary):
 
     
     for file_name in file_names:
-        if 't2' in file_name or 'fit2' in file_name:
+        if 't2' in file_name or 'fit2' in file_name or 'SAV' in file_name:
             try:
                 shutil.move(os.path.join(current, file_name),os.path.join(target_dir, file_name) )
             except shutil.Error:
                 print("File already exist %s"%file_name)
 	
-
 def rock_update(input_dictionary):
 	"""
 	It updates the rock type on the TOUGH2 file

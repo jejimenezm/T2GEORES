@@ -20,6 +20,7 @@ from scipy.spatial import ConvexHull
 from scipy.interpolate import griddata
 from scipy.spatial.distance import cdist
 from scipy.spatial import cKDTree
+from scipy.special import gamma
 import pandas as pd
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 import pyvista as pv
@@ -135,6 +136,8 @@ class py2amesh:
 	    Angle in degrees
 	inner_mesh_type: string
 	    Type of mesh on the inner part of the mesh, it could be 'honeycomb' or 'regular'
+	nx: int
+		Number of elements in x direction when there is a relaxation process
 
 	Returns
 	-------
@@ -159,7 +162,7 @@ class py2amesh:
 		x_from_boarder,y_from_boarder,\
 		x_gap_min,x_gap_max,x_gap_space,y_gap_min,y_gap_max,y_gap_space,\
 		plot_names,plot_centers,z0_level,plot_all_GIS,from_leapfrog,line_file,fault_distance,with_polygon,polygon_shape,set_inac_from_poly,set_inac_from_inner,rotate,angle,inner_mesh_type,\
-		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well, outer_polygon):
+		distance_points,fault_rows,relaxation_times,points_around_well,distance_points_around_well, outer_polygon, nx):
 
 		self.filename=filename
 		self.filepath=filepath
@@ -213,6 +216,7 @@ class py2amesh:
 		self.fault_rows=fault_rows
 		self.relaxation_times=relaxation_times
 		self.points_around_well=points_around_well
+		self.nx = nx
 
 		self.distance_points_around_well=distance_points_around_well
 
@@ -234,9 +238,18 @@ class py2amesh:
 		inner_borders=gpd.read_file(polygon_shape)
 		polygon=[]
 		for line in inner_borders.iterrows():
-			pointList = line[1].geometry.exterior.coords.xy
+			#pointList = line[1].geometry.boundary
+			"""
+			pointList = line[1].geometry.coords
+			print(pointList[0])
+			#pointList = line[1].geometry.exterior.coords.xy
 			for point in zip(pointList[0],pointList[1]):
 				polygon.append([point[0],point[1]])	
+			"""
+			pointList = line[1].geometry.coords
+			for point in pointList:
+				polygon.append([point[0],point[1]])	
+
 
 		self.polygon = polygon[::-1][0:-1]
 
@@ -245,38 +258,44 @@ class py2amesh:
 
 		border_points=[]
 		for line in borders.iterrows():
+
+			pointList = line[1].geometry.coords
+			for point in pointList:
+				border_points.append([point[0],point[1]])	
+			"""
 			pointList = line[1].geometry.exterior.coords.xy
 			for point in zip(pointList[0],pointList[1]):
 				border_points.append([point[0],point[1]])	
+			"""
 
-		self.polygon_external=border_points[::-1][0:-1]
+		self.polygon_external=border_points[::-1]#[0:-1]
 
-		self.color_dict = {1:[['AA','AB','AC','AD','AE','AF','AG'],'ROCK1','red'],\
-						   2:[['BA','BB','BC','BD','BE','BF','BG'],'ROCK2','white'],\
-						   3:[['CA','CB','CC','CD','CE','CF','CG'],'ROCK3','yellow'],\
-						   4:[['DA','DB','DC','DD','DE','DF','DG'],'ROCK4','blue'],\
-						   5:[['EA','EB','EC','ED','EE','EF','EG'],'ROCK5','green'],\
-						   6:[['FA','FB','FC','FD','FE','FF','FG'],'ROCK6','purple'],\
-						   7:[['GA','GB','GC','GD','GE','GF','GG'],'ROCK7','#ff69b4'],\
-						   8:[['HA','HB','HC','HD','HE','HF','HG'],'ROCK8','darkorange'],\
-						   9:[['IA','IB','IC','ID','IE','IF','IG'],'ROCK9','cyan'],\
-						   10:[['JA','JB','JC','JD','JE','JF','JG'],'ROK10','magenta'],\
-						   11:[['KA','KB','KC','KD','KE','KF','KG'],'ROK11','#faebd7'],\
-						   12:[['LA','LB','LC','LD','LE','LF','LG'],'ROK12','#2e8b57'],\
-						   13:[['MA','MB','MC','MD','ME','MF','MG'],'ROK13','#eeefff'],\
-						   14:[['NA','NB','NC','ND','NE','NF','NG'],'ROK14','#da70d6'],\
-						   15:[['OA','OB','OC','OD','OE','OF','OG'],'ROK15','#ff7f50'],\
-						   16:[['PA','PB','PC','PD','PE','PF','PG'],'ROK16','#cd853f'],\
-						   17:[['QA','QB','QC','QD','QE','QF','QG'],'ROK17','#bc8f8f'],\
-						   18:[['RA','RB','RC','RD','RE','RF','RG'],'ROK18','#5f9ea0'],\
-						   19:[['SA','SB','SC','SD','SE','SF','SG'],'ROK19','#daa520'],
-						   20:[['TA','TB','SC','SD','SE','SF','SG'],'ROK20','#daa520'],
-						   21:[['UA','UB','UC','UD','UE','UF','UG'],'ROK21','#daa520'],
-						   22:[['VA','VB','SC','VD','VE','VF','VG'],'ROK22','#daa520'],
-						   23:[['WA','WB','SC','WD','WE','WF','WG'],'ROK23','#daa520'],
-						   24:[['XA','XB','SC','XD','XE','XF','XG'],'ROK19','#daa520'],
-						   25:[['YA','YB','SC','YD','YE','YF','YG'],'ROK19','#daa520'],
-						   26:[['ZA','ZB','SC','ZD','ZE','ZF','ZG'],'ROK19','#daa520']}
+		self.color_dict = {1:[['AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO'],'ROCK1','red'],\
+						   2:[['BA','BB','BC','BD','BE','BF','BG','BH','BI','BJ','BK','BL','BM','BN','BO'],'ROCK2','white'],\
+						   3:[['CA','CB','CC','CD','CE','CF','CG','CH','CI','CJ','CK','CL','CM','CN','CO'],'ROCK3','yellow'],\
+						   4:[['DA','DB','DC','DD','DE','DF','DG','DH','DI','DJ','DK','DL','DM','DN','DO'],'ROCK4','blue'],\
+						   5:[['EA','EB','EC','ED','EE','EF','EG','EH','EI','EJ','EK','EL','EM','EN','EO'],'ROCK5','green'],\
+						   6:[['FA','FB','FC','FD','FE','FF','FG','FH','FI','FJ','FK','FL','FM','FN','FO'],'ROCK6','purple'],\
+						   7:[['GA','GB','GC','GD','GE','GF','GG','GH','GI','GJ','GK','GL','GM','GN','GO'],'ROCK7','#ff69b4'],\
+						   8:[['HA','HB','HC','HD','HE','HF','HG','HH','HI','HJ','HK','HL','HM','HN','HO'],'ROCK8','darkorange'],\
+						   9:[['IA','IB','IC','ID','IE','IF','IG','IH','II','IJ','IK','IL','IM','IN','IO'],'ROCK9','cyan'],\
+						   10:[['JA','JB','JC','JD','JE','JF','JG','JH','JI','JJ','JK','JL','JM','JN','JO'],'ROK10','magenta'],\
+						   11:[['KA','KB','KC','KD','KE','KF','KG','KH','KI','KJ','KK','KL','KM','KN','KO'],'ROK11','#faebd7'],\
+						   12:[['LA','LB','LC','LD','LE','LF','LG','LH','LI','LJ','LK','LL','LM','LN','LO'],'ROK12','#2e8b57'],\
+						   13:[['MA','MB','MC','MD','ME','MF','MG','MH','MI','MJ','MK','ML','MM','MN','MO'],'ROK13','#eeefff'],\
+						   14:[['NA','NB','NC','ND','NE','NF','NG','NH','NI','NJ','NK','NL','NM','NN','NO'],'ROK14','#da70d6'],\
+						   15:[['OA','OB','OC','OD','OE','OF','OG','OH','OI','OJ','OK','OL','OM','ON','OO'],'ROK15','#ff7f50'],\
+						   16:[['PA','PB','PC','PD','PE','PF','PG','PH','PI','PJ','PK','PL','PM','PN','PO'],'ROK16','#cd853f'],\
+						   17:[['QA','QB','QC','QD','QE','QF','QG','QH','QI','QJ','QK','QL','QM','QN','QO'],'ROK17','#bc8f8f'],\
+						   18:[['RA','RB','RC','RD','RE','RF','RG','RH','RI','RJ','RK','RL','RM','RN','RO'],'ROK18','#5f9ea0'],\
+						   19:[['SA','SB','SC','SD','SE','SF','SG','SH','SI','SJ','SK','SL','SM','SN','SO'],'ROK19','#daa520'],
+						   20:[['TA','TB','SC','SD','SE','SF','SG','TH','TI','TJ','TK','TL','TM','TN','TO'],'ROK20','#daa520'],
+						   21:[['UA','UB','UC','UD','UE','UF','UG','UH','UI','UJ','UK','UL','UM','UN','UO'],'ROK21','#daa520'],
+						   22:[['VA','VB','SC','VD','VE','VF','VG','VH','VI','VJ','VK','VL','VM','VN','VO'],'ROK22','#daa520'],
+						   23:[['WA','WB','SC','WD','WE','WF','WG','WH','WI','WJ','WK','WL','WM','WM','WO'],'ROK23','#daa520'],
+						   24:[['XA','XB','SC','XD','XE','XF','XG','XH','XI','XJ','XK','XL','XM','XN','XO'],'ROK19','#daa520'],
+						   25:[['YA','YB','SC','YD','YE','YF','YG','YH','YI','YJ','YK','YL','YM','YN','YO'],'ROK19','#daa520'],
+						   26:[['ZA','ZB','SC','ZD','ZE','ZF','ZG','ZH','ZI','ZJ','ZK','ZL','ZM','ZN','ZO'],'ROK19','#daa520']}
 
 
 		self.rock_dict={}
@@ -335,13 +354,13 @@ class py2amesh:
 		"""Verifica si un punto de la malla del campo cercano esta dentro o fuera del poligo definido por el shapefile de entrada o del campo cercano
 		"""
 
-		if position=='internal':
+		if position == 'internal':
 			polygon=self.polygon
-		elif position=='external':
+		elif position == 'external':
 			polygon=self.polygon_external
 
-
 		boolean=False
+
 		if source=='shapefile':
 
 			cnt=0
@@ -393,15 +412,14 @@ class py2amesh:
 				boolean=True
 		return boolean
 
-
 	def reg_pol_mesh(self):
 		"""Crea malla regular cuando existe un poligono de entrada
 		"""
 		#x_regular=np.arange(self.Xmin+self.x_from_boarder,self.Xmax+self.x_space-self.x_from_boarder,self.x_space)
 		#y_regular=np.arange(self.Ymin+self.y_from_boarder,self.Ymax+self.y_space-self.y_from_boarder,self.y_space)
 
-		nx=40 #number of elements in one direction
-		n_times=4
+		nx = self.nx #number of elements in one direction
+		n_times = 1
 		ny=int((self.Ymax+2*n_times*self.x_from_boarder-self.Ymin)*nx/(self.Xmax-self.Xmin+n_times*2*self.x_from_boarder))
 
 		x_regular=np.linspace(self.Xmin-n_times*self.x_from_boarder,self.Xmax+n_times*self.x_from_boarder,nx,endpoint=True) #generation of regular grid on X
@@ -420,12 +438,12 @@ class py2amesh:
 				self.mesh_array[pair][0]=x1*math.cos(math.pi*angle/180)-y1*math.sin(math.pi*angle/180)+self.Xmin-n_times*self.x_from_boarder
 				self.mesh_array[pair][1]=x1*math.sin(math.pi*angle/180)+y1*math.cos(math.pi*angle/180)+self.Ymin-n_times*self.x_from_boarder
 
-
 		x_pol=[]
 		y_pol=[]
 		for n in range(len(self.polygon)):
 			x_pol.append(int(self.polygon[n][0]))
 			y_pol.append(int(self.polygon[n][1]))
+
 		x_pol.append(int(self.polygon[0][0]))
 		y_pol.append(int(self.polygon[0][1]))
 
@@ -842,6 +860,8 @@ class py2amesh:
 		self.wells_correlative={}
 		data_dict=self.data()
 
+		print(data_dict)
+
 
 		for n in range(self.number_of_layer):
 			cnt=110
@@ -861,9 +881,12 @@ class py2amesh:
 					layer_num+=1
 
 				cnt+=1
+				
 				string_ele=self.color_dict[n+1][0][(layer_num)]
 
+
 				blockname=string_ele+str(blocknumber)
+				print(layer_num,n,cnt,string_ele,blockname)
 
 				self.well_names.append(blockname)
 
@@ -919,6 +942,7 @@ class py2amesh:
 	def de_translate(self,points):
 		#Converts data points to new coordinate system
 		n_times=4
+
 		if self.rotate:
 			angle=self.angle
 			for n, point in enumerate(points):
@@ -932,6 +956,7 @@ class py2amesh:
 
 					points[n][0]=r*np.cos(alpha)+(self.Xmin-n_times*self.x_from_boarder)
 					points[n][1]=r*np.sin(alpha)+(self.Ymin-n_times*self.x_from_boarder)
+
 				else:
 					points[n][0]=self.Xmin
 					points[n][1]=self.Ymin	
@@ -944,8 +969,25 @@ class py2amesh:
 		return name
 
 	def relaxation(self):
+
 		data={'blocks':{},'borders':[]}
 
+		#Read border to clip write into in files
+		borders=gpd.read_file(self.outer_polygon)
+
+		border_points=[]
+		for line in borders.iterrows():
+
+			pointList = line[1].geometry.coords
+			for point in pointList:
+				border_points.append([point[0],point[1]])	
+			"""
+			pointList = line[1].geometry.exterior.coords.xy
+			for point in zip(pointList[0],pointList[1]):
+				border_points.append([point[0],point[1]])	
+			"""
+		data['borders'] = border_points[::-1]
+		print(data['borders'])
 
 		#Extracts the points from the regular mesh, it considers the rotation already and internal region of shapefile
 		data_dict=self.data()['IDXY']
@@ -954,18 +996,16 @@ class py2amesh:
 			points.append([data_dict[key][0],data_dict[key][1]])
 		points=np.array(points)
 
-
 		points=np.array(points)
 		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
 		ax.plot(points[:,0],points[:,1],'ok', linestyle='None',ms=1)
 
-		for k, dot in enumerate(self.polygon_external):
-			if k+1<len(self.polygon_external):
-				ax.plot([dot[0],self.polygon_external[k+1][0]],[dot[1],self.polygon_external[k+1][1]],'og')
+		for k, dot in enumerate(data['borders']):
+			if k+1<len(data['borders']):
+				ax.plot([dot[0],data['borders'][k+1][0]],[dot[1],data['borders'][k+1][1]],'og')
 		ax.set_aspect('equal')
 		plt.savefig('points_original.png',dpi=600)
 		plt.show()
-
 
 		points=self.to_translate(points)
 		
@@ -976,11 +1016,9 @@ class py2amesh:
 		plt.savefig('points_traslated.png',dpi=600)
 		plt.show()
 
-
-
 		#Perform relaxation
 		for i in range(self.relaxation_times):
-			field = Field(points)
+			field = Field.Field(points)
 			field.relax()
 			points= field.get_points()
 		
@@ -991,49 +1029,47 @@ class py2amesh:
 		plt.savefig('points_traslated_relaxed.png',dpi=600)
 		plt.show()
 
-
-
 		points=self.de_translate(points)
 
 		points=np.array(points)
 		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
 		ax.plot(points[:,0],points[:,1],'om', linestyle='None',ms=1)
-		for k, dot in enumerate(self.polygon_external):
-			if k+1<len(self.polygon_external):
-				ax.plot([dot[0],self.polygon_external[k+1][0]],[dot[1],self.polygon_external[k+1][1]],'og')
+		for k, dot in enumerate(data['borders']):
+			if k+1<len(data['borders']):
+				ax.plot([dot[0],data['borders'][k+1][0]],[dot[1],data['borders'][k+1][1]],'og')
 		ax.set_aspect('equal')
 		plt.savefig('points_relaxed.png',dpi=600)
 		plt.show()
 
-
 		#Drops points out of shapefile
 		rlx_points=[]
+		
 		for point in points:
 			if self.check_in_out('external',[point[0],point[1]],'shapefile'):
 				rlx_points.append([point[0],point[1]])
+		
 		rlx_points=np.array(rlx_points)
 
+		fig, ax =  plt.subplots(1, 1, figsize=(20,20))
+		ax.plot(rlx_points[:,0],rlx_points[:,1],'or', linestyle='None',ms=1)
+		for k, dot in enumerate(data['borders']):
+			if k+1<len(data['borders']):
+				ax.plot([dot[0],data['borders'][k+1][0]],[dot[1],data['borders'][k+1][1]],'og')
+		ax.set_aspect('equal')
+		plt.savefig('to_assign.png',dpi=600)
+		plt.show()
 
 		#Assign names to new points
 		position={}
 		for n, layer in enumerate(self.rock_dict):
 			for i,point in enumerate(rlx_points):
-				name=self.well_block_assign_from_relaxation(self.rock_dict[layer][0][0],i)
-				data['blocks'][name]=[n+1,point[0],point[1],self.rock_dict[layer][4],self.rock_dict[layer][5]]
+				name = self.well_block_assign_from_relaxation(self.rock_dict[layer][0][0], i)
+				data['blocks'][name] = [n+1,point[0], point[1], self.rock_dict[layer][4], self.rock_dict[layer][5]]
 				if n==0:
 					position[i]=name
 	
-
 		#Read border to clip write into in file
-		borders=gpd.read_file(	self.outer_polygon)
-
-		border_points=[]
-		for line in borders.iterrows():
-			pointList = line[1].geometry.exterior.coords.xy
-			for point in zip(pointList[0],pointList[1]):
-				border_points.append([point[0],point[1]])	
-
-		data['borders']=self.polygon_external
+		#data['borders']=data['borders']
 
 		#Rewrite the wells dictionaries by finding the new closer position to the wells
 
@@ -1358,7 +1394,7 @@ class py2amesh:
 			cnt=0
 
 			for ny in data_in:
-				if cnt>0 and cnt<(len(data_in)-10):
+				if cnt>0 and cnt<(len(data_in)-30): #30 number of lines that define the mesh boundaries
 					read1=ny[0:6]
 					read2=ny[8:11]
 					read3=ny[11:31]
@@ -1509,6 +1545,8 @@ def mesh_creation_func(input_mesh_dictionary,input_dictionary):
 	    Angle in degrees
 	inner_mesh_type: string
 	    Type of mesh on the inner part of the mesh, it could be 'honeycomb' or 'regular'
+	nx: int
+		Number of elements in x direction when there is a relaxation process
 
 	Returns
 	-------
@@ -1534,7 +1572,7 @@ def mesh_creation_func(input_mesh_dictionary,input_dictionary):
 			input_mesh_dictionary['x_gap_min'],input_mesh_dictionary['x_gap_max'],input_mesh_dictionary['x_gap_space'],input_mesh_dictionary['y_gap_min'],input_mesh_dictionary['y_gap_max'],input_mesh_dictionary['y_gap_space'],input_mesh_dictionary['plot_names'],input_mesh_dictionary['plot_centers'],\
 			input_dictionary['z_ref'],input_mesh_dictionary['plot_all_GIS'],input_mesh_dictionary['from_leapfrog'],input_mesh_dictionary['line_file'],input_mesh_dictionary['fault_distance'],input_mesh_dictionary['with_polygon'],input_mesh_dictionary['polygon_shape'],\
 			input_mesh_dictionary['set_inac_from_poly'],input_mesh_dictionary['set_inac_from_inner'],input_mesh_dictionary['rotate'],input_mesh_dictionary['angle'],input_mesh_dictionary['inner_mesh_type'],\
-			input_mesh_dictionary['distance_points'],input_mesh_dictionary['fault_rows'],input_mesh_dictionary['relaxation_times'],input_mesh_dictionary['points_around_well'],input_mesh_dictionary['distance_points_around_well'], input_mesh_dictionary['outer_polygon'])
+			input_mesh_dictionary['distance_points'],input_mesh_dictionary['fault_rows'],input_mesh_dictionary['relaxation_times'],input_mesh_dictionary['points_around_well'],input_mesh_dictionary['distance_points_around_well'], input_mesh_dictionary['outer_polygon'], input_mesh_dictionary['nx'])
 
 	#data=blocks.relaxation()
 
@@ -2000,7 +2038,7 @@ def to_GIS(input_mesh_dictionary, layer='A'):
 					else:	
 						y=point
 						points.append([x,y])
-
+				
 				w.poly([points])
 				w.record(block,blocks[block]['rocktype'],blocks[block]['vol'])
 
@@ -2120,6 +2158,8 @@ def mesh_to_paraview(input_dictionary):
 					points.append([point_x,point_y])
 
 			points=np.array(points)
+			print("---")
+			print(points, block)
 			hull = ConvexHull(points)
 
 			dict_points={}
@@ -2266,7 +2306,6 @@ def clip_steinar_data():
 	rock_file2.write("ATMOS    02.6500E+030.9990E+001.0000E-121.0000E-121.0000E-122.1000E+008.5000E+02   0   0   0")
 	rock_file2.close()
 	rock_file.close()
-
 
 def reasig_feedzone(input_dictionary):
 	"""It reassing the block related with a well feedzone
@@ -2534,8 +2573,6 @@ def feedpoints_to_vtu():
 		writer.Update()
 		writer.Write()
 
-
-
 def run_meshaker(input_dictionary):
 	"""It runs the TOUGH2 input file
 
@@ -2636,3 +2673,108 @@ def rock_assign_r_meshmaker(conditions, elements_inact = []):
 	ELEME_file.write('ELEME\n'+ELEME_string_output)
 	ELEME_file.close()
 
+def frac_dimen_cir_mesh(n, r0):
+
+	"""
+	This function has been created specifically for PTA when there is just one layer and multiple concentric layers.
+
+	n : float
+		Ranges between 0.1 and 2.99
+	r0 : float
+		Well radius
+	
+	"""
+
+	CONNE_file_path="../model/t2/sources/CONNE"
+	col_conne=[(0,5),(5,10),(10,15),(15,20),(20,25),(25,30),(30,40),(40,50),(50,60),(60,70)]
+	CONNE_pd=pd.read_fwf(CONNE_file_path, colspecs=col_conne, skiprows=1, header=None,
+			               names=['ELEME1','ELEME2','NSEQ', 'NAD1', 'NAD2','ISOT','D1','D2','AREAX', 'BETAX'])
+
+	ELEME_file_path="../model/t2/sources/ELEME"
+	col_eleme=[(0,5),(5,10),(10,15),(15,20),(20,30),(30,40),(40,50),(50,60),(60,70),(70,80)]
+	ELEME_pd=pd.read_fwf(ELEME_file_path,colspecs=col_eleme,skiprows=1,header=None,
+			               names=['ELEME','NSEQ','NADD','MA1','VOLX','AHTX','PMX','X','Y','Z'])
+
+	ELEME_pd.to_json('../mesh/ELEME.json',orient="index",indent=2)
+
+	r = r0
+	A = CONNE_pd['AREAX'].iloc[0]
+	alpha_n = (2*np.pi**(n/2))/gamma(n/2)
+	b = A/(alpha_n*r**(n-1))
+	r_minus = r0
+
+	for index, row in CONNE_pd.iterrows():
+
+		if index > 0:
+
+			r_plus = row['D1']*2 + r_minus
+		
+			A1 = alpha_n*(r_plus**(n-1))*b**(3-n)
+			V1 = ( alpha_n*(b**(3-n))/n )*(r_plus**n - r_minus**n)
+
+			ELEME_pd.loc[ELEME_pd['ELEME'] == row['ELEME1'],'VOLX'] = V1
+			CONNE_pd.loc[index,'AREAX'] = A1
+
+			if index == len(CONNE_pd['D2']) - 2:
+
+				r_minus = r_plus
+				r_plus = row['D2']*2 + r_minus
+
+				V1 = ( alpha_n*(b**(3-n))/n )*(r_plus**n - r_minus**n)
+				ELEME_pd.loc[ELEME_pd['ELEME'] == row['ELEME2'], 'VOLX'] = V1
+
+			r_minus = r_plus
+
+	ELEME_string_output = ''
+
+	for index, row in ELEME_pd.iterrows():
+
+		for column in ELEME_pd.columns:
+			if column in ['MA1','ELEME','NSEQ','NADD']:
+				value = str(row[column]).replace('.0','')
+				if value == 'nan':
+					value = ' '
+			else:
+				value = row[column]
+			
+			to_write = format(value,formats.formats_t2['ELEME'][column][1])
+			if to_write == '       NAN':
+				to_write = format(' ','>10')
+			
+			ELEME_string_output += to_write
+		ELEME_string_output+='\n'
+
+
+	CONNE_string_output = ''
+
+	for index, row in CONNE_pd.iterrows():
+
+		if index + 1 < len(CONNE_pd['ELEME1']):
+			for column in CONNE_pd.columns:
+				if column in ['NSEQ', 'NAT1', 'NAT2','SIGX']:
+					value = str(row[column]).replace('.0','')
+					if value == 'nan':
+						value = ' '
+				else:
+					value = row[column]
+				
+
+				try:
+					to_write = format(value,formats.formats_t2['CONNE'][column][1])
+					if to_write == '       NAN':
+						to_write = format(' ','>10')
+				except ValueError:
+					pass			
+
+				CONNE_string_output += to_write
+			CONNE_string_output += '\n'
+
+	ELEME_file_path="../model/t2/sources/ELEME_frac"
+	ELEME_file=open(ELEME_file_path, "w")
+	ELEME_file.write('ELEME\n'+ELEME_string_output)
+	ELEME_file.close()
+
+	CONNE_file_path="../model/t2/sources/CONNE_frac"
+	CONNE_file=open(CONNE_file_path, "w")
+	CONNE_file.write('CONNE\n' + CONNE_string_output )
+	CONNE_file.close()

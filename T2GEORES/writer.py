@@ -668,7 +668,11 @@ def ELEME_adder(input_dictionary):
 
 	"""
 
-	source_file="../model/t2/sources/ELEME"
+	if input_dictionary['fractional_dimension']:
+		source_file="../model/t2/sources/ELEME_frac"
+	else:	
+		source_file="../model/t2/sources/ELEME"
+	
 	string=""
 	if os.path.isfile(source_file):
 		with open(source_file) as eleme_source_file:
@@ -689,7 +693,12 @@ def CONNE_adder(input_dictionary):
 	  string : string containing the CONNE section
 
 	"""
-	source_file="../model/t2/sources/CONNE"
+
+	if input_dictionary['fractional_dimension']:
+		source_file="../model/t2/sources/CONNE_frac"
+	else:
+		source_file="../model/t2/sources/CONNE"
+
 	string=""
 	if os.path.isfile(source_file):
 		with open(source_file) as conne_source_file:
@@ -697,7 +706,7 @@ def CONNE_adder(input_dictionary):
 				string+="%s"%line
 	else:
 		sys.exit("The file %s or directory do not exist"%source_file)
-	return string
+	return string+ '\n'
 
 def OUTPU_writer(input_dictionary):
 	""""It writes the OUTPU of TOUGH2 file

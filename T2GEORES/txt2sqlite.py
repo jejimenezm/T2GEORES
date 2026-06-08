@@ -343,7 +343,7 @@ def insert_feedzone_to_sqlite(input_dictionary):
 	conn=sqlite3.connect(db_path)
 	c=conn.cursor()
 
-	feedzones=pd.read_csv(source_txt+'well_feedzone.csv',delimiter=',')
+	feedzones=pd.read_csv(source_txt+'well_feedzone.csv',delimiter=';')
 
 
 	for index,row in feedzones.iterrows():
@@ -515,8 +515,13 @@ def insert_raw_mh_to_sqlite(input_dictionary, replace = False):
 		well_name=f.replace("'","").replace("_mh.dat","")
 		if os.path.isfile(source_txt+'mh/'+f):
 			mh=pd.read_csv(source_txt+'mh/'+f)
+			#mh.drop('total_flow', axis=1, inplace=True)
 			mh.rename(columns={'steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status': 'type'}, inplace=True)
-			
+			mh['well'] = well_name
+
+			print("##############%s"%well_name)
+			print(mh)
+
 			if replace:
 				sql = "DELETE FROM mh WHERE well= '%s'"%well_name
 				c.execute(sql)
@@ -879,4 +884,50 @@ def src_rocktype(input_dictionary):
 
 	data_source.to_sql('t2wellsource',if_exists='replace',con=conn,index=False, index_label = 'source_nickname')
 
+	conn.close()
+
+
+
+#not to github
+
+def insert_filtered_mh_to_sqlite_add_legacy(input_dictionary, single_well = None):
+	"""It stores all the data contain on the subfolder mh from the input file folder.
+
+	Parameters
+	----------
+	input_dictionary: dictionary
+	  Dictionary containing the path and name of database and the path of the input file
+
+	Note
+	----
+	Every file contains information about the flow rate and flowing enthalpy of the wells. Every register must contain the next headers:
+	type,date-time,steam,liquid,enthalpy,WHPabs. The file name must be name well_mh.dat
+
+	Examples
+	--------
+	>>>  insert_mh_to_sqlite(input_dictionary)
+	"""
+
+	db_path=input_dictionary['db_path']
+	source_txt=input_dictionary['source_txt']
+
+	conn=sqlite3.connect(db_path)
+	c=conn.cursor()
+	if single_well == None:
+		for f in os.listdir(source_txt+'mh/legacy_2020'):
+			print(f)
+			well_name=f.replace("'","").replace("_mh.dat","")
+			if os.path.isfile(source_txt+'mh/legacy_2020/'+f) and well_name in input_dictionary['WELLS']:
+				mh=pd.read_csv(source_txt+'mh/legacy_2020/'+f)
+				mh['well'] = well_name
+				mh.rename(columns={'date-time': 'date_time','steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status':'type'}, inplace=True)
+				mh.to_sql('mh',if_exists='append',con=conn,index=False)
+	else:
+		file_name = single_well + "_mh.dat"
+		if os.path.isfile(source_txt+'mh/legacy_2020/'+file_name) and single_well in input_dictionary['WELLS']:
+			mh=pd.read_csv(source_txt+'mh/legacy_2020/'+file_name)
+			mh['well'] = single_well
+			mh.rename(columns={'date-time': 'date_time','steam': 'steam_flow', 'liquid': 'liquid_flow', 'enthalpy': 'flowing_enthalpy',  'WHPabs': 'well_head_pressure', 'status':'type'}, inplace=True)
+			mh.to_sql('mh',if_exists='append',con=conn,index=False)
+			
 	conn.close()
