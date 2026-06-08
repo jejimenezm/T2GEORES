@@ -9,4 +9,4 @@
 /T2GEORES/LICENSE.txt
 /T2GEORES/.gitignore
 /T2GEORES/MANIFEST.in
-*.pyc
+*.pyc*.egg-info/
